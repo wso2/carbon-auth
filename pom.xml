@@ -207,11 +207,7 @@
                             </goals>
                             <configuration>
                                 <dataFile>${basedir}/target/coverage-reports/jacoco-ut.exec</dataFile>
-                                <outputDirectory>${basedir}/target/coverage-reports/site/jacoco-ut</outputDire            <dependency>
-                <groupId>org.wso2.carbon.datasources</groupId>
-                <artifactId>org.wso2.carbon.datasource.core</artifactId>
-                <version>${carbon.datasources.version}</version>
-            </dependency>ctory>
+                                <outputDirectory>${basedir}/target/coverage-reports/site/jacoco-ut</outputDirectory>
                             </configuration>
                         </execution>
                         <execution>
