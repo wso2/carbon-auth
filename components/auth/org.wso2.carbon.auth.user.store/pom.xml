@@ -23,13 +23,59 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>carbon-auth</artifactId>
         <groupId>org.wso2.carbon.auth</groupId>
+        <artifactId>auth</artifactId>
         <version>1.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>org.wso2.carbon.auth.user.store</artifactId>
+	<packaging>bundle</packaging>
 
+	<name>Carbon Auth - Userstore</name>
+	
+	<dependencies>
+		<dependency>
+            <groupId>org.wso2.carbon.datasources</groupId>
+            <artifactId>org.wso2.carbon.datasource.core</artifactId>
+        </dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.wso2.eclipse.osgi</groupId>
+			<artifactId>org.eclipse.osgi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.wso2.eclipse.osgi</groupId>
+			<artifactId>org.eclipse.osgi.services</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+		</dependency>
+	</dependencies>
+	
+	<properties>
+        <private.package>org.wso2.carbon.auth.user.store.internal</private.package>
+        <export.package>
+            !org.wso2.carbon.auth.user.store.internal,
+            org.wso2.carbon.auth.user.store.*
+        </export.package>
+        <import.package>
+        	org.osgi.framework.*;version="${osgi.framework.package.import.version.range}",
+            org.osgi.service.*;version="${equinox.osgi.services.package.import.version.range}",
+            org.slf4j.*;version="${slf4j.logging.package.import.version.range}",
+            javax.security.auth.*,
+            javax.sql.*,
+            javax.naming.*,
+            javax.xml.*,
+            javax.crypto.*,
+            org.wso2.carbon.datasource.core.*;version="${datasources.core.package.import.version.range}",
+            org.wso2.carbon.kernel.*,
+        </import.package>
+	</properties>
 
 </project>
