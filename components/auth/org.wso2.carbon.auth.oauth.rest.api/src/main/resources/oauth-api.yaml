@@ -1,0 +1,177 @@
+swagger: '2.0'
+info:
+  description: OAuth API
+  version: 1.0.0
+  title: OAuth API
+  # put the contact info for your development or API team
+  contact:
+    name: "WSO2"
+    url: "http://wso2.com/products/api-manager/"
+    email: "architecture@wso2.com"
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+paths:
+  /authorize:
+    get:
+      tags:
+      - OAuth Authorization
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/x-www-form-urlencoded
+      parameters:
+      - in: query
+        name: response_type
+        description: Expected response type
+        required: true
+        type: string
+      - in: query
+        name: client_id
+        description: OAuth client identifier
+        required: true
+        type: string
+      - in: query
+        name: redirect_uri
+        description: Clients redirection endpoint
+        type: string
+      - in: query
+        name: scope
+        description: OAuth scopes
+        type: string
+      - in: query
+        name: state
+        description: Opaque value used by the client to maintain
+         state between the request and callback
+        type: string
+      responses:
+        302:
+          description: Response from authorization endpoint
+          headers:
+            Location:
+              type: string
+
+  /token:
+    post:
+      tags:
+      - OAuth Token
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json;charset=UTF-8
+      parameters:
+        - in: header
+          name: Authorization
+          description: Authentication scheme header
+          required: true
+          type: string
+        - in: query
+          name: grant_type
+          description: Required OAuth grant type
+          required: true
+          type: string
+        - in: query
+          name: code
+          description: Authorization code to be sent for authorization grant type
+          type: string
+        - in: query
+          name: redirect_uri
+          description: Clients redirection endpoint
+          type: string
+        - in: query
+          name: client_id
+          description: OAuth client identifier
+          type: string
+        - in: query
+          name: refresh_token
+          description: Refresh token issued to the client.
+          type: string
+        - in: query
+          name: scope
+          description: OAuth scopes
+          type: string
+      responses:
+        200:
+          description: |
+            OK.
+            Successful response from token endpoint.
+          schema:
+            $ref: '#/definitions/TokenResponse'
+          headers:
+            Content-Type:
+              description: |
+                The content type of the body.
+              type: string
+        400:
+          description: |
+            Bad Request.
+            Error response from token endpoint due to malformed request.
+          schema:
+            $ref: '#/definitions/TokenErrorResponse'
+          headers:
+            Content-Type:
+              description: |
+                The content type of the body.
+              type: string
+        401:
+          description: |
+            Unauthorized.
+            Error response from token endpoint due to client authentication failure.
+          schema:
+            $ref: '#/definitions/TokenErrorResponse'
+          headers:
+            Content-Type:
+              description: |
+                The content type of the body.
+              type: string  
+
+      
+      
+
+
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /uvindra/oauth/1.0.0
+schemes:
+ - https
+ 
+definitions:
+  TokenResponse:
+    title: Successful response sent for OAuth token request.
+    required:
+      - access_token
+      - token_type
+    properties:
+      access_token:
+        type: string
+        description: |
+          OAuth access tokn issues by authorization server.
+      token_type:
+        type: string
+        description: |
+          The type of the token issued.
+      expires_in:
+        type: string
+        description: |
+          The lifetime in seconds of the access token.
+      refresh_token:
+        type: string
+        description: |
+          OPTIONAL.
+          The refresh token, which can be used to obtain new access tokens.
+      scope:
+        type: string
+        description: |
+          The scope of the access token requested.
+          
+  TokenErrorResponse:
+    title: Error response sent for OAuth token request.
+    required:
+      - error
+    properties:
+      error:
+        type: string
+        description: |
+          Error code classifying the type of error.
