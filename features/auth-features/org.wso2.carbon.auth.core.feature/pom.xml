@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ /*
+  ~ *  Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~ *
+  ~ *  WSO2 Inc. licenses this file to you under the Apache License,
+  ~ *  Version 2.0 (the "License"); you may not use this file except
+  ~ *  in compliance with the License.
+  ~ *  You may obtain a copy of the License at
+  ~ *
+  ~ *    http://www.apache.org/licenses/LICENSE-2.0
+  ~ *
+  ~ * Unless required by applicable law or agreed to in writing,
+  ~ * software distributed under the License is distributed on an
+  ~ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ * KIND, either express or implied.  See the License for the
+  ~ * specific language governing permissions and limitations
+  ~ * under the License.
+  ~ *
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>auth-features</artifactId>
+        <groupId>org.wso2.carbon.auth</groupId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>org.wso2.carbon.auth.core.feature</artifactId>
+    <packaging>carbon-feature</packaging>
+    <name>WSO2 Auth Core Feature</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.wso2.carbon.auth</groupId>
+            <artifactId>org.wso2.carbon.auth.core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.h2database.wso2</groupId>
+                    <artifactId>h2-database-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>clean_target</id>
+                        <phase>install</phase>
+                        <configuration>
+                            <target>
+                                <delete dir="src/main/resources" />
+                                <delete dir="src/main" />
+                                <delete dir="src" />
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>clean-auth-h2-database</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <delete file="resources/database/AUTH_DB.mv.db" />
+                                <delete file="resources/database/AUTH_DB.trace.db" />
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>clean-um-h2-database</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <delete file="resources/database/UM_DB.mv.db" />
+                                <delete file="resources/database/UM_DB.trace.db" />
+                            </target>
+                        </configuration>
+                    </execution>
+                    
+                    <execution>
+                        <id>create-carbon-auth-database</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <path id="h2.classpath">
+                                    <path refid="maven.compile.classpath" />
+                                </path>
+                                <echo message="########### Creating Carbon Auth Database ##############" />
+                                <sql driver="org.h2.Driver" url="jdbc:h2:${basedir}/resources/database/AUTH_DB;create=true;MV_STORE=TRUE" userid="wso2carbon" password="wso2carbon" autocommit="true" onerror="continue">
+
+                                    <classpath>
+                                        <path refid="h2.classpath" />
+                                    </classpath>
+                                    <fileset file="${basedir}/resources/dbscripts/auth/h2.sql" />
+                                </sql>
+                                <echo message="##################### END ########################" />
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>create-carbon-um-database</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <path id="h2.classpath">
+                                    <path refid="maven.compile.classpath" />
+                                </path>
+                                <echo message="########### Creating Carbon User Management Database ##############" />
+                                <sql driver="org.h2.Driver" url="jdbc:h2:${basedir}/resources/database/UM_DB;create=true;MV_STORE=TRUE" userid="wso2carbon" password="wso2carbon" autocommit="true" onerror="continue">
+
+                                    <classpath>
+                                        <path refid="h2.classpath" />
+                                    </classpath>
+                                    <fileset file="${basedir}/resources/dbscripts/um/h2.sql" />
+                                </sql>
+                                <echo message="##################### END ########################" />
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.wso2.carbon.auth</groupId>
+                                    <artifactId>org.wso2.carbon.auth.core</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>bundle</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.directory}/docs</outputDirectory>
+                                    <includes>config-docs/**</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>prefilter-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>src/main/resources</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>resources</directory>
+                                    <includes>
+                                        <include>dbscripts/**</include>
+                                        <include>database/**</include>
+                                        <include>conf/**</include>
+                                        <include>p2.inf</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.wso2.carbon.maven</groupId>
+                <artifactId>carbon-feature-plugin</artifactId>
+                <version>${carbon.feature.plugin.version}</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>1-p2-feature-generation</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                        <propertyFile>../../etc/feature.properties</propertyFile>
+                        <adviceFileContents>
+                            <advice>
+                                <name>org.wso2.carbon.p2.category.type</name>
+                                <value>server</value>
+                            </advice>
+                            <advice>
+                                <name>org.eclipse.equinox.p2.type.group</name>
+                                <value>false</value>
+                            </advice>
+                        </adviceFileContents>
+                        <bundles>
+                            <bundle>
+                                <symbolicName>org.wso2.carbon.auth.core</symbolicName>
+                                <version>${carbon.auth.version}</version>
+                            </bundle>
+                        </bundles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+            
+
+</project>
