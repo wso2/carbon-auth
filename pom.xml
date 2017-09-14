@@ -26,8 +26,7 @@
     
     <modules>
         <module>components/auth</module>
-        <module>auth-features</module>
-        <module>org.wso2.carbon.auth.core.feature</module>
+        <module>features/auth-features</module>
     </modules>
 
     <pluginRepositories>
@@ -47,6 +46,11 @@
 
     <dependencyManagement>
         <dependencies>
+	    <dependency>
+                <groupId>org.wso2.carbon.auth</groupId>
+                <artifactId>org.wso2.carbon.auth.core</artifactId>
+                <version>${carbon.auth.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.core</artifactId>
