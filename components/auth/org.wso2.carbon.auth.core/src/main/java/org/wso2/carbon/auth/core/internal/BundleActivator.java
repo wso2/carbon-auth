@@ -53,8 +53,13 @@ public class BundleActivator {
     protected void start(BundleContext bundleContext) {
         try {
             Context ctx = jndiContextManager.newInitialContext();
-            DataSource dataSource = new DataSourceImpl((HikariDataSource) ctx.lookup("java:comp/env/jdbc/WSO2AMDB"));
-            DataSourceUtil.initialize(dataSource);
+            DataSource umDataSource = new DataSourceImpl((HikariDataSource)
+                    ctx.lookup("java:comp/env/jdbc/WSO2UM_DB"));
+            DataSourceUtil.initializeUMDataSource(umDataSource);
+
+            DataSource authDataSource = new DataSourceImpl((HikariDataSource)
+                    ctx.lookup("java:comp/env/jdbc/WSO2AUTH_DB"));
+            DataSourceUtil.initializeAuthDataSource(authDataSource);
         } catch (NamingException e) {
             log.error("Error occurred while jndi lookup", e);
         }
