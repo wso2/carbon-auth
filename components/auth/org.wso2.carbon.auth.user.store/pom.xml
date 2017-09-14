@@ -57,9 +57,9 @@
 			<artifactId>org.osgi.core</artifactId>
 		</dependency>
 		<dependency>
-            <groupId>org.wso2.carbon.auth</groupId>
-            <artifactId>org.wso2.carbon.auth.core</artifactId>
-        </dependency>
+                        <groupId>org.wso2.carbon.auth</groupId>
+                        <artifactId>org.wso2.carbon.auth.core</artifactId>
+                </dependency>
 	</dependencies>
 	
 	<properties>
