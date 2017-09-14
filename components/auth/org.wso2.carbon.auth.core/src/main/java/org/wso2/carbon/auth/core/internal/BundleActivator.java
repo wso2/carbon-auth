@@ -21,6 +21,7 @@
 package org.wso2.carbon.auth.core.internal;
 
 import com.zaxxer.hikari.HikariDataSource;
+
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -30,10 +31,12 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.jndi.JNDIContextManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.core.ServiceReferenceHolder;
 import org.wso2.carbon.auth.core.datasource.DataSource;
 import org.wso2.carbon.auth.core.datasource.DataSourceImpl;
 import org.wso2.carbon.auth.core.datasource.DataSourceUtil;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
+import org.wso2.carbon.kernel.configprovider.ConfigProvider;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -94,6 +97,28 @@ public class BundleActivator {
 
     protected void unregisterDataSourceService(DataSourceService dataSourceService) {
         log.debug("Un registering apim data source");
+    }
+    
+    /**
+     * Get the ConfigProvider service.
+     * This is the bind method that gets called for ConfigProvider service registration that satisfy the policy.
+     *
+     * @param configProvider the ConfigProvider service that is registered as a service.
+     */
+    @Reference(name = "carbon.config.provider", service = ConfigProvider.class,
+            cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.DYNAMIC,
+            unbind = "unregisterConfigProvider")
+    protected void registerConfigProvider(ConfigProvider configProvider) {
+        ServiceReferenceHolder.getInstance().setConfigProvider(configProvider);
+    }
+    
+    /**
+     * This is the unbind method for the above reference that gets called for ConfigProvider instance un-registrations.
+     *
+     * @param configProvider the ConfigProvider service that get unregistered.
+     */
+    protected void unregisterConfigProvider(ConfigProvider configProvider) {
+        ServiceReferenceHolder.getInstance().setConfigProvider(null);
     }
 
 }
