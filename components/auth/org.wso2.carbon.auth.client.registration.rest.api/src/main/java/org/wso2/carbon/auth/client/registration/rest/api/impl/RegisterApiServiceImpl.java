@@ -27,7 +27,10 @@ public class RegisterApiServiceImpl extends RegisterApiService {
 
     @Override
     public Response getApplication(String clientId, Request request) throws NotFoundException {
-        ApplicationDTO applicationDTO = clientRegistrationHandler.getApplication(clientId);
+        ApplicationDTO applicationDTO;
+        Application application = clientRegistrationHandler.getApplication(clientId);
+        applicationDTO = MappingUtil.applicationModelToApplicationDTO(application);
+
         return Response.status(Response.Status.OK).entity(applicationDTO).build();
     }
 
