@@ -18,24 +18,20 @@
  *
  */
 
-package org.wso2.carbon.auth.oauth;
+package org.wso2.carbon.auth.oauth.dao;
+
+import javax.annotation.CheckForNull;
 
 /**
- *  Provides Auth code related functionality
+ * DAO Interface to Client related data
  */
-public interface AuthCodeManager {
+public interface ClientDAO {
     /**
-     * Generate Auth Code for a given client ID
-     * @param clientId  Client ID
-     * @return Auth Code
+     * Get redirect Uri of a client
+     *
+     * @param clientId Client Id of client
+     * @return Redirect Uri if exists else null
      */
-    String generateCode(String clientId);
-
-    /**
-     * Check if Auth Code is valid for a given Client ID
-     * @param code Auth Code
-     * @param sentClientId  Provided client ID
-     * @return true if valid else false
-     */
-    boolean isCodeValid(String code, String sentClientId);
+    @CheckForNull
+    String getRedirectUri(String clientId);
 }

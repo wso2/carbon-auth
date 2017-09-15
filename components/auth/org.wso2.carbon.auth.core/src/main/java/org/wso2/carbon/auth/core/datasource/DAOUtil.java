@@ -34,8 +34,8 @@ import java.util.Locale;
 /**
  * Provides Utility functionality required for working with Data sources
  */
-public class DataSourceUtil {
-    private static final Logger log = LoggerFactory.getLogger(DataSourceUtil.class);
+public class DAOUtil {
+    private static final Logger log = LoggerFactory.getLogger(DAOUtil.class);
     private static final String DB_NAME_POSTGRESQL = "PostgreSQL";
     private static DataSource userManagementDataSource;
     private static DataSource authDataSource;
@@ -43,19 +43,19 @@ public class DataSourceUtil {
     static final String DAO_ERROR_PREFIX = "Error occurred in DAO layer while ";
 
     public static synchronized void initializeUMDataSource(DataSource dataSource) {
-        if (DataSourceUtil.userManagementDataSource != null) {
+        if (DAOUtil.userManagementDataSource != null) {
             return;
         }
 
-        DataSourceUtil.userManagementDataSource = dataSource;
+        DAOUtil.userManagementDataSource = dataSource;
     }
 
     public static synchronized void initializeAuthDataSource(DataSource dataSource) {
-        if (DataSourceUtil.authDataSource != null) {
+        if (DAOUtil.authDataSource != null) {
             return;
         }
 
-        DataSourceUtil.authDataSource = dataSource;
+        DAOUtil.authDataSource = dataSource;
     }
 
     /**
@@ -65,7 +65,7 @@ public class DataSourceUtil {
      * @throws java.sql.SQLException if failed to get Connection
      */
 
-    static Connection getUMConnection() throws SQLException {
+    public static Connection getUMConnection() throws SQLException {
         if (userManagementDataSource != null) {
             return userManagementDataSource.getConnection();
         }
@@ -79,7 +79,7 @@ public class DataSourceUtil {
      * @throws java.sql.SQLException if failed to get Connection
      */
 
-    static Connection getAuthConnection() throws SQLException {
+    public static Connection getAuthConnection() throws SQLException {
         if (authDataSource != null) {
             return authDataSource.getConnection();
         }

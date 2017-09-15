@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Implementation of AuthCodeManager interface
+ */
 public class AuthCodeManagerImpl implements AuthCodeManager {
     private Map<String, String> authCodeStore = new HashMap<>();
 

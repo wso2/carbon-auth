@@ -18,24 +18,24 @@
  *
  */
 
-package org.wso2.carbon.auth.oauth;
+package org.wso2.carbon.auth.oauth.dao.impl;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- *  Provides Auth code related functionality
+ * DAO Object creation factory
  */
-public interface AuthCodeManager {
-    /**
-     * Generate Auth Code for a given client ID
-     * @param clientId  Client ID
-     * @return Auth Code
-     */
-    String generateCode(String clientId);
+public class DAOFactory {
+    private static final Logger log = LoggerFactory.getLogger(DAOFactory.class);
 
-    /**
-     * Check if Auth Code is valid for a given Client ID
-     * @param code Auth Code
-     * @param sentClientId  Provided client ID
-     * @return true if valid else false
-     */
-    boolean isCodeValid(String code, String sentClientId);
+    private static final String MYSQL = "MySQL";
+    private static final String H2 = "H2";
+    private static final String DB2 = "DB2";
+    private static final String MICROSOFT = "Microsoft";
+    private static final String MS_SQL = "MS SQL";
+    private static final String POSTGRE = "PostgreSQL";
+    private static final String ORACLE = "Oracle";
+
+    
 }
