@@ -26,6 +26,9 @@ import org.wso2.carbon.auth.oauth.ClientRegistry;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Implementation of ClientRegistry interface
+ */
 public class ClientRegistryImpl implements ClientRegistry {
     private Map<String, String> redirectUriStore = new HashMap<>();
 

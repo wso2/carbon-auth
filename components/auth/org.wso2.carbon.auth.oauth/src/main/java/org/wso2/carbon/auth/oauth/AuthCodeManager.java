@@ -20,7 +20,22 @@
 
 package org.wso2.carbon.auth.oauth;
 
+/**
+ *  Provides Auth code related functionality
+ */
 public interface AuthCodeManager {
+    /**
+     * Generate Auth Code for a given client ID
+     * @param clientId  Client ID
+     * @return Auth Code
+     */
     String generateCode(String clientId);
+
+    /**
+     * Check if Auth Code is valid for a given Client ID
+     * @param code Auth Code
+     * @param sentClientId  Provided client ID
+     * @return true if valid else false
+     */
     boolean isCodeValid(String code, String sentClientId);
 }

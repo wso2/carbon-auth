@@ -20,6 +20,9 @@
 
 package org.wso2.carbon.auth.oauth;
 
+/**
+ *  OAuth2 related constants
+ */
 public class OAuthConstants {
     public static final String RESPONSE_TYPE_CODE = "code";
 
@@ -37,7 +40,9 @@ public class OAuthConstants {
     public static final String AUTH_TYPE_BEARER = "Bearer";
 
 
-    // Error conditions
+    /**
+     * OAuth2 Error conditions
+     */
     public enum ErrorCondition {
         ERROR_INVALID_REQUEST("invalid_request"),
         ERROR_UNSUPPORTED_RESPONSE_TYPE("unsupported_response_type"),

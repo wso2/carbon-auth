@@ -22,6 +22,15 @@ package org.wso2.carbon.auth.oauth;
 
 import org.wso2.carbon.auth.oauth.dto.AuthCredentials;
 
+/**
+ * Handles OAuth2 token related functionality
+ */
 public interface TokenRequestHandler {
+
+    /**
+     * Extract Auth credentials from Authorization header
+     * @param authorization Authorization header
+     * @return Auth credentials
+     */
     AuthCredentials parseAuthorizationHeader(String authorization);
 }

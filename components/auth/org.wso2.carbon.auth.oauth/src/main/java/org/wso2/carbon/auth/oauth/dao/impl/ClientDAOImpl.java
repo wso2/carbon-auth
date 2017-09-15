@@ -30,6 +30,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Implementation of ClientDOA interface
+ */
 public class ClientDAOImpl implements ClientDAO {
     private static final Logger log = LoggerFactory.getLogger(ClientDAOImpl.class);
 

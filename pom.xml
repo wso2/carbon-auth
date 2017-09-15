@@ -138,6 +138,11 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>${findbugs.jsr305.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${apache.commons.lang3.version}</version>
@@ -400,6 +405,8 @@
         <equinox.osgi.services.version>3.4.0.v20140312-2051</equinox.osgi.services.version>
 
         <pax.logging.api.version>1.9.0</pax.logging.api.version>
+
+        <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
         
         <carbon.datasources.version>1.0.0</carbon.datasources.version>
         <datasources.core.package.import.version.range>[1.0.0, 2.0.0)</datasources.core.package.import.version.range>
@@ -420,6 +427,8 @@
 
         <servlet-api-version>3.1.0</servlet-api-version>
 
+        <findbugs.jsr305.version>3.0.0</findbugs.jsr305.version>
+        
         <javax.ws.rs-api.version>2.0</javax.ws.rs-api.version>
         <javax.ws.rs-api.import.version>2.0</javax.ws.rs-api.import.version>
 

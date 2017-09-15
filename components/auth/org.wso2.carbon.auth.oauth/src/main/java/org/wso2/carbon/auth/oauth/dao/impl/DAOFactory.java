@@ -23,6 +23,9 @@ package org.wso2.carbon.auth.oauth.dao.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * DAO Object creation factory
+ */
 public class DAOFactory {
     private static final Logger log = LoggerFactory.getLogger(DAOFactory.class);
 

@@ -28,6 +28,9 @@ import org.wso2.carbon.auth.oauth.dto.AuthCredentials;
 import java.nio.charset.Charset;
 import java.util.Base64;
 
+/**
+ * Implementation of TokenRequestHandler interface
+ */
 public class TokenRequestHandlerImpl implements TokenRequestHandler {
 
     @Override

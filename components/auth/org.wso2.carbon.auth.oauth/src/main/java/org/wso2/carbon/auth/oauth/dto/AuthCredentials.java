@@ -20,6 +20,9 @@
 
 package org.wso2.carbon.auth.oauth.dto;
 
+/**
+ *   AuthCredentials DTO
+ */
 public class AuthCredentials {
     private boolean isSuccessful;
     private String consumerKey;

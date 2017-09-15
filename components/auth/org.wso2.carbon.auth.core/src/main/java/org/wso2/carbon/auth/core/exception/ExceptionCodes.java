@@ -24,7 +24,7 @@ package org.wso2.carbon.auth.core.exception;
  * This enum class holds error codes that we need to pass to upper level. 
  * You have to define your custom error codes here.
  */
-public enum ExceptionCodes implements ErrorHandler{
+public enum ExceptionCodes implements ErrorHandler {
     
     INTERNAL_ERROR(900967, "General Error", 500, "Server Error Occurred");
     

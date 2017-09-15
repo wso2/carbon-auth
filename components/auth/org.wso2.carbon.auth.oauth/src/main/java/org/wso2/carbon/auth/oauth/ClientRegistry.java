@@ -20,7 +20,21 @@
 
 package org.wso2.carbon.auth.oauth;
 
+/**
+ * Handles Client related CRUD operations
+ */
 public interface ClientRegistry {
+    /**
+     * Get Redirect Uri for a given Client Id
+     * @param clientId Client Id
+     * @return Redirect Uri
+     */
     String getRedirectUri(String clientId);
+
+    /**
+     * Register redirect Uri against Client Id
+     * @param clientId Client Id
+     * @param redirectUri Redirect Uri
+     */
     void registerRedirectUri(String clientId, String redirectUri);
 }

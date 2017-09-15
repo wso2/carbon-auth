@@ -22,6 +22,9 @@ package org.wso2.carbon.auth.oauth.dao;
 
 import javax.annotation.CheckForNull;
 
+/**
+ * DAO Interface to Client related data
+ */
 public interface ClientDAO {
     /**
      * Get redirect Uri of a client
