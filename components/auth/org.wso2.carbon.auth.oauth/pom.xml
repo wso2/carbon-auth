@@ -31,5 +31,16 @@
 
     <artifactId>org.wso2.carbon.auth.oauth</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.wso2.carbon.auth</groupId>
+            <artifactId>org.wso2.carbon.auth.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>oauth2-oidc-sdk</artifactId>
+        </dependency>
+    </dependencies>
+    
 
 </project>

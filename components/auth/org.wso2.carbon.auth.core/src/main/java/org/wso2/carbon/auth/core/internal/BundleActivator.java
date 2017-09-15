@@ -32,9 +32,9 @@ import org.osgi.service.jndi.JNDIContextManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.ServiceReferenceHolder;
+import org.wso2.carbon.auth.core.datasource.DAOUtil;
 import org.wso2.carbon.auth.core.datasource.DataSource;
 import org.wso2.carbon.auth.core.datasource.DataSourceImpl;
-import org.wso2.carbon.auth.core.datasource.DataSourceUtil;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.kernel.configprovider.ConfigProvider;
 
@@ -58,11 +58,11 @@ public class BundleActivator {
             Context ctx = jndiContextManager.newInitialContext();
             DataSource umDataSource = new DataSourceImpl((HikariDataSource)
                     ctx.lookup("java:comp/env/jdbc/WSO2UM_DB"));
-            DataSourceUtil.initializeUMDataSource(umDataSource);
+            DAOUtil.initializeUMDataSource(umDataSource);
 
             DataSource authDataSource = new DataSourceImpl((HikariDataSource)
                     ctx.lookup("java:comp/env/jdbc/WSO2AUTH_DB"));
-            DataSourceUtil.initializeAuthDataSource(authDataSource);
+            DAOUtil.initializeAuthDataSource(authDataSource);
         } catch (NamingException e) {
             log.error("Error occurred while jndi lookup", e);
         }
