@@ -26,12 +26,16 @@ import org.wso2.carbon.auth.core.exception.ErrorHandler;
  */
 public class ClientRegistrationDAOException extends AuthException {
 
-    public ClientRegistrationDAOException(String message, Throwable cause) {
-        super(message, cause);
+    public ClientRegistrationDAOException(String message, Throwable cause, ErrorHandler code) {
+        super(message, cause, code);
     }
 
-    public ClientRegistrationDAOException(Throwable cause) {
-        super(cause);
+    public ClientRegistrationDAOException(String message, ErrorHandler code) {
+        super(message, code);
+    }
+
+    public ClientRegistrationDAOException(String message) {
+        super(message);
     }
 
     protected ClientRegistrationDAOException(String message, Throwable cause, boolean enableSuppression,
@@ -39,15 +43,11 @@ public class ClientRegistrationDAOException extends AuthException {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
-    public ClientRegistrationDAOException(String message) {
-        super(message);
+    public ClientRegistrationDAOException(Throwable cause) {
+        super(cause);
     }
 
-    public ClientRegistrationDAOException(String message, ErrorHandler code) {
-        super(message, code);
-    }
-
-    public ClientRegistrationDAOException(String message, Throwable cause, ErrorHandler code) {
-        super(message, cause, code);
+    public ClientRegistrationDAOException(String message, Throwable cause) {
+        super(message, cause);
     }
 }
