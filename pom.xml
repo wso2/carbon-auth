@@ -170,6 +170,11 @@
                 <artifactId>org.wso2.carbon.auth.oauth</artifactId>
                 <version>${carbon.auth.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.auth</groupId>
+                <artifactId>org.wso2.carbon.auth.client.registration</artifactId>
+                <version>${carbon.auth.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
