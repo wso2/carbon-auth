@@ -22,10 +22,36 @@ package org.wso2.carbon.auth.client.registration;
 
 import org.wso2.carbon.auth.client.registration.model.Application;
 
+/**
+ * Handles Application related CRUD operations
+ */
 public interface ClientRegistrationHandler {
 
+    /**
+     * Get Application for a given Client ID
+     * @param clientId
+     * @return Application
+     */
     Application getApplication(String clientId);
+
+    /**
+     * Register an Application using an application instance
+     * @param newApplication
+     * @return Application
+     */
     Application registerApplication(Application newApplication);
+
+    /**
+     * Update an Application using an application instance
+     * @param clientId
+     * @param modifiedApplication
+     * @return Application
+     */
     Application updateApplication(String clientId, Application modifiedApplication);
+
+    /**
+     * Delete an Application of a given Client ID
+     * @param clientId
+     */
     void deleteApplication(String clientId);
 }

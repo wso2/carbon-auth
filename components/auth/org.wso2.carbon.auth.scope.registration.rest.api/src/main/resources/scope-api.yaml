@@ -76,25 +76,25 @@ paths:
           description: a scope with the bindings which to be registered
           required: true
           schema:
-            $ref: '#/definitions/scope'
+            $ref: '#/definitions/Scope'
 
       responses:
         201:
           description: Successfully Created
           schema:
-            $ref: '#/definitions/scope'
+            $ref: '#/definitions/Scope'
         400:
           description: Bad Request
           schema:
-             $ref: '#/definitions/error'
+             $ref: '#/definitions/Error'
         409:
           description: Conflict
           schema:
-             $ref: '#/definitions/error'
+             $ref: '#/definitions/Error'
         500:
           description: Server Error
           schema:
-             $ref: '#/definitions/error'
+             $ref: '#/definitions/Error'
       tags:
         - Scope Management
 
@@ -132,15 +132,15 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/scope'
+              $ref: '#/definitions/Scope'
         404:
           description: Not Found
           schema:
-             $ref: '#/definitions/error'
+             $ref: '#/definitions/Error'
         500:
           description: Server Error
           schema:
-             $ref: '#/definitions/error'
+             $ref: '#/definitions/Error'
       tags:
         - Scope Management
 
@@ -171,15 +171,15 @@ paths:
         200:
           description: Successful Retrieved
           schema:
-            $ref: '#/definitions/scope'
+            $ref: '#/definitions/Scope'
         404:
           description: Not Found
           schema:
-             $ref: '#/definitions/error'
+             $ref: '#/definitions/Error'
         500:
           description: Server Error
           schema:
-             $ref: '#/definitions/error'
+             $ref: '#/definitions/Error'
       tags:
         - Scope Management
 
@@ -213,7 +213,7 @@ paths:
         500:
           description: Server Error
           schema:
-             $ref: '#/definitions/error'
+             $ref: '#/definitions/Error'
       tags:
         - Scope Management
 
@@ -239,7 +239,7 @@ paths:
           description: updated scope
           required: true
           schema:
-            $ref: '#/definitions/scopeToUpdate'
+            $ref: '#/definitions/ScopeToUpdate'
         -
           name: name
           in: path
@@ -251,15 +251,15 @@ paths:
         200:
           description: Successful updated
           schema:
-            $ref: '#/definitions/scope'
+            $ref: '#/definitions/Scope'
         409:
           description: Conflict
           schema:
-             $ref: '#/definitions/error'
+             $ref: '#/definitions/Error'
         500:
           description: Server Error
           schema:
-             $ref: '#/definitions/error'
+             $ref: '#/definitions/Error'
       tags:
         - Scope Management
 
@@ -293,11 +293,11 @@ paths:
         404:
           description: Not Found
           schema:
-             $ref: '#/definitions/error'
+             $ref: '#/definitions/Error'
         500:
           description: Server Error
           schema:
-             $ref: '#/definitions/error'
+             $ref: '#/definitions/Error'
       tags:
         - Scope Management
 
@@ -305,7 +305,7 @@ definitions:
 #-----------------------------------------------------
 # The Scope Object
 #-----------------------------------------------------
-  scope:
+  Scope:
     type: object
     required:
       - name
@@ -323,7 +323,7 @@ definitions:
 #-----------------------------------------------------
 # The Scope Object
 #-----------------------------------------------------
-  scopeToUpdate:
+  ScopeToUpdate:
     type: object
     properties:
       description:
@@ -336,7 +336,7 @@ definitions:
 #-----------------------------------------------------
 # The Error Response object
 #-----------------------------------------------------
-  error:
+  Error:
     type: object
     properties:
       code:

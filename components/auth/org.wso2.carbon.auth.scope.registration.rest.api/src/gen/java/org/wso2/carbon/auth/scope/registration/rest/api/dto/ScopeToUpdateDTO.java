@@ -10,16 +10,16 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * scopeToUpdateDTO
+ * ScopeToUpdateDTO
  */
-public class scopeToUpdateDTO   {
+public class ScopeToUpdateDTO   {
   @JsonProperty("description")
   private String description = null;
 
   @JsonProperty("bindings")
   private List<String> bindings = new ArrayList<String>();
 
-  public scopeToUpdateDTO description(String description) {
+  public ScopeToUpdateDTO description(String description) {
     this.description = description;
     return this;
   }
@@ -37,12 +37,12 @@ public class scopeToUpdateDTO   {
     this.description = description;
   }
 
-  public scopeToUpdateDTO bindings(List<String> bindings) {
+  public ScopeToUpdateDTO bindings(List<String> bindings) {
     this.bindings = bindings;
     return this;
   }
 
-  public scopeToUpdateDTO addBindingsItem(String bindingsItem) {
+  public ScopeToUpdateDTO addBindingsItem(String bindingsItem) {
     this.bindings.add(bindingsItem);
     return this;
   }
@@ -69,7 +69,7 @@ public class scopeToUpdateDTO   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    scopeToUpdateDTO scopeToUpdate = (scopeToUpdateDTO) o;
+    ScopeToUpdateDTO scopeToUpdate = (ScopeToUpdateDTO) o;
     return Objects.equals(this.description, scopeToUpdate.description) &&
         Objects.equals(this.bindings, scopeToUpdate.bindings);
   }
@@ -82,7 +82,7 @@ public class scopeToUpdateDTO   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class scopeToUpdateDTO {\n");
+    sb.append("class ScopeToUpdateDTO {\n");
     
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    bindings: ").append(toIndentedString(bindings)).append("\n");

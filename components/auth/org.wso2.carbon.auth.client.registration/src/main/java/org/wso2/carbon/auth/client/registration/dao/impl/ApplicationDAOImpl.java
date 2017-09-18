@@ -26,8 +26,14 @@ import org.wso2.carbon.auth.client.registration.model.Application;
  * Default implementation of the ApplicationDAO interface. Uses SQL syntax that is common to H2 and MySQL DBs.
  * Hence is considered as the default due to its re-usability.
  */
-public class ApplicationDAOImpl implements ApplicationDAO{
+public class ApplicationDAOImpl implements ApplicationDAO {
 
+    /**
+     * Constructor is package private, use factory class to create the
+     */
+    ApplicationDAOImpl() {
+
+    }
     @Override
     public Application getApplication(String clientId) throws ClientRegistrationDAOException {
         return null;

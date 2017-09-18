@@ -21,9 +21,11 @@ package org.wso2.carbon.auth.client.registration.dao;
 import org.wso2.carbon.auth.client.registration.ClientRegistrationDAOException;
 import org.wso2.carbon.auth.client.registration.model.Application;
 
-import java.util.List;
 import javax.annotation.CheckForNull;
 
+/**
+ * DAO Interface to Application related data
+ */
 public interface ApplicationDAO {
 
     /**

@@ -30,7 +30,7 @@ public class MappingUtil {
     /**
      * This method convert the Dto object into Model
      *
-     * @param Application Model instance with application data
+     * @param application Model instance with application data
      * @return ApplicationDTO Contains data of an application
      */
     public static ApplicationDTO applicationModelToApplicationDTO(Application application) {
@@ -46,7 +46,7 @@ public class MappingUtil {
     /**
      * This method convert the Dto object into Model
      *
-     * @param RegistrationRequestDTO Contains data of an application
+     * @param registrationRequestDTO Contains data of an application
      * @return Application model instance with application data
      */
     public static Application registrationRequestToApplication(RegistrationRequestDTO registrationRequestDTO) {
@@ -61,7 +61,7 @@ public class MappingUtil {
     /**
      * This method convert the Dto object into Model
      *
-     * @param UpdateRequestDTO Contains data of an application
+     * @param updateRequestDTO Contains data of an application
      * @return Application model instance with application data
      */
     public static Application updateRequestToApplication(UpdateRequestDTO updateRequestDTO) {

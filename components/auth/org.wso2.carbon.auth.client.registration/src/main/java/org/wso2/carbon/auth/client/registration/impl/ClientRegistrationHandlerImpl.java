@@ -27,8 +27,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * Implementation of ClientRegistrationHandler Interface
+ */
 public class ClientRegistrationHandlerImpl implements ClientRegistrationHandler {
     private Map<String, Application> applicationList = new HashMap<>();
+
     @Override
     public Application getApplication(String clientId) {
         return applicationList.get(clientId);
