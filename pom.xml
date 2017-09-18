@@ -185,6 +185,16 @@
                 <artifactId>org.wso2.carbon.auth.client.registration</artifactId>
                 <version>${carbon.auth.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.auth</groupId>
+                <artifactId>org.wso2.carbon.auth.user.store</artifactId>
+                <version>${carbon.auth.version}</version>
+            </dependency>
+	    <dependency>
+                <groupId>org.wso2.charon</groupId>
+                <artifactId>org.wso2.charon3.core</artifactId>
+                <version>${charon.core.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -450,6 +460,7 @@
 
         <!-- Jacoco for code coverage -->
         <jacoco.version>0.7.9</jacoco.version>
+	<charon.core.version>3.0.5</charon.core.version>
     </properties>
 
 </project>
