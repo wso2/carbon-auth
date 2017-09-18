@@ -8,9 +8,9 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 
 /**
- * errorDTO
+ * ErrorDTO
  */
-public class errorDTO   {
+public class ErrorDTO   {
   @JsonProperty("code")
   private String code = null;
 
@@ -20,7 +20,7 @@ public class errorDTO   {
   @JsonProperty("description")
   private String description = null;
 
-  public errorDTO code(String code) {
+  public ErrorDTO code(String code) {
     this.code = code;
     return this;
   }
@@ -38,7 +38,7 @@ public class errorDTO   {
     this.code = code;
   }
 
-  public errorDTO message(String message) {
+  public ErrorDTO message(String message) {
     this.message = message;
     return this;
   }
@@ -56,7 +56,7 @@ public class errorDTO   {
     this.message = message;
   }
 
-  public errorDTO description(String description) {
+  public ErrorDTO description(String description) {
     this.description = description;
     return this;
   }
@@ -83,7 +83,7 @@ public class errorDTO   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    errorDTO error = (errorDTO) o;
+    ErrorDTO error = (ErrorDTO) o;
     return Objects.equals(this.code, error.code) &&
         Objects.equals(this.message, error.message) &&
         Objects.equals(this.description, error.description);
@@ -97,7 +97,7 @@ public class errorDTO   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class errorDTO {\n");
+    sb.append("class ErrorDTO {\n");
     
     sb.append("    code: ").append(toIndentedString(code)).append("\n");
     sb.append("    message: ").append(toIndentedString(message)).append("\n");

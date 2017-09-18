@@ -7,9 +7,9 @@ import org.wso2.msf4j.formparam.FormDataParam;
 import org.wso2.msf4j.formparam.FileInfo;
 import org.wso2.msf4j.Request;
 
-import org.wso2.carbon.auth.scope.registration.rest.api.dto.errorDTO;
-import org.wso2.carbon.auth.scope.registration.rest.api.dto.scopeDTO;
-import org.wso2.carbon.auth.scope.registration.rest.api.dto.scopeToUpdateDTO;
+import org.wso2.carbon.auth.scope.registration.rest.api.dto.ErrorDTO;
+import org.wso2.carbon.auth.scope.registration.rest.api.dto.ScopeDTO;
+import org.wso2.carbon.auth.scope.registration.rest.api.dto.ScopeToUpdateDTO;
 
 import java.util.List;
 import org.wso2.carbon.auth.scope.registration.rest.api.NotFoundException;
@@ -29,9 +29,9 @@ public abstract class ScopesApiService {
  , Request request) throws NotFoundException;
     public abstract Response isScopeExists(String name
  , Request request) throws NotFoundException;
-    public abstract Response registerScope(scopeDTO scope
+    public abstract Response registerScope(ScopeDTO scope
  , Request request) throws NotFoundException;
-    public abstract Response updateScope(scopeToUpdateDTO scope
+    public abstract Response updateScope(ScopeToUpdateDTO scope
  ,String name
  , Request request) throws NotFoundException;
 }

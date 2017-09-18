@@ -42,13 +42,13 @@ public class ScopesApiServiceImpl extends ScopesApiService {
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
     @Override
-    public Response registerScope(scopeDTO scope
+    public Response registerScope(ScopeDTO scope
  , Request request) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
     @Override
-    public Response updateScope(scopeToUpdateDTO scope
+    public Response updateScope(ScopeToUpdateDTO scope
 , String name
  , Request request) throws NotFoundException {
         // do some magic!

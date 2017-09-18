@@ -19,11 +19,13 @@
 package org.wso2.carbon.auth.client.registration.model;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Application Model
+ */
 public class Application {
     private String clientId;
     private String clientSecret;
@@ -135,10 +137,12 @@ public class Application {
     }
 
     @Override public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
 
         Application that = (Application) o;
 

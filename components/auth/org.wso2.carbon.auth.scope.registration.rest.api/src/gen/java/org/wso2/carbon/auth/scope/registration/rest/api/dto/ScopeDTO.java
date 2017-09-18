@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * scopeDTO
+ * ScopeDTO
  */
-public class scopeDTO   {
+public class ScopeDTO   {
   @JsonProperty("name")
   private String name = null;
 
@@ -22,7 +22,7 @@ public class scopeDTO   {
   @JsonProperty("bindings")
   private List<String> bindings = new ArrayList<String>();
 
-  public scopeDTO name(String name) {
+  public ScopeDTO name(String name) {
     this.name = name;
     return this;
   }
@@ -40,7 +40,7 @@ public class scopeDTO   {
     this.name = name;
   }
 
-  public scopeDTO description(String description) {
+  public ScopeDTO description(String description) {
     this.description = description;
     return this;
   }
@@ -58,12 +58,12 @@ public class scopeDTO   {
     this.description = description;
   }
 
-  public scopeDTO bindings(List<String> bindings) {
+  public ScopeDTO bindings(List<String> bindings) {
     this.bindings = bindings;
     return this;
   }
 
-  public scopeDTO addBindingsItem(String bindingsItem) {
+  public ScopeDTO addBindingsItem(String bindingsItem) {
     this.bindings.add(bindingsItem);
     return this;
   }
@@ -90,7 +90,7 @@ public class scopeDTO   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    scopeDTO scope = (scopeDTO) o;
+    ScopeDTO scope = (ScopeDTO) o;
     return Objects.equals(this.name, scope.name) &&
         Objects.equals(this.description, scope.description) &&
         Objects.equals(this.bindings, scope.bindings);
@@ -104,7 +104,7 @@ public class scopeDTO   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class scopeDTO {\n");
+    sb.append("class ScopeDTO {\n");
     
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
