@@ -74,7 +74,7 @@ public class CarbonAuthSCIMManager {
         // TO-DO : CarbonAuthUserManager should be initialized with UserManagement API
         UserStoreConnector userStoreConnector = UserStoreConnectorFactory.getUserStoreConnector();
         if (userStoreConnector != null) {
-            carbonAuthUserManager = new CarbonAuthUserManager();
+            carbonAuthUserManager = new CarbonAuthUserManager(userStoreConnector);
         } else {
             throw new AuthUserManagementException("Error while obtaining User Store COnnector");
         }
