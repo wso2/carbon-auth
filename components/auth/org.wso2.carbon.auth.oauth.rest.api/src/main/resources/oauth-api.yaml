@@ -169,9 +169,9 @@ definitions:
   TokenErrorResponse:
     title: Error response sent for OAuth token request.
     required:
-      - error
+      - preProcessingError
     properties:
-      error:
+      preProcessingError:
         type: string
         description: |
-          Error code classifying the type of error.
+          Error code classifying the type of preProcessingError.

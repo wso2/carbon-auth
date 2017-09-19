@@ -20,18 +20,43 @@
 
 package org.wso2.carbon.auth.oauth.dao;
 
-import javax.annotation.CheckForNull;
+import org.wso2.carbon.auth.oauth.dto.ClientPublicInfo;
+import org.wso2.carbon.auth.oauth.exception.ClientDAOException;
+
+import java.net.URI;
+import java.util.Optional;
+import javax.annotation.Nullable;
 
 /**
  * DAO Interface to Client related data
  */
 public interface ClientDAO {
     /**
-     * Get redirect Uri of a client
+     * Get public information related to a client including the clientId and redirectUri
      *
      * @param clientId Client Id of client
-     * @return Redirect Uri if exists else null
+     * @return Public info if exists else Optional.Empty
+     * @throws ClientDAOException if a DOA Error is encountered
      */
-    @CheckForNull
-    String getRedirectUri(String clientId);
+    Optional<ClientPublicInfo> getClientPublicInfo(String clientId) throws ClientDAOException;
+
+    /**
+     * Add Authorization code related information
+     *
+     * @param authCode Generated Authorization Code
+     * @param clientId Client Id of client
+     * @param redirectUri Redirect Uri
+     * @throws ClientDAOException if a DOA Error is encountered
+     */
+    void addAuthCodeInfo(String authCode, String clientId, @Nullable URI redirectUri) throws ClientDAOException;
+
+    /**
+     * Check if Authorization code information matches what is persisted
+     * @param authCode Generated Authorization Code
+     * @param clientId Client Id of client
+     * @param redirectUri Redirect Uri
+     * @return true if all values match else false
+     * @throws ClientDAOException if a DOA Error is encountered
+     */
+    boolean isAuthCodeInfoValid(String authCode, String clientId, @Nullable URI redirectUri) throws ClientDAOException;
 }

@@ -92,6 +92,10 @@
             <groupId>org.wso2.carbon.auth</groupId>
             <artifactId>org.wso2.carbon.auth.oauth</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>oauth2-oidc-sdk</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -164,13 +168,15 @@
             org.wso2.msf4j.*; version="${msf4j.package.import.version.range}",
             org.slf4j.*;version="${slf4j.logging.package.import.version.range}",
             org.apache.commons.lang3.*; version="${apache.commons.lang3.import.version.range}",
-            javax.ws.rs.*; version="${javax.ws.rs.import.version.range}"
+            com.nimbusds.oauth2.sdk.*;version="${com.nimbusd.oauth2-oidc-sdk.import.version.range}",
+            javax.ws.rs.*; version="${javax.ws.rs.import.version.range}",
+            org.wso2.carbon.auth.oauth.*; version="${carbon.auth.version}"
         </import.package>
         <export.package>
             org.wso2.carbon.auth.oauth.rest.api.*; version="${carbon.auth.version}"
         </export.package>
         <carbon.component>
-            osgi.service; objectClass="org.wso2.msf4j.Microservice"; serviceCount="9"
+            osgi.service; objectClass="org.wso2.msf4j.Microservice"; serviceCount="2"
         </carbon.component>
     </properties>
 </project>

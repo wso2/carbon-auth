@@ -20,7 +20,7 @@
 
 package org.wso2.carbon.auth.oauth;
 
-import org.wso2.carbon.auth.oauth.dto.AuthCredentials;
+import org.wso2.carbon.auth.oauth.dto.ClientCredentials;
 
 /**
  * Handles OAuth2 token related functionality
@@ -32,5 +32,5 @@ public interface TokenRequestHandler {
      * @param authorization Authorization header
      * @return Auth credentials
      */
-    AuthCredentials parseAuthorizationHeader(String authorization);
+    ClientCredentials parseAuthorizationHeader(String authorization);
 }
