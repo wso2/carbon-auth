@@ -23,7 +23,7 @@ package org.wso2.carbon.auth.oauth.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.TokenRequestHandler;
-import org.wso2.carbon.auth.oauth.dto.AuthCredentials;
+import org.wso2.carbon.auth.oauth.dto.ClientCredentials;
 
 import java.nio.charset.Charset;
 import java.util.Base64;
@@ -34,8 +34,8 @@ import java.util.Base64;
 public class TokenRequestHandlerImpl implements TokenRequestHandler {
 
     @Override
-    public AuthCredentials parseAuthorizationHeader(String authorization) {
-        AuthCredentials credentials = new AuthCredentials();
+    public ClientCredentials parseAuthorizationHeader(String authorization) {
+        ClientCredentials credentials = new ClientCredentials();
 
         if (!StringUtils.isEmpty(authorization)) {
             authorization = authorization.trim();

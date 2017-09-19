@@ -130,7 +130,7 @@ paths:
         400:
           description: |
             Bad Request.
-            Invalid request or validation error
+            Invalid request or validation preProcessingError
           schema:
             $ref: '#/definitions/Error'
         415:
@@ -176,7 +176,7 @@ paths:
         400:
           description: |
             Bad Request.
-            Invalid request or validation error
+            Invalid request or validation preProcessingError
           schema:
             $ref: '#/definitions/Error'
         415:
@@ -252,7 +252,7 @@ paths:
         400:
           description: |
             Bad Request.
-            Invalid request or validation error
+            Invalid request or validation preProcessingError
           schema:
             $ref: '#/definitions/Error'
         415:
@@ -363,7 +363,7 @@ paths:
         400:
           description: |
             Bad Request.
-            Invalid request or validation error
+            Invalid request or validation preProcessingError
           schema:
             $ref: '#/definitions/Error'
         415:
@@ -439,7 +439,7 @@ paths:
         400:
           description: |
             Bad Request.
-            Invalid request or validation error
+            Invalid request or validation preProcessingError
           schema:
             $ref: '#/definitions/Error'
         415:
@@ -535,7 +535,7 @@ paths:
         400:
           description: |
             Bad Request.
-            Invalid request or validation error
+            Invalid request or validation preProcessingError
           schema:
             $ref: '#/definitions/Error'
         415:
@@ -568,7 +568,7 @@ paths:
         400:
           description: |
             Bad Request.
-            Invalid request or validation error
+            Invalid request or validation preProcessingError
           schema:
             $ref: '#/definitions/Error'
         415:
@@ -818,15 +818,15 @@ definitions:
       description:
         type: string
         description: |
-          A detail description about the error message.
+          A detail description about the preProcessingError message.
       moreInfo:
         type: string
         description: |
-          Preferably an url with more details about the error.
-      error:
+          Preferably an url with more details about the preProcessingError.
+      preProcessingError:
         type: array
         description: |
-          If there are more than one error list them out.
+          If there are more than one preProcessingError list them out.
           For example, list out validation errors by each field.
         items:
           $ref: '#/definitions/ErrorListItem'

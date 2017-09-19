@@ -21,34 +21,25 @@
 package org.wso2.carbon.auth.oauth.dto;
 
 /**
- *   AuthCredentials DTO
+ * DTO for transferring public information related to a client
  */
-public class AuthCredentials {
-    private boolean isSuccessful;
-    private String consumerKey;
-    private String consumerSecret;
+public class ClientPublicInfo {
+    private String clientId;
+    private String redirectUri;
 
-    public boolean isSuccessful() {
-        return isSuccessful;
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setSuccessful(boolean successful) {
-        isSuccessful = successful;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
-    public String getConsumerKey() {
-        return consumerKey;
+    public String getRedirectUri() {
+        return redirectUri;
     }
 
-    public void setConsumerKey(String consumerKey) {
-        this.consumerKey = consumerKey;
-    }
-
-    public String getConsumerSecret() {
-        return consumerSecret;
-    }
-
-    public void setConsumerSecret(String consumerSecret) {
-        this.consumerSecret = consumerSecret;
+    public void setRedirectUri(String redirectUri) {
+        this.redirectUri = redirectUri;
     }
 }

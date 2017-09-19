@@ -20,16 +20,20 @@
 
 package org.wso2.carbon.auth.oauth;
 
+import org.wso2.carbon.auth.oauth.dto.AuthResponse;
+
+import java.util.Map;
+
 /**
  *  Provides Auth code related functionality
  */
 public interface AuthCodeManager {
     /**
      * Generate Auth Code for a given client ID
-     * @param clientId  Client ID
-     * @return Auth Code
+     * @param queryParameters  Query Parameters sent in request
+     * @return AuthResponse response object
      */
-    String generateCode(String clientId);
+    AuthResponse generateCode(Map<String, String> queryParameters);
 
     /**
      * Check if Auth Code is valid for a given Client ID
