@@ -20,7 +20,10 @@
 
 package org.wso2.carbon.auth.client.registration.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.client.registration.ClientRegistrationHandler;
+import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
 import org.wso2.carbon.auth.client.registration.model.Application;
 
 import java.util.HashMap;
@@ -31,7 +34,13 @@ import java.util.Random;
  * Implementation of ClientRegistrationHandler Interface
  */
 public class ClientRegistrationHandlerImpl implements ClientRegistrationHandler {
+    private static final Logger log = LoggerFactory.getLogger(ClientRegistrationHandlerImpl.class);
+    private ApplicationDAO applicationDAO;
     private Map<String, Application> applicationList = new HashMap<>();
+
+    public ClientRegistrationHandlerImpl(ApplicationDAO applicationDAO) {
+        this.applicationDAO = applicationDAO;
+    }
 
     @Override
     public Application getApplication(String clientId) {

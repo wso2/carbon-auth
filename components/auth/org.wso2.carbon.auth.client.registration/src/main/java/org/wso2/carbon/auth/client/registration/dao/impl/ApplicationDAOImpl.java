@@ -32,8 +32,8 @@ public class ApplicationDAOImpl implements ApplicationDAO {
      * Constructor is package private, use factory class to create the
      */
     ApplicationDAOImpl() {
-
     }
+
     @Override
     public Application getApplication(String clientId) throws ClientRegistrationDAOException {
         return null;

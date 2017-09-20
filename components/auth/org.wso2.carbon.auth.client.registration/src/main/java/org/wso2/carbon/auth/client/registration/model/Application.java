@@ -20,7 +20,6 @@ package org.wso2.carbon.auth.client.registration.model;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -30,8 +29,8 @@ public class Application {
     private String clientId;
     private String clientSecret;
     private String clientSecretExpiresAt;
-    private List<String> redirectUris;
-    private List<String> grantTypes;
+    private String callBackUrl;
+    private String grantTypes = "";
     private String clientName;
     private String createdUser;
     private LocalDateTime createdTime;
@@ -48,12 +47,12 @@ public class Application {
         this.clientName = clientName;
     }
 
-    public List<String> getRedirectUris() {
-        return redirectUris;
+    public String getCallBackUrl() {
+        return callBackUrl;
     }
 
-    public void setRedirectUris(List<String> redirectUris) {
-        this.redirectUris = redirectUris;
+    public void setCallBackUrl(String callBackUrl) {
+        this.callBackUrl = callBackUrl;
     }
 
     public String getClientSecretExpiresAt() {
@@ -128,11 +127,11 @@ public class Application {
         this.permissionMap = permissionMap;
     }
 
-    public List<String> getGrantTypes() {
+    public String getGrantTypes() {
         return grantTypes;
     }
 
-    public void setGrantTypes(List<String> grantTypes) {
+    public void setGrantTypes(String grantTypes) {
         this.grantTypes = grantTypes;
     }
 
@@ -150,7 +149,7 @@ public class Application {
                 Objects.equals(clientSecret, that.clientSecret) &&
                 Objects.equals(clientName, that.clientName) &&
                 Objects.equals(clientSecretExpiresAt, that.clientSecretExpiresAt) &&
-                Objects.equals(redirectUris, that.redirectUris) &&
+                Objects.equals(callBackUrl, that.callBackUrl) &&
                 Objects.equals(grantTypes, that.grantTypes) &&
                 Objects.equals(clientName, that.clientName) &&
                 Objects.equals(permissionString, that.permissionString) &&
@@ -167,7 +166,7 @@ public class Application {
                 "clientId='" + clientId + '\'' +
                 ", clientSecret='" + clientSecret + '\'' +
                 ", clientSecretExpiresAt='" + clientSecretExpiresAt + '\'' +
-                ", redirectUris=" + redirectUris +
+                ", callBackUrl=" + callBackUrl +
                 ", grantTypes=" + grantTypes +
                 ", clientName='" + clientName + '\'' +
                 ", createdUser='" + createdUser + '\'' +

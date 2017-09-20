@@ -18,10 +18,16 @@
 
 package org.wso2.carbon.auth.client.registration.rest.api.utils;
 
+import org.apache.commons.lang3.StringUtils;
+import org.wso2.carbon.auth.client.registration.constants.ClientRegistrationConstants;
 import org.wso2.carbon.auth.client.registration.model.Application;
+import org.wso2.carbon.auth.client.registration.rest.api.StringUtil;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.ApplicationDTO;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.RegistrationRequestDTO;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.UpdateRequestDTO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Utility class for mapping rest api DTOs to Models
@@ -38,7 +44,9 @@ public class MappingUtil {
         applicationDTO.setClientName(application.getClientName());
         applicationDTO.setClientSecret(application.getClientSecret());
         applicationDTO.setClientId(application.getClientId());
-        applicationDTO.setRedirectUris(application.getRedirectUris());
+        List<String> redirectUrisList = new ArrayList<String>();
+        redirectUrisList.add(application.getCallBackUrl());
+        applicationDTO.setRedirectUris(redirectUrisList);
 
         return applicationDTO;
     }
@@ -50,10 +58,12 @@ public class MappingUtil {
      * @return Application model instance with application data
      */
     public static Application registrationRequestToApplication(RegistrationRequestDTO registrationRequestDTO) {
+        String grantTypes = StringUtils.join(registrationRequestDTO.getGrantTypes(), " ");
         Application newApplication = new Application();
         newApplication.setClientName(registrationRequestDTO.getClientName());
-        newApplication.setRedirectUris(registrationRequestDTO.getRedirectUris());
-        newApplication.setGrantTypes(registrationRequestDTO.getGrantTypes());
+        newApplication.setCallBackUrl(
+                getCallbackUrl(registrationRequestDTO.getRedirectUris(), registrationRequestDTO.getGrantTypes()));
+        newApplication.setGrantTypes(grantTypes);
 
         return newApplication;
     }
@@ -65,11 +75,53 @@ public class MappingUtil {
      * @return Application model instance with application data
      */
     public static Application updateRequestToApplication(UpdateRequestDTO updateRequestDTO) {
+        String grantTypes = StringUtils.join(updateRequestDTO.getGrantTypes(), " ");
         Application updatedApplication = new Application();
         updatedApplication.setClientName(updateRequestDTO.getClientName());
-        updatedApplication.setRedirectUris(updateRequestDTO.getRedirectUris());
-        updatedApplication.setGrantTypes(updateRequestDTO.getGrantTypes());
+        updatedApplication.setCallBackUrl(
+                getCallbackUrl(updateRequestDTO.getRedirectUris(), updateRequestDTO.getGrantTypes()));
+        updatedApplication.setGrantTypes(grantTypes);
 
         return updatedApplication;
+    }
+
+    private static String getCallbackUrl(List<String> redirectUris, List<String> grantTypes) {
+
+        //TODO: After implement multi-urls to the oAuth application, we have to change this API call
+        //TODO: need to validate before processing request
+        if (redirectUris.size() == 0 && (grantTypes.contains(
+                ClientRegistrationConstants.GrantTypes.AUTHORIZATION_CODE) || grantTypes.
+                contains(ClientRegistrationConstants.GrantTypes.IMPLICIT))) {
+            throw new IllegalStateException("Valid input has not been provided");
+        } else if (redirectUris.size() == 1) {
+            String redirectUri = redirectUris.get(0);
+            if (DCRMUtils.isRedirectionUriValid(redirectUri)) {
+                return redirectUri;
+            } else {
+                throw new IllegalStateException("Valid redirectUri has not been provided");
+            }
+
+        } else {
+            return ClientRegistrationConstants.CALLBACK_URL_REGEXP_PREFIX + createRegexPattern(redirectUris);
+        }
+    }
+
+    private static String createRegexPattern(List<String> redirectURIs) {
+        StringBuilder regexPattern = new StringBuilder();
+        for (String redirectURI : redirectURIs) {
+            if (DCRMUtils.isRedirectionUriValid(redirectURI)) {
+                if (regexPattern.length() > 0) {
+                    regexPattern.append("|").append(redirectURI);
+                } else {
+                    regexPattern.append("(").append(redirectURI);
+                }
+            } else {
+                throw new IllegalStateException("Valid redirectUri has not been provided");
+            }
+        }
+        if (regexPattern.length() > 0) {
+            regexPattern.append(")");
+        }
+        return regexPattern.toString();
     }
 }
