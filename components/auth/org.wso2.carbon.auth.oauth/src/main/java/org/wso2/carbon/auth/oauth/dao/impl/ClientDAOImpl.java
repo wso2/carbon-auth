@@ -24,8 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.datasource.DAOUtil;
 import org.wso2.carbon.auth.oauth.dao.ClientDAO;
-import org.wso2.carbon.auth.oauth.dto.ClientPublicInfo;
 import org.wso2.carbon.auth.oauth.exception.ClientDAOException;
+import org.wso2.carbon.auth.oauth.exception.NoDataFoundException;
 
 import java.net.URI;
 import java.sql.Connection;
@@ -34,6 +34,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Optional;
+import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 
 /**
@@ -49,9 +50,8 @@ public class ClientDAOImpl implements ClientDAO {
     }
 
     @Override
-    public Optional<ClientPublicInfo> getClientPublicInfo(String clientId) throws ClientDAOException {
+    public Optional<String> getRedirectUri(String clientId) throws ClientDAOException, NoDataFoundException {
         final String query = "SELECT REDIRECT_URI FROM AUTH_OAUTH2_CLIENTS WHERE CLIENT_ID = ?";
-        Optional<ClientPublicInfo> info = Optional.empty();
 
         try (Connection connection = DAOUtil.getAuthConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -59,10 +59,7 @@ public class ClientDAOImpl implements ClientDAO {
 
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
-                    ClientPublicInfo data = new ClientPublicInfo();
-                    data.setClientId(clientId);
-                    data.setRedirectUri(rs.getString("REDIRECT_URI"));
-                    info = Optional.of(data);
+                    return Optional.of(rs.getString("REDIRECT_URI"));
                 }
             }
         } catch (SQLException e) {
@@ -70,13 +67,14 @@ public class ClientDAOImpl implements ClientDAO {
                     String.format("Error occurred while getting client public info(clientId : %s", clientId), e);
         }
 
-        return info;
+        throw new NoDataFoundException("Specified clientId: " + clientId + ", does not exist");
     }
 
     @Override
-    public void addAuthCodeInfo(String authCode, String clientId, URI redirectUri) throws ClientDAOException {
+    public void addAuthCodeInfo(String authCode, String clientId, String scope, URI redirectUri)
+                                                                                    throws ClientDAOException {
         try {
-            addAuthCodeInfoInDB(authCode, clientId, redirectUri);
+            addAuthCodeInfoInDB(authCode, clientId, scope, redirectUri);
         } catch (SQLException e) {
             throw new ClientDAOException(
                     String.format("Error occurred while registering redirect Uri(clientId : %s, redirectUri : %s",
@@ -85,9 +83,10 @@ public class ClientDAOImpl implements ClientDAO {
     }
 
     @Override
-    public boolean isAuthCodeInfoValid(String authCode, String clientId, @Nullable URI redirectUri)
-                                                                            throws ClientDAOException {
-        final String query = "SELECT 1 FROM AUTH_OAUTH2_AUTHORIZATION_CODE " +
+    @CheckForNull
+    public String getScopeForAuthCode(String authCode, String clientId, @Nullable URI redirectUri)
+            throws ClientDAOException {
+        final String query = "SELECT SCOPE FROM AUTH_OAUTH2_AUTHORIZATION_CODE " +
                 "WHERE CLIENT_ID = ? AND AUTHORIZATION_CODE = ? AND REDIRECT_URI = ?";
 
         try (Connection connection = DAOUtil.getAuthConnection();
@@ -102,17 +101,41 @@ public class ClientDAOImpl implements ClientDAO {
             }
 
             try (ResultSet rs = statement.executeQuery()) {
-                return rs.next();
+                if (rs.next()) {
+                    return rs.getString("SCOPE");
+                }
             }
         } catch (SQLException e) {
             throw new ClientDAOException("Error occurred while checking if auth code info is valid(clientId: "
                     + clientId, e);
         }
+
+        return null;
     }
 
-    private void addAuthCodeInfoInDB(String authCode, String clientId, @Nullable URI redirectUri) throws SQLException {
+    @Override
+    public boolean isClientCredentialsValid(String clientId, String clientSecret) throws ClientDAOException {
+        final String query = "SELECT 1 FROM AUTH_OAUTH2_CLIENTS WHERE CLIENT_ID = ? AND CLIENT_SECRET = ?";
+
+        try (Connection connection = DAOUtil.getAuthConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, clientId);
+            statement.setString(2, clientSecret);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next();
+            }
+            
+        } catch (SQLException e) {
+            throw new ClientDAOException("Error occurred while checking if client credentials valid(clientId: "
+                    + clientId, e);
+        }
+    }
+
+    private void addAuthCodeInfoInDB(String authCode, String clientId, String scope, @Nullable URI redirectUri)
+                                                                                                throws SQLException {
         final String query = "INSERT INTO AUTH_OAUTH2_AUTHORIZATION_CODE" +
-                "(CLIENT_ID, AUTHORIZATION_CODE, REDIRECT_URI) VALUES(?, ?, ?)";
+                "(CLIENT_ID, AUTHORIZATION_CODE, REDIRECT_URI, SCOPE) VALUES(?, ?, ?)";
 
         try (Connection connection = DAOUtil.getAuthConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -127,6 +150,8 @@ public class ClientDAOImpl implements ClientDAO {
                 } else {
                     statement.setNull(3, Types.VARCHAR);
                 }
+
+                statement.setString(4, scope);
 
                 statement.execute();
                 connection.commit();

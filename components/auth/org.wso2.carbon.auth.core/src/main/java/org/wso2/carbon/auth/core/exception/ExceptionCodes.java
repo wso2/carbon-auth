@@ -27,7 +27,8 @@ package org.wso2.carbon.auth.core.exception;
 public enum ExceptionCodes implements ErrorHandler {
     
     INTERNAL_ERROR(900300, "General Error", 500, "Server Error Occurred"),
-    DAO_EXCEPTION(900301, "Internal server error.", 500, " Error occurred while persisting/retrieving data");
+    DAO_EXCEPTION(900301, "Internal server error.", 500, " Error occurred while persisting/retrieving data"),
+    DATA_NOT_FOUND(900302, "Data not found", 404, "Data not found");
 
     private final long errorCode;
     private final String errorMessage;

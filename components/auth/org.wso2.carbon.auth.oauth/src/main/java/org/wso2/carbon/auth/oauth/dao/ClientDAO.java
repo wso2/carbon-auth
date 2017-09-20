@@ -20,11 +20,12 @@
 
 package org.wso2.carbon.auth.oauth.dao;
 
-import org.wso2.carbon.auth.oauth.dto.ClientPublicInfo;
 import org.wso2.carbon.auth.oauth.exception.ClientDAOException;
+import org.wso2.carbon.auth.oauth.exception.NoDataFoundException;
 
 import java.net.URI;
 import java.util.Optional;
+import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 
 /**
@@ -35,10 +36,11 @@ public interface ClientDAO {
      * Get public information related to a client including the clientId and redirectUri
      *
      * @param clientId Client Id of client
-     * @return Public info if exists else Optional.Empty
+     * @return Redirect Uri if exists else Optional.Empty
      * @throws ClientDAOException if a DOA Error is encountered
+     * @throws NoDataFoundException if specified clientId cannot be found
      */
-    Optional<ClientPublicInfo> getClientPublicInfo(String clientId) throws ClientDAOException;
+    Optional<String> getRedirectUri(String clientId) throws ClientDAOException, NoDataFoundException;
 
     /**
      * Add Authorization code related information
@@ -48,15 +50,28 @@ public interface ClientDAO {
      * @param redirectUri Redirect Uri
      * @throws ClientDAOException if a DOA Error is encountered
      */
-    void addAuthCodeInfo(String authCode, String clientId, @Nullable URI redirectUri) throws ClientDAOException;
+    void addAuthCodeInfo(String authCode, String clientId, String scope, @Nullable URI redirectUri)
+            throws ClientDAOException;
 
     /**
-     * Check if Authorization code information matches what is persisted
+     * Get scope for matching persisted Authorization code information
+     *
      * @param authCode Generated Authorization Code
      * @param clientId Client Id of client
      * @param redirectUri Redirect Uri
-     * @return true if all values match else false
+     * @return Scope
      * @throws ClientDAOException if a DOA Error is encountered
      */
-    boolean isAuthCodeInfoValid(String authCode, String clientId, @Nullable URI redirectUri) throws ClientDAOException;
+    @CheckForNull
+    String getScopeForAuthCode(String authCode, String clientId, @Nullable URI redirectUri) throws ClientDAOException;
+
+    /**
+     * Check if client Id/secret credentials are valid
+     *
+     * @param clientId Client Id of client
+     * @param clientSecret Client Secret of client
+     * @return true if client Id/secret is valid else false
+     * @throws ClientDAOException
+     */
+    boolean isClientCredentialsValid(String clientId, String clientSecret) throws ClientDAOException;
 }

@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.oauth.AuthCodeManager;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
-import org.wso2.carbon.auth.oauth.dto.AuthResponse;
+import org.wso2.carbon.auth.oauth.dto.AuthResponseContext;
 import org.wso2.carbon.auth.oauth.rest.api.AuthorizeApiService;
 import org.wso2.carbon.auth.oauth.rest.api.NotFoundException;
 import org.wso2.msf4j.Request;
@@ -33,7 +33,7 @@ public class AuthorizeApiServiceImpl extends AuthorizeApiService {
         queryParameters.put(OAuthConstants.SCOPE_QUERY_PARAM, scope);
         queryParameters.put(OAuthConstants.STATE_QUERY_PARAM, state);
 
-        AuthResponse requestState = authCodeManager.generateCode(queryParameters);
+        AuthResponseContext requestState = authCodeManager.generateCode(queryParameters);
 
         if (requestState.isSuccessful()) {
             String parsedUri = requestState.getRedirectUri().toString();

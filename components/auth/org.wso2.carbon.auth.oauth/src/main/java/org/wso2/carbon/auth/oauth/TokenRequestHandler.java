@@ -20,7 +20,9 @@
 
 package org.wso2.carbon.auth.oauth;
 
-import org.wso2.carbon.auth.oauth.dto.ClientCredentials;
+import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
+
+import java.util.Map;
 
 /**
  * Handles OAuth2 token related functionality
@@ -28,9 +30,11 @@ import org.wso2.carbon.auth.oauth.dto.ClientCredentials;
 public interface TokenRequestHandler {
 
     /**
-     * Extract Auth credentials from Authorization header
+     * Generate OAuth2 Access token
+     *
      * @param authorization Authorization header
-     * @return Auth credentials
+     * @param queryParameters Query Parameters sent in request
+     * @return Access token
      */
-    ClientCredentials parseAuthorizationHeader(String authorization);
+    AccessTokenContext generateToken(String authorization, Map<String, String> queryParameters);
 }
