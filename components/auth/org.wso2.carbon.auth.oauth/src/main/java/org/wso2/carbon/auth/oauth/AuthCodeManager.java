@@ -20,7 +20,7 @@
 
 package org.wso2.carbon.auth.oauth;
 
-import org.wso2.carbon.auth.oauth.dto.AuthResponse;
+import org.wso2.carbon.auth.oauth.dto.AuthResponseContext;
 
 import java.util.Map;
 
@@ -33,7 +33,7 @@ public interface AuthCodeManager {
      * @param queryParameters  Query Parameters sent in request
      * @return AuthResponse response object
      */
-    AuthResponse generateCode(Map<String, String> queryParameters);
+    AuthResponseContext generateCode(Map<String, String> queryParameters);
 
     /**
      * Check if Auth Code is valid for a given Client ID
