@@ -20,8 +20,8 @@ package org.wso2.carbon.auth.user.store.connector.jdbc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
+import org.wso2.carbon.auth.core.exception.UserNotFoundException;
+import org.wso2.carbon.auth.core.exception.UserStoreConnectorException;
 import org.wso2.carbon.auth.user.store.config.UserStoreConnectorConfig;
 import org.wso2.carbon.auth.user.store.connector.Attribute;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
@@ -29,14 +29,11 @@ import org.wso2.carbon.auth.user.store.connector.jdbc.queries.MySQLFamilySQLQuer
 import org.wso2.carbon.auth.user.store.constant.DatabaseColumnNames;
 import org.wso2.carbon.auth.user.store.constant.JDBCConnectorConstants;
 import org.wso2.carbon.auth.user.store.exception.GroupNotFoundException;
-import org.wso2.carbon.auth.user.store.exception.IdentityStoreConnectorException;
 import org.wso2.carbon.auth.user.store.exception.StoreException;
-import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
 import org.wso2.carbon.auth.user.store.internal.ConnectorDataHolder;
 import org.wso2.carbon.auth.user.store.util.NamedPreparedStatement;
 import org.wso2.carbon.auth.user.store.util.UnitOfWork;
 import org.wso2.carbon.auth.user.store.util.UserStoreUtil;
-
 import org.wso2.carbon.datasource.core.exception.DataSourceException;
 
 import java.sql.ResultSet;
@@ -47,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.security.auth.callback.Callback;
 import javax.sql.DataSource;
 
 /**
@@ -82,7 +80,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
-    public void init(UserStoreConnectorConfig identityStoreConfig) throws IdentityStoreConnectorException {
+    public void init(UserStoreConnectorConfig identityStoreConfig) throws UserStoreConnectorException {
 
         Map<String, String> properties = identityStoreConfig.getProperties();
         this.identityStoreId = identityStoreConfig.getConnectorId();
@@ -92,7 +90,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             dataSource = ConnectorDataHolder.getInstance()
                     .getDataSource(properties.get(JDBCConnectorConstants.DATA_SOURCE));
         } catch (DataSourceException e) {
-            throw new IdentityStoreConnectorException("Error occurred while initiating data source.", e);
+            throw new UserStoreConnectorException("Error occurred while initiating data source.", e);
         }
 
         loadQueries(properties);
@@ -105,7 +103,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
 
     @Override
     public String getConnectorUserId(String attributeName, String attributeValue) throws UserNotFoundException,
-            IdentityStoreConnectorException {
+            UserStoreConnectorException {
 
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection())) {
 
@@ -123,13 +121,13 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
                 }
             }
         } catch (SQLException e) {
-            throw new IdentityStoreConnectorException("An error occurred while getting searching the user.", e);
+            throw new UserStoreConnectorException("An error occurred while getting searching the user.", e);
         }
     }
 
     @Override
     public List<String> listConnectorUserIds(String attributeName, String attributeValue, int startIndex, int length)
-            throws IdentityStoreConnectorException {
+            throws UserStoreConnectorException {
 
         // Database handles start index as 0
         if (startIndex > 0) {
@@ -168,12 +166,12 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
 
             return userList;
         } catch (SQLException e) {
-            throw new IdentityStoreConnectorException("Error occurred while listing users.", e);
+            throw new UserStoreConnectorException("Error occurred while listing users.", e);
         }
     }
 
     @Override
-    public List<Attribute> getUserAttributeValues(String userId) throws IdentityStoreConnectorException {
+    public List<Attribute> getUserAttributeValues(String userId) throws UserStoreConnectorException {
 
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection())) {
 
@@ -199,14 +197,14 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
                 return userAttributes;
             }
         } catch (SQLException e) {
-            throw new IdentityStoreConnectorException("Error occurred while retrieving user attributes.", e);
+            throw new UserStoreConnectorException("Error occurred while retrieving user attributes.", e);
         }
     }
     
 
     @Override
     public String getConnectorGroupId(String attributeName, String attributeValue) throws GroupNotFoundException,
-            IdentityStoreConnectorException {
+            UserStoreConnectorException {
 
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection())) {
 
@@ -224,13 +222,13 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
                 }
             }
         } catch (SQLException e) {
-            throw new IdentityStoreConnectorException("An error occurred while getting searching the group.", e);
+            throw new UserStoreConnectorException("An error occurred while getting searching the group.", e);
         }
     }
 
     @Override
     public List<String> listConnectorGroupIds(String attributeName, String attributeValue, int startIndex, int length)
-            throws IdentityStoreConnectorException {
+            throws UserStoreConnectorException {
 
         // Database handles start index as 0
         if (startIndex > 0) {
@@ -271,13 +269,13 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             return groups;
 
         } catch (SQLException e) {
-            throw new IdentityStoreConnectorException("Error occurred while retrieving group list.");
+            throw new UserStoreConnectorException("Error occurred while retrieving group list.");
         }
     }
 
 
     @Override
-    public List<Attribute> getGroupAttributeValues(String groupId) throws IdentityStoreConnectorException {
+    public List<Attribute> getGroupAttributeValues(String groupId) throws UserStoreConnectorException {
 
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection())) {
 
@@ -298,14 +296,14 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
                 return groupAttributes;
             }
         } catch (SQLException e) {
-            throw new IdentityStoreConnectorException("Error occurred while retrieving attribute values of the group" +
+            throw new UserStoreConnectorException("Error occurred while retrieving attribute values of the group" +
                     ".", e);
         }
     }
 
 
     @Override
-    public boolean isUserInGroup(String userId, String groupId) throws IdentityStoreConnectorException {
+    public boolean isUserInGroup(String userId, String groupId) throws UserStoreConnectorException {
 
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection())) {
 
@@ -318,7 +316,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
                 return resultSet.next();
             }
         } catch (SQLException e) {
-            throw new IdentityStoreConnectorException("Error while checking users in group.", e);
+            throw new UserStoreConnectorException("Error while checking users in group.", e);
         }
     }
 
@@ -329,7 +327,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
 
     @Override
     public List<String> getUsers(List<Attribute> attributes, int offset, int length)
-            throws IdentityStoreConnectorException {
+            throws UserStoreConnectorException {
 
         List<String> userIdsToReturn = new ArrayList<>();
         Map<String, String> properties = identityStoreConfig.getProperties();
@@ -366,13 +364,13 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             }
 
         } catch (SQLException e) {
-            throw new IdentityStoreConnectorException("Error occurred while getting database connection.", e);
+            throw new UserStoreConnectorException("Error occurred while getting database connection.", e);
         }
         return userIdsToReturn;
     }
 
     @Override
-    public String addUser(List<Attribute> attributes) throws IdentityStoreConnectorException {
+    public String addUser(List<Attribute> attributes) throws UserStoreConnectorException {
 
         String connectorUniqueId = UserStoreUtil.generateUUID();
 
@@ -399,14 +397,14 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             namedPreparedStatement.getPreparedStatement().executeBatch();
             unitOfWork.endTransaction();
         } catch (SQLException e) {
-            throw new IdentityStoreConnectorException("Error occurred while storing user.", e);
+            throw new UserStoreConnectorException("Error occurred while storing user.", e);
         }
         return connectorUniqueId;
     }
 
     @Override
     public String updateUserAttributes(String userIdentifier, List<Attribute> attributes) throws
-            IdentityStoreConnectorException {
+            UserStoreConnectorException {
 
         //PUT operation
 
@@ -436,13 +434,13 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             namedPreparedStatement.getPreparedStatement().executeBatch();
             unitOfWork.endTransaction();
         } catch (SQLException e) {
-            throw new IdentityStoreConnectorException("Error occurred while updating user.", e);
+            throw new UserStoreConnectorException("Error occurred while updating user.", e);
         }
         return userIdentifier;
     }
 
     @Override
-    public void deleteUser(String userIdentifier) throws IdentityStoreConnectorException {
+    public void deleteUser(String userIdentifier) throws UserStoreConnectorException {
 
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
             NamedPreparedStatement namedPreparedStatement = new NamedPreparedStatement(
@@ -452,13 +450,13 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             namedPreparedStatement.getPreparedStatement().executeUpdate();
             unitOfWork.endTransaction();
         } catch (SQLException e) {
-            throw new IdentityStoreConnectorException("Error occurred while deleting user.", e);
+            throw new UserStoreConnectorException("Error occurred while deleting user.", e);
         }
     }
 
     @Override
     public void updateGroupsOfUser(String userIdentifier, List<String> groupIdentifiers) throws
-            IdentityStoreConnectorException {
+            UserStoreConnectorException {
 
         //PUT operation
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
@@ -483,12 +481,12 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             namedPreparedStatement.getPreparedStatement().executeBatch();
             unitOfWork.endTransaction();
         } catch (SQLException e) {
-            throw new IdentityStoreConnectorException("Error occurred while updating groups of user.", e);
+            throw new UserStoreConnectorException("Error occurred while updating groups of user.", e);
         }
     }
 
     @Override
-    public String addGroup(List<Attribute> attributes) throws IdentityStoreConnectorException {
+    public String addGroup(List<Attribute> attributes) throws UserStoreConnectorException {
 
         String connectorUniqueId = UserStoreUtil.generateUUID();
 
@@ -514,7 +512,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             namedPreparedStatement.getPreparedStatement().executeBatch();
             unitOfWork.endTransaction();
         } catch (SQLException e) {
-            throw new IdentityStoreConnectorException("Error occurred while storing group.", e);
+            throw new UserStoreConnectorException("Error occurred while storing group.", e);
         }
 
         return connectorUniqueId;
@@ -522,9 +520,9 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
 
     @Override
     public Map<String, String> addGroups(Map<String, List<Attribute>> attributes) throws
-            IdentityStoreConnectorException {
+            UserStoreConnectorException {
 
-        IdentityStoreConnectorException identityStoreException = new IdentityStoreConnectorException();
+        UserStoreConnectorException identityStoreException = new UserStoreConnectorException();
         Map<String, String> groupIdsToReturn = new HashMap<>();
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
             NamedPreparedStatement addGroupNamedPreparedStatement = new NamedPreparedStatement(unitOfWork
@@ -552,10 +550,10 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
                             namedPreparedStatement.getPreparedStatement().addBatch();
                         }
                     } catch (SQLException e) {
-                        throw new IdentityStoreConnectorException("Error occurred while storing group.", e);
+                        throw new UserStoreConnectorException("Error occurred while storing group.", e);
                     }
                     groupIdsToReturn.put(entry.getKey(), connectorUniqueId);
-                } catch (IdentityStoreConnectorException e) {
+                } catch (UserStoreConnectorException e) {
                     identityStoreException.addSuppressed(e);
                 }
             });
@@ -563,7 +561,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             namedPreparedStatement.getPreparedStatement().executeBatch();
             unitOfWork.endTransaction();
         } catch (SQLException e) {
-            throw new IdentityStoreConnectorException("Error occurred while getting database connection.", e);
+            throw new UserStoreConnectorException("Error occurred while getting database connection.", e);
         }
 
         if (identityStoreException.getSuppressed().length > 0) {
@@ -574,7 +572,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
 
     @Override
     public String updateGroupAttributes(String groupIdentifier, List<Attribute> attributes) throws
-            IdentityStoreConnectorException {
+            UserStoreConnectorException {
 
         //PUT operation
 
@@ -604,13 +602,13 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             namedPreparedStatement.getPreparedStatement().executeBatch();
             unitOfWork.endTransaction();
         } catch (SQLException e) {
-            throw new IdentityStoreConnectorException("Error occurred while updating user.", e);
+            throw new UserStoreConnectorException("Error occurred while updating user.", e);
         }
         return groupIdentifier;
     }
 
     @Override
-    public void deleteGroup(String groupIdentifier) throws IdentityStoreConnectorException {
+    public void deleteGroup(String groupIdentifier) throws UserStoreConnectorException {
 
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
             NamedPreparedStatement namedPreparedStatement = new NamedPreparedStatement(
@@ -620,13 +618,13 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             namedPreparedStatement.getPreparedStatement().executeUpdate();
             unitOfWork.endTransaction();
         } catch (SQLException e) {
-            throw new IdentityStoreConnectorException("Error occurred while deleting user.", e);
+            throw new UserStoreConnectorException("Error occurred while deleting user.", e);
         }
     }
 
     @Override
     public void updateUsersOfGroup(String groupIdentifier, List<String> userIdentifiers) throws
-            IdentityStoreConnectorException {
+            UserStoreConnectorException {
 
         //PUT operation
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
@@ -651,7 +649,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             namedPreparedStatement.getPreparedStatement().executeBatch();
             unitOfWork.endTransaction();
         } catch (SQLException e) {
-            throw new IdentityStoreConnectorException("Error occurred while updating groups of user.", e);
+            throw new UserStoreConnectorException("Error occurred while updating groups of user.", e);
         }
     }
 
@@ -674,4 +672,24 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
 
         return length;
     }
+
+    @Override
+    public String addCredential(String userIdentifier, List<Callback> callbacks) throws UserStoreConnectorException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String updateCredentials(String userIdentifier, List<Callback> credentialCallbacks)
+            throws UserStoreConnectorException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void deleteCredential(String userIdentifier) throws UserStoreConnectorException {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

@@ -22,7 +22,9 @@ package org.wso2.carbon.auth.core.configuration.models;
 
 import org.wso2.carbon.kernel.annotations.Element;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,11 +37,14 @@ public class UserStoreConfiguration {
     private String connectorType;
     
     @Element(description = "Property Map")
-    private Map<String, String> propertyList = new HashMap<>();
+    private Map<String, String> properties = new HashMap<>();
+    
+    @Element(description = "Attribute Mapping")
+    private List<AttributeMappingConfiguration> attributeMappings = new ArrayList<AttributeMappingConfiguration>();
     
     public UserStoreConfiguration() {
         connectorType = "JDBC";
-        propertyList.put("dataSource", "WSO2_USER_DB");
+        properties.put("dataSource", "WSO2_USER_DB");
     }
 
     public String getConnectorType() {
@@ -50,12 +55,20 @@ public class UserStoreConfiguration {
         this.connectorType = connectorType;
     }
 
-    public Map<String, String> getPropertyList() {
-        return propertyList;
+    public Map<String, String> getProperties() {
+        return properties;
     }
 
-    public void setPropertyList(Map<String, String> propertyList) {
-        this.propertyList = propertyList;
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
+    }
+
+    public List<AttributeMappingConfiguration> getAttributeMappings() {
+        return attributeMappings;
+    }
+
+    public void setAttributeMappings(List<AttributeMappingConfiguration> attributeMappings) {
+        this.attributeMappings = attributeMappings;
     }
     
     
