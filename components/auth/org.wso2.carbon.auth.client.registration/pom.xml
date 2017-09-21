@@ -36,6 +36,30 @@
             <groupId>org.wso2.carbon.auth</groupId>
             <artifactId>org.wso2.carbon.auth.core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>oauth2-oidc-sdk</artifactId>
+        </dependency>
     </dependencies>
+
+    <properties>
+        <private.package>org.wso2.carbon.auth.core.internal</private.package>
+        <import.package>
+            org.eclipse.osgi.util,
+            org.slf4j.*;version="${slf4j.logging.package.import.version.range}",
+            org.osgi.framework.*;version="${osgi.framework.package.import.version.range}",
+            org.eclipse.osgi.framework.console;version="${osgi.framework.console.package.import.version.range}",
+            org.osgi.service.*;version="${equinox.osgi.services.package.import.version.range}",
+            org.osgi.util.tracker; version="${osgi.service.tracker.package.import.version.range}",
+            org.wso2.carbon.kernel.*;version="${carbon.kernel.package.import.version.range}",
+            com.nimbusds.oauth2.sdk.*;version="${com.nimbusd.oauth2-oidc-sdk.import.version.range}",
+            org.wso2.carbon.auth.core.*; version="${carbon.auth.version}"
+        </import.package>
+        <export.package>
+            !org.wso2.carbon.auth.client.registration.internal,
+            org.wso2.carbon.auth.client.registration.*; version="${carbon.auth.version}",
+        </export.package>
+        <dynamic.import.package>*</dynamic.import.package>
+    </properties>
 
 </project>

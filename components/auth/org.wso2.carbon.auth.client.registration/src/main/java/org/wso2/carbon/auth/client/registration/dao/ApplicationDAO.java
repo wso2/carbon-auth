@@ -61,6 +61,6 @@ public interface ApplicationDAO {
      * @param application application object to be updated
      * @throws ClientRegistrationDAOException   If failed to get applications.
      */
-    Application updateApplication(Application application) throws ClientRegistrationDAOException;
+    Application updateApplication(String clientId, Application application) throws ClientRegistrationDAOException;
 
 }

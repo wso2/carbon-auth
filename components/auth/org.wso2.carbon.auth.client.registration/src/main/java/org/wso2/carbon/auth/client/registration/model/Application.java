@@ -18,8 +18,6 @@
 
 package org.wso2.carbon.auth.client.registration.model;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -28,16 +26,14 @@ import java.util.Objects;
 public class Application {
     private String clientId;
     private String clientSecret;
-    private String clientSecretExpiresAt;
     private String callBackUrl;
     private String grantTypes = "";
     private String clientName;
-    private String createdUser;
-    private LocalDateTime createdTime;
-    private String updatedUser;
-    private LocalDateTime updatedTime;
-    private String permissionString;
-    private HashMap permissionMap;
+    private String oauthVersion;
+    private String appState;
+    private String userAccessTokenExpiryTime;
+    private String applicationAccessTokenExpiryTime;
+    private String refreshTokenExpiryTime;
 
     public String getClientName() {
         return clientName;
@@ -55,12 +51,12 @@ public class Application {
         this.callBackUrl = callBackUrl;
     }
 
-    public String getClientSecretExpiresAt() {
-        return clientSecretExpiresAt;
+    public String getOauthVersion() {
+        return oauthVersion;
     }
 
-    public void setClientSecretExpiresAt(String clientSecretExpiresAt) {
-        this.clientSecretExpiresAt = clientSecretExpiresAt;
+    public void setOauthVersion(String oauthVersion) {
+        this.oauthVersion = oauthVersion;
     }
 
     public String getClientSecret() {
@@ -79,54 +75,6 @@ public class Application {
         this.clientId = clientId;
     }
 
-    public String getCreatedUser() {
-        return createdUser;
-    }
-
-    public void setCreatedUser(String createdUser) {
-        this.createdUser = createdUser;
-    }
-
-    public LocalDateTime getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(LocalDateTime createdTime) {
-        this.createdTime = createdTime;
-    }
-
-    public String getUpdatedUser() {
-        return updatedUser;
-    }
-
-    public void setUpdatedUser(String updatedUser) {
-        this.updatedUser = updatedUser;
-    }
-
-    public LocalDateTime getUpdatedTime() {
-        return updatedTime;
-    }
-
-    public void setUpdatedTime(LocalDateTime updatedTime) {
-        this.updatedTime = updatedTime;
-    }
-
-    public String getPermissionString() {
-        return permissionString;
-    }
-
-    public void setPermissionString(String permissionString) {
-        this.permissionString = permissionString;
-    }
-
-    public HashMap getPermissionMap() {
-        return permissionMap;
-    }
-
-    public void setPermissionMap(HashMap permissionMap) {
-        this.permissionMap = permissionMap;
-    }
-
     public String getGrantTypes() {
         return grantTypes;
     }
@@ -135,7 +83,40 @@ public class Application {
         this.grantTypes = grantTypes;
     }
 
-    @Override public boolean equals(Object o) {
+    public String getAppState() {
+        return appState;
+    }
+
+    public void setAppState(String appState) {
+        this.appState = appState;
+    }
+
+    public String getUserAccessTokenExpiryTime() {
+        return userAccessTokenExpiryTime;
+    }
+
+    public void setUserAccessTokenExpiryTime(String userAccessTokenExpiryTime) {
+        this.userAccessTokenExpiryTime = userAccessTokenExpiryTime;
+    }
+
+    public String getApplicationAccessTokenExpiryTime() {
+        return applicationAccessTokenExpiryTime;
+    }
+
+    public void setApplicationAccessTokenExpiryTime(String applicationAccessTokenExpiryTime) {
+        this.applicationAccessTokenExpiryTime = applicationAccessTokenExpiryTime;
+    }
+
+    public String getRefreshTokenExpiryTime() {
+        return refreshTokenExpiryTime;
+    }
+
+    public void setRefreshTokenExpiryTime(String refreshTokenExpiryTime) {
+        this.refreshTokenExpiryTime = refreshTokenExpiryTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
@@ -148,33 +129,30 @@ public class Application {
         return Objects.equals(clientId, that.clientId) &&
                 Objects.equals(clientSecret, that.clientSecret) &&
                 Objects.equals(clientName, that.clientName) &&
-                Objects.equals(clientSecretExpiresAt, that.clientSecretExpiresAt) &&
                 Objects.equals(callBackUrl, that.callBackUrl) &&
                 Objects.equals(grantTypes, that.grantTypes) &&
-                Objects.equals(clientName, that.clientName) &&
-                Objects.equals(permissionString, that.permissionString) &&
-                Objects.equals(createdUser, that.createdUser);
+                Objects.equals(clientName, that.clientName);
 
     }
 
-    @Override public int hashCode() {
-        return Objects.hash(clientId, clientSecret, clientName, clientSecretExpiresAt);
+    @Override
+    public int hashCode() {
+        return Objects.hash(clientId, clientSecret, clientName);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "Application{" +
                 "clientId='" + clientId + '\'' +
                 ", clientSecret='" + clientSecret + '\'' +
-                ", clientSecretExpiresAt='" + clientSecretExpiresAt + '\'' +
-                ", callBackUrl=" + callBackUrl +
-                ", grantTypes=" + grantTypes +
+                ", callBackUrl='" + callBackUrl + '\'' +
+                ", grantTypes='" + grantTypes + '\'' +
                 ", clientName='" + clientName + '\'' +
-                ", createdUser='" + createdUser + '\'' +
-                ", createdTime=" + createdTime +
-                ", updatedUser='" + updatedUser + '\'' +
-                ", updatedTime=" + updatedTime +
-                ", permissionString='" + permissionString + '\'' +
-                ", permissionMap=" + permissionMap +
+                ", oauthVersion='" + oauthVersion + '\'' +
+                ", appState='" + appState + '\'' +
+                ", userAccessTokenExpiryTime='" + userAccessTokenExpiryTime + '\'' +
+                ", applicationAccessTokenExpiryTime='" + applicationAccessTokenExpiryTime + '\'' +
+                ", refreshTokenExpiryTime='" + refreshTokenExpiryTime + '\'' +
                 '}';
     }
 }

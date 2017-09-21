@@ -20,15 +20,15 @@
 
 package org.wso2.carbon.auth.client.registration.impl;
 
+import com.nimbusds.oauth2.sdk.ErrorObject;
+import com.nimbusds.oauth2.sdk.OAuth2Error;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.client.registration.ClientRegistrationDAOException;
 import org.wso2.carbon.auth.client.registration.ClientRegistrationHandler;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
+import org.wso2.carbon.auth.client.registration.dto.ClientRegistrationResponse;
 import org.wso2.carbon.auth.client.registration.model.Application;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
 
 /**
  * Implementation of ClientRegistrationHandler Interface
@@ -36,47 +36,104 @@ import java.util.Random;
 public class ClientRegistrationHandlerImpl implements ClientRegistrationHandler {
     private static final Logger log = LoggerFactory.getLogger(ClientRegistrationHandlerImpl.class);
     private ApplicationDAO applicationDAO;
-    private Map<String, Application> applicationList = new HashMap<>();
 
     public ClientRegistrationHandlerImpl(ApplicationDAO applicationDAO) {
         this.applicationDAO = applicationDAO;
     }
 
     @Override
-    public Application getApplication(String clientId) {
-        return applicationList.get(clientId);
-    }
-
-    @Override
-    public Application registerApplication(Application newApplication) {
-        newApplication.setClientId(getRandomString());
-        applicationList.put(newApplication.getClientId(), newApplication);
-
-        return newApplication;
-    }
-
-    @Override
-    public Application updateApplication(String clientId, Application modifiedApplication) {
-        applicationList.put(clientId, modifiedApplication);
-
-        return modifiedApplication;
-    }
-
-    @Override
-    public void deleteApplication(String clientId) {
-        applicationList.remove(clientId);
-    }
-
-    private String getRandomString() {
-        String charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-        StringBuilder stringBuilder = new StringBuilder();
-        Random rnd = new Random();
-        while (stringBuilder.length() < 15) { // length of the random string.
-            int index = (int) (rnd.nextFloat() * charSet.length());
-            stringBuilder.append(charSet.charAt(index));
+    public ClientRegistrationResponse getApplication(String clientId) {
+        ClientRegistrationResponse clientRegistrationResponse = new ClientRegistrationResponse();
+        try {
+            Application application = applicationDAO.getApplication(clientId);
+            if (application != null) {
+                clientRegistrationResponse.setApplication(application);
+                clientRegistrationResponse.setIsSuccessful(true);
+            } else {
+                log.error("Application with Client Id: " + clientId + ", does not exist ");
+                ErrorObject error = new ErrorObject(OAuth2Error.UNAUTHORIZED_CLIENT.getCode(),
+                        OAuth2Error.UNAUTHORIZED_CLIENT.getDescription(),
+                        OAuth2Error.UNAUTHORIZED_CLIENT.getHTTPStatusCode());
+                clientRegistrationResponse.setErrorObject(error);
+            }
+        } catch (ClientRegistrationDAOException e) {
+            log.error("Error while retrieving the Client Application");
+            ErrorObject error = new ErrorObject(OAuth2Error.SERVER_ERROR.getCode(),
+                    OAuth2Error.SERVER_ERROR.getDescription(),
+                    OAuth2Error.SERVER_ERROR.getHTTPStatusCode());
+            clientRegistrationResponse.setErrorObject(error);
         }
-        String randomString = stringBuilder.toString();
-        return randomString;
-
+        return clientRegistrationResponse;
     }
+
+    @Override
+    public ClientRegistrationResponse registerApplication(Application newApplication) {
+        ClientRegistrationResponse clientRegistrationResponse = new ClientRegistrationResponse();
+
+        try {
+            Application application = applicationDAO.createApplication(newApplication);
+            if (application != null) {
+                clientRegistrationResponse.setApplication(application);
+                clientRegistrationResponse.setIsSuccessful(true);
+            } else {
+                log.error("Application with Client Id: " + newApplication.getClientId() + ", does not exist ");
+                ErrorObject error = new ErrorObject(OAuth2Error.UNAUTHORIZED_CLIENT.getCode(),
+                        OAuth2Error.UNAUTHORIZED_CLIENT.getDescription(),
+                        OAuth2Error.UNAUTHORIZED_CLIENT.getHTTPStatusCode());
+                clientRegistrationResponse.setErrorObject(error);
+            }
+        } catch (ClientRegistrationDAOException e) {
+            log.error("Error while registering the Client Application with client ID: " + newApplication.getClientId(),
+                    e);
+            ErrorObject error = new ErrorObject(OAuth2Error.SERVER_ERROR.getCode(),
+                    OAuth2Error.SERVER_ERROR.getDescription(),
+                    OAuth2Error.SERVER_ERROR.getHTTPStatusCode());
+            clientRegistrationResponse.setErrorObject(error);
+        }
+
+        return clientRegistrationResponse;
+    }
+
+    @Override
+    public ClientRegistrationResponse updateApplication(String clientId, Application modifiedApplication) {
+        ClientRegistrationResponse clientRegistrationResponse = new ClientRegistrationResponse();
+
+        try {
+            Application application = applicationDAO.updateApplication(clientId, modifiedApplication);
+            if (application != null) {
+                clientRegistrationResponse.setApplication(application);
+                clientRegistrationResponse.setIsSuccessful(true);
+            } else {
+                log.error("Application with Client Id: " + clientId + ", does not exist ");
+                ErrorObject error = new ErrorObject(OAuth2Error.UNAUTHORIZED_CLIENT.getCode(),
+                        OAuth2Error.UNAUTHORIZED_CLIENT.getDescription(),
+                        OAuth2Error.UNAUTHORIZED_CLIENT.getHTTPStatusCode());
+                clientRegistrationResponse.setErrorObject(error);
+            }
+        } catch (ClientRegistrationDAOException e) {
+            log.error("Error while updating the Client Application with client ID: " + clientId, e);
+            ErrorObject error = new ErrorObject(OAuth2Error.SERVER_ERROR.getCode(),
+                    OAuth2Error.SERVER_ERROR.getDescription(),
+                    OAuth2Error.SERVER_ERROR.getHTTPStatusCode());
+            clientRegistrationResponse.setErrorObject(error);
+        }
+
+        return clientRegistrationResponse;
+    }
+
+    @Override
+    public ClientRegistrationResponse deleteApplication(String clientId) {
+        ClientRegistrationResponse clientRegistrationResponse = new ClientRegistrationResponse();
+        try {
+            applicationDAO.deleteApplication(clientId);
+            clientRegistrationResponse.setIsSuccessful(true);
+        } catch (ClientRegistrationDAOException e) {
+            log.error("Error while deleting the Client Application with client ID: " + clientId, e);
+            ErrorObject error = new ErrorObject(OAuth2Error.SERVER_ERROR.getCode());
+            clientRegistrationResponse.setErrorObject(error);
+        }
+
+        return  clientRegistrationResponse;
+    }
+
 }
