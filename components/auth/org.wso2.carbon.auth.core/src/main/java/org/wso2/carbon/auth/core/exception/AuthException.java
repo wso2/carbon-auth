@@ -36,6 +36,10 @@ public class AuthException extends Exception {
         return errorHandler;
     }
 
+    public AuthException() {
+        super();
+    }
+    
     /**
      * @param message Error message
      * @param cause Error cause
