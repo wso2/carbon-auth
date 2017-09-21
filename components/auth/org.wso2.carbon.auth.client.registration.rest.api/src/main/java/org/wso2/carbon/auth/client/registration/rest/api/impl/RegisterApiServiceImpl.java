@@ -3,11 +3,13 @@ package org.wso2.carbon.auth.client.registration.rest.api.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.client.registration.ClientRegistrationHandler;
+import org.wso2.carbon.auth.client.registration.dto.ClientRegistrationResponse;
 import org.wso2.carbon.auth.client.registration.model.Application;
 import org.wso2.carbon.auth.client.registration.rest.api.*;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.*;
 import org.wso2.carbon.auth.client.registration.rest.api.NotFoundException;
 import org.wso2.carbon.auth.client.registration.rest.api.utils.MappingUtil;
+import org.wso2.carbon.auth.client.registration.rest.api.utils.RestAPIUtil;
 import org.wso2.msf4j.Request;
 import javax.ws.rs.core.Response;
 
@@ -21,15 +23,23 @@ public class RegisterApiServiceImpl extends RegisterApiService {
 
     @Override
     public Response deleteApplication(String clientId, Request request) throws NotFoundException {
-        clientRegistrationHandler.deleteApplication(clientId);
+        ClientRegistrationResponse registrationResponse = clientRegistrationHandler.getApplication(clientId);
+        if(!registrationResponse.isSuccessful()) {
+            ErrorDTO errorDTO = RestAPIUtil.getErrorDTO(registrationResponse.getErrorObject());
+            return Response.status(registrationResponse.getErrorObject().getHTTPStatusCode()).entity(errorDTO).build();
+        }
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 
     @Override
     public Response getApplication(String clientId, Request request) throws NotFoundException {
         ApplicationDTO applicationDTO;
-        Application application = clientRegistrationHandler.getApplication(clientId);
-        applicationDTO = MappingUtil.applicationModelToApplicationDTO(application);
+        ClientRegistrationResponse registrationResponse = clientRegistrationHandler.getApplication(clientId);
+        if(!registrationResponse.isSuccessful()) {
+            ErrorDTO errorDTO = RestAPIUtil.getErrorDTO(registrationResponse.getErrorObject());
+            return Response.status(registrationResponse.getErrorObject().getHTTPStatusCode()).entity(errorDTO).build();
+        }
+        applicationDTO = MappingUtil.applicationModelToApplicationDTO(registrationResponse.getApplication());
 
         return Response.status(Response.Status.OK).entity(applicationDTO).build();
     }
@@ -38,11 +48,16 @@ public class RegisterApiServiceImpl extends RegisterApiService {
     public Response registerApplication(RegistrationRequestDTO registrationRequest, Request request)
             throws NotFoundException {
         ApplicationDTO applicationDTO;
-        Application application = clientRegistrationHandler
+        ClientRegistrationResponse registrationResponse = clientRegistrationHandler
                 .registerApplication(MappingUtil.registrationRequestToApplication(registrationRequest));
 
-        applicationDTO = MappingUtil.applicationModelToApplicationDTO(application);
+        if(!registrationResponse.isSuccessful()) {
+            ErrorDTO errorDTO = RestAPIUtil.getErrorDTO(registrationResponse.getErrorObject());
+            return Response.status(registrationResponse.getErrorObject().getHTTPStatusCode()).entity(errorDTO).build();
+        }
 
+        Application application = registrationResponse.getApplication();
+        applicationDTO = MappingUtil.applicationModelToApplicationDTO(application);
         return Response.status(Response.Status.CREATED).entity(applicationDTO).build();
     }
 
@@ -50,8 +65,13 @@ public class RegisterApiServiceImpl extends RegisterApiService {
     public Response updateApplication(UpdateRequestDTO updateRequest, String clientId, Request request)
             throws NotFoundException {
         ApplicationDTO applicationDTO;
-        Application application = clientRegistrationHandler
+        ClientRegistrationResponse registrationResponse = clientRegistrationHandler
                 .updateApplication(clientId, MappingUtil.updateRequestToApplication(updateRequest));
+        if(!registrationResponse.isSuccessful()) {
+            ErrorDTO errorDTO = RestAPIUtil.getErrorDTO(registrationResponse.getErrorObject());
+            return Response.status(registrationResponse.getErrorObject().getHTTPStatusCode()).entity(errorDTO).build();
+        }
+        Application application = registrationResponse.getApplication();
         applicationDTO = MappingUtil.applicationModelToApplicationDTO(application);
 
         return Response.status(Response.Status.OK).entity(applicationDTO).build();

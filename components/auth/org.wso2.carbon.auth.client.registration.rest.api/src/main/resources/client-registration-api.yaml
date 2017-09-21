@@ -255,7 +255,11 @@ definitions:
     properties:
       code:
         type: string
+      httpStatusCode:
+        type: integer
       message:
         type: string
       description:
+        type: string
+      moreInfo:
         type: string

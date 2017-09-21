@@ -20,6 +20,7 @@
 
 package org.wso2.carbon.auth.client.registration;
 
+import org.wso2.carbon.auth.client.registration.dto.ClientRegistrationResponse;
 import org.wso2.carbon.auth.client.registration.model.Application;
 
 /**
@@ -32,14 +33,14 @@ public interface ClientRegistrationHandler {
      * @param clientId
      * @return Application
      */
-    Application getApplication(String clientId);
+    ClientRegistrationResponse getApplication(String clientId);
 
     /**
      * Register an Application using an application instance
      * @param newApplication
      * @return Application
      */
-    Application registerApplication(Application newApplication);
+    ClientRegistrationResponse registerApplication(Application newApplication);
 
     /**
      * Update an Application using an application instance
@@ -47,11 +48,11 @@ public interface ClientRegistrationHandler {
      * @param modifiedApplication
      * @return Application
      */
-    Application updateApplication(String clientId, Application modifiedApplication);
+    ClientRegistrationResponse updateApplication(String clientId, Application modifiedApplication);
 
     /**
      * Delete an Application of a given Client ID
      * @param clientId
      */
-    void deleteApplication(String clientId);
+    ClientRegistrationResponse deleteApplication(String clientId);
 }
