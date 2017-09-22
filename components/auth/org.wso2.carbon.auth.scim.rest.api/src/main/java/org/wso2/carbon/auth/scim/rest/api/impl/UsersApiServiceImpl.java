@@ -19,7 +19,7 @@ public class UsersApiServiceImpl extends UsersApiService {
     @Override
     public Response usersGet(Integer startIndex
 , Integer count
-, Integer filter
+, String filter
   ,Request request) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
@@ -37,7 +37,7 @@ public class UsersApiServiceImpl extends UsersApiService {
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
     @Override
-    public Response usersIdPut(String id
+    public Response usersIdPut(String id, UserDTO body
   ,Request request) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
@@ -49,7 +49,7 @@ public class UsersApiServiceImpl extends UsersApiService {
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
     @Override
-    public Response usersSearchPost(UserDTO body
+    public Response usersSearchPost(UserSearchDTO body
   ,Request request) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();

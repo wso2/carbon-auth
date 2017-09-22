@@ -19,7 +19,7 @@ public class GroupsApiServiceImpl extends GroupsApiService {
     @Override
     public Response groupsGet(Integer startIndex
 , Integer count
-, Integer filter
+, String filter
   ,Request request) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
@@ -37,7 +37,7 @@ public class GroupsApiServiceImpl extends GroupsApiService {
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
     @Override
-    public Response groupsIdPut(String id
+    public Response groupsIdPut(String id, GroupDTO body
   ,Request request) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();

@@ -22,13 +22,14 @@ import javax.ws.rs.core.SecurityContext;
 public abstract class GroupsApiService {
     public abstract Response groupsGet(Integer startIndex
  ,Integer count
- ,Integer filter
+ ,String filter
   ,Request request) throws NotFoundException;
     public abstract Response groupsIdDelete(String id
   ,Request request) throws NotFoundException;
     public abstract Response groupsIdGet(String id
   ,Request request) throws NotFoundException;
     public abstract Response groupsIdPut(String id
+ ,GroupDTO body
   ,Request request) throws NotFoundException;
     public abstract Response groupsPost(GroupDTO body
   ,Request request) throws NotFoundException;
