@@ -195,6 +195,16 @@
                 <artifactId>org.wso2.charon3.core</artifactId>
                 <version>${charon.core.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.secvault</groupId>
+                <artifactId>org.wso2.carbon.secvault</artifactId>
+                <version>${securevault.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ws.commons.axiom</groupId>
+                <artifactId>axiom-api</artifactId>
+                <version>${imp.pkg.version.axiom}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -458,10 +468,12 @@
 
         <testng.version>6.9.10</testng.version>
         <mockito.version>1.10.19</mockito.version>
+        <imp.pkg.version.axiom>1.2.10</imp.pkg.version.axiom>
 
         <!-- Jacoco for code coverage -->
         <jacoco.version>0.7.9</jacoco.version>
 	<charon.core.version>3.0.5</charon.core.version>
+        <securevault.version>5.0.8</securevault.version>
     </properties>
 
 </project>
