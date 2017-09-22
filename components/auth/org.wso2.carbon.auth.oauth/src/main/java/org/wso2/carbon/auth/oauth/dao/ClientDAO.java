@@ -21,7 +21,6 @@
 package org.wso2.carbon.auth.oauth.dao;
 
 import org.wso2.carbon.auth.oauth.exception.ClientDAOException;
-import org.wso2.carbon.auth.oauth.exception.NoDataFoundException;
 
 import java.net.URI;
 import java.util.Optional;
@@ -38,9 +37,8 @@ public interface ClientDAO {
      * @param clientId Client Id of client
      * @return Redirect Uri if exists else Optional.Empty
      * @throws ClientDAOException if a DOA Error is encountered
-     * @throws NoDataFoundException if specified clientId cannot be found
      */
-    Optional<String> getRedirectUri(String clientId) throws ClientDAOException, NoDataFoundException;
+    Optional<Optional<String>> getRedirectUri(String clientId) throws ClientDAOException;
 
     /**
      * Add Authorization code related information
