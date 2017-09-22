@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.datasource.DAOUtil;
 import org.wso2.carbon.auth.oauth.dao.ClientDAO;
 import org.wso2.carbon.auth.oauth.exception.ClientDAOException;
-import org.wso2.carbon.auth.oauth.exception.NoDataFoundException;
 
 import java.net.URI;
 import java.sql.Connection;
@@ -50,7 +49,8 @@ public class ClientDAOImpl implements ClientDAO {
     }
 
     @Override
-    public Optional<String> getRedirectUri(String clientId) throws ClientDAOException, NoDataFoundException {
+    public Optional<Optional<String>> getRedirectUri(String clientId) throws ClientDAOException {
+        log.debug("Calling getRedirectUri for clientId: {}", clientId);
         final String query = "SELECT REDIRECT_URI FROM AUTH_OAUTH2_CLIENTS WHERE CLIENT_ID = ?";
 
         try (Connection connection = DAOUtil.getAuthConnection();
@@ -59,7 +59,7 @@ public class ClientDAOImpl implements ClientDAO {
 
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
-                    return Optional.of(rs.getString("REDIRECT_URI"));
+                    return Optional.of(Optional.of(rs.getString("REDIRECT_URI")));
                 }
             }
         } catch (SQLException e) {
@@ -67,12 +67,13 @@ public class ClientDAOImpl implements ClientDAO {
                     String.format("Error occurred while getting client public info(clientId : %s", clientId), e);
         }
 
-        throw new NoDataFoundException("Specified clientId: " + clientId + ", does not exist");
+        return Optional.empty();
     }
 
     @Override
     public void addAuthCodeInfo(String authCode, String clientId, String scope, URI redirectUri)
                                                                                     throws ClientDAOException {
+        log.debug("Calling addAuthCodeInfo for clientId: {}", clientId);
         try {
             addAuthCodeInfoInDB(authCode, clientId, scope, redirectUri);
         } catch (SQLException e) {
@@ -86,6 +87,8 @@ public class ClientDAOImpl implements ClientDAO {
     @CheckForNull
     public String getScopeForAuthCode(String authCode, String clientId, @Nullable URI redirectUri)
             throws ClientDAOException {
+        log.debug("Calling getScopeForAuthCode for clientId: {}", clientId);
+
         final String query = "SELECT SCOPE FROM AUTH_OAUTH2_AUTHORIZATION_CODE " +
                 "WHERE CLIENT_ID = ? AND AUTHORIZATION_CODE = ? AND REDIRECT_URI = ?";
 
@@ -115,6 +118,8 @@ public class ClientDAOImpl implements ClientDAO {
 
     @Override
     public boolean isClientCredentialsValid(String clientId, String clientSecret) throws ClientDAOException {
+        log.debug("Calling isClientCredentialsValid for clientId: {}", clientId);
+
         final String query = "SELECT 1 FROM AUTH_OAUTH2_CLIENTS WHERE CLIENT_ID = ? AND CLIENT_SECRET = ?";
 
         try (Connection connection = DAOUtil.getAuthConnection();
@@ -134,6 +139,8 @@ public class ClientDAOImpl implements ClientDAO {
 
     private void addAuthCodeInfoInDB(String authCode, String clientId, String scope, @Nullable URI redirectUri)
                                                                                                 throws SQLException {
+        log.debug("Calling addAuthCodeInfoInDB for clientId: {}", clientId);
+
         final String query = "INSERT INTO AUTH_OAUTH2_AUTHORIZATION_CODE" +
                 "(CLIENT_ID, AUTHORIZATION_CODE, REDIRECT_URI, SCOPE) VALUES(?, ?, ?)";
 

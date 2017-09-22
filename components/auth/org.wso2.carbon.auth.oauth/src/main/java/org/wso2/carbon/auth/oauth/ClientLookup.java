@@ -20,26 +20,20 @@
 
 package org.wso2.carbon.auth.oauth;
 
-import org.wso2.carbon.auth.oauth.dto.AuthResponseContext;
-
-import java.util.Map;
+import org.apache.commons.lang3.mutable.MutableBoolean;
+import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 
 /**
- *  Provides Auth code related functionality
+ * Interface for looking up client information
  */
-public interface AuthCodeManager {
+public interface ClientLookup {
     /**
-     * Generate Auth Code for a given client ID
-     * @param queryParameters  Query Parameters sent in request
-     * @return AuthResponse response object
+     * Get Client Id based on authorization header
+     *
+     * @param authorization Authorization header
+     * @param context  AccessTokenContext object that stores context information during request processing
+     * @param haltExecution State variable indicating if an error has occurred which should halt further execution
+     * @return
      */
-    AuthResponseContext generateCode(Map<String, String> queryParameters);
-
-    /**
-     * Check if Auth Code is valid for a given Client ID
-     * @param code Auth Code
-     * @param sentClientId  Provided client ID
-     * @return true if valid else false
-     */
-    boolean isCodeValid(String code, String sentClientId);
+    String getClientId(String authorization, AccessTokenContext context, MutableBoolean haltExecution);
 }

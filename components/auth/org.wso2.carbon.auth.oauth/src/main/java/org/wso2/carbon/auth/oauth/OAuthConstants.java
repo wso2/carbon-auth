@@ -39,6 +39,9 @@ public class OAuthConstants {
     public static final String CODE_QUERY_PARAM = "code";
     public static final String GRANT_TYPE_QUERY_PARAM = "grant_type";
     public static final String REFRESH_TOKEN_QUERY_PARAM = "refresh_token";
+    public static final String ACCESS_TOKEN_QUERY_PARAM = "access_token";
+    public static final String EXPERIES_IN_QUERY_PARAM = "expires_in";
+    public static final String TOKEN_TYPE_QUERY_PARAM = "token_type";
 
     // Auth Types
     public static final String AUTH_TYPE_BASIC = "Basic";
