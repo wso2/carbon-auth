@@ -23,16 +23,17 @@ import javax.ws.rs.core.SecurityContext;
 public abstract class UsersApiService {
     public abstract Response usersGet(Integer startIndex
  ,Integer count
- ,Integer filter
+ ,String filter
   ,Request request) throws NotFoundException;
     public abstract Response usersIdDelete(String id
   ,Request request) throws NotFoundException;
     public abstract Response usersIdGet(String id
   ,Request request) throws NotFoundException;
     public abstract Response usersIdPut(String id
+ ,UserDTO body
   ,Request request) throws NotFoundException;
     public abstract Response usersPost(UserDTO body
   ,Request request) throws NotFoundException;
-    public abstract Response usersSearchPost(UserDTO body
+    public abstract Response usersSearchPost(UserSearchDTO body
   ,Request request) throws NotFoundException;
 }

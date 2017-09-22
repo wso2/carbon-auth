@@ -106,7 +106,7 @@ paths:
         - in: body
           name: body
           description: |
-            API object that needs to be added
+            User object that needs to be added
           required: true
           schema:
             $ref: '#/definitions/User'
@@ -130,7 +130,7 @@ paths:
         400:
           description: |
             Bad Request.
-            Invalid request or validation preProcessingError
+            Invalid request or validation error
           schema:
             $ref: '#/definitions/Error'
         415:
@@ -152,10 +152,10 @@ paths:
         - in: body
           name: body
           description: |
-            API object that needs to be added
+            User Search object
           required: true
           schema:
-            $ref: '#/definitions/User'
+            $ref: '#/definitions/UserSearch'
       responses:
         201:
           description: |
@@ -163,7 +163,7 @@ paths:
             Successful response with the newly created object as entity in the body.
             Location header contains URL of newly created entity.
           schema:
-            $ref: '#/definitions/UserSearch'
+            $ref: '#/definitions/UserList'
           headers:
             Location:
               description: |
@@ -176,7 +176,7 @@ paths:
         400:
           description: |
             Bad Request.
-            Invalid request or validation preProcessingError
+            Invalid request or validation error
           schema:
             $ref: '#/definitions/Error'
         415:
@@ -205,7 +205,7 @@ paths:
             OK.
             Users returned. 
           schema:
-            $ref: '#/definitions/UserList'
+            $ref: '#/definitions/User'
           headers:
             Content-Type:
               description: |
@@ -232,6 +232,13 @@ paths:
         - User (Individual)
       parameters:
         - $ref: '#/parameters/id'
+        - in: body
+          name: body
+          description: |
+            User object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/User'
       responses:
         201:
           description: |
@@ -252,7 +259,7 @@ paths:
         400:
           description: |
             Bad Request.
-            Invalid request or validation preProcessingError
+            Invalid request or validation error
           schema:
             $ref: '#/definitions/Error'
         415:
@@ -339,7 +346,7 @@ paths:
         - in: body
           name: body
           description: |
-            API object that needs to be added
+            Group object that needs to be added
           required: true
           schema:
             $ref: '#/definitions/Group'
@@ -363,7 +370,7 @@ paths:
         400:
           description: |
             Bad Request.
-            Invalid request or validation preProcessingError
+            Invalid request or validation error
           schema:
             $ref: '#/definitions/Error'
         415:
@@ -419,6 +426,13 @@ paths:
         - Group (Individual)
       parameters:
         - $ref: '#/parameters/id'
+        - in: body
+          name: body
+          description: |
+            Group object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/Group'
       responses:
         201:
           description: |
@@ -439,7 +453,7 @@ paths:
         400:
           description: |
             Bad Request.
-            Invalid request or validation preProcessingError
+            Invalid request or validation error
           schema:
             $ref: '#/definitions/Error'
         415:
@@ -535,7 +549,7 @@ paths:
         400:
           description: |
             Bad Request.
-            Invalid request or validation preProcessingError
+            Invalid request or validation error
           schema:
             $ref: '#/definitions/Error'
         415:
@@ -568,7 +582,7 @@ paths:
         400:
           description: |
             Bad Request.
-            Invalid request or validation preProcessingError
+            Invalid request or validation error
           schema:
             $ref: '#/definitions/Error'
         415:
@@ -645,7 +659,7 @@ parameters:
     description: |
       A filter expression to request a subset of the result.
     default: 0
-    type: integer
+    type: string
     required: false
 
 ######################################################
@@ -818,15 +832,15 @@ definitions:
       description:
         type: string
         description: |
-          A detail description about the preProcessingError message.
+          A detail description about the error message.
       moreInfo:
         type: string
         description: |
-          Preferably an url with more details about the preProcessingError.
-      preProcessingError:
+          Preferably an url with more details about the error.
+      error:
         type: array
         description: |
-          If there are more than one preProcessingError list them out.
+          If there are more than one error list them out.
           For example, list out validation errors by each field.
         items:
           $ref: '#/definitions/ErrorListItem'

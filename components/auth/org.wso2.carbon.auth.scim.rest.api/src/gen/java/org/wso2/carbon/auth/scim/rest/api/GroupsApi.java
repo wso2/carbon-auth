@@ -57,7 +57,7 @@ public class GroupsApi implements Microservice  {
         @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable. The requested media type is not supported. ", response = GroupListDTO.class) })
     public Response groupsGet(@ApiParam(value = "The index of the first element in the result.  ", defaultValue="0") @DefaultValue("0") @QueryParam("startIndex") Integer startIndex
 ,@ApiParam(value = "Number of elements returned in the paginated result. ", defaultValue="0") @DefaultValue("0") @QueryParam("count") Integer count
-,@ApiParam(value = "A filter expression to request a subset of the result. ", defaultValue="0") @DefaultValue("0") @QueryParam("filter") Integer filter
+,@ApiParam(value = "A filter expression to request a subset of the result. ", defaultValue="0") @DefaultValue("0") @QueryParam("filter") String filter
  ,@Context Request request)
     throws NotFoundException {
         return delegate.groupsGet(startIndex,count,filter,request);
@@ -106,9 +106,10 @@ public class GroupsApi implements Microservice  {
         
         @io.swagger.annotations.ApiResponse(code = 415, message = "Unsupported media type. The entity of the request was in a not supported format. ", response = GroupDTO.class) })
     public Response groupsIdPut(@ApiParam(value = "Resource Id of User or Group ",required=true) @PathParam("id") String id
+,@ApiParam(value = "Group object that needs to be added " ,required=true) GroupDTO body
  ,@Context Request request)
     throws NotFoundException {
-        return delegate.groupsIdPut(id,request);
+        return delegate.groupsIdPut(id,body,request);
     }
     @POST
     
@@ -121,7 +122,7 @@ public class GroupsApi implements Microservice  {
         @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request. Invalid request or validation error ", response = GroupDTO.class),
         
         @io.swagger.annotations.ApiResponse(code = 415, message = "Unsupported media type. The entity of the request was in a not supported format. ", response = GroupDTO.class) })
-    public Response groupsPost(@ApiParam(value = "API object that needs to be added " ,required=true) GroupDTO body
+    public Response groupsPost(@ApiParam(value = "Group object that needs to be added " ,required=true) GroupDTO body
  ,@Context Request request)
     throws NotFoundException {
         return delegate.groupsPost(body,request);
