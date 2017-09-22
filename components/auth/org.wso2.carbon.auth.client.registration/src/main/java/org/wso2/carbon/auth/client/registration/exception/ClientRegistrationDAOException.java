@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.carbon.auth.client.registration;
+package org.wso2.carbon.auth.client.registration.exception;
 
 import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.core.exception.ErrorHandler;
@@ -26,25 +26,8 @@ import org.wso2.carbon.auth.core.exception.ErrorHandler;
  */
 public class ClientRegistrationDAOException extends AuthException {
 
-    public ClientRegistrationDAOException(String message, Throwable cause, ErrorHandler code) {
-        super(message, cause, code);
-    }
-
     public ClientRegistrationDAOException(String message, ErrorHandler code) {
         super(message, code);
-    }
-
-    public ClientRegistrationDAOException(String message) {
-        super(message);
-    }
-
-    protected ClientRegistrationDAOException(String message, Throwable cause, boolean enableSuppression,
-            boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
-
-    public ClientRegistrationDAOException(Throwable cause) {
-        super(cause);
     }
 
     public ClientRegistrationDAOException(String message, Throwable cause) {
