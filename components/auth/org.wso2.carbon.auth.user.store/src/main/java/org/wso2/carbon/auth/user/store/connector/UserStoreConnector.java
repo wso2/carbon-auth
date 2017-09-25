@@ -17,9 +17,9 @@
 package org.wso2.carbon.auth.user.store.connector;
 
 
+import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.core.exception.UserNotFoundException;
 import org.wso2.carbon.auth.core.exception.UserStoreConnectorException;
-import org.wso2.carbon.auth.user.store.config.UserStoreConnectorConfig;
 import org.wso2.carbon.auth.user.store.exception.GroupNotFoundException;
 
 import java.util.List;
@@ -33,12 +33,12 @@ import javax.security.auth.callback.Callback;
 public interface UserStoreConnector {
 
     /**
-     * Initialize identity store by passing identity store configurations read from files.
+     * Initialize identity store by passing user store configurations read from files.
      *
-     * @param identityStoreConnectorConfig IdentityStoreConnectorConfig for this connector.
-     * @throws UserStoreConnectorException Identity Store Connector Exception.
+     * @param userStoreConfiguration UserStoreConfiguration for this connector.
+     * @throws UserStoreConnectorException User Store Connector Exception.
      */
-    void init(UserStoreConnectorConfig identityStoreConnectorConfig) throws UserStoreConnectorException;
+    void init(UserStoreConfiguration userStoreConfiguration) throws UserStoreConnectorException;
 
 
     /**
@@ -48,7 +48,7 @@ public interface UserStoreConnector {
      * @param attributeValue Value of the attribute.
      * @return Connector user id.
      * @throws UserNotFoundException           User not found exception.
-     * @throws UserStoreConnectorException Identity Store Connector Exception.
+     * @throws UserStoreConnectorException User Store Connector Exception.
      */
     String getConnectorUserId(String attributeName, String attributeValue) throws UserNotFoundException,
             UserStoreConnectorException;
@@ -61,7 +61,7 @@ public interface UserStoreConnector {
      * @param offset         Start position.
      * @param length         Number of users to retrieve.
      * @return List of connector user ids.
-     * @throws UserStoreConnectorException Identity Store Connector Exception.
+     * @throws UserStoreConnectorException User Store Connector Exception.
      */
     List<String> listConnectorUserIds(String attributeName, String attributeValue, int offset, int length) throws
             UserStoreConnectorException;
@@ -71,7 +71,7 @@ public interface UserStoreConnector {
      *
      * @param userID ID of the user whose claims are requested
      * @return Attribute map of the user with given ID
-     * @throws UserStoreConnectorException Identity Store Connector Exception.
+     * @throws UserStoreConnectorException User Store Connector Exception.
      */
     List<Attribute> getUserAttributeValues(String userID) throws UserStoreConnectorException;
 
@@ -83,7 +83,7 @@ public interface UserStoreConnector {
      * @param attributeValue Value of the attribute.
      * @return Connector group id.
      * @throws GroupNotFoundException          Group not found exception.
-     * @throws UserStoreConnectorException Identity Store Connector Exception.
+     * @throws UserStoreConnectorException User Store Connector Exception.
      */
     String getConnectorGroupId(String attributeName, String attributeValue) throws GroupNotFoundException,
             UserStoreConnectorException;
@@ -96,7 +96,7 @@ public interface UserStoreConnector {
      * @param offset         Start position.
      * @param length         Number of groups to retrieve.
      * @return List of connector group ids.
-     * @throws UserStoreConnectorException Identity Store Connector Exception.
+     * @throws UserStoreConnectorException User Store Connector Exception.
      */
     List<String> listConnectorGroupIds(String attributeName, String attributeValue, int offset, int length) throws
             UserStoreConnectorException;
@@ -106,7 +106,7 @@ public interface UserStoreConnector {
      *
      * @param groupId Id of the group.
      * @return Map of attributes.
-     * @throws UserStoreConnectorException IdentityStore Exception
+     * @throws UserStoreConnectorException User Store Connector Exception.
      */
     List<Attribute> getGroupAttributeValues(String groupId) throws UserStoreConnectorException;
 
@@ -117,24 +117,24 @@ public interface UserStoreConnector {
      * @param userId  Id of the user.
      * @param groupId Id of the group.
      * @return true if user is in the group.
-     * @throws UserStoreConnectorException Identity Store Connector Exception.
+     * @throws UserStoreConnectorException User Store Connector Exception.
      */
     boolean isUserInGroup(String userId, String groupId) throws UserStoreConnectorException;
 
 
     /**
-     * Returns IdentityStoreConnectorConfig which consists of user store configurations.
+     * Returns UserStoreConfiguration which consists of user store configurations.
      *
-     * @return IdentityStoreConnectorConfig which consists of user store configurations
+     * @return UserStoreConfiguration which consists of user store configurations
      */
-    UserStoreConnectorConfig getIdentityStoreConfig();
+    UserStoreConfiguration getUserStoreConfig();
 
     /**
      * Get a list of users which matches a given list of attributes.
      *
      * @param attributes Attributes of the user.
      * @return List of connector unique ids of the users.
-     * @throws UserStoreConnectorException Identity store connector exception.
+     * @throws UserStoreConnectorException User store connector exception.
      */
     List<String> getUsers(List<Attribute> attributes, int offset, int length) throws UserStoreConnectorException;
 
@@ -143,7 +143,7 @@ public interface UserStoreConnector {
      *
      * @param attributes Attributes of the user.
      * @return connector unique id of the user.
-     * @throws UserStoreConnectorException Identity store connector exception.
+     * @throws UserStoreConnectorException User store connector exception.
      */
     String addUser(List<Attribute> attributes) throws UserStoreConnectorException;
 
@@ -154,7 +154,7 @@ public interface UserStoreConnector {
      * @param userIdentifier User identifier.
      * @param attributes     Attribute values to update.
      * @return connector unique id of user.
-     * @throws UserStoreConnectorException Identity Store Connector Exception.
+     * @throws UserStoreConnectorException User Store Connector Exception.
      */
     String updateUserAttributes(String userIdentifier, List<Attribute> attributes) throws
             UserStoreConnectorException;
@@ -163,7 +163,7 @@ public interface UserStoreConnector {
      * Delete a user.
      *
      * @param userIdentifier User identifier.
-     * @throws UserStoreConnectorException Identity Store Connector Exception.
+     * @throws UserStoreConnectorException User Store Connector Exception.
      */
     void deleteUser(String userIdentifier) throws UserStoreConnectorException;
 
@@ -172,7 +172,7 @@ public interface UserStoreConnector {
      *
      * @param userIdentifier   User identifier.
      * @param groupIdentifiers Group identifiers.
-     * @throws UserStoreConnectorException Identity Store Connector Exception.
+     * @throws UserStoreConnectorException User Store Connector Exception.
      */
     void updateGroupsOfUser(String userIdentifier, List<String> groupIdentifiers) throws
             UserStoreConnectorException;
@@ -182,7 +182,7 @@ public interface UserStoreConnector {
      *
      * @param attributes Attributes of the group.
      * @return connector unique id of group.
-     * @throws UserStoreConnectorException Identity store connector exception.
+     * @throws UserStoreConnectorException User store connector exception.
      */
     String addGroup(List<Attribute> attributes) throws UserStoreConnectorException;
 
@@ -191,7 +191,7 @@ public interface UserStoreConnector {
      *
      * @param attributes Attributes of the groups.
      * @return Map with global unique id of the group with connector unique id.
-     * @throws UserStoreConnectorException Identity Store Connector Exception.
+     * @throws UserStoreConnectorException User Store Connector Exception.
      */
     Map<String, String> addGroups(Map<String, List<Attribute>> attributes) throws UserStoreConnectorException;
 
@@ -201,7 +201,7 @@ public interface UserStoreConnector {
      * @param groupIdentifier Group identifier.
      * @param attributes      Attribute values to update.
      * @return connector unique id of group.
-     * @throws UserStoreConnectorException Identity Store Connector Exception.
+     * @throws UserStoreConnectorException User Store Connector Exception.
      */
     String updateGroupAttributes(String groupIdentifier, List<Attribute> attributes) throws
             UserStoreConnectorException;
@@ -211,7 +211,7 @@ public interface UserStoreConnector {
      * Delete a group.
      *
      * @param groupIdentifier Group identifier.
-     * @throws UserStoreConnectorException Identity Store Connector Exception.
+     * @throws UserStoreConnectorException User Store Connector Exception.
      */
     void deleteGroup(String groupIdentifier) throws UserStoreConnectorException;
 
@@ -220,7 +220,7 @@ public interface UserStoreConnector {
      *
      * @param groupIdentifier Group identifier.
      * @param userIdentifiers User identifier list.
-     * @throws UserStoreConnectorException Identity Store Connector Exception.
+     * @throws UserStoreConnectorException User Store Connector Exception.
      */
     void updateUsersOfGroup(String groupIdentifier, List<String> userIdentifiers) throws
             UserStoreConnectorException;

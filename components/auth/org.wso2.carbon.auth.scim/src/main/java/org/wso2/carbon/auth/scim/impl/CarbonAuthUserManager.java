@@ -23,7 +23,7 @@ package org.wso2.carbon.auth.scim.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.ServiceReferenceHolder;
-import org.wso2.carbon.auth.core.configuration.models.AttributeMappingConfiguration;
+import org.wso2.carbon.auth.core.configuration.models.AttributeConfiguration;
 import org.wso2.carbon.auth.core.exception.UserNotFoundException;
 import org.wso2.carbon.auth.core.exception.UserStoreConnectorException;
 import org.wso2.carbon.auth.scim.impl.constants.SCIMCommonConstants;
@@ -66,18 +66,16 @@ public class CarbonAuthUserManager implements UserManager {
     
     UserStoreConnector userStoreConnector;
     
-    //Holds user attribute to claim mapping
-    Map<String, ClaimInfo> claimMappings = new HashMap<String, ClaimInfo>();
+    //Holds user attribute-name to attribute-info mapping
+    Map<String, AttributeConfiguration> attributeMappings = new HashMap<String, AttributeConfiguration>();
     
     public CarbonAuthUserManager(UserStoreConnector userStoreConnector) {
         this.userStoreConnector = userStoreConnector;
-        List<AttributeMappingConfiguration> attributeMappings = ServiceReferenceHolder.getInstance()
-                .getAuthConfiguration().getUserStoreConfiguration().getAttributeMappings();
+        List<AttributeConfiguration> attributes = ServiceReferenceHolder.getInstance()
+                .getAuthConfiguration().getUserStoreConfiguration().getAttributes();
         
-        for (AttributeMappingConfiguration attributeMapping: attributeMappings) {
-            ClaimInfo claimInfo = new ClaimInfo(attributeMapping.getClaimUri(), 
-                    Boolean.parseBoolean(attributeMapping.getUnique()));
-            claimMappings.put(attributeMapping.getAttribute(), claimInfo);
+        for (AttributeConfiguration attribute: attributes) {
+            attributeMappings.put(attribute.getAttribute(), attribute);
         }
     }    
 
@@ -357,7 +355,7 @@ public class CarbonAuthUserManager implements UserManager {
         for (Attribute attribute : attributeList) {
             String attributeName = attribute.getAttributeName();
             String attributeValue = attribute.getAttributeValue();
-            if (claimMappings.containsKey(attributeName) && claimMappings.get(attributeName).isUnique()) {
+            if (attributeMappings.containsKey(attributeName) && attributeMappings.get(attributeName).isUnique()) {
                 try {
                     String userId = userStoreConnector.getConnectorUserId(attributeName, attributeValue);
                     if (!isNullOrEmpty(userId)) {
@@ -382,7 +380,7 @@ public class CarbonAuthUserManager implements UserManager {
         for (Attribute attribute : attributeList) {
             String attributeName = attribute.getAttributeName();
             String attributeValue = attribute.getAttributeValue();
-            if (claimMappings.containsKey(attributeName) && claimMappings.get(attributeName).isUnique()) {
+            if (attributeMappings.containsKey(attributeName) && attributeMappings.get(attributeName).isUnique()) {
                 try {
                     String groupId = userStoreConnector.getConnectorGroupId(attributeName, attributeValue);
                     if (!isNullOrEmpty(groupId)) {
