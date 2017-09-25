@@ -58,7 +58,7 @@ public class UsersApi implements Microservice  {
         @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable. The requested media type is not supported. ", response = UserListDTO.class) })
     public Response usersGet(@ApiParam(value = "The index of the first element in the result.  ", defaultValue="0") @DefaultValue("0") @QueryParam("startIndex") Integer startIndex
 ,@ApiParam(value = "Number of elements returned in the paginated result. ", defaultValue="0") @DefaultValue("0") @QueryParam("count") Integer count
-,@ApiParam(value = "A filter expression to request a subset of the result. ", defaultValue="0") @DefaultValue("0") @QueryParam("filter") Integer filter
+,@ApiParam(value = "A filter expression to request a subset of the result. ", defaultValue="0") @DefaultValue("0") @QueryParam("filter") String filter
  ,@Context Request request)
     throws NotFoundException {
         return delegate.usersGet(startIndex,count,filter,request);
@@ -83,13 +83,13 @@ public class UsersApi implements Microservice  {
     @Path("/{id}")
     @Consumes({ "application/scim+json" })
     @Produces({ "application/scim+json" })
-    @io.swagger.annotations.ApiOperation(value = "Get user", notes = "Get details of a users ", response = UserListDTO.class, tags={ "User (Individual)", })
+    @io.swagger.annotations.ApiOperation(value = "Get user", notes = "Get details of a users ", response = UserDTO.class, tags={ "User (Individual)", })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 200, message = "OK. Users returned.  ", response = UserListDTO.class),
+        @io.swagger.annotations.ApiResponse(code = 200, message = "OK. Users returned.  ", response = UserDTO.class),
         
-        @io.swagger.annotations.ApiResponse(code = 304, message = "Not Modified. Empty body because the client has already the latest version of the requested resource. ", response = UserListDTO.class),
+        @io.swagger.annotations.ApiResponse(code = 304, message = "Not Modified. Empty body because the client has already the latest version of the requested resource. ", response = UserDTO.class),
         
-        @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable. The requested media type is not supported. ", response = UserListDTO.class) })
+        @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable. The requested media type is not supported. ", response = UserDTO.class) })
     public Response usersIdGet(@ApiParam(value = "Resource Id of User or Group ",required=true) @PathParam("id") String id
  ,@Context Request request)
     throws NotFoundException {
@@ -107,9 +107,10 @@ public class UsersApi implements Microservice  {
         
         @io.swagger.annotations.ApiResponse(code = 415, message = "Unsupported media type. The entity of the request was in a not supported format. ", response = UserDTO.class) })
     public Response usersIdPut(@ApiParam(value = "Resource Id of User or Group ",required=true) @PathParam("id") String id
+,@ApiParam(value = "User object that needs to be added " ,required=true) UserDTO body
  ,@Context Request request)
     throws NotFoundException {
-        return delegate.usersIdPut(id,request);
+        return delegate.usersIdPut(id,body,request);
     }
     @POST
     
@@ -122,7 +123,7 @@ public class UsersApi implements Microservice  {
         @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request. Invalid request or validation error ", response = UserDTO.class),
         
         @io.swagger.annotations.ApiResponse(code = 415, message = "Unsupported media type. The entity of the request was in a not supported format. ", response = UserDTO.class) })
-    public Response usersPost(@ApiParam(value = "API object that needs to be added " ,required=true) UserDTO body
+    public Response usersPost(@ApiParam(value = "User object that needs to be added " ,required=true) UserDTO body
  ,@Context Request request)
     throws NotFoundException {
         return delegate.usersPost(body,request);
@@ -131,14 +132,14 @@ public class UsersApi implements Microservice  {
     @Path("/.search")
     @Consumes({ "application/scim+json" })
     @Produces({ "application/scim+json" })
-    @io.swagger.annotations.ApiOperation(value = "Search users", notes = "Create a new user ", response = UserSearchDTO.class, tags={ "Search Users", })
+    @io.swagger.annotations.ApiOperation(value = "Search users", notes = "Create a new user ", response = UserListDTO.class, tags={ "Search Users", })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 201, message = "Created. Successful response with the newly created object as entity in the body. Location header contains URL of newly created entity. ", response = UserSearchDTO.class),
+        @io.swagger.annotations.ApiResponse(code = 201, message = "Created. Successful response with the newly created object as entity in the body. Location header contains URL of newly created entity. ", response = UserListDTO.class),
         
-        @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request. Invalid request or validation error ", response = UserSearchDTO.class),
+        @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request. Invalid request or validation error ", response = UserListDTO.class),
         
-        @io.swagger.annotations.ApiResponse(code = 415, message = "Unsupported media type. The entity of the request was in a not supported format. ", response = UserSearchDTO.class) })
-    public Response usersSearchPost(@ApiParam(value = "API object that needs to be added " ,required=true) UserDTO body
+        @io.swagger.annotations.ApiResponse(code = 415, message = "Unsupported media type. The entity of the request was in a not supported format. ", response = UserListDTO.class) })
+    public Response usersSearchPost(@ApiParam(value = "User Search object " ,required=true) UserSearchDTO body
  ,@Context Request request)
     throws NotFoundException {
         return delegate.usersSearchPost(body,request);

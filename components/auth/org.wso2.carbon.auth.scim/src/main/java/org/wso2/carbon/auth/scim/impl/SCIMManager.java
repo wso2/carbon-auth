@@ -38,20 +38,20 @@ import java.util.Map;
  * This class handles charon initialization
  *
  */
-public class CarbonAuthSCIMManager {
-    private static Logger logger = LoggerFactory.getLogger(CarbonAuthSCIMManager.class);
-    private static volatile CarbonAuthSCIMManager carbonAuthSCIMManager;
+public class SCIMManager {
+    private static Logger logger = LoggerFactory.getLogger(SCIMManager.class);
+    private static volatile SCIMManager carbonAuthSCIMManager;
     private static Map<String, String> endpointURLs = new HashMap<String, String>();
     
-    private CarbonAuthSCIMManager() {
+    private SCIMManager() {
         init();
     }
     
-    public static CarbonAuthSCIMManager getInstance() {
+    public static SCIMManager getInstance() {
         if (carbonAuthSCIMManager == null) {
-            synchronized (CarbonAuthSCIMManager.class) {
+            synchronized (SCIMManager.class) {
                 if (carbonAuthSCIMManager == null) {
-                    carbonAuthSCIMManager = new CarbonAuthSCIMManager();
+                    carbonAuthSCIMManager = new SCIMManager();
                     return carbonAuthSCIMManager;
                 } else {
                     return carbonAuthSCIMManager;
