@@ -24,6 +24,7 @@ import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.core.exception.UserNotFoundException;
 import org.wso2.carbon.auth.core.exception.UserStoreConnectorException;
 import org.wso2.carbon.auth.user.store.connector.Attribute;
+import org.wso2.carbon.auth.user.store.connector.PasswordHandler;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
 import org.wso2.carbon.auth.user.store.connector.jdbc.queries.MySQLFamilySQLQueryFactory;
 import org.wso2.carbon.auth.user.store.constant.DatabaseColumnNames;
@@ -36,6 +37,7 @@ import org.wso2.carbon.auth.user.store.util.UnitOfWork;
 import org.wso2.carbon.auth.user.store.util.UserStoreUtil;
 import org.wso2.carbon.datasource.core.exception.DataSourceException;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -43,7 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.PasswordCallback;
 import javax.sql.DataSource;
 
 /**
@@ -672,22 +674,156 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
-    public String addCredential(String userIdentifier, List<Callback> callbacks) throws UserStoreConnectorException {
-        // TODO Auto-generated method stub
-        return null;
+    public String addCredential(String userIdentifier, PasswordCallback passwordCallback) 
+            throws UserStoreConnectorException {
+        
+        char[] password = passwordCallback.getPassword();
+        
+        String hashAlgo = getHashAlgo();
+        int iterationCount = getIterationCount();
+        int keyLength = getKeyLength();
+
+        String salt = UserStoreUtil.generateUUID();
+        
+        PasswordHandler passwordHandler = new DefaultPasswordHandler();
+        
+        passwordHandler.setIterationCount(iterationCount);
+        passwordHandler.setKeyLength(keyLength);
+        
+        try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
+            NamedPreparedStatement addPasswordPreparedStatement = new NamedPreparedStatement(
+                    unitOfWork.getConnection(),
+                    sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_ADD_CREDENTIAL));
+            NamedPreparedStatement addPasswordInfoPreparedStatement = new NamedPreparedStatement(
+                    unitOfWork.getConnection(),
+                    sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_ADD_PASSWORD_INFO));
+            
+            String hashedPassword;
+            try {
+                hashedPassword = passwordHandler.hashPassword(password, salt, hashAlgo);
+            } catch (NoSuchAlgorithmException e) {
+                throw new UserStoreConnectorException("Error while hashing the password.", e);
+            }
+            
+            //Store password
+            addPasswordPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.USER_UNIQUE_ID, 
+                    userIdentifier);
+            addPasswordPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.PASSWORD, hashedPassword);
+
+            //Store password info.
+            addPasswordInfoPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.PASSWORD_SALT, salt);
+            addPasswordInfoPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.HASH_ALGO, hashAlgo);
+            addPasswordInfoPreparedStatement.setInt(JDBCConnectorConstants.SQLPlaceholders.ITERATION_COUNT,
+                    iterationCount);
+            addPasswordInfoPreparedStatement.setInt(JDBCConnectorConstants.SQLPlaceholders.KEY_LENGTH, keyLength);
+            addPasswordInfoPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.USER_UNIQUE_ID, 
+                    userIdentifier);
+            
+            addPasswordPreparedStatement.getPreparedStatement().executeUpdate();
+            addPasswordInfoPreparedStatement.getPreparedStatement().executeUpdate();
+            unitOfWork.endTransaction();
+        } catch (SQLException e) {
+            throw new UserStoreConnectorException("Error while storing user credential.", e);
+        }
+        
+        return userIdentifier;
     }
 
     @Override
-    public String updateCredentials(String userIdentifier, List<Callback> credentialCallbacks)
+    public String updateCredentials(String userIdentifier, PasswordCallback passwordCallback)
             throws UserStoreConnectorException {
-        // TODO Auto-generated method stub
-        return null;
+        char[] password = passwordCallback.getPassword();
+        String hashAlgo = getHashAlgo();
+        int iterationCount = getIterationCount();
+        int keyLength = getKeyLength();
+
+        String salt = UserStoreUtil.generateUUID();
+        
+        PasswordHandler passwordHandler = new DefaultPasswordHandler();
+        
+        passwordHandler.setIterationCount(iterationCount);
+        passwordHandler.setKeyLength(keyLength); 
+        
+        try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
+            NamedPreparedStatement updatePasswordPreparedStatement = new NamedPreparedStatement(
+                    unitOfWork.getConnection(),
+                    sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_UPDATE_CREDENTIAL));
+            NamedPreparedStatement updatePasswordInfoPreparedStatement = new NamedPreparedStatement(
+                    unitOfWork.getConnection(),
+                    sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_UPDATE_PASSWORD_INFO));
+            
+            String hashedPassword;
+            try {
+                hashedPassword = passwordHandler.hashPassword(password, salt, hashAlgo);
+            } catch (NoSuchAlgorithmException e) {
+                throw new UserStoreConnectorException("Error while hashing the password.", e);
+            }
+            
+            //Store password
+            updatePasswordPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.USER_UNIQUE_ID, 
+                    userIdentifier);
+            updatePasswordPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.PASSWORD, hashedPassword);
+
+            //Store password info.
+            updatePasswordInfoPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.PASSWORD_SALT, salt);
+            updatePasswordInfoPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.HASH_ALGO, hashAlgo);
+            updatePasswordInfoPreparedStatement.setInt(JDBCConnectorConstants.SQLPlaceholders.ITERATION_COUNT,
+                    iterationCount);
+            updatePasswordInfoPreparedStatement.setInt(JDBCConnectorConstants.SQLPlaceholders.KEY_LENGTH, keyLength);
+            updatePasswordInfoPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.USER_UNIQUE_ID, 
+                    userIdentifier);
+            
+            updatePasswordPreparedStatement.getPreparedStatement().executeUpdate();
+            updatePasswordInfoPreparedStatement.getPreparedStatement().executeUpdate();
+            unitOfWork.endTransaction();
+            
+        } catch (SQLException e) {
+            throw new UserStoreConnectorException("Error while updating user credential.", e);
+        }
+        return userIdentifier;
     }
 
     @Override
     public void deleteCredential(String userIdentifier) throws UserStoreConnectorException {
-        // TODO Auto-generated method stub
+        try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
+            NamedPreparedStatement deleteCredentialPreparedStatement = new NamedPreparedStatement(
+                    unitOfWork.getConnection(),
+                    sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_DELETE_CREDENTIAL));
+            deleteCredentialPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.USER_UNIQUE_ID,
+                    userIdentifier);
+
+            deleteCredentialPreparedStatement.getPreparedStatement().executeUpdate();
+            unitOfWork.endTransaction();
+        } catch (SQLException e) {
+            throw new UserStoreConnectorException("Error while updating user credential.", e);
+        }
         
+    }
+    
+    private String getHashAlgo() {
+        String hashAlgo = "SHA256";
+        //TODO:Read algo from config
+        return hashAlgo;
+    }
+    
+    private int getIterationCount() {
+        int iterationCount = 4096;
+        //TODO:Read iteration count from config
+        /*String iterationCountObj = null;
+        if (iterationCountObj != null) {
+            iterationCount = Integer.parseInt(iterationCountObj);
+        }*/ 
+        return iterationCount;
+    }
+    
+    private int getKeyLength() {
+        int keyLength = 256;
+        //TODO:Read key length from config
+        /*String keyLengthObj = null;
+        if (keyLengthObj != null) {
+            keyLength = Integer.parseInt(keyLengthObj);
+        } */
+        return keyLength;
     }
 
 }
