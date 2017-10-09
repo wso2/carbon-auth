@@ -51,7 +51,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.PasswordCallback;
 
 import static org.wso2.carbon.kernel.utils.StringUtils.isNullOrEmpty;
@@ -104,9 +103,7 @@ public class CarbonAuthUserManager implements UserManager {
                 PasswordCallback passwordCallback = new PasswordCallback(SCIMConstants.UserSchemaConstants.PASSWORD,
                         false);
                 passwordCallback.setPassword(password);
-                List<Callback> callbackList = new ArrayList<>();
-                callbackList.add(passwordCallback);
-                userStoreConnector.addCredential(userId, callbackList);
+                userStoreConnector.addCredential(userId, passwordCallback);
             }
             
             // handle groups of the user
@@ -211,6 +208,39 @@ public class CarbonAuthUserManager implements UserManager {
         
         try {
             userStoreConnector.updateUserAttributes(user.getId(), attributeList);
+            
+            //handle password
+            if (user.getAttribute(SCIMConstants.UserSchemaConstants.PASSWORD) != null) {
+                char[] password = ((SimpleAttribute) (user.getAttribute(
+                        SCIMConstants.UserSchemaConstants.PASSWORD))).getStringValue().toCharArray();
+                PasswordCallback passwordCallback = new PasswordCallback(SCIMConstants.UserSchemaConstants.PASSWORD,
+                        false);
+                passwordCallback.setPassword(password);
+                userStoreConnector.updateCredentials(user.getId(), passwordCallback);
+            }
+            
+            // handle groups of the user
+            MultiValuedAttribute groupsAttribute = (MultiValuedAttribute) (
+                    user.getAttribute(SCIMConstants.UserSchemaConstants.GROUPS));
+            // list to store the group ids which will be used to create the group attribute in scim user.
+            List<String> groupIds = new ArrayList<>();
+            if (groupsAttribute != null) {
+                List<org.wso2.charon3.core.attributes.Attribute> subValues = groupsAttribute.getAttributeValues();
+
+                if (subValues != null && subValues.size() != 0) {
+                    for (org.wso2.charon3.core.attributes.Attribute subValue : subValues) {
+                        SimpleAttribute valueAttribute =
+                            (SimpleAttribute) ((subValue)).getSubAttribute(
+                                     SCIMConstants.CommonSchemaConstants.VALUE);
+                        groupIds.add((String) valueAttribute.getValue());
+                    }
+                }                    
+                //need to add users groups if it is available in the request
+                if (groupIds.size() != 0) {
+                    //now add the user's groups explicitly.
+                    userStoreConnector.updateGroupsOfUser(user.getId(), groupIds);
+                }
+            }
             
             // get the updated user from the user core and sent it to client.
             return this.getUser(user.getId(), requiredAttributes);

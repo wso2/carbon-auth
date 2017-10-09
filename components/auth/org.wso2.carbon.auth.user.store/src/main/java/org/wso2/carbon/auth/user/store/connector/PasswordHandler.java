@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.auth.user.store.util;
+package org.wso2.carbon.auth.user.store.connector;
 
 import java.security.NoSuchAlgorithmException;
 

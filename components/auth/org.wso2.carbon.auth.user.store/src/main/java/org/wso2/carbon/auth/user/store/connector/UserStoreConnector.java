@@ -25,7 +25,7 @@ import org.wso2.carbon.auth.user.store.exception.GroupNotFoundException;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.PasswordCallback;
 
 /**
  * User store.
@@ -229,21 +229,21 @@ public interface UserStoreConnector {
      * Add user credentials.
      *
      * @param userIdentifier unique user id of the connector
-     * @param callbacks Array of callbacks which contains credentials.
+     * @param passwordCallback Callback which contains credentials.
      * @return user id
      * @throws UserStoreConnectorException Credential Store Exception.
      */
-    String addCredential(String userIdentifier, List<Callback> callbacks) throws UserStoreConnectorException;
+    String addCredential(String userIdentifier, PasswordCallback passwordCallback) throws UserStoreConnectorException;
 
     /**
      * Update all user credentials.
      *
      * @param userIdentifier unique user id of the connector
-     * @param credentialCallbacks Array of callbacks which contains credentials.
+     * @param passwordCallback Callback which contains credentials.
      * @return user id
      * @throws UserStoreConnectorException Credential Store Exception.
      */
-    String updateCredentials(String userIdentifier, List<Callback> credentialCallbacks) throws
+    String updateCredentials(String userIdentifier, PasswordCallback passwordCallback) throws
             UserStoreConnectorException;
 
     /**
