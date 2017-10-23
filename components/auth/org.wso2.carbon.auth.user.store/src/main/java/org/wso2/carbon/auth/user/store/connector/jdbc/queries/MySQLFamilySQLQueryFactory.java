@@ -32,203 +32,203 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
 
     private static final String GET_PASSWORD_DATA =
             "SELECT USER_UNIQUE_ID, PASSWORD, PASSWORD_SALT, HASH_ALGO, ITERATION_COUNT, KEY_LENGTH " +
-                    "FROM UM_PASSWORD LEFT JOIN UM_PASSWORD_INFO " +
-                    "ON UM_PASSWORD.ID = UM_PASSWORD_INFO.USER_ID " +
+                    "FROM AUTH_UM_PASSWORD LEFT JOIN AUTH_UM_PASSWORD_INFO " +
+                    "ON AUTH_UM_PASSWORD.ID = AUTH_UM_PASSWORD_INFO.USER_ID " +
                     "WHERE USER_UNIQUE_ID = :user_id; ";
 
     private static final String GET_USER_FROM_ATTRIBUTE =
-            "SELECT UM_USER.USER_UNIQUE_ID " +
-                    "FROM UM_USER LEFT JOIN UM_USER_ATTRIBUTES " +
-                    "ON UM_USER_ATTRIBUTES.USER_ID = UM_USER.ID " +
-                    "WHERE UM_USER_ATTRIBUTES.ATTR_ID = " +
+            "SELECT AUTH_UM_USER.USER_UNIQUE_ID " +
+                    "FROM AUTH_UM_USER LEFT JOIN AUTH_UM_USER_ATTRIBUTES " +
+                    "ON AUTH_UM_USER_ATTRIBUTES.USER_ID = AUTH_UM_USER.ID " +
+                    "WHERE AUTH_UM_USER_ATTRIBUTES.ATTR_ID = " +
                     "(SELECT ID " +
-                    "FROM UM_ATTRIBUTES " +
+                    "FROM AUTH_UM_ATTRIBUTES " +
                     "WHERE ATTR_NAME = :attr_name; ) " +
-                    "AND UM_USER_ATTRIBUTES.ATTR_VALUE = :attr_value;";
+                    "AND AUTH_UM_USER_ATTRIBUTES.ATTR_VALUE = :attr_value;";
 
     private static final String GET_GROUP_FROM_ATTRIBUTE =
-            "SELECT UM_GROUP.GROUP_UNIQUE_ID " +
-                    "FROM UM_GROUP LEFT JOIN UM_GROUP_ATTRIBUTES " +
-                    "ON UM_GROUP_ATTRIBUTES.GROUP_ID = UM_GROUP.ID " +
-                    "WHERE UM_GROUP_ATTRIBUTES.ATTR_ID = " +
+            "SELECT AUTH_UM_GROUP.GROUP_UNIQUE_ID " +
+                    "FROM AUTH_UM_GROUP LEFT JOIN AUTH_UM_GROUP_ATTRIBUTES " +
+                    "ON AUTH_UM_GROUP_ATTRIBUTES.GROUP_ID = AUTH_UM_GROUP.ID " +
+                    "WHERE AUTH_UM_GROUP_ATTRIBUTES.ATTR_ID = " +
                     "(SELECT ID " +
-                    "FROM UM_ATTRIBUTES " +
+                    "FROM AUTH_UM_ATTRIBUTES " +
                     "WHERE ATTR_NAME = :attr_name; ) " +
-                    "AND UM_GROUP_ATTRIBUTES.ATTR_VALUE = :attr_value;";
+                    "AND AUTH_UM_GROUP_ATTRIBUTES.ATTR_VALUE = :attr_value;";
 
     private static final String GET_USER_ATTRIBUTES =
             "SELECT ATTR_NAME, ATTR_VALUE " +
-                    "FROM UM_USER_ATTRIBUTES LEFT JOIN UM_ATTRIBUTES " +
-                    "ON UM_USER_ATTRIBUTES.ATTR_ID = UM_ATTRIBUTES.ID " +
+                    "FROM AUTH_UM_USER_ATTRIBUTES LEFT JOIN AUTH_UM_ATTRIBUTES " +
+                    "ON AUTH_UM_USER_ATTRIBUTES.ATTR_ID = AUTH_UM_ATTRIBUTES.ID " +
                     "WHERE USER_ID = (SELECT ID " +
-                    "FROM UM_USER " +
+                    "FROM AUTH_UM_USER " +
                     "WHERE USER_UNIQUE_ID = :user_id;)";
 
     private static final String LIST_USERS_BY_ATTRIBUTE_PATTERN =
-            "SELECT UM_USER.USER_UNIQUE_ID " +
-                    "FROM UM_USER LEFT JOIN UM_USER_ATTRIBUTES " +
-                    "ON UM_USER_ATTRIBUTES.USER_ID = UM_USER.ID " +
-                    "WHERE UM_USER_ATTRIBUTES.ATTR_ID = " +
+            "SELECT AUTH_UM_USER.USER_UNIQUE_ID " +
+                    "FROM AUTH_UM_USER LEFT JOIN AUTH_UM_USER_ATTRIBUTES " +
+                    "ON AUTH_UM_USER_ATTRIBUTES.USER_ID = AUTH_UM_USER.ID " +
+                    "WHERE AUTH_UM_USER_ATTRIBUTES.ATTR_ID = " +
                     "(SELECT ID " +
-                    "FROM UM_ATTRIBUTES " +
+                    "FROM AUTH_UM_ATTRIBUTES " +
                     "WHERE ATTR_NAME = :attr_name; ) " +
-                    "AND UM_USER_ATTRIBUTES.ATTR_VALUE LIKE :attr_value; " +
+                    "AND AUTH_UM_USER_ATTRIBUTES.ATTR_VALUE LIKE :attr_value; " +
                     "LIMIT :length; " +
                     "OFFSET :offset;";
 
     private static final String LIST_USERS_BY_ATTRIBUTE =
-            "SELECT UM_USER.USER_UNIQUE_ID " +
-                    "FROM UM_USER LEFT JOIN UM_USER_ATTRIBUTES " +
-                    "ON UM_USER_ATTRIBUTES.USER_ID = UM_USER.ID " +
-                    "WHERE UM_USER_ATTRIBUTES.ATTR_ID = " +
+            "SELECT AUTH_UM_USER.USER_UNIQUE_ID " +
+                    "FROM AUTH_UM_USER LEFT JOIN AUTH_UM_USER_ATTRIBUTES " +
+                    "ON AUTH_UM_USER_ATTRIBUTES.USER_ID = AUTH_UM_USER.ID " +
+                    "WHERE AUTH_UM_USER_ATTRIBUTES.ATTR_ID = " +
                     "(SELECT ID " +
-                    "FROM UM_ATTRIBUTES " +
+                    "FROM AUTH_UM_ATTRIBUTES " +
                     "WHERE ATTR_NAME = :attr_name; ) " +
-                    "AND UM_USER_ATTRIBUTES.ATTR_VALUE = :attr_value; " +
+                    "AND AUTH_UM_USER_ATTRIBUTES.ATTR_VALUE = :attr_value; " +
                     "LIMIT :length; " +
                     "OFFSET :offset;";
 
     private static final String GET_USER_ATTRIBUTES_FROM_NAME =
             "SELECT ATTR_NAME, ATTR_VALUE " +
-                    "FROM UM_USER_ATTRIBUTES LEFT JOIN UM_ATTRIBUTES " +
-                    "ON UM_USER_ATTRIBUTES.ATTR_ID = UM_ATTRIBUTES.ID " +
+                    "FROM AUTH_UM_USER_ATTRIBUTES LEFT JOIN AUTH_UM_ATTRIBUTES " +
+                    "ON AUTH_UM_USER_ATTRIBUTES.ATTR_ID = AUTH_UM_ATTRIBUTES.ID " +
                     "WHERE USER_ID = (SELECT ID " +
-                    "FROM UM_USER " +
+                    "FROM AUTH_UM_USER " +
                     "WHERE USER_UNIQUE_ID = :user_id;) " +
                     "AND ATTR_NAME IN (:attr_names;)";
 
     private static final String IS_USER_IN_GROUP =
             "SELECT ID " +
-                    "FROM UM_USER_GROUP " +
-                    "WHERE USER_ID = (SELECT ID FROM UM_USER WHERE USER_UNIQUE_ID = :user_id;) " +
-                    "AND GROUP_ID = (SELECT ID FROM UM_GROUP WHERE GROUP_UNIQUE_ID = :group_id;)";
+                    "FROM AUTH_UM_USER_GROUP " +
+                    "WHERE USER_ID = (SELECT ID FROM AUTH_UM_USER WHERE USER_UNIQUE_ID = :user_id;) " +
+                    "AND GROUP_ID = (SELECT ID FROM AUTH_UM_GROUP WHERE GROUP_UNIQUE_ID = :group_id;)";
 
     private static final String LIST_GROUP_BY_ATTRIBUTE_PATTERN =
-            "SELECT UM_GROUP.GROUP_UNIQUE_ID " +
-                    "FROM UM_GROUP LEFT JOIN UM_GROUP_ATTRIBUTES " +
-                    "ON UM_GROUP_ATTRIBUTES.GROUP_ID = UM_GROUP.ID " +
-                    "WHERE UM_GROUP_ATTRIBUTES.ATTR_ID = " +
+            "SELECT AUTH_UM_GROUP.GROUP_UNIQUE_ID " +
+                    "FROM AUTH_UM_GROUP LEFT JOIN AUTH_UM_GROUP_ATTRIBUTES " +
+                    "ON AUTH_UM_GROUP_ATTRIBUTES.GROUP_ID = AUTH_UM_GROUP.ID " +
+                    "WHERE AUTH_UM_GROUP_ATTRIBUTES.ATTR_ID = " +
                     "(SELECT ID " +
-                    "FROM UM_ATTRIBUTES " +
+                    "FROM AUTH_UM_ATTRIBUTES " +
                     "WHERE ATTR_NAME = :attr_name; ) " +
-                    "AND UM_GROUP_ATTRIBUTES.ATTR_VALUE LIKE :attr_value; " +
+                    "AND AUTH_UM_GROUP_ATTRIBUTES.ATTR_VALUE LIKE :attr_value; " +
                     "LIMIT :length; " +
                     "OFFSET :offset;";
 
     private static final String LIST_GROUP_BY_ATTRIBUTE =
-            "SELECT UM_GROUP.GROUP_UNIQUE_ID " +
-                    "FROM UM_GROUP LEFT JOIN UM_GROUP_ATTRIBUTES " +
-                    "ON UM_GROUP_ATTRIBUTES.GROUP_ID = UM_GROUP.ID " +
-                    "WHERE UM_GROUP_ATTRIBUTES.ATTR_ID = " +
+            "SELECT AUTH_UM_GROUP.GROUP_UNIQUE_ID " +
+                    "FROM AUTH_UM_GROUP LEFT JOIN AUTH_UM_GROUP_ATTRIBUTES " +
+                    "ON AUTH_UM_GROUP_ATTRIBUTES.GROUP_ID = AUTH_UM_GROUP.ID " +
+                    "WHERE AUTH_UM_GROUP_ATTRIBUTES.ATTR_ID = " +
                     "(SELECT ID " +
-                    "FROM UM_ATTRIBUTES " +
+                    "FROM AUTH_UM_ATTRIBUTES " +
                     "WHERE ATTR_NAME = :attr_name; ) " +
-                    "AND UM_GROUP_ATTRIBUTES.ATTR_VALUE = :attr_value; " +
+                    "AND AUTH_UM_GROUP_ATTRIBUTES.ATTR_VALUE = :attr_value; " +
                     "LIMIT :length; " +
                     "OFFSET :offset;";
 
     private static final String GET_GROUP_ATTRIBUTES =
             "SELECT ATTR_NAME, ATTR_VALUE " +
-                    "FROM UM_GROUP_ATTRIBUTES LEFT JOIN UM_ATTRIBUTES " +
-                    "ON UM_GROUP_ATTRIBUTES.ATTR_ID = UM_ATTRIBUTES.ID " +
+                    "FROM AUTH_UM_GROUP_ATTRIBUTES LEFT JOIN AUTH_UM_ATTRIBUTES " +
+                    "ON AUTH_UM_GROUP_ATTRIBUTES.ATTR_ID = AUTH_UM_ATTRIBUTES.ID " +
                     "WHERE GROUP_ID = (SELECT ID " +
-                    "FROM UM_GROUP " +
+                    "FROM AUTH_UM_GROUP " +
                     "WHERE GROUP_UNIQUE_ID = :group_id;)";
 
     private static final String GET_GROUP_ATTRIBUTES_FROM_NAME =
             "SELECT ATTR_NAME, ATTR_VALUE " +
-                    "FROM UM_GROUP_ATTRIBUTES LEFT JOIN UM_ATTRIBUTES " +
-                    "ON UM_GROUP_ATTRIBUTES.ATTR_ID = UM_ATTRIBUTES.ID " +
+                    "FROM AUTH_UM_GROUP_ATTRIBUTES LEFT JOIN AUTH_UM_ATTRIBUTES " +
+                    "ON AUTH_UM_GROUP_ATTRIBUTES.ATTR_ID = AUTH_UM_ATTRIBUTES.ID " +
                     "WHERE GROUP_ID = (SELECT ID " +
-                    "FROM UM_GROUP " +
+                    "FROM AUTH_UM_GROUP " +
                     "WHERE GROUP_UNIQUE_ID = :group_id;) " +
                     "AND ATTR_NAME IN (:attr_names;)";
 
-    private static final String COUNT_USERS = "SELECT COUNT(*) FROM UM_USER";
+    private static final String COUNT_USERS = "SELECT COUNT(*) FROM AUTH_UM_USER";
 
-    private static final String COUNT_GROUPS = "SELECT COUNT(*) FROM UM_GROUP";
+    private static final String COUNT_GROUPS = "SELECT COUNT(*) FROM AUTH_UM_GROUP";
 
     private static final String ADD_USER_ATTRIBUTES =
-            "INSERT INTO UM_USER_ATTRIBUTES (ATTR_ID, ATTR_VALUE, USER_ID) " +
-                    "VALUES ((SELECT ID FROM UM_ATTRIBUTES WHERE ATTR_NAME = :attr_name;), :attr_value;, " +
-                    "(SELECT ID FROM UM_USER WHERE USER_UNIQUE_ID = :user_unique_id;)) ";
+            "INSERT INTO AUTH_UM_USER_ATTRIBUTES (ATTR_ID, ATTR_VALUE, USER_ID) " +
+                    "VALUES ((SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_NAME = :attr_name;), :attr_value;, " +
+                    "(SELECT ID FROM AUTH_UM_USER WHERE USER_UNIQUE_ID = :user_unique_id;)) ";
 
     private static final String ADD_USER =
-            "INSERT INTO UM_USER (USER_UNIQUE_ID) " +
+            "INSERT INTO AUTH_UM_USER (USER_UNIQUE_ID) " +
                     "VALUES (:user_unique_id;)";
 
     private static final String ADD_GROUP_ATTRIBUTES =
-            "INSERT INTO UM_GROUP_ATTRIBUTES (ATTR_ID, ATTR_VALUE, GROUP_ID) " +
-                    "VALUES ((SELECT ID FROM UM_ATTRIBUTES WHERE ATTR_NAME = :attr_name;), :attr_value;, " +
-                    "(SELECT ID FROM UM_GROUP WHERE GROUP_UNIQUE_ID = :group_unique_id;)) ";
+            "INSERT INTO AUTH_UM_GROUP_ATTRIBUTES (ATTR_ID, ATTR_VALUE, GROUP_ID) " +
+                    "VALUES ((SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_NAME = :attr_name;), :attr_value;, " +
+                    "(SELECT ID FROM AUTH_UM_GROUP WHERE GROUP_UNIQUE_ID = :group_unique_id;)) ";
 
     private static final String ADD_GROUP =
-            "INSERT INTO UM_GROUP (GROUP_UNIQUE_ID) " +
+            "INSERT INTO AUTH_UM_GROUP (GROUP_UNIQUE_ID) " +
                     "VALUES (:group_unique_id;)";
 
     private static final String ADD_USER_GROUPS =
-            "INSERT INTO UM_USER_GROUP (USER_ID, GROUP_ID) " +
-                    "VALUES ((SELECT ID FROM UM_USER WHERE USER_UNIQUE_ID = :user_unique_id;), " +
-                    "(SELECT ID FROM UM_GROUP WHERE GROUP_UNIQUE_ID = :group_unique_id;))";
+            "INSERT INTO AUTH_UM_USER_GROUP (USER_ID, GROUP_ID) " +
+                    "VALUES ((SELECT ID FROM AUTH_UM_USER WHERE USER_UNIQUE_ID = :user_unique_id;), " +
+                    "(SELECT ID FROM AUTH_UM_GROUP WHERE GROUP_UNIQUE_ID = :group_unique_id;))";
 
-    private static final String REMOVE_ALL_GROUPS_OF_USER = "DELETE FROM UM_USER_GROUP " +
-            "WHERE USER_ID = (SELECT ID FROM UM_USER WHERE USER_UNIQUE_ID = :user_unique_id;)";
+    private static final String REMOVE_ALL_GROUPS_OF_USER = "DELETE FROM AUTH_UM_USER_GROUP " +
+            "WHERE USER_ID = (SELECT ID FROM AUTH_UM_USER WHERE USER_UNIQUE_ID = :user_unique_id;)";
 
-    private static final String REMOVE_ALL_USERS_OF_GROUP = "DELETE FROM UM_USER_GROUP " +
-            "WHERE GROUP_ID = (SELECT ID FROM UM_GROUP WHERE GROUP_UNIQUE_ID = :group_unique_id;)";
+    private static final String REMOVE_ALL_USERS_OF_GROUP = "DELETE FROM AUTH_UM_USER_GROUP " +
+            "WHERE GROUP_ID = (SELECT ID FROM AUTH_UM_GROUP WHERE GROUP_UNIQUE_ID = :group_unique_id;)";
 
-    private static final String REMOVE_GROUP_OF_USER = "DELETE FROM UM_USER_GROUP " +
-            "WHERE USER_ID = (SELECT ID FROM UM_USER WHERE USER_UNIQUE_ID = :user_unique_id;) " +
-            "AND GROUP_ID = (SELECT ID FROM UM_GROUP WHERE GROUP_UNIQUE_ID = :group_unique_id;)";
+    private static final String REMOVE_GROUP_OF_USER = "DELETE FROM AUTH_UM_USER_GROUP " +
+            "WHERE USER_ID = (SELECT ID FROM AUTH_UM_USER WHERE USER_UNIQUE_ID = :user_unique_id;) " +
+            "AND GROUP_ID = (SELECT ID FROM AUTH_UM_GROUP WHERE GROUP_UNIQUE_ID = :group_unique_id;)";
 
-    private static final String REMOVE_ALL_ATTRIBUTES_OF_USER = "DELETE FROM UM_USER_ATTRIBUTES " +
-            "WHERE USER_ID = (SELECT ID FROM UM_USER WHERE USER_UNIQUE_ID = :user_unique_id;)";
+    private static final String REMOVE_ALL_ATTRIBUTES_OF_USER = "DELETE FROM AUTH_UM_USER_ATTRIBUTES " +
+            "WHERE USER_ID = (SELECT ID FROM AUTH_UM_USER WHERE USER_UNIQUE_ID = :user_unique_id;)";
 
-    private static final String REMOVE_ALL_ATTRIBUTES_OF_GROUP = "DELETE FROM UM_GROUP_ATTRIBUTES " +
-            "WHERE GROUP_ID = (SELECT ID FROM UM_GROUP WHERE GROUP_UNIQUE_ID = :group_unique_id;)";
+    private static final String REMOVE_ALL_ATTRIBUTES_OF_GROUP = "DELETE FROM AUTH_UM_GROUP_ATTRIBUTES " +
+            "WHERE GROUP_ID = (SELECT ID FROM AUTH_UM_GROUP WHERE GROUP_UNIQUE_ID = :group_unique_id;)";
 
     private static final String REMOVE_ATTRIBUTE_OF_USER =
-            "DELETE FROM UM_USER_ATTRIBUTES " +
-                    "WHERE ATTR_ID = (SELECT ID FROM UM_ATTRIBUTES WHERE ATTR_NAME = :attr_name;) AND " +
-                    "USER_ID = (SELECT ID FROM UM_USER WHERE USER_UNIQUE_ID = :user_unique_id;) ";
+            "DELETE FROM AUTH_UM_USER_ATTRIBUTES " +
+                    "WHERE ATTR_ID = (SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_NAME = :attr_name;) AND " +
+                    "USER_ID = (SELECT ID FROM AUTH_UM_USER WHERE USER_UNIQUE_ID = :user_unique_id;) ";
 
     private static final String REMOVE_ATTRIBUTE_OF_GROUP =
-            "DELETE FROM UM_GROUP_ATTRIBUTES " +
-                    "WHERE ATTR_ID = (SELECT ID FROM UM_ATTRIBUTES WHERE ATTR_NAME = :attr_name;) AND " +
-                    "GROUP_ID = (SELECT ID FROM UM_GROUP WHERE GROUP_UNIQUE_ID = :group_unique_id;) ";
+            "DELETE FROM AUTH_UM_GROUP_ATTRIBUTES " +
+                    "WHERE ATTR_ID = (SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_NAME = :attr_name;) AND " +
+                    "GROUP_ID = (SELECT ID FROM AUTH_UM_GROUP WHERE GROUP_UNIQUE_ID = :group_unique_id;) ";
 
     private static final String DELETE_USER =
-            "DELETE FROM UM_USER " +
+            "DELETE FROM AUTH_UM_USER " +
                     "WHERE USER_UNIQUE_ID = :user_unique_id;";
 
     private static final String DELETE_GROUP =
-            "DELETE FROM UM_GROUP " +
+            "DELETE FROM AUTH_UM_GROUP " +
                     "WHERE GROUP_UNIQUE_ID = :group_unique_id;";
 
-    private static final String UPDATE_USER_ATTRIBUTES = "UPDATE UM_USER_ATTRIBUTES SET ATTR_VALUE = " +
-            ":attr_value; WHERE ATTR_ID = (SELECT ID FROM UM_ATTRIBUTES WHERE ATTR_NAME = :attr_name;) AND " +
-            "USER_ID = (SELECT ID FROM UM_USER WHERE USER_UNIQUE_ID = :user_unique_id;)";
+    private static final String UPDATE_USER_ATTRIBUTES = "UPDATE AUTH_UM_USER_ATTRIBUTES SET ATTR_VALUE = " +
+            ":attr_value; WHERE ATTR_ID = (SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_NAME = :attr_name;) AND " +
+            "USER_ID = (SELECT ID FROM AUTH_UM_USER WHERE USER_UNIQUE_ID = :user_unique_id;)";
 
-    private static final String UPDATE_GROUP_ATTRIBUTES = "UPDATE UM_GROUP_ATTRIBUTES SET ATTR_VALUE = " +
-            ":attr_value; WHERE ATTR_ID = (SELECT ID FROM UM_ATTRIBUTES WHERE ATTR_NAME = :attr_name;) AND " +
-            "GROUP_ID = (SELECT ID FROM UM_GROUP WHERE GROUP_UNIQUE_ID = :group_unique_id;)";
+    private static final String UPDATE_GROUP_ATTRIBUTES = "UPDATE AUTH_UM_GROUP_ATTRIBUTES SET ATTR_VALUE = " +
+            ":attr_value; WHERE ATTR_ID = (SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_NAME = :attr_name;) AND " +
+            "GROUP_ID = (SELECT ID FROM AUTH_UM_GROUP WHERE GROUP_UNIQUE_ID = :group_unique_id;)";
 
-    private static final String ADD_PASSWORD_INFO = "INSERT INTO UM_PASSWORD_INFO " +
+    private static final String ADD_PASSWORD_INFO = "INSERT INTO AUTH_UM_PASSWORD_INFO " +
             "(PASSWORD_SALT, HASH_ALGO, ITERATION_COUNT, KEY_LENGTH, USER_ID) " +
-            "VALUES (:password_salt;, :hash_algo;, :iteration_count;, :key_length;, (SELECT ID FROM UM_PASSWORD WHERE" +
-            " USER_UNIQUE_ID = :user_unique_id;))";
+            "VALUES (:password_salt;, :hash_algo;, :iteration_count;, :key_length;, (SELECT ID FROM AUTH_UM_PASSWORD "
+            + "WHERE USER_UNIQUE_ID = :user_unique_id;))";
 
-    private static final String ADD_CREDENTIAL = "INSERT INTO UM_PASSWORD (PASSWORD, USER_UNIQUE_ID) " +
+    private static final String ADD_CREDENTIAL = "INSERT INTO AUTH_UM_PASSWORD (PASSWORD, USER_UNIQUE_ID) " +
             "VALUES (:password;, :user_unique_id;)";
 
-    private static final String UPDATE_CREDENTIAL = "UPDATE UM_PASSWORD SET PASSWORD = :password; " +
+    private static final String UPDATE_CREDENTIAL = "UPDATE AUTH_UM_PASSWORD SET PASSWORD = :password; " +
             "WHERE USER_UNIQUE_ID = :user_unique_id;";
 
-    private static final String UPDATE_PASSWORD_INFO = "UPDATE UM_PASSWORD_INFO SET HASH_ALGO = :hash_algo;, " +
+    private static final String UPDATE_PASSWORD_INFO = "UPDATE AUTH_UM_PASSWORD_INFO SET HASH_ALGO = :hash_algo;, " +
             "ITERATION_COUNT = :iteration_count;, KEY_LENGTH = :key_length;, PASSWORD_SALT = :password_salt; " +
-            "WHERE USER_ID = (SELECT ID FROM UM_PASSWORD WHERE USER_UNIQUE_ID = :user_unique_id;)";
+            "WHERE USER_ID = (SELECT ID FROM AUTH_UM_PASSWORD WHERE USER_UNIQUE_ID = :user_unique_id;)";
 
-    private static final String DELETE_CREDENTIAL = "DELETE FROM UM_PASSWORD " +
+    private static final String DELETE_CREDENTIAL = "DELETE FROM AUTH_UM_PASSWORD " +
             "WHERE USER_UNIQUE_ID = :user_unique_id;";
 
     public MySQLFamilySQLQueryFactory() {
@@ -285,12 +285,12 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
 
     public String getQuerryForUserIdFromMultipleAttributes(List<Attribute> attributes, int offset, int length) {
         StringBuilder getUniqueUserQuerry = new StringBuilder();
-         getUniqueUserQuerry.append("SELECT UM_USER.USER_UNIQUE_ID FROM UM_USER WHERE UM_USER.ID IN");
+         getUniqueUserQuerry.append("SELECT AUTH_UM_USER.USER_UNIQUE_ID FROM AUTH_UM_USER WHERE AUTH_UM_USER.ID IN");
         int count = 1;
         for (Attribute attribute : attributes) {
             getUniqueUserQuerry
-                    .append(" (SELECT UM_USER_ATTRIBUTES.USER_ID FROM UM_USER_ATTRIBUTES" +
-                            " WHERE ATTR_ID = (SELECT ID FROM UM_ATTRIBUTES WHERE ATTR_NAME = '")
+                    .append(" (SELECT AUTH_UM_USER_ATTRIBUTES.USER_ID FROM AUTH_UM_USER_ATTRIBUTES" +
+                            " WHERE ATTR_ID = (SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_NAME = '")
                     .append(attribute.getAttributeName())
                     .append("' ) AND ATTR_VALUE = '")
                     .append(attribute.getAttributeValue())
