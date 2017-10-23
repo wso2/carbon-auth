@@ -44,6 +44,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.security.auth.callback.PasswordCallback;
 import javax.sql.DataSource;
@@ -61,7 +63,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
     protected String identityStoreId;    
     protected Map<String, String> sqlQueries;
 
-    protected void loadQueries(Map<String, Object> properties) {
+    protected void loadQueries(Map<String, String> properties) {
 
         String databaseType = (String) properties.get(JDBCConnectorConstants.DATABASE_TYPE);
 
@@ -75,15 +77,24 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
         }
 
         // If there are matching queries in the properties, we have to override the default and replace with them.
-        /*sqlQueries.putAll(sqlQueries.keySet().stream()
+        sqlQueries.putAll(sqlQueries.keySet().stream()
                 .filter(properties::containsKey)
-                .collect(Collectors.toMap(key -> key, properties::get)));*/
+                .collect(Collectors.toMap(key -> key, properties::get)));
     }
 
     @Override
     public void init(UserStoreConfiguration userStoreConfig) throws UserStoreConnectorException {
 
         Map<String, Object> properties = userStoreConfig.getProperties();
+        Map<String, String> strProperties = new HashMap<String, String>();
+        
+        
+        for (Entry<String, Object> entry : properties.entrySet()) {
+            if (entry.getValue() instanceof String) {
+                strProperties.put(entry.getKey(), (String) entry.getValue());
+            }
+        }
+        
         this.userStoreConfig = userStoreConfig;
 
         try {
@@ -93,7 +104,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             throw new UserStoreConnectorException("Error occurred while initiating data source.", e);
         }
 
-        loadQueries(properties);
+        loadQueries(strProperties);
 
         if (log.isDebugEnabled()) {
             log.debug("JDBC identity store with id: {} initialized successfully.", identityStoreId);
