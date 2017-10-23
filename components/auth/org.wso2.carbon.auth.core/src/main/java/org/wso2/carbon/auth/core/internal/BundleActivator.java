@@ -23,6 +23,7 @@ package org.wso2.carbon.auth.core.internal;
 import com.zaxxer.hikari.HikariDataSource;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -36,6 +37,7 @@ import org.wso2.carbon.auth.core.datasource.DAOUtil;
 import org.wso2.carbon.auth.core.datasource.DataSource;
 import org.wso2.carbon.auth.core.datasource.DataSourceImpl;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
+import org.wso2.carbon.datasource.core.exception.DataSourceException;
 import org.wso2.carbon.kernel.configprovider.ConfigProvider;
 
 import javax.naming.Context;
@@ -76,9 +78,13 @@ public class BundleActivator {
             unbind = "unregisterDataSourceService"
     )
     protected void onDataSourceServiceReady(DataSourceService service) {
-        //this is required to enforce a dependency on datasources
+        try {
+            DataSource umDataSource = new DataSourceImpl((HikariDataSource) service.getDataSource("WSO2UM_DB"));
+            DAOUtil.initializeAuthDataSource(umDataSource);
+        } catch (DataSourceException e) {
+            log.error("Error occurred while jndi lookup", e);
+        }
     }
-
     @Reference(
             name = "org.wso2.carbon.datasource.jndi",
             service = JNDIContextManager.class,

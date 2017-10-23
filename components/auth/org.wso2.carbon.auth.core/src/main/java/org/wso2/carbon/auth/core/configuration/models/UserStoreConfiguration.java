@@ -46,7 +46,7 @@ public class UserStoreConfiguration {
     private List<AttributeConfiguration> attributes = new ArrayList<AttributeConfiguration>();
     
     public UserStoreConfiguration() {
-        properties.put("dataSource", "WSO2_USER_DB");
+        properties.put("dataSource", "WSO2UM_DB");
         populateDefaultAttributes();
     }
 
