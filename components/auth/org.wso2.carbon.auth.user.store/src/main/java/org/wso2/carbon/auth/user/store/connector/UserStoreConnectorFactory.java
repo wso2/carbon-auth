@@ -22,22 +22,27 @@ package org.wso2.carbon.auth.user.store.connector;
 
 import org.wso2.carbon.auth.core.ServiceReferenceHolder;
 import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
+import org.wso2.carbon.auth.core.exception.UserStoreConnectorException;
 import org.wso2.carbon.auth.user.store.connector.jdbc.JDBCUserStoreConnector;
 import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
 
 /**
  * Factory class to create user store connector
- *
  */
 public class UserStoreConnectorFactory {
-    
     public static UserStoreConnector getUserStoreConnector() {
         UserStoreConfiguration userStoreConfiguration = ServiceReferenceHolder.getInstance().
                 getAuthConfiguration().getUserStoreConfiguration();
+        JDBCUserStoreConnector jdbcUserStoreConnector = new JDBCUserStoreConnector();
         if (UserStoreConstants.JDBC_CONNECTOR_TYPE.equals(userStoreConfiguration.getConnectorType())) {
-            return new JDBCUserStoreConnector();
+            try {
+                jdbcUserStoreConnector.init(userStoreConfiguration);
+                return jdbcUserStoreConnector;
+            } catch (UserStoreConnectorException e) {
+                System.out.print(e);
+            }
         }
-        return new JDBCUserStoreConnector();
+        return jdbcUserStoreConnector;
     }
 
 }
