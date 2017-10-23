@@ -66,6 +66,7 @@
     
     <properties>
         <import.package>
+            org.wso2.charon3.core.*; version="${charon.core.import.version}",
             org.eclipse.osgi.util,
             org.slf4j.*;version="${slf4j.logging.package.import.version.range}",
             org.osgi.framework.*;version="${osgi.framework.package.import.version.range}",
