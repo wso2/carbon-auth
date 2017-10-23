@@ -84,9 +84,10 @@ public class MeApi implements Microservice  {
         @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request. Invalid request or validation error ", response = UserDTO.class),
         
         @io.swagger.annotations.ApiResponse(code = 415, message = "Unsupported media type. The entity of the request was in a not supported format. ", response = UserDTO.class) })
-    public Response mePost( @Context Request request)
+    public Response mePost(@ApiParam(value = "User object that needs to be added " ,required=true) UserDTO body
+ ,@Context Request request)
     throws NotFoundException {
-        return delegate.mePost(request);
+        return delegate.mePost(body,request);
     }
     @PUT
     
@@ -99,8 +100,9 @@ public class MeApi implements Microservice  {
         @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request. Invalid request or validation error ", response = UserDTO.class),
         
         @io.swagger.annotations.ApiResponse(code = 415, message = "Unsupported media type. The entity of the request was in a not supported format. ", response = UserDTO.class) })
-    public Response mePut( @Context Request request)
+    public Response mePut(@ApiParam(value = "User object that needs to be added " ,required=true) UserDTO body
+ ,@Context Request request)
     throws NotFoundException {
-        return delegate.mePut(request);
+        return delegate.mePut(body,request);
     }
 }
