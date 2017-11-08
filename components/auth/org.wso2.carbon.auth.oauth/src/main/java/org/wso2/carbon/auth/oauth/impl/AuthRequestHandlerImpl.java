@@ -34,9 +34,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.oauth.AuthRequestHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
-import org.wso2.carbon.auth.oauth.dao.ClientDAO;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AuthResponseContext;
-import org.wso2.carbon.auth.oauth.exception.ClientDAOException;
+import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -48,10 +48,10 @@ import java.util.Optional;
  */
 public class AuthRequestHandlerImpl implements AuthRequestHandler {
     private static final Logger log = LoggerFactory.getLogger(AuthRequestHandlerImpl.class);
-    private ClientDAO clientDAO;
+    private OAuthDAO oauthDAO;
 
-    public AuthRequestHandlerImpl(ClientDAO clientDAO) {
-        this.clientDAO = clientDAO;
+    public AuthRequestHandlerImpl(OAuthDAO oauthDAO) {
+        this.oauthDAO = oauthDAO;
     }
 
     @Override
@@ -109,7 +109,7 @@ public class AuthRequestHandlerImpl implements AuthRequestHandler {
         // If redirectUri is not specified in request try to lookup pre registered redirectUri for this clientId
         if (redirectUri == null) {
             try {
-                Optional<Optional<String>> result = clientDAO.getRedirectUri(request.getClientID().getValue());
+                Optional<Optional<String>> result = oauthDAO.getRedirectUri(request.getClientID().getValue());
                 if (result.isPresent()) {
                     Optional<String> uri = result.get();
 
@@ -132,7 +132,7 @@ public class AuthRequestHandlerImpl implements AuthRequestHandler {
                 ErrorObject error = new ErrorObject(OAuth2Error.SERVER_ERROR.getCode());
                 context.setErrorObject(error);
                 haltExecution.setTrue();
-            } catch (ClientDAOException e) {
+            } catch (OAuthDAOException e) {
                 String clientId = request.getClientID().getValue();
                 log.error("Error while getting public client information for client Id: " + clientId, e);
                 ErrorObject error = new ErrorObject(OAuth2Error.SERVER_ERROR.getCode());
@@ -150,11 +150,11 @@ public class AuthRequestHandlerImpl implements AuthRequestHandler {
             String code = new AuthorizationCode().getValue();
             String scope = getScope(request);
 
-            clientDAO.addAuthCodeInfo(code, request.getClientID().getValue(),
+            oauthDAO.addAuthCodeInfo(code, request.getClientID().getValue(),
                     scope, request.getRedirectionURI());
 
             context.setAuthCode(code);
-        } catch (ClientDAOException e) {
+        } catch (OAuthDAOException e) {
             String clientId = request.getClientID().getValue();
             log.error("Error while saving auth code information for client Id: " + clientId, e);
             ErrorObject error = new ErrorObject(OAuth2Error.SERVER_ERROR.getCode());

@@ -23,8 +23,9 @@ package org.wso2.carbon.auth.oauth.dao.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.datasource.DAOUtil;
-import org.wso2.carbon.auth.oauth.dao.ClientDAO;
-import org.wso2.carbon.auth.oauth.exception.ClientDAOException;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
+import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
+import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
 import java.net.URI;
 import java.sql.Connection;
@@ -39,19 +40,19 @@ import javax.annotation.Nullable;
 /**
  * Implementation of ClientDOA interface
  */
-public class ClientDAOImpl implements ClientDAO {
-    private static final Logger log = LoggerFactory.getLogger(ClientDAOImpl.class);
+public class OAuthDAOImpl implements OAuthDAO {
+    private static final Logger log = LoggerFactory.getLogger(OAuthDAOImpl.class);
 
     /**
      * Constructor is package private, use factory class to create an instance of this class
      */
-    ClientDAOImpl() {
+    OAuthDAOImpl() {
     }
 
     @Override
-    public Optional<Optional<String>> getRedirectUri(String clientId) throws ClientDAOException {
+    public Optional<Optional<String>> getRedirectUri(String clientId) throws OAuthDAOException {
         log.debug("Calling getRedirectUri for clientId: {}", clientId);
-        final String query = "SELECT REDIRECT_URI FROM AUTH_OAUTH2_CLIENTS WHERE CLIENT_ID = ?";
+        final String query = "SELECT REDIRECT_URI FROM AUTH_OAUTH2_APPLICATION WHERE CLIENT_ID = ?";
 
         try (Connection connection = DAOUtil.getAuthConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -63,7 +64,7 @@ public class ClientDAOImpl implements ClientDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new ClientDAOException(
+            throw new OAuthDAOException(
                     String.format("Error occurred while getting client public info(clientId : %s", clientId), e);
         }
 
@@ -72,12 +73,12 @@ public class ClientDAOImpl implements ClientDAO {
 
     @Override
     public void addAuthCodeInfo(String authCode, String clientId, String scope, URI redirectUri)
-                                                                                    throws ClientDAOException {
+                                                                                    throws OAuthDAOException {
         log.debug("Calling addAuthCodeInfo for clientId: {}", clientId);
         try {
             addAuthCodeInfoInDB(authCode, clientId, scope, redirectUri);
         } catch (SQLException e) {
-            throw new ClientDAOException(
+            throw new OAuthDAOException(
                     String.format("Error occurred while registering redirect Uri(clientId : %s, redirectUri : %s",
                             clientId, redirectUri), e);
         }
@@ -86,7 +87,7 @@ public class ClientDAOImpl implements ClientDAO {
     @Override
     @CheckForNull
     public String getScopeForAuthCode(String authCode, String clientId, @Nullable URI redirectUri)
-            throws ClientDAOException {
+            throws OAuthDAOException {
         log.debug("Calling getScopeForAuthCode for clientId: {}", clientId);
 
         final String query = "SELECT SCOPE FROM AUTH_OAUTH2_AUTHORIZATION_CODE " +
@@ -109,7 +110,7 @@ public class ClientDAOImpl implements ClientDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new ClientDAOException("Error occurred while checking if auth code info is valid(clientId: "
+            throw new OAuthDAOException("Error occurred while checking if auth code info is valid(clientId: "
                     + clientId, e);
         }
 
@@ -117,10 +118,10 @@ public class ClientDAOImpl implements ClientDAO {
     }
 
     @Override
-    public boolean isClientCredentialsValid(String clientId, String clientSecret) throws ClientDAOException {
+    public boolean isClientCredentialsValid(String clientId, String clientSecret) throws OAuthDAOException {
         log.debug("Calling isClientCredentialsValid for clientId: {}", clientId);
 
-        final String query = "SELECT 1 FROM AUTH_OAUTH2_CLIENTS WHERE CLIENT_ID = ? AND CLIENT_SECRET = ?";
+        final String query = "SELECT 1 FROM AUTH_OAUTH2_APPLICATION WHERE CLIENT_ID = ? AND CLIENT_SECRET = ?";
 
         try (Connection connection = DAOUtil.getAuthConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -132,8 +133,56 @@ public class ClientDAOImpl implements ClientDAO {
             }
             
         } catch (SQLException e) {
-            throw new ClientDAOException("Error occurred while checking if client credentials valid(clientId: "
+            throw new OAuthDAOException("Error occurred while checking if client credentials valid(clientId: "
                     + clientId, e);
+        }
+    }
+
+    @Override
+    public void addAccessTokenInfo(AccessTokenData accessTokenData) throws OAuthDAOException {
+        log.debug("Calling addAccessTokenInfo for clientId: {}", accessTokenData.getClientId());
+
+        try {
+            addAccessTokenInfoInDB(accessTokenData);
+        } catch (SQLException e) {
+            throw new OAuthDAOException("Error occurred while adding access token info(clientId: "
+                    + accessTokenData.getClientId(), e);
+        }
+
+    }
+
+
+    private void addAccessTokenInfoInDB(AccessTokenData accessTokenData) throws SQLException {
+        log.debug("Calling addAccessTokenInfoInDB for clientId: {}", accessTokenData.getClientId());
+
+        final String query = "INSERT INTO AUTH_OAUTH2_ACCESS_TOKEN" +
+                "(ACCESS_TOKEN, REFRESH_TOKEN, APPLICATION_ID, GRANT_TYPE, ACCESS_TOKEN_TIME_CREATED, " +
+                "REFRESH_TOKEN_TIME_CREATED, ACCESS_TOKEN_VALIDITY_PERIOD, REFRESH_TOKEN_VALIDITY_PERIOD, " +
+                "TOKEN_STATE) SELECT ?,?,ID FROM AUTH_OAUTH2_APPLICATION WHERE CLIENT_ID = ?,?,?,?,?,?,?";
+
+        try (Connection connection = DAOUtil.getAuthConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            try {
+                connection.setAutoCommit(false);
+
+                statement.setString(1, accessTokenData.getAccessToken());
+                statement.setString(2, accessTokenData.getRefreshToken());
+                statement.setString(3, accessTokenData.getClientId());
+                statement.setString(4, accessTokenData.getGrantType());
+                statement.setTimestamp(5, accessTokenData.getAccessTokenCreatedTime());
+                statement.setTimestamp(6, accessTokenData.getRefreshTokenCreatedTime());
+                statement.setLong(7, accessTokenData.getAccessTokenValidityPeriod());
+                statement.setLong(8, accessTokenData.getRefreshTokenValidityPeriod());
+                statement.setString(9, accessTokenData.getTokenState().toString());
+
+                statement.execute();
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                throw e;
+            } finally {
+                connection.setAutoCommit(DAOUtil.isAutoCommitAuth());
+            }
         }
     }
 

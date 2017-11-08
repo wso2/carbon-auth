@@ -18,37 +18,30 @@
  *
  */
 
-package org.wso2.carbon.auth.oauth.dto;
+package org.wso2.carbon.auth.oauth.exception;
+
+import org.wso2.carbon.auth.core.exception.AuthException;
+import org.wso2.carbon.auth.core.exception.ExceptionCodes;
 
 /**
- *   ClientCredentials DTO
+ *  This is the Exception class for Client DAO related exceptions.
  */
-public class ClientCredentials {
-    private boolean isSuccessful;
-    private String consumerKey;
-    private String consumerSecret;
+public class OAuthDAOException extends AuthException {
 
-    public boolean isSuccessful() {
-        return isSuccessful;
+    public OAuthDAOException(String msg, ExceptionCodes code) {
+        super(msg, code);
     }
 
-    public void setSuccessful(boolean successful) {
-        isSuccessful = successful;
+    public OAuthDAOException(String msg, Throwable e, ExceptionCodes code) {
+        super(msg, e, code);
     }
 
-    public String getConsumerKey() {
-        return consumerKey;
+
+    public OAuthDAOException(String msg) {
+        super(msg, ExceptionCodes.DAO_EXCEPTION);
     }
 
-    public void setConsumerKey(String consumerKey) {
-        this.consumerKey = consumerKey;
-    }
-
-    public String getConsumerSecret() {
-        return consumerSecret;
-    }
-
-    public void setConsumerSecret(String consumerSecret) {
-        this.consumerSecret = consumerSecret;
+    public OAuthDAOException(String msg, Throwable e) {
+        super(msg, e, ExceptionCodes.DAO_EXCEPTION);
     }
 }

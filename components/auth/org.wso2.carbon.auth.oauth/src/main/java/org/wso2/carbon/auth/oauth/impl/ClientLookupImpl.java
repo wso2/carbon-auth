@@ -31,19 +31,19 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.oauth.ClientLookup;
-import org.wso2.carbon.auth.oauth.dao.ClientDAO;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
-import org.wso2.carbon.auth.oauth.exception.ClientDAOException;
+import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
 /**
  * Client lookup implementation
  */
 public class ClientLookupImpl implements ClientLookup {
     private static final Logger log = LoggerFactory.getLogger(ClientLookupImpl.class);
-    private ClientDAO clientDAO;
+    private OAuthDAO oauthDAO;
 
-    ClientLookupImpl(ClientDAO clientDAO) {
-        this.clientDAO = clientDAO;
+    ClientLookupImpl(OAuthDAO oauthDAO) {
+        this.oauthDAO = oauthDAO;
     }
 
     @Override
@@ -55,7 +55,7 @@ public class ClientLookupImpl implements ClientLookup {
 
                 ClientID clientId = clientCredentials.getClientID();
                 Secret clientSecret = clientCredentials.getClientSecret();
-                boolean isValid = clientDAO.isClientCredentialsValid(clientId.getValue(), clientSecret.getValue());
+                boolean isValid = oauthDAO.isClientCredentialsValid(clientId.getValue(), clientSecret.getValue());
 
                 if (!isValid) {
                     ErrorObject error = new ErrorObject(OAuth2Error.INVALID_CLIENT.getCode());
@@ -68,7 +68,7 @@ public class ClientLookupImpl implements ClientLookup {
                 log.info("Error while parsing client credentials: ", e.getMessage());
                 context.setErrorObject(e.getErrorObject());
                 haltExecution.setTrue();
-            } catch (ClientDAOException e) {
+            } catch (OAuthDAOException e) {
                 log.error("Error while validating client credentials", e);
                 ErrorObject error = new ErrorObject(OAuth2Error.SERVER_ERROR.getCode());
                 context.setErrorObject(error);

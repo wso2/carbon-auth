@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
-import org.wso2.carbon.auth.oauth.dao.ClientDAO;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 
 import java.util.Map;
@@ -42,8 +42,8 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
     private static final Logger log = LoggerFactory.getLogger(PasswordGrantHandlerImpl.class);
     private ClientLookup clientLookup;
 
-    PasswordGrantHandlerImpl(ClientDAO clientDAO) {
-        clientLookup = new ClientLookupImpl(clientDAO);
+    PasswordGrantHandlerImpl(OAuthDAO oauthDAO) {
+        clientLookup = new ClientLookupImpl(oauthDAO);
     }
 
     @Override
