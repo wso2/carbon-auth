@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.TokenRequestHandler;
-import org.wso2.carbon.auth.oauth.dao.ClientDAO;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 
 import java.util.Map;
@@ -37,10 +37,10 @@ import java.util.Optional;
  */
 public class TokenRequestHandlerImpl implements TokenRequestHandler {
     private static final Logger log = LoggerFactory.getLogger(TokenRequestHandlerImpl.class);
-    private ClientDAO clientDAO;
+    private OAuthDAO oauthDAO;
 
-    public TokenRequestHandlerImpl(ClientDAO clientDAO) {
-        this.clientDAO = clientDAO;
+    public TokenRequestHandlerImpl(OAuthDAO oauthDAO) {
+        this.oauthDAO = oauthDAO;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class TokenRequestHandlerImpl implements TokenRequestHandler {
         MutableBoolean haltExecution = new MutableBoolean(false);
 
         Optional<GrantHandler> grantHandler = GrantHandlerFactory.createGrantHandler(grantTypeValue, context,
-                clientDAO, haltExecution);
+                oauthDAO, haltExecution);
 
         if (haltExecution.isFalse()) {
             grantHandler.ifPresent(handler -> handler.process(authorization, context, queryParameters));

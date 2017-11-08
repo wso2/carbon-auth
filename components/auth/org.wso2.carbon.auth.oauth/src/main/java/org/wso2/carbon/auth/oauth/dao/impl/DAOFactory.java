@@ -24,8 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.datasource.DAOUtil;
 import org.wso2.carbon.auth.core.exception.ExceptionCodes;
-import org.wso2.carbon.auth.oauth.dao.ClientDAO;
-import org.wso2.carbon.auth.oauth.exception.ClientDAOException;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
+import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -44,20 +44,20 @@ public class DAOFactory {
     private static final String POSTGRE = "PostgreSQL";
     private static final String ORACLE = "Oracle";
 
-    public static ClientDAO getClientDAO() throws ClientDAOException {
+    public static OAuthDAO getClientDAO() throws OAuthDAOException {
         try (Connection connection = DAOUtil.getAuthConnection()) {
             String driverName = connection.getMetaData().getDriverName();
 
             if (!(driverName.contains(MYSQL) || driverName.contains(H2) || driverName.contains(DB2) ||
                 driverName.contains(MS_SQL) || driverName.contains(MICROSOFT) || driverName.contains(POSTGRE) ||
                 driverName.contains(ORACLE))) {
-                throw new ClientDAOException("Unhandled DB driver: " + driverName + " detected",
+                throw new OAuthDAOException("Unhandled DB driver: " + driverName + " detected",
                         ExceptionCodes.DAO_EXCEPTION);
             }
 
-            return new ClientDAOImpl();
+            return new OAuthDAOImpl();
         } catch (SQLException e) {
-            throw new ClientDAOException("Error while getting clientDAO", e);
+            throw new OAuthDAOException("Error while getting clientDAO", e);
         }
     }
 }
