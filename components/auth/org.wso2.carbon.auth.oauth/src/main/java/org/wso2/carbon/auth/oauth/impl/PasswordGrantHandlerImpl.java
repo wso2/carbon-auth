@@ -31,6 +31,8 @@ import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
+import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
+import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -40,14 +42,17 @@ import javax.annotation.Nullable;
  */
 public class PasswordGrantHandlerImpl implements GrantHandler {
     private static final Logger log = LoggerFactory.getLogger(PasswordGrantHandlerImpl.class);
+    private OAuthDAO oauthDAO;
     private ClientLookup clientLookup;
 
     PasswordGrantHandlerImpl(OAuthDAO oauthDAO) {
+        this.oauthDAO = oauthDAO;
         clientLookup = new ClientLookupImpl(oauthDAO);
     }
 
     @Override
-    public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters) {
+    public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
+            throws OAuthDAOException {
         log.debug("Calling PasswordGrantHandlerImpl:process");
         try {
             ResourceOwnerPasswordCredentialsGrant request =
@@ -62,7 +67,7 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
 
     private void processPasswordGrantRequest(String authorization, AccessTokenContext context,
                                              @Nullable String scopeValue,
-                                             ResourceOwnerPasswordCredentialsGrant request) {
+                                             ResourceOwnerPasswordCredentialsGrant request) throws OAuthDAOException {
         log.debug("calling processPasswordGrantRequest");
         MutableBoolean haltExecution = new MutableBoolean(false);
 
@@ -82,5 +87,8 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
         }
 
         TokenGenerator.generateAccessToken(scope, context);
+
+        AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
+        oauthDAO.addAccessTokenInfo(accessTokenData);
     }
 }

@@ -20,7 +20,7 @@
 
 package org.wso2.carbon.auth.oauth.dto;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 
 /**
  * DTO for Access token related data
@@ -30,8 +30,8 @@ public class AccessTokenData {
     private String refreshToken;
     private String clientId;
     private String grantType;
-    private Timestamp accessTokenCreatedTime;
-    private Timestamp refreshTokenCreatedTime;
+    private Instant accessTokenCreatedTime;
+    private Instant refreshTokenCreatedTime;
     private long accessTokenValidityPeriod;
     private long refreshTokenValidityPeriod;
     private TokenState tokenState;
@@ -68,19 +68,19 @@ public class AccessTokenData {
         this.grantType = grantType;
     }
 
-    public Timestamp getAccessTokenCreatedTime() {
+    public Instant getAccessTokenCreatedTime() {
         return accessTokenCreatedTime;
     }
 
-    public void setAccessTokenCreatedTime(Timestamp accessTokenCreatedTime) {
+    public void setAccessTokenCreatedTime(Instant accessTokenCreatedTime) {
         this.accessTokenCreatedTime = accessTokenCreatedTime;
     }
 
-    public Timestamp getRefreshTokenCreatedTime() {
+    public Instant getRefreshTokenCreatedTime() {
         return refreshTokenCreatedTime;
     }
 
-    public void setRefreshTokenCreatedTime(Timestamp refreshTokenCreatedTime) {
+    public void setRefreshTokenCreatedTime(Instant refreshTokenCreatedTime) {
         this.refreshTokenCreatedTime = refreshTokenCreatedTime;
     }
 

@@ -21,6 +21,7 @@
 package org.wso2.carbon.auth.oauth;
 
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
+import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
 import java.util.Map;
 
@@ -34,5 +35,6 @@ public interface GrantHandler {
      * @param context AccessTokenContext object that stores context information during request processing
      * @param queryParameters Map of query parameters sent
      */
-    void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters);
+    void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
+            throws OAuthDAOException;
 }

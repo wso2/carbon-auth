@@ -1,9 +1,12 @@
 package org.wso2.carbon.auth.oauth.rest.api.impl;
 
 import com.nimbusds.oauth2.sdk.ErrorObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.TokenRequestHandler;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
+import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 import org.wso2.carbon.auth.oauth.rest.api.NotFoundException;
 import org.wso2.carbon.auth.oauth.rest.api.TokenApiService;
 import org.wso2.msf4j.Request;
@@ -14,6 +17,7 @@ import javax.ws.rs.core.Response;
 
 
 public class TokenApiServiceImpl extends TokenApiService {
+    private static final Logger log = LoggerFactory.getLogger(TokenApiServiceImpl.class);
     private TokenRequestHandler tokenRequestHandler;
 
     public TokenApiServiceImpl(TokenRequestHandler tokenRequestHandler) {
@@ -32,13 +36,18 @@ public class TokenApiServiceImpl extends TokenApiService {
         queryParameters.put(OAuthConstants.CODE_QUERY_PARAM, code);
         queryParameters.put(OAuthConstants.REFRESH_TOKEN_QUERY_PARAM, refreshToken);
 
-        AccessTokenContext context = tokenRequestHandler.generateToken(authorization, queryParameters);
+        try {
+            AccessTokenContext context = tokenRequestHandler.generateToken(authorization, queryParameters);
 
-        if (context.isSuccessful()) {
-            return Response.ok().entity(context.getAccessTokenResponse()).build();
-        } else {
-            ErrorObject error = context.getErrorObject();
-            return Response.status(error.getHTTPStatusCode()).build();
+            if (context.isSuccessful()) {
+                return Response.ok().entity(context.getAccessTokenResponse()).build();
+            } else {
+                ErrorObject error = context.getErrorObject();
+                return Response.status(error.getHTTPStatusCode()).build();
+            }
+        } catch (OAuthDAOException e) {
+            log.error("DAO error while generating access token", e);
+            return Response.status(e.getErrorHandler().getHttpStatusCode()).build();
         }
     }
 }

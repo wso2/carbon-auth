@@ -32,6 +32,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Optional;
 import javax.annotation.CheckForNull;
@@ -169,8 +170,8 @@ public class OAuthDAOImpl implements OAuthDAO {
                 statement.setString(2, accessTokenData.getRefreshToken());
                 statement.setString(3, accessTokenData.getClientId());
                 statement.setString(4, accessTokenData.getGrantType());
-                statement.setTimestamp(5, accessTokenData.getAccessTokenCreatedTime());
-                statement.setTimestamp(6, accessTokenData.getRefreshTokenCreatedTime());
+                statement.setTimestamp(5, Timestamp.from(accessTokenData.getAccessTokenCreatedTime()));
+                statement.setTimestamp(6, Timestamp.from(accessTokenData.getRefreshTokenCreatedTime()));
                 statement.setLong(7, accessTokenData.getAccessTokenValidityPeriod());
                 statement.setLong(8, accessTokenData.getRefreshTokenValidityPeriod());
                 statement.setString(9, accessTokenData.getTokenState().toString());

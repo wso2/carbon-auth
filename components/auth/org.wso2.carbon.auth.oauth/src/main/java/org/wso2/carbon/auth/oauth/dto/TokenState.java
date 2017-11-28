@@ -20,6 +20,9 @@
 
 package org.wso2.carbon.auth.oauth.dto;
 
+/**
+ * Token state enum
+ */
 public enum TokenState {
     ACTIVE,
     INACTIVE

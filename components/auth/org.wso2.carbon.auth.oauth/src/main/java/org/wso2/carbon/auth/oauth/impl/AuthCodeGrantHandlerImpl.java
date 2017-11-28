@@ -20,13 +20,11 @@
 
 package org.wso2.carbon.auth.oauth.impl;
 
-import com.nimbusds.oauth2.sdk.AccessTokenResponse;
 import com.nimbusds.oauth2.sdk.AuthorizationCodeGrant;
 import com.nimbusds.oauth2.sdk.ErrorObject;
 import com.nimbusds.oauth2.sdk.OAuth2Error;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.Scope;
-import com.nimbusds.oauth2.sdk.token.Tokens;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +36,6 @@ import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
 import java.net.URI;
-import java.sql.Timestamp;
-import java.time.Clock;
-import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
@@ -57,7 +52,8 @@ public class AuthCodeGrantHandlerImpl implements GrantHandler {
     }
 
     @Override
-    public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters) {
+    public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
+            throws OAuthDAOException {
         log.debug("Calling AuthCodeGrantHandlerImpl:process");
         try {
             AuthorizationCodeGrant request = AuthorizationCodeGrant.parse(queryParameters);
@@ -69,7 +65,7 @@ public class AuthCodeGrantHandlerImpl implements GrantHandler {
     }
 
     private void processAuthCodeGrantRequest(String authorization, AccessTokenContext context,
-                                             AuthorizationCodeGrant request) {
+                                             AuthorizationCodeGrant request) throws OAuthDAOException {
         log.debug("Calling processAuthCodeGrantRequest");
         MutableBoolean haltExecution = new MutableBoolean(false);
 
@@ -87,21 +83,8 @@ public class AuthCodeGrantHandlerImpl implements GrantHandler {
 
         TokenGenerator.generateAccessToken(scope, context);
 
-        AccessTokenResponse accessTokenResponse = context.getAccessTokenResponse();
-        Tokens tokens = accessTokenResponse.getTokens();
-
-        AccessTokenData accessTokenData = new AccessTokenData();
-        accessTokenData.setAccessToken(tokens.getAccessToken().getValue());
-        accessTokenData.setRefreshToken(tokens.getRefreshToken().getValue());
-
-        Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now(Clock.systemUTC()));
-
-        accessTokenData.setAccessTokenCreatedTime(timestamp);
-        accessTokenData.setRefreshTokenCreatedTime(timestamp);
-        accessTokenData.setAccessTokenValidityPeriod(tokens.getAccessToken().getLifetime());
-        accessTokenData.setRefreshTokenValidityPeriod(tokens.getRefreshToken().);
-
-        oauthDAO.addAccessTokenInfo()
+        AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
+        oauthDAO.addAccessTokenInfo(accessTokenData);
     }
 
     private Scope getScope(String clientId, AuthorizationCodeGrant request, AccessTokenContext context,
