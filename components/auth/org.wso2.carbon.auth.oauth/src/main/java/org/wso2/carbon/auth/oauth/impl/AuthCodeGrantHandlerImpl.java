@@ -79,7 +79,7 @@ public class AuthCodeGrantHandlerImpl implements GrantHandler {
             return;
         }
 
-        TokenGenerator.generateAccessToken(scope, context);
+        TokenGenerator.generateAccessToken(clientId, scope, context);
     }
 
     private Scope getScope(String clientId, AuthorizationCodeGrant request, AccessTokenContext context,
