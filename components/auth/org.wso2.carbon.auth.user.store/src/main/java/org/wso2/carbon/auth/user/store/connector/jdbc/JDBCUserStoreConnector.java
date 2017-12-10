@@ -804,10 +804,14 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
                 if (resultSet.next()) {
                     Map info = new HashMap();
                     info.put(UserStoreConstants.PASSWORD, resultSet.getString(DatabaseColumnNames.User.PASSWORD));
-                    info.put(UserStoreConstants.PASSWORD_SALT, resultSet.getString(DatabaseColumnNames.PasswordInfo.PASSWORD_SALT));
-                    info.put(UserStoreConstants.HASH_ALGO, resultSet.getString(DatabaseColumnNames.PasswordInfo.HASH_ALGO));
-                    info.put(UserStoreConstants.ITERATION_COUNT, resultSet.getInt(DatabaseColumnNames.PasswordInfo.ITERATION_COUNT));
-                    info.put(UserStoreConstants.KEY_LENGTH, resultSet.getInt(DatabaseColumnNames.PasswordInfo.KEY_LENGTH));
+                    info.put(UserStoreConstants.PASSWORD_SALT,
+                            resultSet.getString(DatabaseColumnNames.PasswordInfo.PASSWORD_SALT));
+                    info.put(UserStoreConstants.HASH_ALGO,
+                            resultSet.getString(DatabaseColumnNames.PasswordInfo.HASH_ALGO));
+                    info.put(UserStoreConstants.ITERATION_COUNT,
+                            resultSet.getInt(DatabaseColumnNames.PasswordInfo.ITERATION_COUNT));
+                    info.put(UserStoreConstants.KEY_LENGTH,
+                            resultSet.getInt(DatabaseColumnNames.PasswordInfo.KEY_LENGTH));
                     return info;
                 } else {
                     throw new UserStoreConnectorException("Password not found for the user.");
