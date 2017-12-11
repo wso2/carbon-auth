@@ -13,7 +13,7 @@
     <groupId>org.wso2.carbon.auth</groupId>
     <artifactId>carbon-auth</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <name>WSO2 Carbon - Authorization Aggregator POM</name>
 
@@ -107,6 +107,16 @@
                 <version>${com.fasterxml.jackson.core.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-yaml</artifactId>
+                <version>${com.fasterxml.jackson.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${com.fasterxml.jackson.core.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.fasterxml.jackson.jaxrs</groupId>
                 <artifactId>jackson-jaxrs-json-provider</artifactId>
                 <version>${com.fasterxml.jackson.core.version}</version>
@@ -115,6 +125,11 @@
                 <groupId>com.fasterxml.jackson.jaxrs</groupId>
                 <artifactId>jackson-jaxrs-base</artifactId>
                 <version>${com.fasterxml.jackson.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.googlecode.json-simple</groupId>
+                <artifactId>json-simple</artifactId>
+                <version>${json-simple.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.swagger</groupId>
@@ -187,10 +202,15 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.auth</groupId>
+                <artifactId>org.wso2.carbon.auth.client.registration.rest.api</artifactId>
+                <version>${carbon.auth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.auth</groupId>
                 <artifactId>org.wso2.carbon.auth.user.store</artifactId>
                 <version>${carbon.auth.version}</version>
             </dependency>
-	    <dependency>
+	        <dependency>
                 <groupId>org.wso2.charon</groupId>
                 <artifactId>org.wso2.charon3.core</artifactId>
                 <version>${charon.core.version}</version>
@@ -201,9 +221,44 @@
                 <version>${securevault.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.ws.commons.axiom</groupId>
-                <artifactId>axiom-api</artifactId>
-                <version>${imp.pkg.version.axiom}</version>
+                <groupId>com.nimbusds</groupId>
+                <artifactId>nimbus-jose-jwt</artifactId>
+                <version>${com.nimbusds.nimbus-jose-jwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.servicemix.bundles</groupId>
+                <artifactId>org.apache.servicemix.bundles.jcip-annotations</artifactId>
+                <version>${apache.servicemix.jcip-annotations.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.minidev</groupId>
+                <artifactId>json-smart</artifactId>
+                <version>${net.minidev.json-smart.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.minidev</groupId>
+                <artifactId>accessors-smart</artifactId>
+                <version>${net.minidev.accessors-smart.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>${org.ow2.asm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nimbusds</groupId>
+                <artifactId>lang-tag</artifactId>
+                <version>${com.nimbusds.lang-tag.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+                <version>${javax.mail.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${org.apache.commons-collections4.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -414,9 +469,9 @@
     </build>
 
     <properties>
-        <carbon.kernel.version>5.2.0-m3</carbon.kernel.version>
+        <carbon.kernel.version>5.2.0</carbon.kernel.version>
         <carbon.kernel.package.import.version.range>[5.1.0, 6.0.0)</carbon.kernel.package.import.version.range>
-        <carbon.auth.version>1.0-SNAPSHOT</carbon.auth.version>
+        <carbon.auth.version>1.0.0-SNAPSHOT</carbon.auth.version>
 
         <org.osgi.core.version>6.0.0</org.osgi.core.version>
         <osgi.framework.import.version.range>[1.8.0, 2.0.0)</osgi.framework.import.version.range>
@@ -431,7 +486,7 @@
 
         <pax.logging.api.version>1.9.0</pax.logging.api.version>
 
-        <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
+        <carbon.feature.plugin.version>3.1.3</carbon.feature.plugin.version>
         
         <carbon.datasources.version>1.0.0</carbon.datasources.version>
         <datasources.core.package.import.version.range>[1.0.0, 2.0.0)</datasources.core.package.import.version.range>
@@ -440,10 +495,12 @@
         <com.h2database.wso2.version>1.2.140.wso2v3</com.h2database.wso2.version>
         <h2.version>1.4.192</h2.version>
         
-        <org.wso2.msf4j.version>2.3.0-m1</org.wso2.msf4j.version>
+        <org.wso2.msf4j.version>2.4.3</org.wso2.msf4j.version>
         <msf4j.package.import.version.range>[2.0.0, 3.0.0)</msf4j.package.import.version.range>
 
-        <com.fasterxml.jackson.core.version>2.7.4</com.fasterxml.jackson.core.version>
+        <com.fasterxml.jackson.core.version>2.8.9</com.fasterxml.jackson.core.version>
+        <json-simple.version>1.1.1</json-simple.version>
+        <json-simple.bundle.version>1.1.1</json-simple.bundle.version>
 
         <com.nimbusd.oauth2-oidc-sdk.version>5.36</com.nimbusd.oauth2-oidc-sdk.version>
         <com.nimbusd.oauth2-oidc-sdk.import.version.range>[5.0, 6.0)</com.nimbusd.oauth2-oidc-sdk.import.version.range>
@@ -469,6 +526,20 @@
         <testng.version>6.9.10</testng.version>
         <mockito.version>1.10.19</mockito.version>
         <imp.pkg.version.axiom>1.2.10</imp.pkg.version.axiom>
+
+        <com.nimbusds.nimbus-jose-jwt.version>5.1</com.nimbusds.nimbus-jose-jwt.version>
+        <com.nimbusds.nimbus-jose-jwt.bundle.version>5.1.0</com.nimbusds.nimbus-jose-jwt.bundle.version>
+        <net.jcip.wso2.jcip-annotations.version>1.0.0.wso2v1</net.jcip.wso2.jcip-annotations.version>
+        <net.minidev.json-smart.version>2.3</net.minidev.json-smart.version>
+
+        <net.minidev.accessors-smart.version>1.2</net.minidev.accessors-smart.version>
+        <org.ow2.asm.version>5.2</org.ow2.asm.version>
+        <com.nimbusds.lang-tag.version>1.4.3</com.nimbusds.lang-tag.version>
+        <javax.mail.version>1.4.7</javax.mail.version>
+        <org.apache.commons-collections4.version>4.1</org.apache.commons-collections4.version>
+        <org.apache.commons-collections4.bundle.version>4.1.0</org.apache.commons-collections4.bundle.version>
+        <apache.servicemix.jcip-annotations.version>1.0_1</apache.servicemix.jcip-annotations.version>
+        <apache.servicemix.jcip-annotations.bundle.version>1.0.0.1</apache.servicemix.jcip-annotations.bundle.version>
 
         <!-- Jacoco for code coverage -->
         <jacoco.version>0.7.9</jacoco.version>

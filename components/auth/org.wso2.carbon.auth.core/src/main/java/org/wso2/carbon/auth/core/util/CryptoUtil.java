@@ -20,11 +20,11 @@
 
 package org.wso2.carbon.auth.core.util;
 
-import org.apache.axiom.om.util.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.auth.core.encryption.SymmetricEncryption;
 import org.wso2.carbon.auth.core.exception.CryptoException;
+import java.util.Base64;
 
 /**
  * The utility class to encrypt/decrypt passwords to be stored in the
@@ -80,7 +80,7 @@ public class CryptoUtil {
      */
     public String encryptAndBase64Encode(byte[] plainText) throws
             CryptoException {
-        return Base64.encode(encrypt(plainText));
+        return Base64.getEncoder().encodeToString(encrypt(plainText));
     }
 
     /**
@@ -113,6 +113,6 @@ public class CryptoUtil {
      */
     public byte[] base64DecodeAndDecrypt(String base64CipherText) throws
             CryptoException {
-        return decrypt(Base64.decode(base64CipherText));
+        return decrypt(Base64.getDecoder().decode(base64CipherText));
     }
 }

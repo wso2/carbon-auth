@@ -27,4 +27,17 @@ public class RestAPIUtil {
         errorDTO.setDescription(errorObject.getDescription());
         return errorDTO;
     }
+
+    /**
+     * Returns an Internal Server Error DTO
+     *
+     * @return an Internal Server Error DTO
+     */
+    public static ErrorDTO getInternalServerErrorDTO() {
+        ErrorDTO errorDTO = new ErrorDTO();
+        errorDTO.setCode("500");
+        errorDTO.setHttpStatusCode(500);
+        errorDTO.setDescription("Internal Server Error");
+        return errorDTO;
+    }
 }

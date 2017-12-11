@@ -22,12 +22,12 @@ import javax.ws.rs.core.SecurityContext;
 
 public abstract class RegisterApiService {
     public abstract Response deleteApplication(String clientId
- , Request request) throws NotFoundException;
+  ,Request request) throws NotFoundException;
     public abstract Response getApplication(String clientId
- , Request request) throws NotFoundException;
+  ,Request request) throws NotFoundException;
     public abstract Response registerApplication(RegistrationRequestDTO registrationRequest
- , Request request) throws NotFoundException;
+  ,Request request) throws NotFoundException;
     public abstract Response updateApplication(UpdateRequestDTO updateRequest
  ,String clientId
- , Request request) throws NotFoundException;
+  ,Request request) throws NotFoundException;
 }

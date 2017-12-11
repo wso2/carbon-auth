@@ -18,10 +18,8 @@
 
 package org.wso2.carbon.auth.client.registration.dao.impl;
 
-import org.wso2.carbon.auth.client.registration.EncryptionDecryptionPersistenceProcessor;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
 import org.wso2.carbon.auth.client.registration.exception.ClientRegistrationDAOException;
-import org.wso2.carbon.auth.client.registration.exception.PersistenceProcessorException;
 import org.wso2.carbon.auth.client.registration.model.Application;
 import org.wso2.carbon.auth.core.datasource.DAOUtil;
 
@@ -37,12 +35,10 @@ import java.sql.Types;
  */
 public class ApplicationDAOImpl implements ApplicationDAO {
 
-    private EncryptionDecryptionPersistenceProcessor persistenceProcessor;
     /**
      * Constructor is package private, use factory class to create the
      */
     ApplicationDAOImpl() {
-        persistenceProcessor = new EncryptionDecryptionPersistenceProcessor();
     }
 
     @Override
@@ -58,8 +54,11 @@ public class ApplicationDAOImpl implements ApplicationDAO {
                 if (rs.next()) {
                     Application data = new Application();
                     data.setClientId(clientId);
+                    /* todo add encryption util
                     data.setClientSecret(
                             persistenceProcessor.getPreprocessedClientSecret(rs.getString("CLIENT_SECRET")));
+                    */
+                    data.setClientSecret(rs.getString("CLIENT_SECRET"));
                     data.setClientName(rs.getString("APP_NAME"));
                     data.setCallBackUrl(rs.getString("CALLBACK_URL"));
                     data.setGrantTypes(rs.getString("GRANT_TYPES"));
@@ -74,10 +73,10 @@ public class ApplicationDAOImpl implements ApplicationDAO {
             throw new ClientRegistrationDAOException(
                     String.format("Error occurred while getting client application public info(clientId : %s",
                             clientId), e);
-        } catch (PersistenceProcessorException e) {
+        } /*catch (PersistenceProcessorException e) {
             throw new ClientRegistrationDAOException("Error occurred while processing client secret by " +
                             "EncryptionDecryptionPersistenceProcessor", e);
-        }
+        }*/
 
         return null;
     }
@@ -144,7 +143,10 @@ public class ApplicationDAOImpl implements ApplicationDAO {
                 connection.setAutoCommit(false);
 
                 statement.setString(1, application.getClientId());
+                /* todo add encryption util
                 statement.setString(2, persistenceProcessor.getProcessedClientSecret(application.getClientSecret()));
+                */
+                statement.setString(2, application.getClientSecret());
                 statement.setString(3, application.getClientName());
                 statement.setString(4, application.getOauthVersion());
 
@@ -165,9 +167,9 @@ public class ApplicationDAOImpl implements ApplicationDAO {
             } catch (SQLException e) {
                 connection.rollback();
                 throw e;
-            } catch (PersistenceProcessorException e) {
+            /* }  catch (PersistenceProcessorException e) {
                 throw new ClientRegistrationDAOException("Error occurred while processing client secret by " +
-                        "EncryptionDecryptionPersistenceProcessor", e);
+                        "EncryptionDecryptionPersistenceProcessor", e); */
             } finally {
                 connection.setAutoCommit(DAOUtil.isAutoCommitAuth());
             }

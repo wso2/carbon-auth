@@ -25,7 +25,7 @@
     <parent>
         <artifactId>auth-features</artifactId>
         <groupId>org.wso2.carbon.auth</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -48,6 +48,46 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>oauth2-oidc-sdk</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.jcip-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>accessors-smart</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>lang-tag</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
         </dependency>
     </dependencies>
 
@@ -226,6 +266,46 @@
                             <bundle>
                                 <symbolicName>org.wso2.carbon.auth.core</symbolicName>
                                 <version>${carbon.auth.version}</version>
+                            </bundle>
+                            <bundle>
+                                <symbolicName>org.apache.commons.lang3</symbolicName>
+                                <version>${apache.commons.lang3.version}</version>
+                            </bundle>
+                            <bundle>
+                                <symbolicName>oauth2-oidc-sdk</symbolicName>
+                                <version>${com.nimbusd.oauth2-oidc-sdk.version}</version>
+                            </bundle>
+                            <bundle>
+                                <symbolicName>com.nimbusds.nimbus-jose-jwt</symbolicName>
+                                <version>${com.nimbusds.nimbus-jose-jwt.bundle.version}</version>
+                            </bundle>
+                            <bundle>
+                                <symbolicName>org.apache.servicemix.bundles.jcip-annotations</symbolicName>
+                                <version>${apache.servicemix.jcip-annotations.bundle.version}</version>
+                            </bundle>
+                            <bundle>
+                                <symbolicName>net.minidev.json-smart</symbolicName>
+                                <version>${net.minidev.json-smart.version}</version>
+                            </bundle>
+                            <bundle>
+                                <symbolicName>net.minidev.accessors-smart</symbolicName>
+                                <version>${net.minidev.accessors-smart.version}</version>
+                            </bundle>
+                            <bundle>
+                                <symbolicName>org.objectweb.asm</symbolicName>
+                                <version>${org.ow2.asm.version}</version>
+                            </bundle>
+                            <bundle>
+                                <symbolicName>lang-tag</symbolicName>
+                                <version>${com.nimbusds.lang-tag.version}</version>
+                            </bundle>
+                            <bundle>
+                                <symbolicName>javax.mail</symbolicName>
+                                <version>${javax.mail.version}</version>
+                            </bundle>
+                            <bundle>
+                                <symbolicName>org.apache.commons.collections4</symbolicName>
+                                <version>${org.apache.commons-collections4.bundle.version}</version>
                             </bundle>
                         </bundles>
                         </configuration>

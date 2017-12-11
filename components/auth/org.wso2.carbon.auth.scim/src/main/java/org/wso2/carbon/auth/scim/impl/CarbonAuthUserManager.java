@@ -20,6 +20,7 @@
 
 package org.wso2.carbon.auth.scim.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.ServiceReferenceHolder;
@@ -52,8 +53,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.security.auth.callback.PasswordCallback;
-
-import static org.wso2.carbon.kernel.utils.StringUtils.isNullOrEmpty;
 
 /**
  * This is the wrapper class of Charon User Manager. This deals with the user management API. 
@@ -388,7 +387,7 @@ public class CarbonAuthUserManager implements UserManager {
             if (attributeMappings.containsKey(attributeName) && attributeMappings.get(attributeName).isUnique()) {
                 try {
                     String userId = userStoreConnector.getConnectorUserId(attributeName, attributeValue);
-                    if (!isNullOrEmpty(userId)) {
+                    if (!StringUtils.isEmpty(userId)) {
                         return true;
                     }
                 } catch (UserStoreConnectorException e) {
@@ -413,7 +412,7 @@ public class CarbonAuthUserManager implements UserManager {
             if (attributeMappings.containsKey(attributeName) && attributeMappings.get(attributeName).isUnique()) {
                 try {
                     String groupId = userStoreConnector.getConnectorGroupId(attributeName, attributeValue);
-                    if (!isNullOrEmpty(groupId)) {
+                    if (!StringUtils.isEmpty(groupId)) {
                         return true;
                     }
                 } catch (UserStoreConnectorException e) {
