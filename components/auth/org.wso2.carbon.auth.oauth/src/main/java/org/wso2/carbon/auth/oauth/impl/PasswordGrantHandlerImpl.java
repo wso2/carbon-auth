@@ -23,6 +23,7 @@ package org.wso2.carbon.auth.oauth.impl;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.ResourceOwnerPasswordCredentialsGrant;
 import com.nimbusds.oauth2.sdk.Scope;
+import com.nimbusds.oauth2.sdk.auth.Secret;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,9 @@ import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.ClientDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
+import org.wso2.carbon.auth.user.mgt.UserStoreException;
+import org.wso2.carbon.auth.user.mgt.UserStoreManager;
+import org.wso2.carbon.auth.user.mgt.impl.JDBCUserStoreManager;
 
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -50,8 +54,8 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
     public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters) {
         log.debug("Calling PasswordGrantHandlerImpl:process");
         try {
-            ResourceOwnerPasswordCredentialsGrant request =
-                    ResourceOwnerPasswordCredentialsGrant.parse(queryParameters);
+            ResourceOwnerPasswordCredentialsGrant request = ResourceOwnerPasswordCredentialsGrant
+                    .parse(queryParameters);
             String scope = queryParameters.get(OAuthConstants.SCOPE_QUERY_PARAM);
             processPasswordGrantRequest(authorization, context, scope, request);
         } catch (ParseException e) {
@@ -61,13 +65,20 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
     }
 
     private void processPasswordGrantRequest(String authorization, AccessTokenContext context,
-                                             @Nullable String scopeValue,
-                                             ResourceOwnerPasswordCredentialsGrant request) {
+            @Nullable String scopeValue, ResourceOwnerPasswordCredentialsGrant request) {
         log.debug("calling processPasswordGrantRequest");
         MutableBoolean haltExecution = new MutableBoolean(false);
 
-        clientLookup.getClientId(authorization, context, haltExecution);
+        String clientId = clientLookup.getClientId(authorization, context, haltExecution);
 
+        boolean authenticated = validateGrant(request);
+        if (authenticated) {
+            context.getParams().put("AUTH_USER", request.getUsername());
+        } else {
+            return;
+        }
+        //check CK empty
+        //check CK state
         if (haltExecution.isTrue()) {
             return;
         }
@@ -81,6 +92,19 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
             scope = new Scope(OAuthConstants.SCOPE_DEFAULT);
         }
 
-        TokenGenerator.generateAccessToken(scope, context);
+        TokenGenerator.generateAccessToken(clientId, scope, context);
+    }
+
+    private boolean validateGrant(ResourceOwnerPasswordCredentialsGrant request) {
+        String username = request.getUsername();
+        Secret password = request.getPassword();
+
+        UserStoreManager jdbcUserStoreManager = new JDBCUserStoreManager();
+        try {
+            return jdbcUserStoreManager.doAuthenticate(username, password.getValue());
+        } catch (UserStoreException e) {
+            log.error(e.getMessage(), e);
+        }
+        return false;
     }
 }

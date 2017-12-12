@@ -79,7 +79,7 @@ public class CarbonAuthUserManager implements UserManager {
     }    
 
     @Override
-    public User createUser(User user, Map<String, Boolean> requiredAttributes) throws CharonException, 
+    public User createUser(User user, Map<String, Boolean> requiredAttributes) throws CharonException,
             ConflictException, BadRequestException {
         try {
             
@@ -116,9 +116,7 @@ public class CarbonAuthUserManager implements UserManager {
 
                 if (subValues != null && subValues.size() != 0) {
                     for (org.wso2.charon3.core.attributes.Attribute subValue : subValues) {
-                        SimpleAttribute valueAttribute =
-                            (SimpleAttribute) ((subValue)).getSubAttribute(
-                                     SCIMConstants.CommonSchemaConstants.VALUE);
+                        SimpleAttribute valueAttribute = (SimpleAttribute) subValue;
                         groupIds.add((String) valueAttribute.getValue());
                     }
                 }                    

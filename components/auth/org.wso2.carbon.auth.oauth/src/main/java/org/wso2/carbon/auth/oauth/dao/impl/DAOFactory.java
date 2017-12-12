@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.datasource.DAOUtil;
 import org.wso2.carbon.auth.core.exception.ExceptionCodes;
 import org.wso2.carbon.auth.oauth.dao.ClientDAO;
+import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.exception.ClientDAOException;
 
 import java.sql.Connection;
@@ -56,6 +57,29 @@ public class DAOFactory {
             }
 
             return new ClientDAOImpl();
+        } catch (SQLException e) {
+            throw new ClientDAOException("Error while getting clientDAO", e);
+        }
+    }
+
+    /**
+     * getting token DAO
+     *
+     * @return
+     * @throws ClientDAOException
+     */
+    public static TokenDAO getTokenDAO() throws ClientDAOException {
+        try (Connection connection = DAOUtil.getAuthConnection()) {
+            String driverName = connection.getMetaData().getDriverName();
+
+            if (!(driverName.contains(MYSQL) || driverName.contains(H2) || driverName.contains(DB2) || driverName
+                    .contains(MS_SQL) || driverName.contains(MICROSOFT) || driverName.contains(POSTGRE) || driverName
+                    .contains(ORACLE))) {
+                throw new ClientDAOException("Unhandled DB driver: " + driverName + " detected",
+                        ExceptionCodes.DAO_EXCEPTION);
+            }
+
+            return new TokenDAOImpl();
         } catch (SQLException e) {
             throw new ClientDAOException("Error while getting clientDAO", e);
         }

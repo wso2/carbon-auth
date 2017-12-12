@@ -254,4 +254,6 @@ public interface UserStoreConnector {
      */
     void deleteCredential(String userIdentifier) throws UserStoreConnectorException;
 
+    Map getUserPasswordInfo(String userId) throws UserStoreConnectorException;
+
 }

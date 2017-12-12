@@ -64,7 +64,7 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
         log.debug("Calling processClientCredentialsGrantRequest");
         MutableBoolean haltExecution = new MutableBoolean(false);
 
-        clientLookup.getClientId(authorization, context, haltExecution);
+        String clientID = clientLookup.getClientId(authorization, context, haltExecution);
 
         if (haltExecution.isTrue()) {
             return;
@@ -77,6 +77,6 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
             scope = new Scope(OAuthConstants.SCOPE_DEFAULT);
         }
 
-        TokenGenerator.generateAccessToken(scope, context);
+        TokenGenerator.generateAccessToken(clientID, scope, context);
     }
 }
