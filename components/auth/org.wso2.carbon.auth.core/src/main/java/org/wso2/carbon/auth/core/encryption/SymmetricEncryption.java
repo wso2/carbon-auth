@@ -69,16 +69,19 @@ public class SymmetricEncryption {
 
         try {
 
-            ClassLoader classLoader = getClass().getClassLoader();
-            File file = new File(classLoader.getResource(CryptoConstants.SYMMETRIC_KEY_PROPERTIES_FILE_NAME).getFile());
+            String path = System.getProperty("wso2.runtime.path") + File.separator + "resources/auth/"
+                    + CryptoConstants.SYMMETRIC_KEY_PROPERTIES_FILE_NAME;
+            File file = new File(path);
             if (file.exists()) {
                 try (FileInputStream fileInputStream = new FileInputStream(file)) {
                     properties = new Properties();
                     properties.load(fileInputStream);
                 }
 
-                Path configPath = Paths.get("resources", CryptoConstants.SECURE_VAULT_CONFIG_YAML_FILE_NAME);
-
+                String path1 = System.getProperty("wso2.runtime.path") + File.separator + "resources/auth/"
+                        + CryptoConstants.SECURE_VAULT_CONFIG_YAML_FILE_NAME;
+                File file1 = new File(path1);
+                Path configPath = Paths.get(file1.toURI());
                 SecureVault secureVault = new SecureVaultFactory().getSecureVault(configPath)
                         .orElseThrow(() -> new SecureVaultException("Error in getting secure vault instance"));
 
