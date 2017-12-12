@@ -46,9 +46,14 @@
 
     <dependencyManagement>
         <dependencies>
-	    <dependency>
+	        <dependency>
                 <groupId>org.wso2.carbon.auth</groupId>
                 <artifactId>org.wso2.carbon.auth.core</artifactId>
+                <version>${carbon.auth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.auth</groupId>
+                <artifactId>org.wso2.carbon.auth.user.mgt</artifactId>
                 <version>${carbon.auth.version}</version>
             </dependency>
             <dependency>
