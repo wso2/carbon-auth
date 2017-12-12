@@ -21,7 +21,6 @@
 package org.wso2.carbon.auth.core.internal;
 
 import com.zaxxer.hikari.HikariDataSource;
-
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -35,8 +34,8 @@ import org.wso2.carbon.auth.core.ServiceReferenceHolder;
 import org.wso2.carbon.auth.core.datasource.DAOUtil;
 import org.wso2.carbon.auth.core.datasource.DataSource;
 import org.wso2.carbon.auth.core.datasource.DataSourceImpl;
+import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
-import org.wso2.carbon.kernel.configprovider.ConfigProvider;
 
 import javax.naming.Context;
 import javax.naming.NamingException;

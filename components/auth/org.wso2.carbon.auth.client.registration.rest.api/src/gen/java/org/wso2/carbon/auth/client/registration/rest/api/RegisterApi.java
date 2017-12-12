@@ -22,6 +22,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
+
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -37,7 +38,7 @@ import javax.ws.rs.core.Response;
     service = Microservice.class,
     immediate = true
 )
-@Path(".[\\d]+/register")
+@Path("/api/identity/oauth2/dcr/v1.[\\d]+/register")
 @Consumes({ "application/json" })
 @Produces({ "application/json" })
 @ApplicationPath("/register")
@@ -45,6 +46,7 @@ import javax.ws.rs.core.Response;
 public class RegisterApi implements Microservice  {
    private final RegisterApiService delegate = RegisterApiServiceFactory.getRegisterApi();
 
+    
     @DELETE
     @Path("/{client_id}")
     @Consumes({ "application/json" })
@@ -57,10 +59,11 @@ public class RegisterApi implements Microservice  {
         
         @io.swagger.annotations.ApiResponse(code = 500, message = "Server Error", response = void.class) })
     public Response deleteApplication(@ApiParam(value = "Unique identifier of the OAuth2 client application.",required=true) @PathParam("client_id") String clientId
-, @Context Request request)
+ ,@Context Request request)
     throws NotFoundException {
-        return delegate.deleteApplication(clientId, request);
+        return delegate.deleteApplication(clientId,request);
     }
+    
     @GET
     @Path("/{client_id}")
     @Consumes({ "application/json" })
@@ -73,10 +76,11 @@ public class RegisterApi implements Microservice  {
         
         @io.swagger.annotations.ApiResponse(code = 500, message = "Server Error", response = ApplicationDTO.class) })
     public Response getApplication(@ApiParam(value = "Unique identifier of the OAuth2 client application.",required=true) @PathParam("client_id") String clientId
-, @Context Request request)
+ ,@Context Request request)
     throws NotFoundException {
-        return delegate.getApplication(clientId, request);
+        return delegate.getApplication(clientId,request);
     }
+    
     @POST
     
     @Consumes({ "application/json" })
@@ -91,10 +95,11 @@ public class RegisterApi implements Microservice  {
         
         @io.swagger.annotations.ApiResponse(code = 500, message = "Server Error", response = ApplicationDTO.class) })
     public Response registerApplication(@ApiParam(value = "Application information to register." ,required=true) RegistrationRequestDTO registrationRequest
-, @Context Request request)
+ ,@Context Request request)
     throws NotFoundException {
-        return delegate.registerApplication(registrationRequest, request);
+        return delegate.registerApplication(registrationRequest,request);
     }
+    
     @PUT
     @Path("/{client_id}")
     @Consumes({ "application/json" })
@@ -110,8 +115,8 @@ public class RegisterApi implements Microservice  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "Server Error", response = ApplicationDTO.class) })
     public Response updateApplication(@ApiParam(value = "Application information to update." ,required=true) UpdateRequestDTO updateRequest
 ,@ApiParam(value = "Unique identifier for the OAuth2 client application.",required=true) @PathParam("client_id") String clientId
-, @Context Request request)
+ ,@Context Request request)
     throws NotFoundException {
-        return delegate.updateApplication(updateRequest,clientId, request);
+        return delegate.updateApplication(updateRequest,clientId,request);
     }
 }

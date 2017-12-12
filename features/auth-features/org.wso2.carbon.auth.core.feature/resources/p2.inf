@@ -1,5 +1,7 @@
+metaRequirements.0.namespace = org.eclipse.equinox.p2.iu
+metaRequirements.0.name = org.wso2.carbon.extensions.touchpoint
 instructions.configure = \
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../lib/features/org.wso2.carbon.auth.core_${feature.version}/dbscripts/auth/,target:${installFolder}/../../dbscripts/auth,overwrite:true);\
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../lib/features/org.wso2.carbon.auth.core_${feature.version}/dbscripts/um/,target:${installFolder}/../../dbscripts/um,overwrite:true);\
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../lib/features/org.wso2.carbon.apimgt.core_${feature.version}/database/AUTH_DB.mv.db/,target:${installFolder}/../../database/AUTH_DB.mv.db,overwrite:true);\
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../lib/features/org.wso2.carbon.apimgt.core_${feature.version}/database/UM_DB.mv.db/,target:${installFolder}/../../database/UM_DB.mv.db,overwrite:true);\
+org.wso2.carbon.extensions.touchpoint.copy(source:${installFolder}/../lib/features/org.wso2.carbon.auth.core_${feature.version}/dbscripts/auth/,target:${installFolder}/../{runtime}/dbscripts/auth,overwrite:true);\
+org.wso2.carbon.extensions.touchpoint.copy(source:${installFolder}/../lib/features/org.wso2.carbon.auth.core_${feature.version}/dbscripts/um/,target:${installFolder}/../{runtime}/dbscripts/um,overwrite:true);\
+org.wso2.carbon.extensions.touchpoint.copy(source:${installFolder}/../lib/features/org.wso2.carbon.auth.core_${feature.version}/database/AUTH_DB.mv.db/,target:${installFolder}/../{runtime}/database/AUTH_DB.mv.db,overwrite:true);\
+org.wso2.carbon.extensions.touchpoint.copy(source:${installFolder}/../lib/features/org.wso2.carbon.auth.core_${feature.version}/database/UM_DB.mv.db/,target:${installFolder}/../{runtime}/database/UM_DB.mv.db,overwrite:true);\

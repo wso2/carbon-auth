@@ -18,15 +18,15 @@
 package org.wso2.carbon.auth.client.registration.rest.api.utils;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
 public class DCRMUtils {
 
-    private static final Log log = LogFactory.getLog(DCRMUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(DCRMUtils.class);
 
     public static boolean isRedirectionUriValid(String redirectUri) {
 
