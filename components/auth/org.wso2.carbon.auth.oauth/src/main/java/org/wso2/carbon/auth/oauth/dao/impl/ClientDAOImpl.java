@@ -20,9 +20,12 @@
 
 package org.wso2.carbon.auth.oauth.dao.impl;
 
+import org.apache.commons.io.Charsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.datasource.DAOUtil;
+import org.wso2.carbon.auth.core.exception.CryptoException;
+import org.wso2.carbon.auth.core.util.CryptoUtil;
 import org.wso2.carbon.auth.oauth.dao.ClientDAO;
 import org.wso2.carbon.auth.oauth.exception.ClientDAOException;
 
@@ -37,7 +40,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 
 /**
- * Implementation of ClientDOA interface
+ * Implementation of ClientDAO interface
  */
 public class ClientDAOImpl implements ClientDAO {
     private static final Logger log = LoggerFactory.getLogger(ClientDAOImpl.class);
@@ -120,12 +123,13 @@ public class ClientDAOImpl implements ClientDAO {
     public boolean isClientCredentialsValid(String clientId, String clientSecret) throws ClientDAOException {
         log.debug("Calling isClientCredentialsValid for clientId: {}", clientId);
 
-        final String query = "SELECT 1 FROM AUTH_OAUTH2_CLIENTS WHERE CLIENT_ID = ? AND CLIENT_SECRET = ?";
-
+        final String query = "SELECT 1 FROM AUTH_OAUTH2_APPLICATIONS WHERE CLIENT_ID = ? AND CLIENT_SECRET = ?";
         try (Connection connection = DAOUtil.getAuthConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
+            String encodedCS = CryptoUtil.getDefaultCryptoUtil()
+                    .encryptAndBase64Encode(clientSecret.getBytes(Charsets.UTF_8));
             statement.setString(1, clientId);
-            statement.setString(2, clientSecret);
+            statement.setString(2, encodedCS);
 
             try (ResultSet rs = statement.executeQuery()) {
                 return rs.next();
@@ -134,6 +138,8 @@ public class ClientDAOImpl implements ClientDAO {
         } catch (SQLException e) {
             throw new ClientDAOException("Error occurred while checking if client credentials valid(clientId: "
                     + clientId, e);
+        } catch (CryptoException e) {
+            throw new ClientDAOException("Error occurred while encrypting clientSecret", e);
         }
     }
 
@@ -157,8 +163,6 @@ public class ClientDAOImpl implements ClientDAO {
                 } else {
                     statement.setNull(3, Types.VARCHAR);
                 }
-
-                statement.setString(4, scope);
 
                 statement.execute();
                 connection.commit();

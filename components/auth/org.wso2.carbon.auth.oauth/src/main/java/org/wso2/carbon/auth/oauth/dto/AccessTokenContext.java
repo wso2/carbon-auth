@@ -23,6 +23,9 @@ package org.wso2.carbon.auth.oauth.dto;
 import com.nimbusds.oauth2.sdk.AccessTokenResponse;
 import com.nimbusds.oauth2.sdk.ErrorObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * DTO that stores context information related to the Access Token
  */
@@ -30,6 +33,7 @@ public class AccessTokenContext {
     private boolean isSuccessful;
     private ErrorObject errorObject;
     private AccessTokenResponse accessTokenResponse;
+    private Map<String, String> params = new HashMap<>();
 
     public boolean isSuccessful() {
         return isSuccessful;
@@ -53,5 +57,13 @@ public class AccessTokenContext {
 
     public void setAccessTokenResponse(AccessTokenResponse accessTokenResponse) {
         this.accessTokenResponse = accessTokenResponse;
+    }
+
+    public Map getParams() {
+        return params;
+    }
+
+    public void setParams(Map params) {
+        this.params = params;
     }
 }
