@@ -1,4 +1,3 @@
-package org.wso2.carbon.auth.token.introspection.rest.api.utils;
 /*
  * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
@@ -16,8 +15,9 @@ package org.wso2.carbon.auth.token.introspection.rest.api.utils;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.wso2.carbon.auth.token.introspection.rest.api.utils;
 
-import org.wso2.carbon.auth.introspection.dto.IntrospectionResponse;
+import org.wso2.carbon.auth.token.introspection.dto.IntrospectionResponse;
 import org.wso2.carbon.auth.token.introspection.rest.api.dto.IntrospectionResponseDTO;
 
 /**

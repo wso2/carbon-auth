@@ -28,14 +28,14 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.auth.token.introspection.rest.api.feature</artifactId>
     <packaging>carbon-feature</packaging>
-    <name>WSO2 Auth Client Registration REST API Feature</name>
+    <name>WSO2 Auth Introspection REST API Feature</name>
     
     <dependencies>
-        <!--<dependency>-->
-            <!--<groupId>org.wso2.carbon.auth</groupId>-->
-            <!--<artifactId>org.wso2.carbon.auth.token.introspection</artifactId>-->
-            <!--<version>1.0.0-SNAPSHOT</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.wso2.carbon.auth</groupId>
+            <artifactId>org.wso2.carbon.auth.token.introspection</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>org.wso2.carbon.auth</groupId>
             <artifactId>org.wso2.carbon.auth.token.introspection.rest.api</artifactId>
@@ -70,10 +70,10 @@
                                 </advice>
                             </adviceFileContents>
                             <bundles>
-                                <!--<bundle>-->
-                                    <!--<symbolicName>org.wso2.carbon.auth.client.registration</symbolicName>-->
-                                    <!--<version>${carbon.auth.version}</version>-->
-                                <!--</bundle>-->
+                                <bundle>
+                                    <symbolicName>org.wso2.carbon.auth.token.introspection</symbolicName>
+                                    <version>${carbon.auth.version}</version>
+                                </bundle>
                                 <bundle>
                                     <symbolicName>org.wso2.carbon.auth.token.introspection.rest.api</symbolicName>
                                     <version>${carbon.auth.version}</version>

@@ -1,8 +1,8 @@
 package org.wso2.carbon.auth.token.introspection.rest.api.impl;
 
-import org.wso2.carbon.auth.introspection.IntrospectionManager;
-import org.wso2.carbon.auth.introspection.dto.IntrospectionResponse;
-import org.wso2.carbon.auth.introspection.impl.IntrospectionManagerImpl;
+import org.wso2.carbon.auth.token.introspection.IntrospectionManager;
+import org.wso2.carbon.auth.token.introspection.dto.IntrospectionResponse;
+import org.wso2.carbon.auth.token.introspection.impl.IntrospectionManagerImpl;
 import org.wso2.carbon.auth.token.introspection.rest.api.IntrospectionApiService;
 import org.wso2.carbon.auth.token.introspection.rest.api.NotFoundException;
 import org.wso2.carbon.auth.token.introspection.rest.api.dto.IntrospectionResponseDTO;
