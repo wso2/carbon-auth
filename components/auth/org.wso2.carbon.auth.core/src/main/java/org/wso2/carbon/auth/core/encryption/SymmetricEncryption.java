@@ -20,7 +20,7 @@
 
 package org.wso2.carbon.auth.core.encryption;
 
-import org.wso2.carbon.auth.core.CryptoConstants;
+import org.wso2.carbon.auth.core.AuthConstants;
 import org.wso2.carbon.auth.core.exception.CryptoException;
 import org.wso2.carbon.secvault.SecureVault;
 import org.wso2.carbon.secvault.SecureVaultFactory;
@@ -70,14 +70,16 @@ public class SymmetricEncryption {
         try {
 
             ClassLoader classLoader = getClass().getClassLoader();
-            File file = new File(classLoader.getResource(CryptoConstants.SYMMETRIC_KEY_PROPERTIES_FILE_NAME).getFile());
+            File file = new File(classLoader.getResource(AuthConstants.SYMMETRIC_KEY_PROPERTIES_FILE_NAME).getFile());
             if (file.exists()) {
                 try (FileInputStream fileInputStream = new FileInputStream(file)) {
                     properties = new Properties();
                     properties.load(fileInputStream);
                 }
 
-                Path configPath = Paths.get("resources", CryptoConstants.SECURE_VAULT_CONFIG_YAML_FILE_NAME);
+                Path configPath = Paths
+                        .get(System.getProperty(AuthConstants.CARBON_HOME) + File.separator + "resources",
+                                AuthConstants.SECURE_VAULT_CONFIG_YAML_FILE_NAME);
 
                 SecureVault secureVault = new SecureVaultFactory().getSecureVault(configPath)
                         .orElseThrow(() -> new SecureVaultException("Error in getting secure vault instance"));

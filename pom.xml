@@ -163,6 +163,11 @@
                 <version>${findbugs.jsr305.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>annotations</artifactId>
+                <version>${findbugs.jsr305.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${apache.commons.lang3.version}</version>
@@ -198,6 +203,11 @@
             <dependency>
                 <groupId>org.wso2.carbon.auth</groupId>
                 <artifactId>org.wso2.carbon.auth.oauth</artifactId>
+                <version>${carbon.auth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.auth</groupId>
+                <artifactId>org.wso2.carbon.auth.test.common</artifactId>
                 <version>${carbon.auth.version}</version>
             </dependency>
             <dependency>
@@ -410,7 +420,7 @@
                                             <limit>
                                                 <counter>INSTRUCTION</counter>
                                                 <value>COVEREDRATIO</value>
-                                                <minimum>0.20</minimum>
+                                                <minimum>0.70</minimum>
                                             </limit>
                                         </limits>
                                     </rule>
