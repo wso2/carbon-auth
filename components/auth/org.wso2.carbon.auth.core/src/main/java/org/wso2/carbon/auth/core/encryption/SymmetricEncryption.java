@@ -50,7 +50,6 @@ public class SymmetricEncryption {
     private static SymmetricEncryption instance = null;
 
     private SecretKey symmetricKey = null;
-    private boolean isSymmetricKeyFromFile = false;
     private static String symmetricKeyEncryptAlgoDefault = "AES";
     private String propertyKey = "symmetric.key";
 
@@ -64,23 +63,28 @@ public class SymmetricEncryption {
     public void generateSymmetricKey() throws CryptoException {
 
         String secretAlias;
-        String encryptionAlgo = null;
+        String encryptionAlgo;
         Properties properties;
+        boolean isSymmetricKeyFromFile = false;
 
         try {
 
-            ClassLoader classLoader = getClass().getClassLoader();
-            File file = new File(classLoader.getResource(AuthConstants.SYMMETRIC_KEY_PROPERTIES_FILE_NAME).getFile());
-            if (file.exists()) {
-                try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            String symmetricPropertiesFilePath =
+                    System.getProperty(AuthConstants.WSO2_RUNTIME_PATH) + File.separator + "resources" + File.separator
+                            + "auth" + File.separator + AuthConstants.SYMMETRIC_KEY_PROPERTIES_FILE_NAME;
+            File symmetricPropertiesFile = new File(symmetricPropertiesFilePath);
+            if (symmetricPropertiesFile.exists()) {
+                try (FileInputStream fileInputStream = new FileInputStream(symmetricPropertiesFile)) {
                     properties = new Properties();
                     properties.load(fileInputStream);
                 }
 
-                Path configPath = Paths
-                        .get(System.getProperty(AuthConstants.CARBON_HOME) + File.separator + "resources",
-                                AuthConstants.SECURE_VAULT_CONFIG_YAML_FILE_NAME);
-
+                String secVaultYamlFilePath =
+                        System.getProperty(AuthConstants.WSO2_RUNTIME_PATH) + File.separator + "resources"
+                                + File.separator + "auth" + File.separator
+                                + AuthConstants.SECURE_VAULT_CONFIG_YAML_FILE_NAME;
+                File secVaultYamlFile = new File(secVaultYamlFilePath);
+                Path configPath = Paths.get(secVaultYamlFile.toURI());
                 SecureVault secureVault = new SecureVaultFactory().getSecureVault(configPath)
                         .orElseThrow(() -> new SecureVaultException("Error in getting secure vault instance"));
 

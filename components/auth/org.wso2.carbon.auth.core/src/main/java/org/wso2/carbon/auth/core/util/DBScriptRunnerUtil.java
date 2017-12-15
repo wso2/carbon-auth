@@ -21,9 +21,11 @@ package org.wso2.carbon.auth.core.util;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.core.exception.ScriptRunnerException;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Connection;
@@ -35,13 +37,20 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- * DB Script runner class to be used in integration tests
+ * DB Script runner class to be used in integration tests.
  * 
  */
 public class DBScriptRunnerUtil {
     private static final Logger log = LoggerFactory.getLogger(DBScriptRunnerUtil.class);
 
-    public static void executeSQLScript(String dbscriptPath, Connection connection) throws Exception {
+    /**
+     * Execute a given sql script using connection object
+     *
+     * @param dbscriptPath path to db script
+     * @param connection connection object
+     * @throws ScriptRunnerException when error occurred while running db script
+     */
+    public static void executeSQLScript(String dbscriptPath, Connection connection) throws ScriptRunnerException {
         StringBuffer sql = new StringBuffer();
 
         try (InputStream is = new FileInputStream(dbscriptPath);
@@ -80,11 +89,20 @@ public class DBScriptRunnerUtil {
             if (sql.length() > 0) {
                 executeSQL(sql.toString(), connection);
             }
+        } catch (IOException e) {
+            throw new ScriptRunnerException("Error while running sql script in " + dbscriptPath, e);
         }
     }
 
+    /**
+     * Runs an sql script using the connection object
+     * 
+     * @param sql sql script
+     * @param connection connection object
+     * @throws ScriptRunnerException when error occurred while running db script
+     */
     @SuppressFBWarnings("SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE")
-    private static void executeSQL(String sql, Connection connection) {
+    private static void executeSQL(String sql, Connection connection) throws ScriptRunnerException {
         // Check and ignore empty statements
         String delimiter = ";";
         String dbType;
@@ -123,7 +141,6 @@ public class DBScriptRunnerUtil {
                 } catch (SQLException e) {
                     log.error("Error while executing oracle PL/SQL commands.", e);
                 }
-
             }
 
             final String q = "select index_name,index_type,status,domidx_status,domidx_opstatus from user_indexes "
@@ -136,7 +153,7 @@ public class DBScriptRunnerUtil {
                     }
                 }
             } catch (SQLException e) {
-                log.error("Error when rebuilding Oracle indexes", e);
+                throw new ScriptRunnerException("Error when rebuilding Oracle indexes", e);
             }
         }
     }

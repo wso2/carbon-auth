@@ -26,20 +26,18 @@
         <groupId>org.wso2.carbon.auth</groupId>
         <artifactId>auth</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>org.wso2.carbon.auth.test.common</artifactId>
+    <name>Carbon Auth - Common Test Module</name>
 
-	<name>Carbon Auth - Common test module</name>
-	
-	<dependencies>
-		<dependency>
+    <dependencies>
+        <dependency>
             <groupId>org.wso2.carbon.datasources</groupId>
             <artifactId>org.wso2.carbon.datasource.core</artifactId>
         </dependency>
-		<dependency>
+        <dependency>
             <groupId>org.wso2.carbon.auth</groupId>
             <artifactId>org.wso2.carbon.auth.core</artifactId>
         </dependency>
@@ -56,6 +54,4 @@
             <artifactId>annotations</artifactId>
         </dependency>
     </dependencies>
-
-
 </project>

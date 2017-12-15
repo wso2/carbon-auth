@@ -37,7 +37,7 @@ public class EncryptionDecryptionPersistenceProcessorTest {
     
     @Test
     public void testGetPreprocessedClientSecret() throws Exception {
-        System.setProperty(AuthConstants.CARBON_HOME, TEST_FOLDER_RELATIVE);
+        System.setProperty(AuthConstants.WSO2_RUNTIME_PATH, TEST_FOLDER_RELATIVE);
         EncryptionDecryptionPersistenceProcessor processor = new EncryptionDecryptionPersistenceProcessor();
         try {
             String secret = processor.getPreprocessedClientSecret(ENCRYPTED_SECRET);
@@ -50,7 +50,7 @@ public class EncryptionDecryptionPersistenceProcessorTest {
 
     @Test
     public void testGetProcessedClientSecret() throws Exception {
-        System.setProperty(AuthConstants.CARBON_HOME, TEST_FOLDER_RELATIVE);
+        System.setProperty(AuthConstants.WSO2_RUNTIME_PATH, TEST_FOLDER_RELATIVE);
         EncryptionDecryptionPersistenceProcessor processor = new EncryptionDecryptionPersistenceProcessor();
         try {
             String afterEncryption = processor.getProcessedClientSecret(SECRET);
@@ -63,7 +63,7 @@ public class EncryptionDecryptionPersistenceProcessorTest {
 
     @Test
     public void testGetPreprocessedClientSecretWithoutSettingConfigsProperly() throws Exception {
-        System.clearProperty(AuthConstants.CARBON_HOME);
+        System.clearProperty(AuthConstants.WSO2_RUNTIME_PATH);
         EncryptionDecryptionPersistenceProcessor processor = new EncryptionDecryptionPersistenceProcessor();
         try {
             processor.getPreprocessedClientSecret(ENCRYPTED_SECRET);
@@ -75,7 +75,7 @@ public class EncryptionDecryptionPersistenceProcessorTest {
 
     @Test
     public void testGetProcessedClientSecretWithoutSettingConfigsProperly() throws Exception {
-        System.clearProperty(AuthConstants.CARBON_HOME);
+        System.clearProperty(AuthConstants.WSO2_RUNTIME_PATH);
         EncryptionDecryptionPersistenceProcessor processor = new EncryptionDecryptionPersistenceProcessor();
         try {
             processor.getProcessedClientSecret(SECRET);
@@ -87,7 +87,7 @@ public class EncryptionDecryptionPersistenceProcessorTest {
 
     @AfterClass
     public void after() {
-        System.clearProperty(AuthConstants.CARBON_HOME);
+        System.clearProperty(AuthConstants.WSO2_RUNTIME_PATH);
     }
 
 }

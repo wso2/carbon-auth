@@ -58,7 +58,6 @@ public class ClientRegistrationHandlerImplExceptionTest extends AuthDAOIntegrati
         log.info("Cleaned databases");
     }
 
-
     @Test
     public void testAddApplicationUnsuccessful() throws Exception {
         ClientRegistrationHandler handler = ClientRegistrationFactory.getInstance().getClientRegistrationHandler();

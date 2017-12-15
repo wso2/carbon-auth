@@ -27,13 +27,24 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Utility class to be used for testing
+ * 
+ */
 public class TestUtil {
-    private static TestUtil instance = new TestUtil();
 
     private TestUtil() {
     }
 
-
+    /**
+     * Generates a diff between objects obj1 and obj2
+     * 
+     * @param obj1 object1
+     * @param obj2 object2
+     * @param <T> Class type
+     * @return String representing the diff between objects
+     * @throws IllegalAccessException when error occurred while generating the diff
+     */
     public static <T> String printDiff(T obj1, T obj2) throws IllegalAccessException {
         Field[] fields = FieldUtils.getAllFields(obj1.getClass());
 
@@ -62,10 +73,18 @@ public class TestUtil {
                         System.lineSeparator();
             }
         }
-
         return null;
     }
 
+    /**
+     * Generates a diff between two list objects list1 and list2
+     *
+     * @param list1 list object1
+     * @param list2 list object2
+     * @param <T> Class type
+     * @return String representing the diff between two list objects
+     * @throws IllegalAccessException when error occurred while generating the diff
+     */
     public static <T> String printListDiff(List<T> list1, List<T> list2) throws IllegalAccessException {
         if (list1.size() != list2.size()) {
             throw new IllegalArgumentException("The size of the list types are not the same");
@@ -78,12 +97,7 @@ public class TestUtil {
                 return diff;
             }
         }
-
         return null;
-    }
-
-    public static TestUtil getInstance() {
-        return instance;
     }
 
     /**

@@ -22,6 +22,9 @@ import org.wso2.carbon.auth.client.registration.model.Application;
 
 import java.util.UUID;
 
+/**
+ * Creates sample objects used for test cases.
+ */
 public class SampleTestObjectCreator {
 
     public static Application createDefaultApplication() {
