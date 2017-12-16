@@ -89,7 +89,6 @@
         <dependency>
             <groupId>org.wso2.carbon.auth</groupId>
             <artifactId>org.wso2.carbon.auth.token.introspection</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
