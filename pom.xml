@@ -57,6 +57,26 @@
                 <version>${carbon.auth.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.wso2.carbon.auth</groupId>
+                <artifactId>org.wso2.carbon.auth.token.introspection</artifactId>
+                <version>${carbon.auth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.auth</groupId>
+                <artifactId>org.wso2.carbon.auth.token.introspection.rest.api</artifactId>
+                <version>${carbon.auth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.auth</groupId>
+                <artifactId>org.wso2.carbon.auth.oauth.rest.api</artifactId>
+                <version>${carbon.auth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.auth</groupId>
+                <artifactId>org.wso2.carbon.auth.user.mgt.rest.api</artifactId>
+                <version>${carbon.auth.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.core</artifactId>
                 <version>${carbon.kernel.version}</version>

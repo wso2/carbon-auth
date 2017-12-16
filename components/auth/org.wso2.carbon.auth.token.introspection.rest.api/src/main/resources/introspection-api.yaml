@@ -1,0 +1,109 @@
+swagger: '2.0'
+info:
+  version: "v1.0"
+  title: WSO2 API Manager OAuth2 Introspection Endpoint
+  description: >
+    This document specifies an **OAuth2 Introspection Endpoint**
+    for WSO2 **Identity Server** .
+    It is written with [swagger 2](http://swagger.io/).
+  contact:
+    name: WSO2
+    url: 'http://wso2.com/api-management'
+    email: architecture@wso2.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+schemes:
+  - https
+host: localhost
+basePath: /api/identity/oauth2/introspect/v1.0
+consumes:
+  - application/x-www-form-urlencoded
+produces:
+  - application/json
+paths:
+  /introspection:
+    post:
+      description: |
+        This API is used to introspection.
+      x-wso2-request: |
+        curl -X POST -H "Authorization: Basic YWRtaW46YWRtaW4=" -H
+        "Content-Type: application/json" -d '{
+          "redirect_uris":["https://client.example.org/callback"],
+          "client_name": "application_1",
+          "ext_param_owner": "application_owner",
+          "grant_types": ["password"] }'
+        "https://localhost:9443/api/identity/oauth2/dcr/v1.0/register"
+      x-wso2-response: |
+        "HTTP/1.1 201 Created"
+        { "client_id": "s6BhdRkqt3",
+        "client_secret":"ZJYCqe3GGRvdrudKyZS0XhGv_Z45DuKhCUk0gBR1vZk",
+        "client_secret_expires_at": 1577858400,
+        "redirect_uris":["https://client.example.org/callback"],
+        "client_name":"application_owner_application_1" }
+      summary: |
+        Registers an OAuth2 application
+      operationId: registerApplication
+      parameters:
+        - name: token
+          in: formData
+          description: Application information to register.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Created
+          schema:
+            $ref: '#/definitions/IntrospectionResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - OAuth2 DCR
+
+definitions:
+#-----------------------------------------------------
+# The Application Update Request Object
+#-----------------------------------------------------
+  IntrospectionResponse:
+    type: object
+    properties:
+      active:
+        type: boolean
+      username:
+        type: string
+      scope:
+        type: string
+      token_type:
+        type: string
+      client_id:
+        type: string
+      exp:
+        type: integer
+      iat:
+        type: integer
+#-----------------------------------------------------
+# The Error Response object
+#-----------------------------------------------------
+  Error:
+    type: object
+    properties:
+      code:
+        type: string
+      httpStatusCode:
+        type: integer
+      message:
+        type: string
+      description:
+        type: string
+      moreInfo:
+        type: string
