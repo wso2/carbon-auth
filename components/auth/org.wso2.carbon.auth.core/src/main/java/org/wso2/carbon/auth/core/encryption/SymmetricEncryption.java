@@ -20,7 +20,7 @@
 
 package org.wso2.carbon.auth.core.encryption;
 
-import org.wso2.carbon.auth.core.CryptoConstants;
+import org.wso2.carbon.auth.core.AuthConstants;
 import org.wso2.carbon.auth.core.exception.CryptoException;
 import org.wso2.carbon.secvault.SecureVault;
 import org.wso2.carbon.secvault.SecureVaultFactory;
@@ -50,7 +50,6 @@ public class SymmetricEncryption {
     private static SymmetricEncryption instance = null;
 
     private SecretKey symmetricKey = null;
-    private boolean isSymmetricKeyFromFile = false;
     private static String symmetricKeyEncryptAlgoDefault = "AES";
     private String propertyKey = "symmetric.key";
 
@@ -64,24 +63,28 @@ public class SymmetricEncryption {
     public void generateSymmetricKey() throws CryptoException {
 
         String secretAlias;
-        String encryptionAlgo = null;
+        String encryptionAlgo;
         Properties properties;
+        boolean isSymmetricKeyFromFile = false;
 
         try {
 
-            String path = System.getProperty("wso2.runtime.path") + File.separator + "resources/auth/"
-                    + CryptoConstants.SYMMETRIC_KEY_PROPERTIES_FILE_NAME;
-            File file = new File(path);
-            if (file.exists()) {
-                try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            String symmetricPropertiesFilePath =
+                    System.getProperty(AuthConstants.WSO2_RUNTIME_PATH) + File.separator + "resources" + File.separator
+                            + "auth" + File.separator + AuthConstants.SYMMETRIC_KEY_PROPERTIES_FILE_NAME;
+            File symmetricPropertiesFile = new File(symmetricPropertiesFilePath);
+            if (symmetricPropertiesFile.exists()) {
+                try (FileInputStream fileInputStream = new FileInputStream(symmetricPropertiesFile)) {
                     properties = new Properties();
                     properties.load(fileInputStream);
                 }
 
-                String path1 = System.getProperty("wso2.runtime.path") + File.separator + "resources/auth/"
-                        + CryptoConstants.SECURE_VAULT_CONFIG_YAML_FILE_NAME;
-                File file1 = new File(path1);
-                Path configPath = Paths.get(file1.toURI());
+                String secVaultYamlFilePath =
+                        System.getProperty(AuthConstants.WSO2_RUNTIME_PATH) + File.separator + "resources"
+                                + File.separator + "auth" + File.separator
+                                + AuthConstants.SECURE_VAULT_CONFIG_YAML_FILE_NAME;
+                File secVaultYamlFile = new File(secVaultYamlFilePath);
+                Path configPath = Paths.get(secVaultYamlFile.toURI());
                 SecureVault secureVault = new SecureVaultFactory().getSecureVault(configPath)
                         .orElseThrow(() -> new SecureVaultException("Error in getting secure vault instance"));
 
