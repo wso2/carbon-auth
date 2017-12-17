@@ -15,13 +15,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.carbon.auth.introspection;
+package org.wso2.carbon.auth.token.introspection;
 
-import org.wso2.carbon.auth.introspection.dto.IntrospectionResponse;
+import org.wso2.carbon.auth.token.introspection.dto.IntrospectionContext;
 
 /**
- * Introspection manager interface
+ * Token validation handler interface
  */
-public interface IntrospectionManager {
-    IntrospectionResponse introspect(String token);
+public interface TokenValidatorHandler {
+    void validate(IntrospectionContext context) throws IntrospectionException;
 }

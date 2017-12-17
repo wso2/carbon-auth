@@ -15,11 +15,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.carbon.auth.introspection.impl;
+package org.wso2.carbon.auth.token.introspection.impl;
 
-import org.wso2.carbon.auth.introspection.IntrospectionException;
-import org.wso2.carbon.auth.introspection.TokenValidator;
-import org.wso2.carbon.auth.introspection.dto.IntrospectionContext;
+import org.wso2.carbon.auth.token.introspection.IntrospectionException;
+import org.wso2.carbon.auth.token.introspection.TokenValidator;
+import org.wso2.carbon.auth.token.introspection.dto.IntrospectionContext;
 
 /**
  * Implementation of TokenValidator

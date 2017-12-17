@@ -15,16 +15,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.carbon.auth.introspection.impl;
+package org.wso2.carbon.auth.token.introspection.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.auth.introspection.IntrospectionException;
-import org.wso2.carbon.auth.introspection.IntrospectionManager;
-import org.wso2.carbon.auth.introspection.TokenValidatorHandler;
-import org.wso2.carbon.auth.introspection.dto.IntrospectionContext;
-import org.wso2.carbon.auth.introspection.dto.IntrospectionResponse;
+import org.wso2.carbon.auth.token.introspection.IntrospectionException;
+import org.wso2.carbon.auth.token.introspection.IntrospectionManager;
+import org.wso2.carbon.auth.token.introspection.TokenValidatorHandler;
+import org.wso2.carbon.auth.token.introspection.dto.IntrospectionContext;
+import org.wso2.carbon.auth.token.introspection.dto.IntrospectionResponse;
 
 /**
  * Implementation of the IntrospectionManager
