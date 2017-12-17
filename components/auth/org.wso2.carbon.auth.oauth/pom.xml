@@ -60,7 +60,6 @@
             org.wso2.carbon.auth.core.*; version="${carbon.auth.version}"
         </import.package>
         <export.package>
-            !org.wso2.carbon.auth.oauth.internal,
             org.wso2.carbon.auth.oauth.*; version="${carbon.auth.version}",
         </export.package>
         <dynamic.import.package>*</dynamic.import.package>
