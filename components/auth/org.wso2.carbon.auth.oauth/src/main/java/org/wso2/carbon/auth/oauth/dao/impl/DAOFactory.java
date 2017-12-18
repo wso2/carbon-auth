@@ -46,20 +46,7 @@ public class DAOFactory {
     private static final String ORACLE = "Oracle";
 
     public static ClientDAO getClientDAO() throws ClientDAOException {
-        try (Connection connection = DAOUtil.getAuthConnection()) {
-            String driverName = connection.getMetaData().getDriverName();
-
-            if (!(driverName.contains(MYSQL) || driverName.contains(H2) || driverName.contains(DB2) ||
-                driverName.contains(MS_SQL) || driverName.contains(MICROSOFT) || driverName.contains(POSTGRE) ||
-                driverName.contains(ORACLE))) {
-                throw new ClientDAOException("Unhandled DB driver: " + driverName + " detected",
-                        ExceptionCodes.DAO_EXCEPTION);
-            }
-
-            return new ClientDAOImpl();
-        } catch (SQLException e) {
-            throw new ClientDAOException("Error while getting clientDAO", e);
-        }
+        return new ClientDAOImpl();
     }
 
     /**
