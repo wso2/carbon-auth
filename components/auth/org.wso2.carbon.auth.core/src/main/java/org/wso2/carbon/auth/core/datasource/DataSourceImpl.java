@@ -29,7 +29,7 @@ import java.sql.SQLException;
  * Concrete implementation of DataSource interface
  */
 public class DataSourceImpl implements DataSource {
-    HikariDataSource dataSource;
+    protected HikariDataSource dataSource;
 
     public DataSourceImpl(HikariDataSource dataSource) {
         this.dataSource = dataSource;

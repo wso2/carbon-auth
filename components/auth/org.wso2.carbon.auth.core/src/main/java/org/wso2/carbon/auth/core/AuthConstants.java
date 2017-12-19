@@ -20,7 +20,7 @@
 package org.wso2.carbon.auth.core;
 
 /**
- *  Required constants for OAuth core
+ * Required constants for OAuth core
  */
 public class AuthConstants {
     public static final String SECURE_VAULT_CONFIG_YAML_FILE_NAME = "secure-vault.yaml";

@@ -30,7 +30,7 @@ import org.wso2.carbon.auth.client.registration.SampleTestObjectCreator;
 import org.wso2.carbon.auth.client.registration.TestUtil;
 import org.wso2.carbon.auth.client.registration.dto.ClientRegistrationResponse;
 import org.wso2.carbon.auth.client.registration.model.Application;
-import org.wso2.carbon.auth.test.common.AuthDAOIntegrationTestBase;
+import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
 
 public class ClientRegistrationHandlerImplTest extends AuthDAOIntegrationTestBase {
 
@@ -46,14 +46,14 @@ public class ClientRegistrationHandlerImplTest extends AuthDAOIntegrationTestBas
     }
 
     @BeforeMethod
-    public void setUp() throws Exception {
-        super.setUp();
+    public void setup() throws Exception {
+        super.setup();
         log.info("Created databases");
     }
 
     @AfterClass
-    public void tempDBCleanup() throws Exception {
-        super.tempDBCleanup();
+    public void cleanup() throws Exception {
+        super.cleanup();
         log.info("Cleaned databases");
     }
 

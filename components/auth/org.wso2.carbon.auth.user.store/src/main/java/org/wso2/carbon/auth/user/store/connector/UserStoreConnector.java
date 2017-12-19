@@ -16,15 +16,13 @@
 
 package org.wso2.carbon.auth.user.store.connector;
 
-
 import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
-import org.wso2.carbon.auth.core.exception.UserNotFoundException;
-import org.wso2.carbon.auth.core.exception.UserStoreConnectorException;
 import org.wso2.carbon.auth.user.store.exception.GroupNotFoundException;
+import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
+import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 
 import java.util.List;
 import java.util.Map;
-
 import javax.security.auth.callback.PasswordCallback;
 
 /**

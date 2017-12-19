@@ -42,7 +42,10 @@ public class AttributeConfiguration {
     
     @Element(description = "Attribute is unique or not")
     private boolean unique;
-    
+
+    public AttributeConfiguration() {
+    }
+
     public AttributeConfiguration(String attribute, String displayName, boolean required, 
             String regex, boolean unique) {
         this.attribute = attribute;
@@ -51,7 +54,8 @@ public class AttributeConfiguration {
         this.regex = regex;
         this.unique = unique;
     }
-    
+
+
     public String getAttribute() {
         return attribute;
     }

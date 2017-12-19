@@ -575,6 +575,7 @@
         <org.apache.commons-collections4.bundle.version>4.1.0</org.apache.commons-collections4.bundle.version>
         <apache.servicemix.jcip-annotations.version>1.0_1</apache.servicemix.jcip-annotations.version>
         <apache.servicemix.jcip-annotations.bundle.version>1.0.0.1</apache.servicemix.jcip-annotations.bundle.version>
+        <carbon.config.version>2.1.4</carbon.config.version>
 
         <!-- Jacoco for code coverage -->
         <jacoco.version>0.7.9</jacoco.version>

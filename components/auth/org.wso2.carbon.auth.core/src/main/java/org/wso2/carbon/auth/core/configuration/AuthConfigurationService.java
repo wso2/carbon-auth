@@ -29,10 +29,8 @@ import org.wso2.carbon.auth.core.configuration.models.AuthConfiguration;
  */
 public class AuthConfigurationService {
     private static AuthConfigurationService authConfigurationService = new AuthConfigurationService();
-    private AuthConfiguration authConfiguration;
     
     private AuthConfigurationService() {
-        authConfiguration = ServiceReferenceHolder.getInstance().getAuthConfiguration();
     }
     
     public static AuthConfigurationService getInstance() {
@@ -40,7 +38,7 @@ public class AuthConfigurationService {
     }
     
     public AuthConfiguration getAuthConfiguration() {
-        return authConfiguration;
+        return ServiceReferenceHolder.getInstance().getAuthConfiguration();
     }
 
 }

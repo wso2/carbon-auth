@@ -16,12 +16,15 @@
  * under the License.
  */
 
-package org.wso2.carbon.auth.core.util;
+package org.wso2.carbon.auth.core.test.common.util;
 
+import com.zaxxer.hikari.HikariDataSource;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.auth.core.exception.ScriptRunnerException;
+import org.wso2.carbon.auth.core.datasource.DataSource;
+import org.wso2.carbon.auth.core.datasource.DataSourceImpl;
+import org.wso2.carbon.auth.core.test.common.ScriptRunnerException;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -40,8 +43,8 @@ import java.util.StringTokenizer;
  * DB Script runner class to be used in integration tests.
  * 
  */
-public class DBScriptRunnerUtil {
-    private static final Logger log = LoggerFactory.getLogger(DBScriptRunnerUtil.class);
+public class AuthCoreTestUtil {
+    private static final Logger log = LoggerFactory.getLogger(AuthCoreTestUtil.class);
 
     /**
      * Execute a given sql script using connection object
@@ -156,5 +159,25 @@ public class DBScriptRunnerUtil {
                 throw new ScriptRunnerException("Error when rebuilding Oracle indexes", e);
             }
         }
+    }
+
+    /**
+     * Retrieves the hikari datasource from the provided data
+     *
+     * @param jdbcUrl      JDBC url
+     * @param username     Username
+     * @param password     Password
+     * @param isAutoCommit is autocommit enabled
+     * @return Hikari datasource from the provided data
+     */
+    public static DataSource getDataSource(String jdbcUrl, String username, String password,
+            boolean isAutoCommit) {
+        HikariDataSource hikariDataSource = new HikariDataSource();
+        hikariDataSource.setJdbcUrl(jdbcUrl);
+        hikariDataSource.setUsername(username);
+        hikariDataSource.setPassword(password);
+        hikariDataSource.setAutoCommit(isAutoCommit);
+
+        return new DataSourceImpl(hikariDataSource);
     }
 }

@@ -16,18 +16,30 @@
  * under the License.
  */
 
-package org.wso2.carbon.auth.core.exception;
+package org.wso2.carbon.auth.user.store.exception;
+
+import org.wso2.carbon.auth.core.exception.AuthException;
+import org.wso2.carbon.auth.core.exception.ExceptionCodes;
 
 /**
- *  This is the Exception class for Test Script Runner related exceptions.
+ * Class to handle user store connector exceptions
+ *
  */
-public class ScriptRunnerException extends AuthException {
-
-    public ScriptRunnerException(String message, ErrorHandler code) {
+public class UserStoreConnectorException extends AuthException {
+    
+    public UserStoreConnectorException() {
+        super();
+    }
+    public UserStoreConnectorException(String message) {
+        super(message);
+    }
+    
+    public UserStoreConnectorException(String message, ExceptionCodes code) {
         super(message, code);
     }
 
-    public ScriptRunnerException(String message, Throwable cause) {
-        super(message, cause);
+    public UserStoreConnectorException(String message, Throwable e) {
+        super(message, e);
     }
+
 }
