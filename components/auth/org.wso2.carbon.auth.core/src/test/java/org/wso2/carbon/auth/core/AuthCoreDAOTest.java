@@ -42,7 +42,7 @@ public class AuthCoreDAOTest extends AuthDAOIntegrationTestBase {
 
     @Test
     public void testDAO() throws Exception {
-        setUp();
+        setup();
         log.info("Data sources successfully setup");
 
         Assert.assertTrue(DAOUtil.isAutoCommitAuth(), "Autocommit set to true in auth DB but was false");
@@ -51,8 +51,8 @@ public class AuthCoreDAOTest extends AuthDAOIntegrationTestBase {
     }
 
     @AfterClass
-    public void tempDBCleanup() throws Exception {
-        super.tempDBCleanup();
+    public void cleanup() throws Exception {
+        super.cleanup();
         log.info("Cleaned databases");
     }
 }

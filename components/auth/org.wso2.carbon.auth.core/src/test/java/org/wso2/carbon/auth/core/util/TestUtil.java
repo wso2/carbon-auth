@@ -27,9 +27,9 @@ public class TestUtil {
 
     /**
      * Checks whether the specified attribute exist in UserStoreConfiguration
-     * 
+     *
      * @param userStoreConfiguration UserStoreConfiguration object
-     * @param attribute Attribute string to check if exists
+     * @param attribute              Attribute string to check if exists
      * @return true if the specified attribute exist in UserStoreConfiguration
      */
     public static boolean isAttributeExists(UserStoreConfiguration userStoreConfiguration, String attribute) {

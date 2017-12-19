@@ -24,12 +24,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.datasource.DAOUtil;
 import org.wso2.carbon.auth.core.datasource.DataSource;
-import org.wso2.carbon.auth.core.test.common.datasource.H2DataSource;
-import org.wso2.carbon.auth.core.test.common.util.DBScriptRunnerUtil;
+import org.wso2.carbon.auth.core.test.common.util.AuthCoreTestUtil;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * The base class to use for integration tests
@@ -42,6 +42,8 @@ public class AuthDAOIntegrationTestBase {
     private static final String H2 = "h2";
     private static final int MAX_RETRIES = 5;
     private static final long MAX_WAIT = 5000;
+    private static final String TEST_RESOURCES_FOLDER =
+            "src" + File.separator + "test" + File.separator + "resources" + File.separator;
 
     private static final Logger log = LoggerFactory.getLogger(AuthDAOIntegrationTestBase.class);
 
@@ -55,8 +57,12 @@ public class AuthDAOIntegrationTestBase {
     protected void init() throws Exception {
         // This used to check connection healthy
         if (H2.equals(database)) {
-            authDataSource = new H2DataSource("jdbc:h2:./src/test/resources/amdb", "sa", "sa", true);
-            umDataSource = new H2DataSource("jdbc:h2:./src/test/resources/umdb", "sa", "sa", true);
+            authDataSource = AuthCoreTestUtil
+                    .getDataSource("jdbc:h2:." + File.separator + TEST_RESOURCES_FOLDER + File.separator + "amdb", "sa",
+                            "sa", true);
+            umDataSource = AuthCoreTestUtil
+                    .getDataSource("jdbc:h2:." + File.separator + TEST_RESOURCES_FOLDER + File.separator + "umdb", "sa",
+                            "sa", true);
         }
         verifyDataSourceConnection(authDataSource, MAX_RETRIES, MAX_WAIT);
         verifyDataSourceConnection(umDataSource, MAX_RETRIES, MAX_WAIT);
@@ -86,12 +92,11 @@ public class AuthDAOIntegrationTestBase {
         }
     }
 
-    protected void setUp() throws Exception {
+    protected void setup() throws Exception {
         String authSqlFilePath = null;
         String umSqlFilePath = null;
         if (H2.equals(database)) {
-            ((H2DataSource) authDataSource).resetDB();
-            ((H2DataSource) umDataSource).resetDB();
+            cleanup();
             authSqlFilePath = ".." + File.separator + ".." + File.separator + ".." + File.separator
                     + "features" + File.separator + "auth-features" + File.separator
                     + "org.wso2.carbon.auth.core.feature" + File.separator + "resources"
@@ -106,24 +111,31 @@ public class AuthDAOIntegrationTestBase {
         DAOUtil.initializeAuthDataSource(authDataSource);
         DAOUtil.initializeUMDataSource(umDataSource);
         try (Connection connection = DAOUtil.getAuthConnection()) {
-            DBScriptRunnerUtil.executeSQLScript(authSqlFilePath, connection);
+            AuthCoreTestUtil.executeSQLScript(authSqlFilePath, connection);
         }
         try (Connection connection = DAOUtil.getUMConnection()) {
-            DBScriptRunnerUtil.executeSQLScript(umSqlFilePath, connection);
+            AuthCoreTestUtil.executeSQLScript(umSqlFilePath, connection);
         }
     }
 
-    protected void setUpWithoutTables() throws Exception {
+    protected void setupWithoutTables() throws Exception {
         DAOUtil.clearAuthDataSource();
         DAOUtil.clearUMDataSource();
         DAOUtil.initializeAuthDataSource(authDataSource);
         DAOUtil.initializeUMDataSource(umDataSource);
     }
 
-    protected void tempDBCleanup() throws Exception {
+    protected void cleanup() throws Exception {
         if (H2.equals(database)) {
-            ((H2DataSource) authDataSource).resetDB();
-            ((H2DataSource) umDataSource).resetDB();
+            final String dropAllQuery = "DROP ALL OBJECTS DELETE FILES";
+            try (Connection connection = authDataSource.getConnection();
+                    Statement statement = connection.createStatement()) {
+                statement.execute(dropAllQuery);
+            }
+            try (Connection connection = umDataSource.getConnection();
+                    Statement statement = connection.createStatement()) {
+                statement.execute(dropAllQuery);
+            }
         }
     }
 }

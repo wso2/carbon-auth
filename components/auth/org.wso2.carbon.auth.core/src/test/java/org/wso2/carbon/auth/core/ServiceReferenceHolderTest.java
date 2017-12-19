@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.wso2.carbon.auth.core.configuration.AuthConfigurationService;
 import org.wso2.carbon.auth.core.configuration.models.AuthConfiguration;
 import org.wso2.carbon.auth.core.configuration.models.ConfigModelsTest;
 import org.wso2.carbon.auth.core.util.TestUtil;
@@ -66,11 +67,20 @@ public class ServiceReferenceHolderTest {
             ConfigProvider configProvider = ConfigProviderFactory.getConfigProvider(deploymentConfigPath);
             ServiceReferenceHolder.getInstance().setConfigProvider(configProvider);
             AuthConfiguration authConfiguration = ServiceReferenceHolder.getInstance().getAuthConfiguration();
+            AuthConfiguration authConfigurationFromService = AuthConfigurationService.getInstance()
+                    .getAuthConfiguration();
+
             log.info("AuthConfiguration loaded from " + CONFIG_FILE_NAME, authConfiguration);
             Assert.assertNotNull(authConfiguration);
             Assert.assertNotNull(authConfiguration.getUserStoreConfiguration());
             Assert.assertTrue(authConfiguration.getUserStoreConfiguration().isReadOnly());
-            if (TestUtil.isAttributeExists(authConfiguration.getUserStoreConfiguration(), USER_STORE_TEAM_ATTR)) {
+
+            Assert.assertNotNull(authConfigurationFromService);
+            Assert.assertNotNull(authConfigurationFromService.getUserStoreConfiguration());
+            Assert.assertTrue(authConfigurationFromService.getUserStoreConfiguration().isReadOnly());
+            if (TestUtil.isAttributeExists(authConfiguration.getUserStoreConfiguration(), USER_STORE_TEAM_ATTR)
+                    && TestUtil.isAttributeExists(authConfigurationFromService.getUserStoreConfiguration(),
+                    USER_STORE_TEAM_ATTR)) {
                 return;
             }
             //this line must not reach

@@ -44,13 +44,13 @@ public class AuthCoreDAOExceptionTest extends AuthDAOIntegrationTestBase {
         super.init();
         log.info("Data sources initialized");
 
-        super.tempDBCleanup();
+        super.cleanup();
         log.info("Cleaned existing databases");
     }
 
     @Test
     public void testDAOException() throws Exception {
-        setUpWithoutTables();
+        setupWithoutTables();
         final String sql = "SELECT * FROM AUTH_OAUTH2_CLIENTS";
         try (Connection connection = DAOUtil.getAuthConnection();
                 Statement statement = connection.createStatement();
@@ -64,8 +64,8 @@ public class AuthCoreDAOExceptionTest extends AuthDAOIntegrationTestBase {
     }
 
     @AfterClass
-    public void tempDBCleanup() throws Exception {
-        super.tempDBCleanup();
+    public void cleanup() throws Exception {
+        super.cleanup();
         log.info("Cleaned databases");
     }
 }

@@ -46,14 +46,14 @@ public class ClientRegistrationHandlerImplTest extends AuthDAOIntegrationTestBas
     }
 
     @BeforeMethod
-    public void setUp() throws Exception {
-        super.setUp();
+    public void setup() throws Exception {
+        super.setup();
         log.info("Created databases");
     }
 
     @AfterClass
-    public void tempDBCleanup() throws Exception {
-        super.tempDBCleanup();
+    public void cleanup() throws Exception {
+        super.cleanup();
         log.info("Cleaned databases");
     }
 

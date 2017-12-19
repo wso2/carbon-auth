@@ -46,15 +46,15 @@ public class ClientRegistrationHandlerImplExceptionTest extends AuthDAOIntegrati
     }
 
     @BeforeMethod
-    public void setUpWithoutTables() throws Exception {
+    public void setupWithoutTables() throws Exception {
         //to make every sql execution throws exception
-        super.setUpWithoutTables();
+        super.setupWithoutTables();
         log.info("Created databases without any tables");
     }
 
     @AfterClass
-    public void tempDBCleanup() throws Exception {
-        super.tempDBCleanup();
+    public void cleanup() throws Exception {
+        super.cleanup();
         log.info("Cleaned databases");
     }
 
