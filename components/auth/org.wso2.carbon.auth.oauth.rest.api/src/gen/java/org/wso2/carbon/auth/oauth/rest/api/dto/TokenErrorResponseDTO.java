@@ -11,25 +11,25 @@ import java.util.Objects;
  * TokenErrorResponseDTO
  */
 public class TokenErrorResponseDTO   {
-  @JsonProperty("error")
-  private String error = null;
+  @JsonProperty("preProcessingError")
+  private String preProcessingError = null;
 
-  public TokenErrorResponseDTO error(String error) {
-    this.error = error;
+  public TokenErrorResponseDTO preProcessingError(String preProcessingError) {
+    this.preProcessingError = preProcessingError;
     return this;
   }
 
    /**
-   * Error code classifying the type of error.
-   * @return error
+   * Error code classifying the type of preProcessingError.
+   * @return preProcessingError
   **/
-  @ApiModelProperty(required = true, value = "Error code classifying the type of error.")
-  public String getError() {
-    return error;
+  @ApiModelProperty(required = true, value = "Error code classifying the type of preProcessingError.")
+  public String getPreProcessingError() {
+    return preProcessingError;
   }
 
-  public void setError(String error) {
-    this.error = error;
+  public void setPreProcessingError(String preProcessingError) {
+    this.preProcessingError = preProcessingError;
   }
 
 
@@ -42,12 +42,12 @@ public class TokenErrorResponseDTO   {
       return false;
     }
     TokenErrorResponseDTO tokenErrorResponse = (TokenErrorResponseDTO) o;
-    return Objects.equals(this.error, tokenErrorResponse.error);
+    return Objects.equals(this.preProcessingError, tokenErrorResponse.preProcessingError);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(error);
+    return Objects.hash(preProcessingError);
   }
 
   @Override
@@ -55,7 +55,7 @@ public class TokenErrorResponseDTO   {
     StringBuilder sb = new StringBuilder();
     sb.append("class TokenErrorResponseDTO {\n");
     
-    sb.append("    error: ").append(toIndentedString(error)).append("\n");
+    sb.append("    preProcessingError: ").append(toIndentedString(preProcessingError)).append("\n");
     sb.append("}");
     return sb.toString();
   }

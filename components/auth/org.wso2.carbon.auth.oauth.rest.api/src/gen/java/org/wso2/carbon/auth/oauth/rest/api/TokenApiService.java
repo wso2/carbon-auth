@@ -26,5 +26,7 @@ public abstract class TokenApiService {
  ,String clientId
  ,String refreshToken
  ,String scope
+ ,String username
+ ,String password
   ,Request request) throws NotFoundException;
 }

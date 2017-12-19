@@ -14,19 +14,8 @@ import org.wso2.msf4j.formparam.FormDataParam;
 import org.osgi.service.component.annotations.Component;
 
 import java.io.InputStream;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
+
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
@@ -43,6 +32,7 @@ import javax.ws.rs.core.Response;
 public class TokenApi implements Microservice  {
    private final TokenApiService delegate = TokenApiServiceFactory.getTokenApi();
 
+    
     @POST
     
     @Consumes({ "application/x-www-form-urlencoded" })
@@ -61,8 +51,10 @@ public class TokenApi implements Microservice  {
 ,@ApiParam(value = "OAuth client identifier") @QueryParam("client_id") String clientId
 ,@ApiParam(value = "Refresh token issued to the client.") @QueryParam("refresh_token") String refreshToken
 ,@ApiParam(value = "OAuth scopes") @QueryParam("scope") String scope
+,@ApiParam(value = "username")  @FormParam("username")  String username
+,@ApiParam(value = "password")  @FormParam("password")  String password
  ,@Context Request request)
     throws NotFoundException {
-        return delegate.tokenPost(authorization,grantType,code,redirectUri,clientId,refreshToken,scope,request);
+        return delegate.tokenPost(authorization,grantType,code,redirectUri,clientId,refreshToken,scope,username,password,request);
     }
 }

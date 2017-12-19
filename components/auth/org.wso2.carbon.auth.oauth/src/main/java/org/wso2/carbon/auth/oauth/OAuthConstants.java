@@ -42,6 +42,8 @@ public class OAuthConstants {
     public static final String ACCESS_TOKEN_QUERY_PARAM = "access_token";
     public static final String EXPERIES_IN_QUERY_PARAM = "expires_in";
     public static final String TOKEN_TYPE_QUERY_PARAM = "token_type";
+    public static final String USERNAME = "username";
+    public static final String PASSWORD = "password";
 
     // Auth Types
     public static final String AUTH_TYPE_BASIC = "Basic";
