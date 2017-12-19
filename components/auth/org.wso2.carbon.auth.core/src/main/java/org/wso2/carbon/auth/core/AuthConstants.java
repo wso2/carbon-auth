@@ -20,9 +20,10 @@
 package org.wso2.carbon.auth.core;
 
 /**
- *  OAuth2 related constants
+ *  Required constants for OAuth core
  */
-public class CryptoConstants {
+public class AuthConstants {
     public static final String SECURE_VAULT_CONFIG_YAML_FILE_NAME = "secure-vault.yaml";
     public static final String SYMMETRIC_KEY_PROPERTIES_FILE_NAME = "symmetric-key.properties";
+    public static final String WSO2_RUNTIME_PATH = "wso2.runtime.path";
 }
