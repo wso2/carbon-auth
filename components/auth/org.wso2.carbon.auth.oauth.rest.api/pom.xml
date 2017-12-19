@@ -169,6 +169,8 @@
             org.slf4j.*;version="${slf4j.logging.package.import.version.range}",
             org.apache.commons.lang3.*; version="${apache.commons.lang3.import.version.range}",
             com.nimbusds.oauth2.sdk.*;version="${com.nimbusd.oauth2-oidc-sdk.import.version.range}",
+            com.nimbusds.oauth2.sdk.http.*;version="${com.nimbusd.oauth2-oidc-sdk.import.version.range}",
+            com.nimbusds.oauth2.sdk.token.*;version="${com.nimbusd.oauth2-oidc-sdk.import.version.range}",
             javax.ws.rs.*; version="${javax.ws.rs.import.version.range}",
             org.wso2.carbon.auth.oauth.*; version="${carbon.auth.version}"
         </import.package>

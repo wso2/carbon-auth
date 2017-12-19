@@ -60,10 +60,10 @@ public class TokenDAOImpl implements TokenDAO {
             int refreshTokenValidityPeriod, String tokenScopeHash, String tokenState, String userType, String grantType)
             throws SQLException {
         String query = "INSERT INTO AUTH_ACCESS_TOKEN (ACCESS_TOKEN, "
-                + "REFRESH_TOKEN, CONSUMER_KEY_ID, AUTHZ_USER, USER_DOMAIN, TIME_CREATED, "
+                + "REFRESH_TOKEN, CONSUMER_KEY_ID, AUTHZ_USER, TIME_CREATED, "
                 + "REFRESH_TOKEN_TIME_CREATED, VALIDITY_PERIOD, REFRESH_TOKEN_VALIDITY_PERIOD, TOKEN_SCOPE_HASH, "
                 + "TOKEN_STATE, USER_TYPE, GRANT_TYPE) SELECT ?,?,(SELECT ID FROM AUTH_OAUTH2_APPLICATIONS "
-                + "WHERE CLIENT_ID = ?),?,?,?,?,?,?,?,?,?,?";
+                + "WHERE CLIENT_ID = ?),?,?,?,?,?,?,?,?,?";
 
         log.debug("Calling persistToken for clientId: {}", clientID);
 
@@ -76,16 +76,14 @@ public class TokenDAOImpl implements TokenDAO {
                 statement.setString(2, refreshToken);
                 statement.setString(3, clientID);
                 statement.setString(4, authUser);
-                statement.setString(5, userDomain);
-                statement.setTimestamp(6, new Timestamp(timeCreated));
-                statement.setTimestamp(7, new Timestamp(refreshTokenCreatedTime));
-                statement.setInt(8, validityPeriod);
-                statement.setInt(9, refreshTokenValidityPeriod);
-                statement.setString(10, tokenScopeHash);
-                statement.setString(11, tokenState);
-                statement.setString(12, userType);
-                //                statement.setString(13, "2");
-                statement.setString(13, grantType);
+                statement.setTimestamp(5, new Timestamp(timeCreated));
+                statement.setTimestamp(6, new Timestamp(refreshTokenCreatedTime));
+                statement.setInt(7, validityPeriod);
+                statement.setInt(8, refreshTokenValidityPeriod);
+                statement.setString(9, tokenScopeHash);
+                statement.setString(10, tokenState);
+                statement.setString(11, userType);
+                statement.setString(12, grantType);
 
                 statement.execute();
                 connection.commit();
@@ -121,7 +119,7 @@ public class TokenDAOImpl implements TokenDAO {
     public AccessTokenDTO getTokenInfo(String accessToken) throws SQLException {
         log.debug("Calling getTokenInfo for accessToken");
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
-        final String query = "SELECT TOKEN_ID, ACCESS_TOKEN, REFRESH_TOKEN, CONSUMER_KEY_ID, AUTHZ_USER, USER_DOMAIN, "
+        final String query = "SELECT TOKEN_ID, ACCESS_TOKEN, REFRESH_TOKEN, CONSUMER_KEY_ID, AUTHZ_USER, "
                 + "TIME_CREATED, REFRESH_TOKEN_TIME_CREATED, VALIDITY_PERIOD, REFRESH_TOKEN_VALIDITY_PERIOD, "
                 + "TOKEN_SCOPE_HASH, TOKEN_STATE, USER_TYPE, GRANT_TYPE FROM AUTH_ACCESS_TOKEN WHERE "
                 + "ACCESS_TOKEN = ? ";
@@ -137,7 +135,6 @@ public class TokenDAOImpl implements TokenDAO {
                     accessTokenDTO.setRefreshToken(rs.getString(JDBCAuthConstants.REFRESH_TOKEN));
                     accessTokenDTO.setConsumerKey(rs.getString(JDBCAuthConstants.CONSUMER_KEY_ID));
                     accessTokenDTO.setAuthUser(rs.getString(JDBCAuthConstants.AUTHZ_USER));
-                    accessTokenDTO.setUserDomain(rs.getString(JDBCAuthConstants.USER_DOMAIN));
                     accessTokenDTO.setTimeCreated(rs.getTimestamp(JDBCAuthConstants.TIME_CREATED).getTime());
                     accessTokenDTO.setRefreshTokenCreatedTime(
                             rs.getTimestamp(JDBCAuthConstants.REFRESH_TOKEN_TIME_CREATED).getTime());

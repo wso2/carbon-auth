@@ -21,8 +21,8 @@ public class TokenApiServiceImpl extends TokenApiService {
     }
 
     @Override
-    public Response tokenPost(String authorization, String grantType, String code, String redirectUri,
-                              String clientId, String refreshToken, String scope, Request request)
+    public Response tokenPost(String authorization, String grantType, String code, String redirectUri, String clientId,
+            String refreshToken, String scope, String username, String password, Request request)
             throws NotFoundException {
         Map<String, String> queryParameters = new HashMap<>();
         queryParameters.put(OAuthConstants.GRANT_TYPE_QUERY_PARAM, grantType);
@@ -31,11 +31,13 @@ public class TokenApiServiceImpl extends TokenApiService {
         queryParameters.put(OAuthConstants.SCOPE_QUERY_PARAM, scope);
         queryParameters.put(OAuthConstants.CODE_QUERY_PARAM, code);
         queryParameters.put(OAuthConstants.REFRESH_TOKEN_QUERY_PARAM, refreshToken);
+        queryParameters.put(OAuthConstants.USERNAME, username);
+        queryParameters.put(OAuthConstants.PASSWORD, password);
 
         AccessTokenContext context = tokenRequestHandler.generateToken(authorization, queryParameters);
 
         if (context.isSuccessful()) {
-            return Response.ok().entity(context.getAccessTokenResponse()).build();
+            return Response.ok().entity(context.getAccessTokenResponse().getTokens().toString()).build();
         } else {
             ErrorObject error = context.getErrorObject();
             return Response.status(error.getHTTPStatusCode()).build();
