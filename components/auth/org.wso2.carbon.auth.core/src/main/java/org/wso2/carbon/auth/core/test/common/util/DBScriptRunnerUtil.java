@@ -16,12 +16,12 @@
  * under the License.
  */
 
-package org.wso2.carbon.auth.core.util;
+package org.wso2.carbon.auth.core.test.common.util;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.auth.core.exception.ScriptRunnerException;
+import org.wso2.carbon.auth.core.test.common.ScriptRunnerException;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;

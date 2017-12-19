@@ -21,8 +21,6 @@ package org.wso2.carbon.auth.user.store.connector.jdbc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
-import org.wso2.carbon.auth.core.exception.UserNotFoundException;
-import org.wso2.carbon.auth.core.exception.UserStoreConnectorException;
 import org.wso2.carbon.auth.user.store.connector.Attribute;
 import org.wso2.carbon.auth.user.store.connector.PasswordHandler;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
@@ -32,6 +30,8 @@ import org.wso2.carbon.auth.user.store.constant.JDBCConnectorConstants;
 import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
 import org.wso2.carbon.auth.user.store.exception.GroupNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.StoreException;
+import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
+import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 import org.wso2.carbon.auth.user.store.internal.ConnectorDataHolder;
 import org.wso2.carbon.auth.user.store.util.NamedPreparedStatement;
 import org.wso2.carbon.auth.user.store.util.UnitOfWork;
@@ -47,7 +47,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-
 import javax.security.auth.callback.PasswordCallback;
 import javax.sql.DataSource;
 

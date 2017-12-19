@@ -25,13 +25,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.ServiceReferenceHolder;
 import org.wso2.carbon.auth.core.configuration.models.AttributeConfiguration;
-import org.wso2.carbon.auth.core.exception.UserNotFoundException;
-import org.wso2.carbon.auth.core.exception.UserStoreConnectorException;
 import org.wso2.carbon.auth.scim.impl.constants.SCIMCommonConstants;
 import org.wso2.carbon.auth.scim.utils.SCIMClaimResolver;
 import org.wso2.carbon.auth.user.store.connector.Attribute;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
 import org.wso2.carbon.auth.user.store.exception.GroupNotFoundException;
+import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
+import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.exceptions.BadRequestException;
@@ -51,7 +51,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.security.auth.callback.PasswordCallback;
 
 /**

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.carbon.auth.test.common;
+package org.wso2.carbon.auth.core.test.common.datasource;
 
 import com.zaxxer.hikari.HikariDataSource;
 import org.wso2.carbon.auth.core.datasource.DataSource;
@@ -28,15 +28,16 @@ import java.sql.Statement;
 /**
  * Implements DataSource interface which supports in memory h2 DB with a reusable single connection
  */
-public class H2TestDataSource implements DataSource {
-    static HikariDataSource dataSource = new HikariDataSource();
+public class H2DataSource implements DataSource {
+    private static HikariDataSource dataSource = new HikariDataSource();
+    private static final String H2_DRIVER = "org.h2.Driver";
 
-    H2TestDataSource(String jdbcUrl) throws SQLException {
+    public H2DataSource(String jdbcUrl, String username, String password, boolean isAutoCommit) throws SQLException {
         dataSource.setJdbcUrl(jdbcUrl);
-        dataSource.setUsername("sa");
-        dataSource.setPassword("sa");
-        dataSource.setDriverClassName("org.h2.Driver");
-        dataSource.setAutoCommit(true);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+        dataSource.setDriverClassName(H2_DRIVER);
+        dataSource.setAutoCommit(isAutoCommit);
     }
 
     /**

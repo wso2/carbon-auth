@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.carbon.auth.test.common;
+package org.wso2.carbon.auth.core.test.common;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.datasource.DAOUtil;
 import org.wso2.carbon.auth.core.datasource.DataSource;
-import org.wso2.carbon.auth.core.util.DBScriptRunnerUtil;
+import org.wso2.carbon.auth.core.test.common.datasource.H2DataSource;
+import org.wso2.carbon.auth.core.test.common.util.DBScriptRunnerUtil;
 
 import java.io.File;
 import java.sql.Connection;
@@ -32,7 +33,6 @@ import java.sql.SQLException;
 
 /**
  * The base class to use for integration tests
- * 
  */
 public class AuthDAOIntegrationTestBase {
     private String database;
@@ -45,7 +45,7 @@ public class AuthDAOIntegrationTestBase {
 
     private static final Logger log = LoggerFactory.getLogger(AuthDAOIntegrationTestBase.class);
 
-    public AuthDAOIntegrationTestBase() {
+    protected AuthDAOIntegrationTestBase() {
         database = System.getenv("DATABASE_TYPE");
         if (StringUtils.isEmpty(database)) {
             database = H2;
@@ -55,8 +55,8 @@ public class AuthDAOIntegrationTestBase {
     protected void init() throws Exception {
         // This used to check connection healthy
         if (H2.equals(database)) {
-            authDataSource = new H2TestDataSource("jdbc:h2:./src/test/resources/amdb");
-            umDataSource = new H2TestDataSource("jdbc:h2:./src/test/resources/umdb");
+            authDataSource = new H2DataSource("jdbc:h2:./src/test/resources/amdb", "sa", "sa", true);
+            umDataSource = new H2DataSource("jdbc:h2:./src/test/resources/umdb", "sa", "sa", true);
         }
         verifyDataSourceConnection(authDataSource, MAX_RETRIES, MAX_WAIT);
         verifyDataSourceConnection(umDataSource, MAX_RETRIES, MAX_WAIT);
@@ -90,8 +90,8 @@ public class AuthDAOIntegrationTestBase {
         String authSqlFilePath = null;
         String umSqlFilePath = null;
         if (H2.equals(database)) {
-            ((H2TestDataSource) authDataSource).resetDB();
-            ((H2TestDataSource) umDataSource).resetDB();
+            ((H2DataSource) authDataSource).resetDB();
+            ((H2DataSource) umDataSource).resetDB();
             authSqlFilePath = ".." + File.separator + ".." + File.separator + ".." + File.separator
                     + "features" + File.separator + "auth-features" + File.separator
                     + "org.wso2.carbon.auth.core.feature" + File.separator + "resources"
@@ -122,8 +122,8 @@ public class AuthDAOIntegrationTestBase {
 
     protected void tempDBCleanup() throws Exception {
         if (H2.equals(database)) {
-            ((H2TestDataSource) authDataSource).resetDB();
-            ((H2TestDataSource) umDataSource).resetDB();
+            ((H2DataSource) authDataSource).resetDB();
+            ((H2DataSource) umDataSource).resetDB();
         }
     }
 }

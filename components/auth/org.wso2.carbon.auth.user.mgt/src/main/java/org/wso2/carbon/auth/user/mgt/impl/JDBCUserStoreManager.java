@@ -20,8 +20,6 @@ package org.wso2.carbon.auth.user.mgt.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
-import org.wso2.carbon.auth.core.exception.UserNotFoundException;
-import org.wso2.carbon.auth.core.exception.UserStoreConnectorException;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 import org.wso2.carbon.auth.user.store.connector.PasswordHandler;
@@ -30,6 +28,8 @@ import org.wso2.carbon.auth.user.store.connector.UserStoreConnectorFactory;
 import org.wso2.carbon.auth.user.store.connector.jdbc.DefaultPasswordHandler;
 import org.wso2.carbon.auth.user.store.constant.JDBCConnectorConstants;
 import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
+import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
+import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;

@@ -29,7 +29,7 @@ import org.wso2.carbon.auth.client.registration.ClientRegistrationHandler;
 import org.wso2.carbon.auth.client.registration.SampleTestObjectCreator;
 import org.wso2.carbon.auth.client.registration.dto.ClientRegistrationResponse;
 import org.wso2.carbon.auth.client.registration.model.Application;
-import org.wso2.carbon.auth.test.common.AuthDAOIntegrationTestBase;
+import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
 
 public class ClientRegistrationHandlerImplExceptionTest extends AuthDAOIntegrationTestBase {
 
@@ -46,7 +46,7 @@ public class ClientRegistrationHandlerImplExceptionTest extends AuthDAOIntegrati
     }
 
     @BeforeMethod
-    public void setUp() throws Exception {
+    public void setUpWithoutTables() throws Exception {
         //to make every sql execution throws exception
         super.setUpWithoutTables();
         log.info("Created databases without any tables");

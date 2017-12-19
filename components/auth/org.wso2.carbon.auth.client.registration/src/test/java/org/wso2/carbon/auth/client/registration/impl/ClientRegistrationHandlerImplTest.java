@@ -30,7 +30,7 @@ import org.wso2.carbon.auth.client.registration.SampleTestObjectCreator;
 import org.wso2.carbon.auth.client.registration.TestUtil;
 import org.wso2.carbon.auth.client.registration.dto.ClientRegistrationResponse;
 import org.wso2.carbon.auth.client.registration.model.Application;
-import org.wso2.carbon.auth.test.common.AuthDAOIntegrationTestBase;
+import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
 
 public class ClientRegistrationHandlerImplTest extends AuthDAOIntegrationTestBase {
 
