@@ -58,8 +58,8 @@ public class AuthDAOIntegrationTestBase {
         // This used to check connection healthy
         if (H2.equals(database)) {
             authDataSource = AuthCoreTestUtil
-                    .getDataSource("jdbc:h2:." + File.separator + TEST_RESOURCES_FOLDER + File.separator + "amdb", "sa",
-                            "sa", true);
+                    .getDataSource("jdbc:h2:." + File.separator + TEST_RESOURCES_FOLDER + File.separator + "authdb",
+                            "sa", "sa", true);
             umDataSource = AuthCoreTestUtil
                     .getDataSource("jdbc:h2:." + File.separator + TEST_RESOURCES_FOLDER + File.separator + "umdb", "sa",
                             "sa", true);
