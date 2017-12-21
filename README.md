@@ -23,7 +23,6 @@ Carbon Auth is a common authentication platform for Carbon 5 based products.
 ### Prerequisites
 * Java 8 or above
 * [Apache Maven](https://maven.apache.org/download.cgi#) 3.x.x
-* [Node.js](https://nodejs.org/en/) 8.x.x or above
 ### Steps
 1. Install above prerequisites if they have not been already installed
 2. Get a clone from [this](https://github.com/wso2/carbon-auth.git) repository
