@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -13,7 +11,7 @@
     <groupId>org.wso2.carbon.auth</groupId>
     <artifactId>carbon-auth</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <name>WSO2 Carbon - Authorization Aggregator POM</name>
 
@@ -21,7 +19,7 @@
         <url>https://github.com/wso2/carbon-auth.git</url>
         <developerConnection>scm:git:https://github.com/wso2/carbon-auth.git</developerConnection>
         <connection>scm:git:https://github.com/wso2/carbon-auth.git</connection>
-        <tag>HEAD</tag>
+        <tag>v1.0.0</tag>
     </scm>
     
     <modules>
@@ -506,7 +504,7 @@
     <properties>
         <carbon.kernel.version>5.2.0</carbon.kernel.version>
         <carbon.kernel.package.import.version.range>[5.1.0, 6.0.0)</carbon.kernel.package.import.version.range>
-        <carbon.auth.version>1.0.0-SNAPSHOT</carbon.auth.version>
+        <carbon.auth.version>1.0.0</carbon.auth.version>
 
         <org.osgi.core.version>6.0.0</org.osgi.core.version>
         <osgi.framework.import.version.range>[1.8.0, 2.0.0)</osgi.framework.import.version.range>
