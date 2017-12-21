@@ -57,19 +57,15 @@ public class AuthDAOIntegrationTestBase {
     protected void init() throws Exception {
         // This used to check connection healthy
         if (H2.equals(database)) {
-            authDataSource = AuthCoreTestUtil
-                    .getDataSource("jdbc:h2:." + File.separator + TEST_RESOURCES_FOLDER + File.separator + "amdb", "sa",
-                            "sa", true);
-            umDataSource = AuthCoreTestUtil
-                    .getDataSource("jdbc:h2:." + File.separator + TEST_RESOURCES_FOLDER + File.separator + "umdb", "sa",
-                            "sa", true);
+            authDataSource = AuthCoreTestUtil.getDataSource("jdbc:h2:mem:amdb", "sa", "sa", true);
+            umDataSource = AuthCoreTestUtil.getDataSource("jdbc:h2:mem:umdb", "sa", "sa", true);
         }
         verifyDataSourceConnection(authDataSource, MAX_RETRIES, MAX_WAIT);
         verifyDataSourceConnection(umDataSource, MAX_RETRIES, MAX_WAIT);
     }
 
     @SuppressFBWarnings("UC_USELESS_CONDITION")
-    private void verifyDataSourceConnection(DataSource dataSource, int maxRetries, long maxWait) throws SQLException {
+    protected void verifyDataSourceConnection(DataSource dataSource, int maxRetries, long maxWait) throws SQLException {
         while (maxRetries > 0) {
             try (Connection ignored = dataSource.getConnection()) {
                 log.info("Database Connection Successful: [" + dataSource.getDatasource().toString() + "]");
@@ -135,6 +131,16 @@ public class AuthDAOIntegrationTestBase {
             try (Connection connection = umDataSource.getConnection();
                     Statement statement = connection.createStatement()) {
                 statement.execute(dropAllQuery);
+            }
+        }
+    }
+
+    @SuppressFBWarnings("SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE")
+    protected void executeOnAuthDb(final String query) throws Exception {
+        if (H2.equals(database)) {
+            try (Connection connection = authDataSource.getConnection();
+                    Statement statement = connection.createStatement()) {
+                statement.execute(query);
             }
         }
     }

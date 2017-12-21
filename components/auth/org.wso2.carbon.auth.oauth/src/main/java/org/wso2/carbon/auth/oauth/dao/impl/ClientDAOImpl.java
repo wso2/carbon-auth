@@ -51,7 +51,7 @@ public class ClientDAOImpl implements ClientDAO {
     @Override
     public Optional<Optional<String>> getRedirectUri(String clientId) throws ClientDAOException {
         log.debug("Calling getRedirectUri for clientId: {}", clientId);
-        final String query = "SELECT REDIRECT_URI FROM AUTH_OAUTH2_CLIENTS WHERE CLIENT_ID = ?";
+        final String query = "SELECT CALLBACK_URL FROM AUTH_OAUTH2_APPLICATIONS WHERE CLIENT_ID = ?";
 
         try (Connection connection = DAOUtil.getAuthConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -59,7 +59,7 @@ public class ClientDAOImpl implements ClientDAO {
 
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
-                    return Optional.of(Optional.of(rs.getString("REDIRECT_URI")));
+                    return Optional.of(Optional.of(rs.getString("CALLBACK_URL")));
                 }
             }
         } catch (SQLException e) {
@@ -144,7 +144,7 @@ public class ClientDAOImpl implements ClientDAO {
         log.debug("Calling addAuthCodeInfoInDB for clientId: {}", clientId);
 
         final String query = "INSERT INTO AUTH_OAUTH2_AUTHORIZATION_CODE" +
-                "(CLIENT_ID, AUTHORIZATION_CODE, REDIRECT_URI, SCOPE) VALUES(?, ?, ?)";
+                "(CLIENT_ID, AUTHORIZATION_CODE, REDIRECT_URI, SCOPE) VALUES(?, ?, ?, ?)";
 
         try (Connection connection = DAOUtil.getAuthConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -159,7 +159,7 @@ public class ClientDAOImpl implements ClientDAO {
                 } else {
                     statement.setNull(3, Types.VARCHAR);
                 }
-
+                statement.setString(4, scope);
                 statement.execute();
                 connection.commit();
             } catch (SQLException e) {

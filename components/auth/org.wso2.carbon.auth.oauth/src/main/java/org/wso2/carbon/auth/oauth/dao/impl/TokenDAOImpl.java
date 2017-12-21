@@ -89,7 +89,7 @@ public class TokenDAOImpl implements TokenDAO {
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
-                throw e;
+                throw new SQLException("Error occurred while storing token information", e);
             } finally {
                 connection.setAutoCommit(DAOUtil.isAutoCommitAuth());
             }

@@ -215,6 +215,24 @@
                 <version>${mockito.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-api-mockito</artifactId>
+                <scope>test</scope>
+                <version>${powermock.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-module-junit4</artifactId>
+                <scope>test</scope>
+                <version>${powermock.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-module-junit4-rule-agent</artifactId>
+                <scope>test</scope>
+                <version>${powermock.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <scope>test</scope>
@@ -560,6 +578,7 @@
 
         <testng.version>6.9.10</testng.version>
         <mockito.version>1.10.19</mockito.version>
+        <powermock.version>1.6.5</powermock.version>
         <imp.pkg.version.axiom>1.2.10</imp.pkg.version.axiom>
 
         <com.nimbusds.nimbus-jose-jwt.version>5.1</com.nimbusds.nimbus-jose-jwt.version>
@@ -579,7 +598,7 @@
 
         <!-- Jacoco for code coverage -->
         <jacoco.version>0.7.9</jacoco.version>
-	<charon.core.version>3.0.5</charon.core.version>
+	    <charon.core.version>3.0.5</charon.core.version>
         <securevault.version>5.0.8</securevault.version>
     </properties>
 

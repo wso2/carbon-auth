@@ -42,6 +42,10 @@ public class AuthResponseContext {
     private URI redirectUri;
     private Map<String, String> queryParams = new HashMap<>();
 
+    public Map<String, String> getQueryParams() {
+        return queryParams;
+    }
+
     public void setRedirectUri(URI redirectUri) {
         this.redirectUri = redirectUri;
     }
