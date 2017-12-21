@@ -57,7 +57,7 @@ public class AuthDAOIntegrationTestBase {
     protected void init() throws Exception {
         // This used to check connection healthy
         if (H2.equals(database)) {
-            authDataSource = AuthCoreTestUtil.getDataSource("jdbc:h2:mem:amdb", "sa", "sa", true);
+            authDataSource = AuthCoreTestUtil.getDataSource("jdbc:h2:mem:authdb", "sa", "sa", true);
             umDataSource = AuthCoreTestUtil.getDataSource("jdbc:h2:mem:umdb", "sa", "sa", true);
         }
         verifyDataSourceConnection(authDataSource, MAX_RETRIES, MAX_WAIT);
@@ -65,7 +65,7 @@ public class AuthDAOIntegrationTestBase {
     }
 
     @SuppressFBWarnings("UC_USELESS_CONDITION")
-    protected void verifyDataSourceConnection(DataSource dataSource, int maxRetries, long maxWait) throws SQLException {
+    private void verifyDataSourceConnection(DataSource dataSource, int maxRetries, long maxWait) throws SQLException {
         while (maxRetries > 0) {
             try (Connection ignored = dataSource.getConnection()) {
                 log.info("Database Connection Successful: [" + dataSource.getDatasource().toString() + "]");

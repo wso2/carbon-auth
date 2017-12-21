@@ -129,7 +129,9 @@ public class ClientRegistrationHandlerImpl implements ClientRegistrationHandler 
             clientRegistrationResponse.setIsSuccessful(true);
         } catch (ClientRegistrationDAOException e) {
             log.error("Error while deleting the Client Application with client ID: " + clientId, e);
-            ErrorObject error = new ErrorObject(OAuth2Error.SERVER_ERROR.getCode());
+            ErrorObject error = new ErrorObject(OAuth2Error.SERVER_ERROR.getCode(),
+                    OAuth2Error.SERVER_ERROR.getDescription(),
+                    OAuth2Error.SERVER_ERROR.getHTTPStatusCode());
             clientRegistrationResponse.setErrorObject(error);
         }
 
