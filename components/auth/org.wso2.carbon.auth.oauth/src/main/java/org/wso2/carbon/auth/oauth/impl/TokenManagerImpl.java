@@ -21,8 +21,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.oauth.TokenManager;
 import org.wso2.carbon.auth.oauth.dao.TokenDAO;
-import org.wso2.carbon.auth.oauth.dao.impl.TokenDAOImpl;
+import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
+import org.wso2.carbon.auth.oauth.exception.ClientDAOException;
 
 import java.sql.SQLException;
 
@@ -34,7 +35,12 @@ public class TokenManagerImpl implements TokenManager {
     private TokenDAO tokenDAO;
 
     public TokenManagerImpl() {
-        tokenDAO = new TokenDAOImpl();
+
+        try {
+            tokenDAO = DAOFactory.getTokenDAO();
+        } catch (ClientDAOException e) {
+            throw new IllegalStateException("Could not create TokenManagerImpl", e);
+        }
     }
 
     @Override
