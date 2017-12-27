@@ -144,4 +144,14 @@ public class AuthDAOIntegrationTestBase {
             }
         }
     }
+
+    @SuppressFBWarnings("SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE")
+    protected void executeOnUmDb(final String query) throws Exception {
+        if (H2.equals(database)) {
+            try (Connection connection = umDataSource.getConnection();
+                    Statement statement = connection.createStatement()) {
+                statement.execute(query);
+            }
+        }
+    }
 }

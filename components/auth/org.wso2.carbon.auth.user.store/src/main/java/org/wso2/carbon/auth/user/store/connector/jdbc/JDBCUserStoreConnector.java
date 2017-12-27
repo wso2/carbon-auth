@@ -277,7 +277,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             return groups;
 
         } catch (SQLException e) {
-            throw new UserStoreConnectorException("Error occurred while retrieving group list.");
+            throw new UserStoreConnectorException("Error occurred while retrieving group list.", e);
         }
     }
 
