@@ -47,6 +47,7 @@ public class IntrospectionManagerImpl implements IntrospectionManager {
             tokenValidatorHandler.validate(context);
             return context.getIntrospectionResponse();
         } catch (IntrospectionException e) {
+            introspectionResponse.setActive(false);
             log.error(e.getMessage(), e);
         }
         return introspectionResponse;
