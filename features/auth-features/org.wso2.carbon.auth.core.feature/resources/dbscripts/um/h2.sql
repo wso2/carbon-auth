@@ -80,3 +80,9 @@ CREATE TABLE AUTH_UM_PASSWORD_INFO
 
 CREATE UNIQUE INDEX unique_ID_INDEX_1 ON AUTH_UM_USER (USER_UNIQUE_ID);
 CREATE UNIQUE INDEX unique_ID_INDEX_2 ON AUTH_UM_GROUP (GROUP_UNIQUE_ID);
+
+INSERT INTO `AUTH_UM_ATTRIBUTES` (`ID`, `ATTR_NAME`) VALUES
+(1, 'password'),
+(2, 'urn:ietf:params:scim:schemas:core:2.0:User:userName'),
+(3, 'urn:ietf:params:scim:schemas:core:2.0:Group:displayName'),
+(4, 'urn:ietf:params:scim:schemas:core:2.0:User:name.familyName');
