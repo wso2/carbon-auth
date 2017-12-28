@@ -21,4 +21,8 @@ package org.wso2.carbon.auth.token.introspection;
  * Exception class for introspection component
  */
 public class IntrospectionException extends Exception {
+
+    public IntrospectionException(String message) {
+        super(message);
+    }
 }

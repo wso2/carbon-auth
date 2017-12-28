@@ -28,6 +28,7 @@ import org.wso2.carbon.auth.token.introspection.TokenValidatorHandler;
 import org.wso2.carbon.auth.token.introspection.dto.IntrospectionContext;
 import org.wso2.carbon.auth.token.introspection.dto.IntrospectionResponse;
 
+import java.util.HashMap;
 
 /**
  * Default TokenValidatorHandler implementation
@@ -44,7 +45,10 @@ public class TokenValidatorHandlerImpl implements TokenValidatorHandler {
         }
 
         AccessTokenDTO accessTokenDTO = findAccessToken(context.getAccessToken());
-        log.info(accessTokenDTO.getAccessToken() + " " + accessTokenDTO.getConsumerKey());
+        if (accessTokenDTO == null) {
+            throw new IntrospectionException("accessTokenDO is " + "\'NULL\'");
+        }
+
         if (hasAccessTokenExpired(accessTokenDTO)) {
             buildIntrospectionError(context, "Access token expired");
             return;
@@ -62,6 +66,15 @@ public class TokenValidatorHandlerImpl implements TokenValidatorHandler {
         introspectionResponse.setUsername("");
         // add client id
         introspectionResponse.setClientId(accessTokenDTO.getConsumerKey());
+
+        introspectionResponse.setTokenType("user and application");
+        introspectionResponse.setNbf(1L);
+        introspectionResponse.setAud("audience");
+        introspectionResponse.setIss("Issuer");
+        introspectionResponse.setJti("JTI");
+        introspectionResponse.setSub("SUB");
+        introspectionResponse.setUserContext("context");
+        introspectionResponse.setProperties(new HashMap<>());
 
         context.setIntrospectionResponse(introspectionResponse);
         // adding the AccessTokenDO as a context property for further use
@@ -84,8 +97,10 @@ public class TokenValidatorHandlerImpl implements TokenValidatorHandler {
         if (log.isDebugEnabled()) {
             log.debug(errorMessage);
         }
-        context.getIntrospectionResponse().setActive(false);
-        context.getIntrospectionResponse().setError(errorMessage);
+        IntrospectionResponse introspectionResponse = new IntrospectionResponse();
+        introspectionResponse.setActive(false);
+        introspectionResponse.setError(errorMessage);
+        context.setIntrospectionResponse(introspectionResponse);
     }
 
     private AccessTokenDTO findAccessToken(String tokenIdentifier) throws IntrospectionException {
@@ -111,17 +126,7 @@ public class TokenValidatorHandlerImpl implements TokenValidatorHandler {
     }
 
     public static long getAccessTokenExpireMillis(AccessTokenDTO accessTokenDTO) {
-
-        if (accessTokenDTO == null) {
-            throw new IllegalArgumentException("accessTokenDO is " + "\'NULL\'");
-        }
         long validityPeriodMillis = accessTokenDTO.getValidityPeriod() * 1000L;
-
-        if (validityPeriodMillis < 0) {
-            log.debug("Access Token has infinite lifetime");
-            return -1;
-        }
-
         long issuedTime = accessTokenDTO.getTimeCreated();
         long validityMillis = calculateValidityInMillis(issuedTime, validityPeriodMillis);
         if (validityMillis > 1000) {

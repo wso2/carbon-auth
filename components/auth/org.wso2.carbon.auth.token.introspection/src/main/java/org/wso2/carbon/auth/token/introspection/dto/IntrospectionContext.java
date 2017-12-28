@@ -21,17 +21,8 @@ package org.wso2.carbon.auth.token.introspection.dto;
  * Introspection context holding class
  */
 public class IntrospectionContext {
-    private boolean isSuccessful;
     private String accessToken;
     private IntrospectionResponse introspectionResponse;
-
-    public boolean isSuccessful() {
-        return isSuccessful;
-    }
-
-    public void setSuccessful(boolean successful) {
-        isSuccessful = successful;
-    }
 
     public IntrospectionResponse getIntrospectionResponse() {
         return introspectionResponse;
