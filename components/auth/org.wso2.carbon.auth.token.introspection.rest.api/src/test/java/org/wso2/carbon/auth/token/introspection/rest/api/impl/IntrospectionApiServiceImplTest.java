@@ -39,7 +39,6 @@ import javax.ws.rs.core.Response;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ IntrospectionManagerImpl.class, TokenValidatorHandlerImpl.class, IntrospectionContext.class,
          })
-
 public class IntrospectionApiServiceImplTest {
 
     @Mock
