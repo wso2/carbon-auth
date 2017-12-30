@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response;
 
 public class IntrospectionApiServiceImpl extends IntrospectionApiService {
     @Override
-    public Response registerApplication(String token, Request request) throws NotFoundException {
+    public Response introspect(String token, Request request) throws NotFoundException {
         IntrospectionManager introspectionManager;
         introspectionManager = new IntrospectionManagerImpl();
         IntrospectionResponse introspectionResponse = introspectionManager.introspect(token);

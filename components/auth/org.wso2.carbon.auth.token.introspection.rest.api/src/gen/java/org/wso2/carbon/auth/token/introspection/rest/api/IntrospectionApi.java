@@ -37,18 +37,18 @@ public class IntrospectionApi implements Microservice  {
     
     @Consumes({ "application/x-www-form-urlencoded" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Registers an OAuth2 application ", notes = "This API is used to introspection. ", response = IntrospectionResponseDTO.class, tags={ "OAuth2 DCR", })
+    @io.swagger.annotations.ApiOperation(value = "Token introspection ", notes = "This API is used to introspection. ", response = IntrospectionResponseDTO.class, tags={ "OAuth2 DCR", })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 200, message = "Created", response = IntrospectionResponseDTO.class),
+        @io.swagger.annotations.ApiResponse(code = 200, message = "Ok", response = IntrospectionResponseDTO.class),
         
         @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request", response = IntrospectionResponseDTO.class),
         
         @io.swagger.annotations.ApiResponse(code = 409, message = "Conflict", response = IntrospectionResponseDTO.class),
         
         @io.swagger.annotations.ApiResponse(code = 500, message = "Server Error", response = IntrospectionResponseDTO.class) })
-    public Response registerApplication(@ApiParam(value = "Application information to register.", required=true)  @FormParam("token")  String token
+    public Response introspect(@ApiParam(value = "token to be introspect.", required=true)  @FormParam("token")  String token
  ,@Context Request request)
     throws NotFoundException {
-        return delegate.registerApplication(token,request);
+        return delegate.introspect(token,request);
     }
 }

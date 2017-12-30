@@ -42,17 +42,17 @@ paths:
         "redirect_uris":["https://client.example.org/callback"],
         "client_name":"application_owner_application_1" }
       summary: |
-        Registers an OAuth2 application
-      operationId: registerApplication
+        Token introspection
+      operationId: introspect
       parameters:
         - name: token
           in: formData
-          description: Application information to register.
+          description: token to be introspect.
           required: true
           type: string
       responses:
         '200':
-          description: Created
+          description: Ok
           schema:
             $ref: '#/definitions/IntrospectionResponse'
         '400':
