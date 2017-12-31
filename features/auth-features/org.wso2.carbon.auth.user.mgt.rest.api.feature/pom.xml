@@ -21,7 +21,7 @@
     <parent>
         <artifactId>auth-features</artifactId>
         <groupId>org.wso2.carbon.auth</groupId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.7-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -35,10 +35,10 @@
             <groupId>org.wso2.carbon.auth</groupId>
             <artifactId>org.wso2.carbon.auth.user.mgt</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.auth</groupId>
-            <artifactId>org.wso2.carbon.auth.user.mgt.rest.api</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.auth</groupId>-->
+            <!--<artifactId>org.wso2.carbon.auth.user.mgt.rest.api</artifactId>-->
+        <!--</dependency>-->
     </dependencies>
 
     <build>
@@ -72,10 +72,10 @@
                                     <symbolicName>org.wso2.carbon.auth.user.mgt</symbolicName>
                                     <version>${carbon.auth.version}</version>
                                 </bundle>
-                                <bundle>
-                                    <symbolicName>org.wso2.carbon.auth.user.mgt.rest.api</symbolicName>
-                                    <version>${carbon.auth.version}</version>
-                                </bundle>
+                                <!--<bundle>-->
+                                    <!--<symbolicName>org.wso2.carbon.auth.user.mgt.rest.api</symbolicName>-->
+                                    <!--<version>${carbon.auth.version}</version>-->
+                                <!--</bundle>-->
                             </bundles>
                             <importFeatures>
                                 <feature>
