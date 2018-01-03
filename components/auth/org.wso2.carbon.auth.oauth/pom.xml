@@ -40,6 +40,10 @@
             <artifactId>org.wso2.carbon.auth.user.mgt</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.auth</groupId>
+            <artifactId>org.wso2.carbon.auth.client.registration</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>oauth2-oidc-sdk</artifactId>
         </dependency>

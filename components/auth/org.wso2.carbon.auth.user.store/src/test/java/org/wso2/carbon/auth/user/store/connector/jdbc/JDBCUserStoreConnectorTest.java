@@ -248,10 +248,20 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
 
     @Test
     public void testGetUserAttributeValues() throws Exception {
+        // add test user
+        List<Attribute> attributeList = new ArrayList<>();
+        String adminUser = "superAdmin";
+        String adminPass = "superAdminPass";
+        attributeList.add(new Attribute(Constants.USERNAME_URI, adminUser));
+        attributeList.add(new Attribute(Constants.PASSWORD_URI, adminPass));
+        String adminUserId = connector.addUser(attributeList);
+        Assert.assertNotNull(adminUserId);
+
         String userId = null;
         try {
-            userId = connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "admin");
+            userId = connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, adminUser);
             Assert.assertNotNull(userId);
+            Assert.assertEquals(adminUserId, userId);
         } catch (UserNotFoundException e) {
             Assert.fail("Exception not expected");
         }
