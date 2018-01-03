@@ -598,6 +598,7 @@
         <jacoco.version>0.7.9</jacoco.version>
         <charon.core.version>3.0.5</charon.core.version>
         <securevault.version>5.0.8</securevault.version>
+        <gson.version.range>[2.2,3)</gson.version.range>
     </properties>
 
 </project>
