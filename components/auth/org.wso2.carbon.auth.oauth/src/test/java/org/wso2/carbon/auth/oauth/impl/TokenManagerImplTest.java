@@ -23,6 +23,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.client.registration.ClientRegistrationHandler;
+import org.wso2.carbon.auth.client.registration.impl.ClientRegistrationFactory;
+import org.wso2.carbon.auth.client.registration.model.Application;
 import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
 //import org.wso2.carbon.auth.oauth.IntegrationTestBase;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
@@ -37,15 +40,27 @@ public class TokenManagerImplTest extends AuthDAOIntegrationTestBase {
     public void setup() throws Exception {
         super.init();
         super.setup();
-        log.info("setup AuthRequestHandlerTest");
+        log.info("setup TokenManagerImplTest");
     }
 
     @Test
     public void testGetTokenInfo() throws Exception {
+        ClientRegistrationHandler defaultClientRegistrationHandler = ClientRegistrationFactory.getInstance()
+                .getClientRegistrationHandler();
+        Application application = new Application();
+        application.setClientName("tokenGet-app");
+        application.setClientId(UUID.randomUUID().toString());
+        application.setClientSecret(UUID.randomUUID().toString());
+        application.setGrantTypes("password");
+        application.setCallBackUrl("http://localhost/callback");
+        application.setOauthVersion("2");
+        defaultClientRegistrationHandler.registerApplication(application);
+
+
         TokenManagerImpl tokenManager = new TokenManagerImpl();
         String accessToken = UUID.randomUUID().toString();
         String refreshToken = UUID.randomUUID().toString();
-        String clientID = "sample";
+        String clientID = application.getClientId();
         String authUser = "admin";
         String userDomain = "default";
         long timeCreated = Calendar.getInstance().getTimeInMillis();
@@ -55,7 +70,8 @@ public class TokenManagerImplTest extends AuthDAOIntegrationTestBase {
         String tokenScopeHash = "hash";
         String tokenState = "active";
         String userType = "application user";
-        String grantType = "password";
+        String grantType = application.getGrantTypes();
+
         tokenManager.storeToken(accessToken, refreshToken, clientID, authUser, userDomain, timeCreated,
                 refreshTokenCreatedTime, validityPeriod, refreshTokenValidityPeriod, tokenScopeHash, tokenState,
                 userType, grantType);

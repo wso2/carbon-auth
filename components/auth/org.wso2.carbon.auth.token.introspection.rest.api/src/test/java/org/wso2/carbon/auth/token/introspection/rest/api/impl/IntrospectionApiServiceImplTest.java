@@ -17,6 +17,7 @@
  */
 package org.wso2.carbon.auth.token.introspection.rest.api.impl;
 
+import com.google.gson.Gson;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,13 +61,16 @@ public class IntrospectionApiServiceImplTest {
         PowerMockito.when(context.getIntrospectionResponse()).thenReturn(introspectionResponse);
 
         Response response = service.introspect("ASDF5F6sd587fdgfsakjdd", null);
-        IntrospectionResponseDTO dto = (IntrospectionResponseDTO) response.getEntity();
+        String payload = (String) response.getEntity();
+        Gson gson =  new Gson();
+        IntrospectionResponseDTO dto = gson.fromJson(payload, IntrospectionResponseDTO.class);
         Assert.assertTrue(dto.getActive());
 
         PowerMockito.when(tokenValidatorHandler, "validate", Mockito.any(IntrospectionContext.class))
                 .thenThrow(IntrospectionException.class);
         response = service.introspect("inactive", null);
-        dto = (IntrospectionResponseDTO) response.getEntity();
+        payload = (String) response.getEntity();
+        dto = gson.fromJson(payload, IntrospectionResponseDTO.class);
         Assert.assertFalse(dto.getActive());
     }
 }

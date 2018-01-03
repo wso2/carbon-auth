@@ -20,6 +20,7 @@ package org.wso2.carbon.auth.user.mgt.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
+import org.wso2.carbon.auth.user.mgt.Constants;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 import org.wso2.carbon.auth.user.store.connector.PasswordHandler;
@@ -46,7 +47,7 @@ public class JDBCUserStoreManager implements UserStoreManager {
         UserStoreConnector connector = UserStoreConnectorFactory.getUserStoreConnector();
         UserStoreConfiguration config = new UserStoreConfiguration();
         Map<String, Object> properties = new HashMap<>();
-        properties.put(JDBCConnectorConstants.DATA_SOURCE, "WSO2UM_DB");
+        properties.put(JDBCConnectorConstants.DATA_SOURCE, Constants.WSO2_UM_DB);
         properties.put(JDBCConnectorConstants.DATABASE_TYPE, "MySql");
         config.setProperties(properties);
         try {

@@ -63,7 +63,7 @@ public class TokenValidatorHandlerImpl implements TokenValidatorHandler {
         // token scopes
         introspectionResponse.setScope("");
         // set user-name
-        introspectionResponse.setUsername("");
+        introspectionResponse.setUsername("admin");
         // add client id
         introspectionResponse.setClientId(accessTokenDTO.getConsumerKey());
 

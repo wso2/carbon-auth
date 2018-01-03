@@ -119,10 +119,11 @@ public class TokenDAOImpl implements TokenDAO {
     public AccessTokenDTO getTokenInfo(String accessToken) throws SQLException {
         log.debug("Calling getTokenInfo for accessToken");
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
-        final String query = "SELECT TOKEN_ID, ACCESS_TOKEN, REFRESH_TOKEN, CONSUMER_KEY_ID, AUTHZ_USER, "
+        final String query = "SELECT TOKEN_ID, ACCESS_TOKEN, REFRESH_TOKEN, CLIENT_ID, AUTHZ_USER, "
                 + "TIME_CREATED, REFRESH_TOKEN_TIME_CREATED, VALIDITY_PERIOD, REFRESH_TOKEN_VALIDITY_PERIOD, "
-                + "TOKEN_SCOPE_HASH, TOKEN_STATE, USER_TYPE, GRANT_TYPE FROM AUTH_ACCESS_TOKEN WHERE "
-                + "ACCESS_TOKEN = ? ";
+                + "TOKEN_SCOPE_HASH, TOKEN_STATE, USER_TYPE, GRANT_TYPE FROM AUTH_ACCESS_TOKEN INNER JOIN  "
+                + "AUTH_OAUTH2_APPLICATIONS  WHERE  ACCESS_TOKEN = ? AND AUTH_ACCESS_TOKEN.CONSUMER_KEY_ID = "
+                + "AUTH_OAUTH2_APPLICATIONS.ID";
 
         try (Connection connection = DAOUtil.getAuthConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
@@ -133,7 +134,7 @@ public class TokenDAOImpl implements TokenDAO {
                     accessTokenDTO.setTokenID(rs.getInt(JDBCAuthConstants.TOKEN_ID));
                     accessTokenDTO.setAccessToken(rs.getString(JDBCAuthConstants.ACCESS_TOKEN));
                     accessTokenDTO.setRefreshToken(rs.getString(JDBCAuthConstants.REFRESH_TOKEN));
-                    accessTokenDTO.setConsumerKey(rs.getString(JDBCAuthConstants.CONSUMER_KEY_ID));
+                    accessTokenDTO.setConsumerKey(rs.getString(JDBCAuthConstants.CLIENT_ID));
                     accessTokenDTO.setAuthUser(rs.getString(JDBCAuthConstants.AUTHZ_USER));
                     accessTokenDTO.setTimeCreated(rs.getTimestamp(JDBCAuthConstants.TIME_CREATED).getTime());
                     accessTokenDTO.setRefreshTokenCreatedTime(

@@ -35,6 +35,7 @@ public class UserStoreConstants {
     public static final String ITERATION_COUNT = "iteration_count";
     public static final String KEY_LENGTH = "key_length";
     public static final String CLAIM_USERNAME = "urn:ietf:params:scim:schemas:core:2.0:User:userName";
-
+    public static final String PASSWORD_URI = "password";
+    public static final String DATASOURCE_WSO2UM_DB = "WSO2_UM_DB";
 
 }

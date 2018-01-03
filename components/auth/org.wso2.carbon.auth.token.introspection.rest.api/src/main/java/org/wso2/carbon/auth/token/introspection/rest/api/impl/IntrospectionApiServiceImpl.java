@@ -1,5 +1,6 @@
 package org.wso2.carbon.auth.token.introspection.rest.api.impl;
 
+import com.google.gson.Gson;
 import org.wso2.carbon.auth.token.introspection.IntrospectionManager;
 import org.wso2.carbon.auth.token.introspection.dto.IntrospectionResponse;
 import org.wso2.carbon.auth.token.introspection.impl.IntrospectionManagerImpl;
@@ -19,6 +20,8 @@ public class IntrospectionApiServiceImpl extends IntrospectionApiService {
         IntrospectionResponse introspectionResponse = introspectionManager.introspect(token);
         IntrospectionResponseDTO introspectionResponseDTO = MappingUtil
                 .applicationModelToApplicationDTO(introspectionResponse);
-        return Response.status(Response.Status.OK).entity(introspectionResponseDTO).build();
+        Gson gson = new Gson();
+        String json = gson.toJson(introspectionResponseDTO);
+        return Response.status(Response.Status.OK).entity(json).build();
     }
 }

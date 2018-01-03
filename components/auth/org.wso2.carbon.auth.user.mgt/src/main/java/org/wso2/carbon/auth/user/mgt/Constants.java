@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -15,12 +15,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.carbon.auth.user.store.connector;
+package org.wso2.carbon.auth.user.mgt;
 
+/**
+ * Constants for user mgt component
+ */
 public class Constants {
-    public static final String FAMILY_NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:User:name.familyName";
-    public static final String DISPLAY_NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:displayName";
-    public static final String USERNAME_URI = "urn:ietf:params:scim:schemas:core:2.0:User:userName";
-    public static final String PASSWORD_URI = "password";
-    public static final String DATASOURCE_WSO2UM_DB = "WSO2_UM_DB";
+    public static final String WSO2_UM_DB = "WSO2_UM_DB";
 }
