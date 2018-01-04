@@ -37,7 +37,7 @@ public interface OAuthDAO {
      *
      * @param clientId Client Id of client
      * @return Redirect Uri if exists else Optional.Empty
-     * @throws OAuthDAOException if a DOA Error is encountered
+     * @throws OAuthDAOException if a DAO Error is encountered
      */
     Optional<Optional<String>> getRedirectUri(String clientId) throws OAuthDAOException;
 
@@ -47,7 +47,7 @@ public interface OAuthDAO {
      * @param authCode Generated Authorization Code
      * @param clientId Client Id of client
      * @param redirectUri Redirect Uri
-     * @throws OAuthDAOException if a DOA Error is encountered
+     * @throws OAuthDAOException if a DAO Error is encountered
      */
     void addAuthCodeInfo(String authCode, String clientId, String scope, @Nullable URI redirectUri)
             throws OAuthDAOException;
@@ -59,7 +59,7 @@ public interface OAuthDAO {
      * @param clientId Client Id of client
      * @param redirectUri Redirect Uri
      * @return Scope
-     * @throws OAuthDAOException if a DOA Error is encountered
+     * @throws OAuthDAOException if a DAO Error is encountered
      */
     @CheckForNull
     String getScopeForAuthCode(String authCode, String clientId, @Nullable URI redirectUri) throws OAuthDAOException;
@@ -70,7 +70,7 @@ public interface OAuthDAO {
      * @param clientId Client Id of client
      * @param clientSecret Client Secret of client
      * @return true if client Id/secret is valid else false
-     * @throws OAuthDAOException if a DOA Error is encountered
+     * @throws OAuthDAOException if a DAO Error is encountered
      */
     boolean isClientCredentialsValid(String clientId, String clientSecret) throws OAuthDAOException;
 
@@ -78,7 +78,7 @@ public interface OAuthDAO {
      * Add access token related information
      *
      * @param accessTokenData Access token related data
-     * @throws OAuthDAOException if a DOA Error is encountered
+     * @throws OAuthDAOException if a DAO Error is encountered
      */
     void addAccessTokenInfo(AccessTokenData accessTokenData) throws OAuthDAOException;
 }
