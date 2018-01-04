@@ -23,6 +23,7 @@ package org.wso2.carbon.auth.oauth.impl;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.ResourceOwnerPasswordCredentialsGrant;
 import com.nimbusds.oauth2.sdk.Scope;
+import com.nimbusds.oauth2.sdk.auth.Secret;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +32,10 @@ import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
-import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
+import org.wso2.carbon.auth.user.mgt.UserStoreException;
+import org.wso2.carbon.auth.user.mgt.UserStoreManager;
+import org.wso2.carbon.auth.user.mgt.impl.JDBCUserStoreManager;
 
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -73,6 +76,14 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
 
         clientLookup.getClientId(authorization, context, haltExecution);
 
+        boolean authenticated = validateGrant(request);
+        if (authenticated) {
+            context.getParams().put("AUTH_USER", request.getUsername());
+        } else {
+            return;
+        }
+        //check CK empty
+        //check CK state
         if (haltExecution.isTrue()) {
             return;
         }
@@ -87,8 +98,18 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
         }
 
         TokenGenerator.generateAccessToken(scope, context);
+    }
 
-        AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
-        oauthDAO.addAccessTokenInfo(accessTokenData);
+    private boolean validateGrant(ResourceOwnerPasswordCredentialsGrant request) {
+        String username = request.getUsername();
+        Secret password = request.getPassword();
+
+        UserStoreManager jdbcUserStoreManager = new JDBCUserStoreManager();
+        try {
+            return jdbcUserStoreManager.doAuthenticate(username, password.getValue());
+        } catch (UserStoreException e) {
+            log.error(e.getMessage(), e);
+        }
+        return false;
     }
 }

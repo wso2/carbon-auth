@@ -92,6 +92,14 @@ paths:
           name: scope
           description: OAuth scopes
           type: string
+        - in: formData
+          name: username
+          description: username
+          type: string
+        - in: formData
+          name: password
+          description: password
+          type: string
       responses:
         200:
           description: |

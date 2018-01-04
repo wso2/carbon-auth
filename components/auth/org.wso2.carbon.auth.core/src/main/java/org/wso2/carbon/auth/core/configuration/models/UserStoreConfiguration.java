@@ -20,7 +20,7 @@
 
 package org.wso2.carbon.auth.core.configuration.models;
 
-import org.wso2.carbon.kernel.annotations.Element;
+import org.wso2.carbon.config.annotation.Element;
 
 import java.util.ArrayList;
 import java.util.HashMap;

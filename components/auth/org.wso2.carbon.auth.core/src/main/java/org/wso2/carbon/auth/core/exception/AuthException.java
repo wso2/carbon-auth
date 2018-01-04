@@ -38,14 +38,16 @@ public class AuthException extends Exception {
 
     public AuthException() {
         super();
+        this.errorHandler = ExceptionCodes.INTERNAL_ERROR;
     }
-    
+
     /**
      * @param message Error message
      * @param cause Error cause
      */
     public AuthException(String message, Throwable cause) {
         super(message, cause);
+        this.errorHandler = ExceptionCodes.INTERNAL_ERROR;
     }
 
     /**
@@ -75,6 +77,7 @@ public class AuthException extends Exception {
      */
     public AuthException(String message) {
         super(message);
+        this.errorHandler = ExceptionCodes.INTERNAL_ERROR;
     }
 
     /**
@@ -88,7 +91,7 @@ public class AuthException extends Exception {
     }
 
     /**
-     * This is a default constructure where you can pass error code to error DTO
+     * This is a default constructor where you can pass error code to error DTO
      * @param message Error message
      * @param cause throwable object.
      * @param code Exception code that need to pass to the error DTO

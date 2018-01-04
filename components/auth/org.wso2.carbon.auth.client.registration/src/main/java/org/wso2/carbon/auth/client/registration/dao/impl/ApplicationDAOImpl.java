@@ -18,10 +18,8 @@
 
 package org.wso2.carbon.auth.client.registration.dao.impl;
 
-import org.wso2.carbon.auth.client.registration.EncryptionDecryptionPersistenceProcessor;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
 import org.wso2.carbon.auth.client.registration.exception.ClientRegistrationDAOException;
-import org.wso2.carbon.auth.client.registration.exception.PersistenceProcessorException;
 import org.wso2.carbon.auth.client.registration.model.Application;
 import org.wso2.carbon.auth.core.datasource.DAOUtil;
 
@@ -37,18 +35,16 @@ import java.sql.Types;
  */
 public class ApplicationDAOImpl implements ApplicationDAO {
 
-    private EncryptionDecryptionPersistenceProcessor persistenceProcessor;
     /**
      * Constructor is package private, use factory class to create the
      */
     ApplicationDAOImpl() {
-        persistenceProcessor = new EncryptionDecryptionPersistenceProcessor();
     }
 
     @Override
     public Application getApplication(String clientId) throws ClientRegistrationDAOException {
         final String query = "SELECT * "
-                + "FROM AUTH_OAUTH2_APPLICATIONS WHERE CLIENT_ID = ?";
+                + "FROM AUTH_OAUTH2_APPLICATION WHERE CLIENT_ID = ?";
 
         try (Connection connection = DAOUtil.getAuthConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
@@ -58,10 +54,13 @@ public class ApplicationDAOImpl implements ApplicationDAO {
                 if (rs.next()) {
                     Application data = new Application();
                     data.setClientId(clientId);
+                    /* todo add encryption util
                     data.setClientSecret(
                             persistenceProcessor.getPreprocessedClientSecret(rs.getString("CLIENT_SECRET")));
+                    */
+                    data.setClientSecret(rs.getString("CLIENT_SECRET"));
                     data.setClientName(rs.getString("APP_NAME"));
-                    data.setCallBackUrl(rs.getString("CALLBACK_URL"));
+                    data.setCallBackUrl(rs.getString("REDIRECT_URI"));
                     data.setGrantTypes(rs.getString("GRANT_TYPES"));
                     data.setApplicationAccessTokenExpiryTime(rs.getString("APP_ACCESS_TOKEN_EXPIRE_TIME"));
                     data.setRefreshTokenExpiryTime(rs.getString("REFRESH_TOKEN_EXPIRE_TIME"));
@@ -74,17 +73,17 @@ public class ApplicationDAOImpl implements ApplicationDAO {
             throw new ClientRegistrationDAOException(
                     String.format("Error occurred while getting client application public info(clientId : %s",
                             clientId), e);
-        } catch (PersistenceProcessorException e) {
+        } /*catch (PersistenceProcessorException e) {
             throw new ClientRegistrationDAOException("Error occurred while processing client secret by " +
                             "EncryptionDecryptionPersistenceProcessor", e);
-        }
+        }*/
 
         return null;
     }
 
     @Override
     public void deleteApplication(String clientId) throws ClientRegistrationDAOException {
-        final String query = "DELETE FROM AUTH_OAUTH2_APPLICATIONS WHERE CLIENT_ID=?";
+        final String query = "DELETE FROM AUTH_OAUTH2_APPLICATION WHERE CLIENT_ID=?";
 
         try (Connection connection = DAOUtil.getAuthConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
@@ -134,9 +133,9 @@ public class ApplicationDAOImpl implements ApplicationDAO {
     }
 
     private void addClientInfoInDB(Application application) throws SQLException, ClientRegistrationDAOException {
-        final String query = "INSERT INTO AUTH_OAUTH2_APPLICATIONS " +
+        final String query = "INSERT INTO AUTH_OAUTH2_APPLICATION " +
                 "(CLIENT_ID, CLIENT_SECRET, APP_NAME, OAUTH_VERSION," +
-                " CALLBACK_URL, GRANT_TYPES) VALUES (?,?,?,?,?,?) ";
+                " REDIRECT_URI, GRANT_TYPES) VALUES (?,?,?,?,?,?) ";
 
         try (Connection connection = DAOUtil.getAuthConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
@@ -144,7 +143,10 @@ public class ApplicationDAOImpl implements ApplicationDAO {
                 connection.setAutoCommit(false);
 
                 statement.setString(1, application.getClientId());
+                /* todo add encryption util
                 statement.setString(2, persistenceProcessor.getProcessedClientSecret(application.getClientSecret()));
+                */
+                statement.setString(2, application.getClientSecret());
                 statement.setString(3, application.getClientName());
                 statement.setString(4, application.getOauthVersion());
 
@@ -165,9 +167,9 @@ public class ApplicationDAOImpl implements ApplicationDAO {
             } catch (SQLException e) {
                 connection.rollback();
                 throw e;
-            } catch (PersistenceProcessorException e) {
+            /* }  catch (PersistenceProcessorException e) {
                 throw new ClientRegistrationDAOException("Error occurred while processing client secret by " +
-                        "EncryptionDecryptionPersistenceProcessor", e);
+                        "EncryptionDecryptionPersistenceProcessor", e); */
             } finally {
                 connection.setAutoCommit(DAOUtil.isAutoCommitAuth());
             }
@@ -175,8 +177,8 @@ public class ApplicationDAOImpl implements ApplicationDAO {
     }
 
     private void updateClientInfoInDB(Application application, String clientId) throws SQLException {
-        String query = "UPDATE AUTH_OAUTH2_APPLICATIONS SET APP_NAME=?," +
-                " CALLBACK_URL=?, GRANT_TYPES=?, USER_ACCESS_TOKEN_EXPIRE_TIME=?, " +
+        String query = "UPDATE AUTH_OAUTH2_APPLICATION SET APP_NAME=?," +
+                " REDIRECT_URI=?, GRANT_TYPES=?, USER_ACCESS_TOKEN_EXPIRE_TIME=?, " +
                 "APP_ACCESS_TOKEN_EXPIRE_TIME=?, REFRESH_TOKEN_EXPIRE_TIME=? " +
                 "WHERE CLIENT_ID=?";
 

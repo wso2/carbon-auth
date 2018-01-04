@@ -23,7 +23,7 @@ package org.wso2.carbon.auth.scim.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.wso2.carbon.auth.core.exception.AuthUserManagementException;
+import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
 import org.wso2.carbon.auth.scim.impl.constants.SCIMCommonConstants;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnectorFactory;

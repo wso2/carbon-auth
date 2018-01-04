@@ -20,8 +20,8 @@
 
 package org.wso2.carbon.auth.core.configuration.models;
 
-import org.wso2.carbon.kernel.annotations.Configuration;
-import org.wso2.carbon.kernel.annotations.Element;
+import org.wso2.carbon.config.annotation.Configuration;
+import org.wso2.carbon.config.annotation.Element;
 
 /**
  * Class to hold Auth configuration parameters and generate yaml file

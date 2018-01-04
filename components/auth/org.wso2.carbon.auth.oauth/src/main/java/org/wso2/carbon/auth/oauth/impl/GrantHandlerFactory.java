@@ -55,6 +55,8 @@ public class GrantHandlerFactory {
                 return Optional.of(new AuthCodeGrantHandlerImpl(oauthDAO));
             } else if (grantType.equals(GrantType.PASSWORD)) {
                 return Optional.of(new PasswordGrantHandlerImpl(oauthDAO));
+            } else if (grantType.equals(GrantType.CLIENT_CREDENTIALS)) {
+                return Optional.of(new ClientCredentialsGrantHandlerImpl(oauthDAO));
             } else {
                 context.setErrorObject(OAuth2Error.INVALID_REQUEST);
                 haltExecution.setTrue();

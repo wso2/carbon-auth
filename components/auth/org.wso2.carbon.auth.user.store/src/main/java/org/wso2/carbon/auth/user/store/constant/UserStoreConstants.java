@@ -29,6 +29,13 @@ public class UserStoreConstants {
     public static final String JDBC_CONNECTOR_TYPE = "JDBC";
     
     public static final String LDAP_CONNECTOR_TYPE = "LDAP";
-    
+    public static final String PASSWORD = "password";
+    public static final String PASSWORD_SALT = "password_salt";
+    public static final String HASH_ALGO = "hash_algo";
+    public static final String ITERATION_COUNT = "iteration_count";
+    public static final String KEY_LENGTH = "key_length";
+    public static final String CLAIM_USERNAME = "urn:ietf:params:scim:schemas:core:2.0:User:userName";
+    public static final String PASSWORD_URI = "password";
+    public static final String DATASOURCE_WSO2UM_DB = "WSO2_UM_DB";
 
 }

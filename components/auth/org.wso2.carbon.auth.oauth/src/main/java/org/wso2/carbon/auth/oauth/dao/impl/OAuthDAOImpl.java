@@ -39,7 +39,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 
 /**
- * Implementation of ClientDOA interface
+ * Implementation of OAuthDAO interface
  */
 public class OAuthDAOImpl implements OAuthDAO {
     private static final Logger log = LoggerFactory.getLogger(OAuthDAOImpl.class);
@@ -156,10 +156,11 @@ public class OAuthDAOImpl implements OAuthDAO {
     private void addAccessTokenInfoInDB(AccessTokenData accessTokenData) throws SQLException {
         log.debug("Calling addAccessTokenInfoInDB for clientId: {}", accessTokenData.getClientId());
 
-        final String query = "INSERT INTO AUTH_OAUTH2_ACCESS_TOKEN" +
-                "(ACCESS_TOKEN, REFRESH_TOKEN, APPLICATION_ID, GRANT_TYPE, ACCESS_TOKEN_TIME_CREATED, " +
-                "REFRESH_TOKEN_TIME_CREATED, ACCESS_TOKEN_VALIDITY_PERIOD, REFRESH_TOKEN_VALIDITY_PERIOD, " +
-                "TOKEN_STATE) SELECT ?,?,ID FROM AUTH_OAUTH2_APPLICATION WHERE CLIENT_ID = ?,?,?,?,?,?,?";
+        final String query = "INSERT INTO AUTH_ACCESS_TOKEN" +
+                "(ACCESS_TOKEN, REFRESH_TOKEN, CONSUMER_KEY_ID, GRANT_TYPE, TIME_CREATED, " +
+                "REFRESH_TOKEN_TIME_CREATED, VALIDITY_PERIOD, REFRESH_TOKEN_VALIDITY_PERIOD, " +
+                "TOKEN_STATE) SELECT ?,?, AUTH_OAUTH2_APPLICATION.ID ,?,?,?,?,?,? " +
+                "FROM AUTH_OAUTH2_APPLICATION WHERE CLIENT_ID = ?";
 
         try (Connection connection = DAOUtil.getAuthConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -168,13 +169,13 @@ public class OAuthDAOImpl implements OAuthDAO {
 
                 statement.setString(1, accessTokenData.getAccessToken());
                 statement.setString(2, accessTokenData.getRefreshToken());
-                statement.setString(3, accessTokenData.getClientId());
-                statement.setString(4, accessTokenData.getGrantType());
-                statement.setTimestamp(5, Timestamp.from(accessTokenData.getAccessTokenCreatedTime()));
-                statement.setTimestamp(6, Timestamp.from(accessTokenData.getRefreshTokenCreatedTime()));
-                statement.setLong(7, accessTokenData.getAccessTokenValidityPeriod());
-                statement.setLong(8, accessTokenData.getRefreshTokenValidityPeriod());
-                statement.setString(9, accessTokenData.getTokenState().toString());
+                statement.setString(3, accessTokenData.getGrantType());
+                statement.setTimestamp(4, Timestamp.from(accessTokenData.getAccessTokenCreatedTime()));
+                statement.setTimestamp(5, Timestamp.from(accessTokenData.getRefreshTokenCreatedTime()));
+                statement.setLong(6, accessTokenData.getAccessTokenValidityPeriod());
+                statement.setLong(7, accessTokenData.getRefreshTokenValidityPeriod());
+                statement.setString(8, accessTokenData.getTokenState().toString());
+                statement.setString(9, accessTokenData.getClientId());
 
                 statement.execute();
                 connection.commit();
@@ -192,7 +193,7 @@ public class OAuthDAOImpl implements OAuthDAO {
         log.debug("Calling addAuthCodeInfoInDB for clientId: {}", clientId);
 
         final String query = "INSERT INTO AUTH_OAUTH2_AUTHORIZATION_CODE" +
-                "(CLIENT_ID, AUTHORIZATION_CODE, REDIRECT_URI, SCOPE) VALUES(?, ?, ?)";
+                "(CLIENT_ID, AUTHORIZATION_CODE, REDIRECT_URI, SCOPE) VALUES(?, ?, ?, ?)";
 
         try (Connection connection = DAOUtil.getAuthConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {

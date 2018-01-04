@@ -20,17 +20,18 @@
 
 package org.wso2.carbon.auth.scim.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.ServiceReferenceHolder;
 import org.wso2.carbon.auth.core.configuration.models.AttributeConfiguration;
-import org.wso2.carbon.auth.core.exception.UserNotFoundException;
-import org.wso2.carbon.auth.core.exception.UserStoreConnectorException;
 import org.wso2.carbon.auth.scim.impl.constants.SCIMCommonConstants;
 import org.wso2.carbon.auth.scim.utils.SCIMClaimResolver;
 import org.wso2.carbon.auth.user.store.connector.Attribute;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
 import org.wso2.carbon.auth.user.store.exception.GroupNotFoundException;
+import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
+import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.exceptions.BadRequestException;
@@ -50,10 +51,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.security.auth.callback.PasswordCallback;
-
-import static org.wso2.carbon.kernel.utils.StringUtils.isNullOrEmpty;
 
 /**
  * This is the wrapper class of Charon User Manager. This deals with the user management API. 
@@ -79,7 +77,7 @@ public class CarbonAuthUserManager implements UserManager {
     }    
 
     @Override
-    public User createUser(User user, Map<String, Boolean> requiredAttributes) throws CharonException, 
+    public User createUser(User user, Map<String, Boolean> requiredAttributes) throws CharonException,
             ConflictException, BadRequestException {
         try {
             
@@ -116,9 +114,7 @@ public class CarbonAuthUserManager implements UserManager {
 
                 if (subValues != null && subValues.size() != 0) {
                     for (org.wso2.charon3.core.attributes.Attribute subValue : subValues) {
-                        SimpleAttribute valueAttribute =
-                            (SimpleAttribute) ((subValue)).getSubAttribute(
-                                     SCIMConstants.CommonSchemaConstants.VALUE);
+                        SimpleAttribute valueAttribute = (SimpleAttribute) subValue;
                         groupIds.add((String) valueAttribute.getValue());
                     }
                 }                    
@@ -388,7 +384,7 @@ public class CarbonAuthUserManager implements UserManager {
             if (attributeMappings.containsKey(attributeName) && attributeMappings.get(attributeName).isUnique()) {
                 try {
                     String userId = userStoreConnector.getConnectorUserId(attributeName, attributeValue);
-                    if (!isNullOrEmpty(userId)) {
+                    if (!StringUtils.isEmpty(userId)) {
                         return true;
                     }
                 } catch (UserStoreConnectorException e) {
@@ -413,7 +409,7 @@ public class CarbonAuthUserManager implements UserManager {
             if (attributeMappings.containsKey(attributeName) && attributeMappings.get(attributeName).isUnique()) {
                 try {
                     String groupId = userStoreConnector.getConnectorGroupId(attributeName, attributeValue);
-                    if (!isNullOrEmpty(groupId)) {
+                    if (!StringUtils.isEmpty(groupId)) {
                         return true;
                     }
                 } catch (UserStoreConnectorException e) {

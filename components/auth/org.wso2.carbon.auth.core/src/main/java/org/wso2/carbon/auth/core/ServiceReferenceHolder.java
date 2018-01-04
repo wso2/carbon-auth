@@ -24,8 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.wso2.carbon.auth.core.configuration.models.AuthConfiguration;
-import org.wso2.carbon.kernel.configprovider.CarbonConfigurationException;
-import org.wso2.carbon.kernel.configprovider.ConfigProvider;
+import org.wso2.carbon.config.ConfigurationException;
+import org.wso2.carbon.config.provider.ConfigProvider;
 
 /**
  * Class to hold Service references
@@ -56,7 +56,7 @@ public class ServiceReferenceHolder {
             } else {
                 log.error("Configuration provider is null");
             }
-        } catch (CarbonConfigurationException e) {
+        } catch (ConfigurationException e) {
             log.error("error getting config : org.wso2.carbon.apimgt.core.internal.AuthConfiguration", e);
         }
 

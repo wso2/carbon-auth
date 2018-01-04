@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.datasource.DAOUtil;
 import org.wso2.carbon.auth.core.exception.ExceptionCodes;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
+import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
 import java.sql.Connection;
@@ -59,5 +60,15 @@ public class DAOFactory {
         } catch (SQLException e) {
             throw new OAuthDAOException("Error while getting clientDAO", e);
         }
+    }
+
+    /**
+     * getting token DAO
+     *
+     * @return
+     * @throws OAuthDAOException
+     */
+    public static TokenDAO getTokenDAO() throws OAuthDAOException {
+        return new TokenDAOImpl();
     }
 }

@@ -28,6 +28,7 @@ import org.wso2.carbon.auth.client.registration.rest.api.dto.UpdateRequestDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Utility class for mapping rest api DTOs to Models
@@ -64,6 +65,8 @@ public class MappingUtil {
         newApplication.setCallBackUrl(
                 getCallbackUrl(registrationRequestDTO.getRedirectUris(), registrationRequestDTO.getGrantTypes()));
         newApplication.setGrantTypes(grantTypes);
+        newApplication.setClientId(UUID.randomUUID().toString());
+        newApplication.setClientSecret(UUID.randomUUID().toString());
 
         return newApplication;
     }
