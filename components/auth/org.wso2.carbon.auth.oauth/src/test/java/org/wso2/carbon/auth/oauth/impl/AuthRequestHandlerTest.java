@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
 //import org.wso2.carbon.auth.oauth.IntegrationTestBase;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
-import org.wso2.carbon.auth.oauth.dao.ClientDAO;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
 import org.wso2.carbon.auth.oauth.dto.AuthResponseContext;
 import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
@@ -57,7 +57,7 @@ public class AuthRequestHandlerTest extends AuthDAOIntegrationTestBase {
         Map info = new HashMap();
         info.put(UserStoreConstants.PASSWORD, hashedPassword);
 
-        ClientDAO clientDAO = DAOFactory.getClientDAO();
+        OAuthDAO clientDAO = DAOFactory.getClientDAO();
         AuthRequestHandlerImpl authRequestHandler = new AuthRequestHandlerImpl(clientDAO);
 
         String query = "INSERT INTO AUTH_OAUTH2_AUTHORIZATION_CODE"
@@ -79,8 +79,8 @@ public class AuthRequestHandlerTest extends AuthDAOIntegrationTestBase {
 
         //test without redirect url
         String tmCK = ck + "12345";
-        query = "INSERT INTO AUTH_OAUTH2_APPLICATIONS " + "(CLIENT_ID, CLIENT_SECRET, APP_NAME, OAUTH_VERSION,"
-                + " CALLBACK_URL, GRANT_TYPES) VALUES ('" + tmCK + "'," + "'" + cs
+        query = "INSERT INTO AUTH_OAUTH2_APPLICATION " + "(CLIENT_ID, CLIENT_SECRET, APP_NAME, OAUTH_VERSION,"
+                + " REDIRECT_URI, GRANT_TYPES) VALUES ('" + tmCK + "'," + "'" + cs
                 + "','sampleApp','2.0',' ','password') ";
         super.executeOnAuthDb(query);
         info.put(OAuthConstants.CLIENT_ID_QUERY_PARAM, tmCK);
@@ -90,8 +90,8 @@ public class AuthRequestHandlerTest extends AuthDAOIntegrationTestBase {
 
         //test with invalid
         String tmCkUrl = ck + "9876";
-        query = "INSERT INTO AUTH_OAUTH2_APPLICATIONS " + "(CLIENT_ID, CLIENT_SECRET, APP_NAME, OAUTH_VERSION,"
-                + " CALLBACK_URL, GRANT_TYPES) VALUES ('" + tmCkUrl + "'," + "'" + cs
+        query = "INSERT INTO AUTH_OAUTH2_APPLICATION " + "(CLIENT_ID, CLIENT_SECRET, APP_NAME, OAUTH_VERSION,"
+                + " REDIRECT_URI, GRANT_TYPES) VALUES ('" + tmCkUrl + "'," + "'" + cs
                 + "','sampleApp','2.0','my url','password') ";
         super.executeOnAuthDb(query);
         info.put(OAuthConstants.CLIENT_ID_QUERY_PARAM, tmCkUrl);
@@ -101,8 +101,8 @@ public class AuthRequestHandlerTest extends AuthDAOIntegrationTestBase {
 
         info.put(OAuthConstants.CLIENT_ID_QUERY_PARAM, ck);
         // adding auth app details to the DB
-        query = "INSERT INTO AUTH_OAUTH2_APPLICATIONS " + "(CLIENT_ID, CLIENT_SECRET, APP_NAME, OAUTH_VERSION,"
-                + " CALLBACK_URL, GRANT_TYPES) VALUES ('" + ck + "'," + "'" + cs + "','sampleApp','2.0','" + redirectUri
+        query = "INSERT INTO AUTH_OAUTH2_APPLICATION " + "(CLIENT_ID, CLIENT_SECRET, APP_NAME, OAUTH_VERSION,"
+                + " REDIRECT_URI, GRANT_TYPES) VALUES ('" + ck + "'," + "'" + cs + "','sampleApp','2.0','" + redirectUri
                 + "','password') ";
         super.executeOnAuthDb(query);
         //test without valid response type

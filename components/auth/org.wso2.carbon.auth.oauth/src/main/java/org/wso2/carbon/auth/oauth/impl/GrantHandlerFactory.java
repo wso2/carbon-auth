@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
-import org.wso2.carbon.auth.oauth.dao.ClientDAO;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 
 import java.util.Optional;
@@ -46,17 +46,17 @@ public class GrantHandlerFactory {
      * @return Grant handler implementation
      */
     static Optional<GrantHandler> createGrantHandler(String grantTypeValue, AccessTokenContext context,
-                                                    ClientDAO clientDAO, MutableBoolean haltExecution) {
+                                                     OAuthDAO oauthDAO, MutableBoolean haltExecution) {
         log.debug("Calling createGrantHandler");
         if (!StringUtils.isEmpty(grantTypeValue)) {
             GrantType grantType = new GrantType(grantTypeValue);
 
             if (grantType.equals(GrantType.AUTHORIZATION_CODE)) {
-                return Optional.of(new AuthCodeGrantHandlerImpl(clientDAO));
+                return Optional.of(new AuthCodeGrantHandlerImpl(oauthDAO));
             } else if (grantType.equals(GrantType.PASSWORD)) {
-                return Optional.of(new PasswordGrantHandlerImpl(clientDAO));
+                return Optional.of(new PasswordGrantHandlerImpl(oauthDAO));
             } else if (grantType.equals(GrantType.CLIENT_CREDENTIALS)) {
-                return Optional.of(new ClientCredentialsGrantHandlerImpl(clientDAO));
+                return Optional.of(new ClientCredentialsGrantHandlerImpl(oauthDAO));
             } else {
                 context.setErrorObject(OAuth2Error.INVALID_REQUEST);
                 haltExecution.setTrue();

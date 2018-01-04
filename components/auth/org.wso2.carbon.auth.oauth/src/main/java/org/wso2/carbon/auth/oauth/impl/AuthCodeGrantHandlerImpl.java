@@ -30,9 +30,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.GrantHandler;
-import org.wso2.carbon.auth.oauth.dao.ClientDAO;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
-import org.wso2.carbon.auth.oauth.exception.ClientDAOException;
+import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
+import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
 import java.net.URI;
 import java.util.Map;
@@ -42,16 +43,17 @@ import java.util.Map;
  */
 public class AuthCodeGrantHandlerImpl implements GrantHandler {
     private static final Logger log = LoggerFactory.getLogger(AuthCodeGrantHandlerImpl.class);
-    private ClientDAO clientDAO;
+    private OAuthDAO oauthDAO;
     private ClientLookup clientLookup;
 
-    AuthCodeGrantHandlerImpl(ClientDAO clientDAO) {
-        this.clientDAO = clientDAO;
-        clientLookup = new ClientLookupImpl(clientDAO);
+    AuthCodeGrantHandlerImpl(OAuthDAO oauthDAO) {
+        this.oauthDAO = oauthDAO;
+        clientLookup = new ClientLookupImpl(oauthDAO);
     }
 
     @Override
-    public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters) {
+    public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
+            throws OAuthDAOException {
         log.debug("Calling AuthCodeGrantHandlerImpl:process");
         try {
             AuthorizationCodeGrant request = AuthorizationCodeGrant.parse(queryParameters);
@@ -63,7 +65,7 @@ public class AuthCodeGrantHandlerImpl implements GrantHandler {
     }
 
     private void processAuthCodeGrantRequest(String authorization, AccessTokenContext context,
-                                             AuthorizationCodeGrant request) {
+                                             AuthorizationCodeGrant request) throws OAuthDAOException {
         log.debug("Calling processAuthCodeGrantRequest");
         MutableBoolean haltExecution = new MutableBoolean(false);
 
@@ -79,7 +81,10 @@ public class AuthCodeGrantHandlerImpl implements GrantHandler {
             return;
         }
 
-        TokenGenerator.generateAccessToken(clientId, scope, context);
+        TokenGenerator.generateAccessToken(scope, context);
+
+        AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
+        oauthDAO.addAccessTokenInfo(accessTokenData);
     }
 
     private Scope getScope(String clientId, AuthorizationCodeGrant request, AccessTokenContext context,
@@ -88,7 +93,7 @@ public class AuthCodeGrantHandlerImpl implements GrantHandler {
         URI redirectionURI = request.getRedirectionURI();
 
         try {
-            String scope = clientDAO.getScopeForAuthCode(authCode, clientId, redirectionURI);
+            String scope = oauthDAO.getScopeForAuthCode(authCode, clientId, redirectionURI);
 
             if (scope != null) {
                 return new Scope(scope);
@@ -97,7 +102,7 @@ public class AuthCodeGrantHandlerImpl implements GrantHandler {
                 context.setErrorObject(error);
                 haltExecution.setTrue();
             }
-        } catch (ClientDAOException e) {
+        } catch (OAuthDAOException e) {
             log.error("Error while validating query parameters", e);
             ErrorObject error = new ErrorObject(OAuth2Error.SERVER_ERROR.getCode());
             context.setErrorObject(error);

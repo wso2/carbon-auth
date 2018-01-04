@@ -62,7 +62,7 @@ public class TokenDAOImpl implements TokenDAO {
         String query = "INSERT INTO AUTH_ACCESS_TOKEN (ACCESS_TOKEN, "
                 + "REFRESH_TOKEN, CONSUMER_KEY_ID, AUTHZ_USER, TIME_CREATED, "
                 + "REFRESH_TOKEN_TIME_CREATED, VALIDITY_PERIOD, REFRESH_TOKEN_VALIDITY_PERIOD, TOKEN_SCOPE_HASH, "
-                + "TOKEN_STATE, USER_TYPE, GRANT_TYPE) SELECT ?,?,(SELECT ID FROM AUTH_OAUTH2_APPLICATIONS "
+                + "TOKEN_STATE, USER_TYPE, GRANT_TYPE) SELECT ?,?,(SELECT ID FROM AUTH_OAUTH2_APPLICATION "
                 + "WHERE CLIENT_ID = ?),?,?,?,?,?,?,?,?,?";
 
         log.debug("Calling persistToken for clientId: {}", clientID);
@@ -122,8 +122,8 @@ public class TokenDAOImpl implements TokenDAO {
         final String query = "SELECT TOKEN_ID, ACCESS_TOKEN, REFRESH_TOKEN, CLIENT_ID, AUTHZ_USER, "
                 + "TIME_CREATED, REFRESH_TOKEN_TIME_CREATED, VALIDITY_PERIOD, REFRESH_TOKEN_VALIDITY_PERIOD, "
                 + "TOKEN_SCOPE_HASH, TOKEN_STATE, USER_TYPE, GRANT_TYPE FROM AUTH_ACCESS_TOKEN INNER JOIN  "
-                + "AUTH_OAUTH2_APPLICATIONS  WHERE  ACCESS_TOKEN = ? AND AUTH_ACCESS_TOKEN.CONSUMER_KEY_ID = "
-                + "AUTH_OAUTH2_APPLICATIONS.ID";
+                + "AUTH_OAUTH2_APPLICATION  WHERE ACCESS_TOKEN = ? AND AUTH_ACCESS_TOKEN.CONSUMER_KEY_ID = "
+                + "AUTH_OAUTH2_APPLICATION.ID";
 
         try (Connection connection = DAOUtil.getAuthConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {

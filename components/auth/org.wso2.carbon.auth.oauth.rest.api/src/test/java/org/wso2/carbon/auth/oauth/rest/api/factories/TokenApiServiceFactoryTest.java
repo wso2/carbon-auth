@@ -25,7 +25,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
-import org.wso2.carbon.auth.oauth.exception.ClientDAOException;
+import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 import org.wso2.carbon.auth.oauth.rest.api.TokenApiService;
 
 @RunWith(PowerMockRunner.class)
@@ -42,7 +42,7 @@ public class TokenApiServiceFactoryTest {
         TokenApiService tokenApiService = TokenApiServiceFactory.getTokenApi();
         Assert.assertNotNull(tokenApiService);
 
-        PowerMockito.when(DAOFactory.getClientDAO()).thenThrow(ClientDAOException.class);
+        PowerMockito.when(DAOFactory.getClientDAO()).thenThrow(OAuthDAOException.class);
         try {
             tokenApiService = TokenApiServiceFactory.getTokenApi();
             Assert.fail("exception expected");

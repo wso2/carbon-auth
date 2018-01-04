@@ -23,9 +23,9 @@ import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.wso2.carbon.auth.oauth.dao.ClientDAO;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
-import org.wso2.carbon.auth.oauth.exception.ClientDAOException;
+import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 import org.wso2.carbon.auth.oauth.rest.api.AuthorizeApiService;
 
 @RunWith(PowerMockRunner.class)
@@ -38,12 +38,12 @@ public class AuthorizeApiServiceFactoryTest {
         Assert.assertNotNull(authorizeApiServiceFactory);
 
         PowerMockito.mockStatic(DAOFactory.class);
-        ClientDAO clientDAO = PowerMockito.mock(ClientDAO.class);
+        OAuthDAO clientDAO = PowerMockito.mock(OAuthDAO.class);
         PowerMockito.when(DAOFactory.getClientDAO()).thenReturn(clientDAO);
         AuthorizeApiService authorizeApi = AuthorizeApiServiceFactory.getAuthorizeApi();
         Assert.assertNotNull(authorizeApi);
 
-        PowerMockito.when(DAOFactory.getClientDAO()).thenThrow(ClientDAOException.class);
+        PowerMockito.when(DAOFactory.getClientDAO()).thenThrow(OAuthDAOException.class);
         try {
             authorizeApi = AuthorizeApiServiceFactory.getAuthorizeApi();
             Assert.fail("exception expected");

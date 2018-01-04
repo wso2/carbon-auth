@@ -29,8 +29,10 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
-import org.wso2.carbon.auth.oauth.dao.ClientDAO;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
+import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
+import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -40,14 +42,17 @@ import javax.annotation.Nullable;
  */
 public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
     private static final Logger log = LoggerFactory.getLogger(ClientCredentialsGrantHandlerImpl.class);
+    private OAuthDAO oauthDAO;
     private ClientLookup clientLookup;
 
-    ClientCredentialsGrantHandlerImpl(ClientDAO clientDAO) {
-        clientLookup = new ClientLookupImpl(clientDAO);
+    ClientCredentialsGrantHandlerImpl(OAuthDAO oauthDAO) {
+        this.oauthDAO = oauthDAO;
+        clientLookup = new ClientLookupImpl(oauthDAO);
     }
 
     @Override
-    public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters) {
+    public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
+            throws OAuthDAOException {
         log.debug("Calling ClientCredentialsGrantHandlerImpl:process");
         try {
             ClientCredentialsGrant request = ClientCredentialsGrant.parse(queryParameters);
@@ -60,11 +65,12 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
     }
 
     private void processClientCredentialsGrantRequest(String authorization, AccessTokenContext context,
-                                             @Nullable String scopeValue, ClientCredentialsGrant request) {
+                                             @Nullable String scopeValue, ClientCredentialsGrant request)
+                                                                                        throws OAuthDAOException {
         log.debug("Calling processClientCredentialsGrantRequest");
         MutableBoolean haltExecution = new MutableBoolean(false);
 
-        String clientID = clientLookup.getClientId(authorization, context, haltExecution);
+        clientLookup.getClientId(authorization, context, haltExecution);
 
         if (haltExecution.isTrue()) {
             return;
@@ -77,6 +83,9 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
             scope = new Scope(OAuthConstants.SCOPE_DEFAULT);
         }
 
-        TokenGenerator.generateAccessToken(clientID, scope, context);
+        TokenGenerator.generateAccessToken(scope, context);
+
+        AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
+        oauthDAO.addAccessTokenInfo(accessTokenData);
     }
 }

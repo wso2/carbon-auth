@@ -22,9 +22,14 @@ package org.wso2.carbon.auth.oauth.dao.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.auth.oauth.dao.ClientDAO;
+import org.wso2.carbon.auth.core.datasource.DAOUtil;
+import org.wso2.carbon.auth.core.exception.ExceptionCodes;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dao.TokenDAO;
-import org.wso2.carbon.auth.oauth.exception.ClientDAOException;
+import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * DAO Object creation factory
@@ -32,17 +37,38 @@ import org.wso2.carbon.auth.oauth.exception.ClientDAOException;
 public class DAOFactory {
     private static final Logger log = LoggerFactory.getLogger(DAOFactory.class);
 
-    public static ClientDAO getClientDAO() throws ClientDAOException {
-        return new ClientDAOImpl();
+    private static final String MYSQL = "MySQL";
+    private static final String H2 = "H2";
+    private static final String DB2 = "DB2";
+    private static final String MICROSOFT = "Microsoft";
+    private static final String MS_SQL = "MS SQL";
+    private static final String POSTGRE = "PostgreSQL";
+    private static final String ORACLE = "Oracle";
+
+    public static OAuthDAO getClientDAO() throws OAuthDAOException {
+        try (Connection connection = DAOUtil.getAuthConnection()) {
+            String driverName = connection.getMetaData().getDriverName();
+
+            if (!(driverName.contains(MYSQL) || driverName.contains(H2) || driverName.contains(DB2) ||
+                driverName.contains(MS_SQL) || driverName.contains(MICROSOFT) || driverName.contains(POSTGRE) ||
+                driverName.contains(ORACLE))) {
+                throw new OAuthDAOException("Unhandled DB driver: " + driverName + " detected",
+                        ExceptionCodes.DAO_EXCEPTION);
+            }
+
+            return new OAuthDAOImpl();
+        } catch (SQLException e) {
+            throw new OAuthDAOException("Error while getting clientDAO", e);
+        }
     }
 
     /**
      * getting token DAO
      *
      * @return
-     * @throws ClientDAOException
+     * @throws OAuthDAOException
      */
-    public static TokenDAO getTokenDAO() throws ClientDAOException {
+    public static TokenDAO getTokenDAO() throws OAuthDAOException {
         return new TokenDAOImpl();
     }
 }

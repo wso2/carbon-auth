@@ -21,34 +21,9 @@
 package org.wso2.carbon.auth.oauth.dto;
 
 /**
- *   ClientCredentials DTO
+ * Token state enum
  */
-public class ClientCredentials {
-    private boolean isSuccessful;
-    private String consumerKey;
-    private String consumerSecret;
-
-    public boolean isSuccessful() {
-        return isSuccessful;
-    }
-
-    public void setSuccessful(boolean successful) {
-        isSuccessful = successful;
-    }
-
-    public String getConsumerKey() {
-        return consumerKey;
-    }
-
-    public void setConsumerKey(String consumerKey) {
-        this.consumerKey = consumerKey;
-    }
-
-    public String getConsumerSecret() {
-        return consumerSecret;
-    }
-
-    public void setConsumerSecret(String consumerSecret) {
-        this.consumerSecret = consumerSecret;
-    }
+public enum TokenState {
+    ACTIVE,
+    INACTIVE
 }

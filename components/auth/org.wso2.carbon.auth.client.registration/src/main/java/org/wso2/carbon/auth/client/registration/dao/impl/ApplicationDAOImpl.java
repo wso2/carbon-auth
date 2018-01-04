@@ -44,7 +44,7 @@ public class ApplicationDAOImpl implements ApplicationDAO {
     @Override
     public Application getApplication(String clientId) throws ClientRegistrationDAOException {
         final String query = "SELECT * "
-                + "FROM AUTH_OAUTH2_APPLICATIONS WHERE CLIENT_ID = ?";
+                + "FROM AUTH_OAUTH2_APPLICATION WHERE CLIENT_ID = ?";
 
         try (Connection connection = DAOUtil.getAuthConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
@@ -60,7 +60,7 @@ public class ApplicationDAOImpl implements ApplicationDAO {
                     */
                     data.setClientSecret(rs.getString("CLIENT_SECRET"));
                     data.setClientName(rs.getString("APP_NAME"));
-                    data.setCallBackUrl(rs.getString("CALLBACK_URL"));
+                    data.setCallBackUrl(rs.getString("REDIRECT_URI"));
                     data.setGrantTypes(rs.getString("GRANT_TYPES"));
                     data.setApplicationAccessTokenExpiryTime(rs.getString("APP_ACCESS_TOKEN_EXPIRE_TIME"));
                     data.setRefreshTokenExpiryTime(rs.getString("REFRESH_TOKEN_EXPIRE_TIME"));
@@ -83,7 +83,7 @@ public class ApplicationDAOImpl implements ApplicationDAO {
 
     @Override
     public void deleteApplication(String clientId) throws ClientRegistrationDAOException {
-        final String query = "DELETE FROM AUTH_OAUTH2_APPLICATIONS WHERE CLIENT_ID=?";
+        final String query = "DELETE FROM AUTH_OAUTH2_APPLICATION WHERE CLIENT_ID=?";
 
         try (Connection connection = DAOUtil.getAuthConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
@@ -133,9 +133,9 @@ public class ApplicationDAOImpl implements ApplicationDAO {
     }
 
     private void addClientInfoInDB(Application application) throws SQLException, ClientRegistrationDAOException {
-        final String query = "INSERT INTO AUTH_OAUTH2_APPLICATIONS " +
+        final String query = "INSERT INTO AUTH_OAUTH2_APPLICATION " +
                 "(CLIENT_ID, CLIENT_SECRET, APP_NAME, OAUTH_VERSION," +
-                " CALLBACK_URL, GRANT_TYPES) VALUES (?,?,?,?,?,?) ";
+                " REDIRECT_URI, GRANT_TYPES) VALUES (?,?,?,?,?,?) ";
 
         try (Connection connection = DAOUtil.getAuthConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
@@ -177,8 +177,8 @@ public class ApplicationDAOImpl implements ApplicationDAO {
     }
 
     private void updateClientInfoInDB(Application application, String clientId) throws SQLException {
-        String query = "UPDATE AUTH_OAUTH2_APPLICATIONS SET APP_NAME=?," +
-                " CALLBACK_URL=?, GRANT_TYPES=?, USER_ACCESS_TOKEN_EXPIRE_TIME=?, " +
+        String query = "UPDATE AUTH_OAUTH2_APPLICATION SET APP_NAME=?," +
+                " REDIRECT_URI=?, GRANT_TYPES=?, USER_ACCESS_TOKEN_EXPIRE_TIME=?, " +
                 "APP_ACCESS_TOKEN_EXPIRE_TIME=?, REFRESH_TOKEN_EXPIRE_TIME=? " +
                 "WHERE CLIENT_ID=?";
 

@@ -36,7 +36,7 @@ import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
 //import org.wso2.carbon.auth.oauth.IntegrationTestBase;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.TokenRequestHandler;
-import org.wso2.carbon.auth.oauth.dao.ClientDAO;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.user.mgt.impl.JDBCUserStoreManager;
@@ -87,7 +87,7 @@ public class TokenRequestHandlerImplTest extends AuthDAOIntegrationTestBase {
         info.put(UserStoreConstants.ITERATION_COUNT, 1);
         info.put(UserStoreConstants.KEY_LENGTH, 1);
 
-        ClientDAO clientDAO = DAOFactory.getClientDAO();
+        OAuthDAO clientDAO = DAOFactory.getClientDAO();
         TokenRequestHandler tokenRequestHandler = new TokenRequestHandlerImpl(clientDAO);
         Map<String, String> queryParameters = new HashMap<>();
         queryParameters.put(OAuthConstants.USERNAME, username);
@@ -109,8 +109,8 @@ public class TokenRequestHandlerImplTest extends AuthDAOIntegrationTestBase {
         PowerMockito.whenNew(DefaultPasswordHandler.class).withNoArguments().thenReturn(defaultPasswordHandler);
 
         // adding auth app details to the DB
-        String query = "INSERT INTO AUTH_OAUTH2_APPLICATIONS " + "(CLIENT_ID, CLIENT_SECRET, APP_NAME, OAUTH_VERSION,"
-                + " CALLBACK_URL, GRANT_TYPES) VALUES ('" + ck + "'," + "'" + cs
+        String query = "INSERT INTO AUTH_OAUTH2_APPLICATION " + "(CLIENT_ID, CLIENT_SECRET, APP_NAME, OAUTH_VERSION,"
+                + " REDIRECT_URI, GRANT_TYPES) VALUES ('" + ck + "'," + "'" + cs
                 + "','sampleApp','2.0','url','password') ";
         super.executeOnAuthDb(query);
 

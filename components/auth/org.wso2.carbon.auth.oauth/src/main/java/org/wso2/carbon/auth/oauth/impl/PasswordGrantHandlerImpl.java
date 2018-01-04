@@ -30,8 +30,9 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
-import org.wso2.carbon.auth.oauth.dao.ClientDAO;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
+import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 import org.wso2.carbon.auth.user.mgt.impl.JDBCUserStoreManager;
@@ -44,18 +45,21 @@ import javax.annotation.Nullable;
  */
 public class PasswordGrantHandlerImpl implements GrantHandler {
     private static final Logger log = LoggerFactory.getLogger(PasswordGrantHandlerImpl.class);
+    private OAuthDAO oauthDAO;
     private ClientLookup clientLookup;
 
-    PasswordGrantHandlerImpl(ClientDAO clientDAO) {
-        clientLookup = new ClientLookupImpl(clientDAO);
+    PasswordGrantHandlerImpl(OAuthDAO oauthDAO) {
+        this.oauthDAO = oauthDAO;
+        clientLookup = new ClientLookupImpl(oauthDAO);
     }
 
     @Override
-    public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters) {
+    public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
+            throws OAuthDAOException {
         log.debug("Calling PasswordGrantHandlerImpl:process");
         try {
-            ResourceOwnerPasswordCredentialsGrant request = ResourceOwnerPasswordCredentialsGrant
-                    .parse(queryParameters);
+            ResourceOwnerPasswordCredentialsGrant request =
+                    ResourceOwnerPasswordCredentialsGrant.parse(queryParameters);
             String scope = queryParameters.get(OAuthConstants.SCOPE_QUERY_PARAM);
             processPasswordGrantRequest(authorization, context, scope, request);
         } catch (ParseException e) {
@@ -65,11 +69,12 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
     }
 
     private void processPasswordGrantRequest(String authorization, AccessTokenContext context,
-            @Nullable String scopeValue, ResourceOwnerPasswordCredentialsGrant request) {
+                                             @Nullable String scopeValue,
+                                             ResourceOwnerPasswordCredentialsGrant request) throws OAuthDAOException {
         log.debug("calling processPasswordGrantRequest");
         MutableBoolean haltExecution = new MutableBoolean(false);
 
-        String clientId = clientLookup.getClientId(authorization, context, haltExecution);
+        clientLookup.getClientId(authorization, context, haltExecution);
 
         boolean authenticated = validateGrant(request);
         if (authenticated) {
@@ -92,7 +97,7 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
             scope = new Scope(OAuthConstants.SCOPE_DEFAULT);
         }
 
-        TokenGenerator.generateAccessToken(clientId, scope, context);
+        TokenGenerator.generateAccessToken(scope, context);
     }
 
     private boolean validateGrant(ResourceOwnerPasswordCredentialsGrant request) {

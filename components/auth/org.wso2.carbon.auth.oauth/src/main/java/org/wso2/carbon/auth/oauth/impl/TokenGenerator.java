@@ -25,14 +25,13 @@ import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import com.nimbusds.oauth2.sdk.token.Tokens;
-import org.wso2.carbon.auth.oauth.TokenManager;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 
 /**
  * Contains token generation logic
  */
 public class TokenGenerator {
-    static void generateAccessToken(String clientID, Scope scope, AccessTokenContext context) {
+    static void generateAccessToken(Scope scope, AccessTokenContext context) {
         BearerAccessToken accessToken = new BearerAccessToken(3600, scope);
 
         RefreshToken refreshToken = new RefreshToken();
@@ -41,11 +40,5 @@ public class TokenGenerator {
 
         context.setAccessTokenResponse(new AccessTokenResponse(tokens));
         context.setSuccessful(true);
-
-        TokenManager tokenManager = new TokenManagerImpl();
-        //todo: populate param values accordingly
-        tokenManager.storeToken(accessToken.getValue(), refreshToken.getValue(), clientID,
-                (String) context.getParams().get("AUTH_USER"), "primary", System.currentTimeMillis(),
-                System.currentTimeMillis(), 3600, 3600, "hash", "ative", "application & user", "password");
     }
 }

@@ -27,9 +27,10 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.testng.Assert;
 import org.wso2.carbon.auth.core.datasource.DAOUtil;
-import org.wso2.carbon.auth.oauth.dao.ClientDAO;
+import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
-import org.wso2.carbon.auth.oauth.exception.ClientDAOException;
+import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
 import java.net.URI;
 import java.sql.Connection;
@@ -39,7 +40,7 @@ import java.sql.SQLException;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ DAOUtil.class })
-public class ClientDAOImplTest {
+public class ClientDAOImplTest extends AuthDAOIntegrationTestBase {
     @Mock
     Connection connection;
     @Mock
@@ -51,10 +52,12 @@ public class ClientDAOImplTest {
     String clientSec = "clientSec";
     String scope = "scope";
     URI redirectUri;
-    ClientDAO dao;
+    OAuthDAO dao;
 
     @Before
     public void init() throws Exception {
+        super.init();
+        super.setup();
         redirectUri = new URI("http://host");
         dao = DAOFactory.getClientDAO();
         PowerMockito.mockStatic(DAOUtil.class);
@@ -67,7 +70,7 @@ public class ClientDAOImplTest {
         PowerMockito.when(statement.executeQuery()).thenReturn(resultSet);
         try {
             dao.getRedirectUri(clientId);
-        } catch (ClientDAOException e) {
+        } catch (OAuthDAOException e) {
             Assert.fail("exception not expected");
         }
 
@@ -75,14 +78,14 @@ public class ClientDAOImplTest {
         try {
             dao.getRedirectUri(clientId);
             Assert.fail("exception expected");
-        } catch (ClientDAOException e) {
+        } catch (OAuthDAOException e) {
         }
 
         PowerMockito.when(DAOUtil.getAuthConnection()).thenThrow(SQLException.class);
         try {
             dao.getRedirectUri(clientId);
             Assert.fail("exception expected");
-        } catch (ClientDAOException e) {
+        } catch (OAuthDAOException e) {
         }
     }
 
@@ -92,7 +95,7 @@ public class ClientDAOImplTest {
         PowerMockito.when(connection.prepareStatement(Mockito.anyString())).thenReturn(statement);
         try {
             dao.addAuthCodeInfo(authCode, clientId, scope, redirectUri);
-        } catch (ClientDAOException e) {
+        } catch (OAuthDAOException e) {
             Assert.fail("exception not expected");
         }
 
@@ -100,14 +103,14 @@ public class ClientDAOImplTest {
         try {
             dao.addAuthCodeInfo(authCode, clientId, scope, redirectUri);
             Assert.fail("exception expected");
-        } catch (ClientDAOException e) {
+        } catch (OAuthDAOException e) {
         }
 
         PowerMockito.when(DAOUtil.getAuthConnection()).thenThrow(SQLException.class);
         try {
             dao.addAuthCodeInfo(authCode, clientId, scope, redirectUri);
             Assert.fail("exception expected");
-        } catch (ClientDAOException e) {
+        } catch (OAuthDAOException e) {
         }
     }
 
@@ -118,13 +121,13 @@ public class ClientDAOImplTest {
         PowerMockito.when(statement.executeQuery()).thenReturn(resultSet);
         try {
             dao.getScopeForAuthCode(authCode, clientId, redirectUri);
-        } catch (ClientDAOException e) {
+        } catch (OAuthDAOException e) {
             Assert.fail("exception not expected");
         }
 
         try {
             dao.getScopeForAuthCode(authCode, clientId, null);
-        } catch (ClientDAOException e) {
+        } catch (OAuthDAOException e) {
             Assert.fail("exception not expected");
         }
 
@@ -132,14 +135,14 @@ public class ClientDAOImplTest {
         try {
             dao.getScopeForAuthCode(authCode, clientId, redirectUri);
             Assert.fail("exception expected");
-        } catch (ClientDAOException e) {
+        } catch (OAuthDAOException e) {
         }
 
         PowerMockito.when(DAOUtil.getAuthConnection()).thenThrow(SQLException.class);
         try {
             dao.getScopeForAuthCode(authCode, clientId, redirectUri);
             Assert.fail("exception expected");
-        } catch (ClientDAOException e) {
+        } catch (OAuthDAOException e) {
         }
     }
 
@@ -151,14 +154,14 @@ public class ClientDAOImplTest {
         try {
             dao.isClientCredentialsValid(clientId, clientSec);
             Assert.fail("exception expected");
-        } catch (ClientDAOException e) {
+        } catch (OAuthDAOException e) {
         }
 
         PowerMockito.when(DAOUtil.getAuthConnection()).thenThrow(SQLException.class);
         try {
             dao.isClientCredentialsValid(clientId, clientSec);
             Assert.fail("exception expected");
-        } catch (ClientDAOException e) {
+        } catch (OAuthDAOException e) {
         }
     }
 

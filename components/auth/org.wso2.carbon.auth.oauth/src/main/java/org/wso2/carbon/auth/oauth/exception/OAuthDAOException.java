@@ -18,28 +18,30 @@
  *
  */
 
-package org.wso2.carbon.auth.oauth.dto;
+package org.wso2.carbon.auth.oauth.exception;
+
+import org.wso2.carbon.auth.core.exception.AuthException;
+import org.wso2.carbon.auth.core.exception.ExceptionCodes;
 
 /**
- * DTO for transferring public information related to a client
+ *  This is the Exception class for Client DAO related exceptions.
  */
-public class ClientPublicInfo {
-    private String clientId;
-    private String redirectUri;
+public class OAuthDAOException extends AuthException {
 
-    public String getClientId() {
-        return clientId;
+    public OAuthDAOException(String msg, ExceptionCodes code) {
+        super(msg, code);
     }
 
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
+    public OAuthDAOException(String msg, Throwable e, ExceptionCodes code) {
+        super(msg, e, code);
     }
 
-    public String getRedirectUri() {
-        return redirectUri;
+
+    public OAuthDAOException(String msg) {
+        super(msg, ExceptionCodes.DAO_EXCEPTION);
     }
 
-    public void setRedirectUri(String redirectUri) {
-        this.redirectUri = redirectUri;
+    public OAuthDAOException(String msg, Throwable e) {
+        super(msg, e, ExceptionCodes.DAO_EXCEPTION);
     }
 }
