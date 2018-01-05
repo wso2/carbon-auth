@@ -10,7 +10,7 @@ import java.util.Objects;
  * ErrorDTO
  */
 public class ErrorDTO   {
-  @JsonProperty("code")
+  @SerializedName("code")
   private String code = null;
 
   @SerializedName("httpStatusCode")
