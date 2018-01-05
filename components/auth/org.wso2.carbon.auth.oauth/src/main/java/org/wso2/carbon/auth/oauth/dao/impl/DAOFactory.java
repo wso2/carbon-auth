@@ -22,14 +22,10 @@ package org.wso2.carbon.auth.oauth.dao.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.auth.core.datasource.DAOUtil;
-import org.wso2.carbon.auth.core.exception.ExceptionCodes;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * DAO Object creation factory
@@ -46,6 +42,9 @@ public class DAOFactory {
     private static final String ORACLE = "Oracle";
 
     public static OAuthDAO getClientDAO() throws OAuthDAOException {
+        return new OAuthDAOImpl();
+        // commented since core refactoring is required to fix activate order
+        /*
         try (Connection connection = DAOUtil.getAuthConnection()) {
             String driverName = connection.getMetaData().getDriverName();
 
@@ -60,6 +59,7 @@ public class DAOFactory {
         } catch (SQLException e) {
             throw new OAuthDAOException("Error while getting clientDAO", e);
         }
+        */
     }
 
     /**
