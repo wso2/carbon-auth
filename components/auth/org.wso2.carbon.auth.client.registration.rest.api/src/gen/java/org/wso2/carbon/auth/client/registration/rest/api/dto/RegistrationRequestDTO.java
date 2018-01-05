@@ -1,8 +1,7 @@
 package org.wso2.carbon.auth.client.registration.rest.api.dto;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
@@ -13,13 +12,13 @@ import java.util.Objects;
  * RegistrationRequestDTO
  */
 public class RegistrationRequestDTO   {
-  @JsonProperty("redirect_uris")
+  @SerializedName("redirect_uris")
   private List<String> redirectUris = new ArrayList<String>();
 
-  @JsonProperty("client_name")
+  @SerializedName("client_name")
   private String clientName = null;
 
-  @JsonProperty("grant_types")
+  @SerializedName("grant_types")
   private List<String> grantTypes = new ArrayList<String>();
 
   public RegistrationRequestDTO redirectUris(List<String> redirectUris) {
