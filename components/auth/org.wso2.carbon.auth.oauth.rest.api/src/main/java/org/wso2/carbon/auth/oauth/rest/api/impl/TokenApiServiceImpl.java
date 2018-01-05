@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.core.Response;
 
-
 public class TokenApiServiceImpl extends TokenApiService {
     private static final Logger log = LoggerFactory.getLogger(TokenApiServiceImpl.class);
     private TokenRequestHandler tokenRequestHandler;
@@ -42,7 +41,7 @@ public class TokenApiServiceImpl extends TokenApiService {
             AccessTokenContext context = tokenRequestHandler.generateToken(authorization, queryParameters);
 
             if (context.isSuccessful()) {
-                return Response.ok().entity(context.getAccessTokenResponse()).build();
+                return Response.ok().entity(context.getAccessTokenResponse().getTokens().toString()).build();
             } else {
                 ErrorObject error = context.getErrorObject();
                 return Response.status(error.getHTTPStatusCode()).build();

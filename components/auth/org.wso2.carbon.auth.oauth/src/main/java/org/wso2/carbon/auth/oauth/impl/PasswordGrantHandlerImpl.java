@@ -32,6 +32,7 @@ import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
+import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
@@ -74,7 +75,7 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
         log.debug("calling processPasswordGrantRequest");
         MutableBoolean haltExecution = new MutableBoolean(false);
 
-        clientLookup.getClientId(authorization, context, haltExecution);
+        String clientId = clientLookup.getClientId(authorization, context, haltExecution);
 
         boolean authenticated = validateGrant(request);
         if (authenticated) {
@@ -98,6 +99,9 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
         }
 
         TokenGenerator.generateAccessToken(scope, context);
+        AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
+        accessTokenData.setClientId(clientId);
+        oauthDAO.addAccessTokenInfo(accessTokenData);
     }
 
     private boolean validateGrant(ResourceOwnerPasswordCredentialsGrant request) {
