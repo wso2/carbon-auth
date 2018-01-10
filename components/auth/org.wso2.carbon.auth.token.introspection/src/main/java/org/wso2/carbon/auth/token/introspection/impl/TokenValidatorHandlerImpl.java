@@ -17,7 +17,6 @@
  */
 package org.wso2.carbon.auth.token.introspection.impl;
 
-//import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.oauth.TokenManager;
@@ -55,9 +54,8 @@ public class TokenValidatorHandlerImpl implements TokenValidatorHandler {
             return;
         }
 
-//        if (!StringUtils.isEmpty(accessTokenDTO.getScopes())) {
-            //validate scopes
-//        }
+        //todo: validate scopes
+
         IntrospectionResponse introspectionResponse = new IntrospectionResponse();
 
         // should be in seconds
