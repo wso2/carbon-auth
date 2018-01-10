@@ -32,6 +32,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
 import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
 //import org.wso2.carbon.auth.oauth.IntegrationTestBase;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
@@ -88,7 +89,9 @@ public class TokenRequestHandlerImplTest extends AuthDAOIntegrationTestBase {
         info.put(UserStoreConstants.KEY_LENGTH, 1);
 
         OAuthDAO clientDAO = DAOFactory.getClientDAO();
-        TokenRequestHandler tokenRequestHandler = new TokenRequestHandlerImpl(clientDAO);
+        ApplicationDAO applicationDAO = org.wso2.carbon.auth.client.registration.dao.impl.DAOFactory
+                .getApplicationDAO();
+        TokenRequestHandler tokenRequestHandler = new TokenRequestHandlerImpl(clientDAO, applicationDAO);
         Map<String, String> queryParameters = new HashMap<>();
         queryParameters.put(OAuthConstants.USERNAME, username);
         queryParameters.put(OAuthConstants.PASSWORD, password);

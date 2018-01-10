@@ -145,6 +145,7 @@ public class OAuthDAOImpl implements OAuthDAO {
 
         try {
             addAccessTokenInfoInDB(accessTokenData);
+            persistingTokenScopes(accessTokenData);
         } catch (SQLException e) {
             throw new OAuthDAOException("Error occurred while adding access token info(clientId: "
                     + accessTokenData.getClientId(), e);
@@ -156,10 +157,10 @@ public class OAuthDAOImpl implements OAuthDAO {
     private void addAccessTokenInfoInDB(AccessTokenData accessTokenData) throws SQLException {
         log.debug("Calling addAccessTokenInfoInDB for clientId: {}", accessTokenData.getClientId());
 
-        final String query = "INSERT INTO AUTH_ACCESS_TOKEN" +
-                "(ACCESS_TOKEN, REFRESH_TOKEN, CONSUMER_KEY_ID, GRANT_TYPE, TIME_CREATED, " +
+        final String query = "INSERT INTO AUTH_OAUTH2_ACCESS_TOKEN" +
+                "(ACCESS_TOKEN, REFRESH_TOKEN, CONSUMER_KEY_ID, AUTHZ_USER, GRANT_TYPE, TIME_CREATED, " +
                 "REFRESH_TOKEN_TIME_CREATED, VALIDITY_PERIOD, REFRESH_TOKEN_VALIDITY_PERIOD, " +
-                "TOKEN_STATE) SELECT ?,?, AUTH_OAUTH2_APPLICATION.ID ,?,?,?,?,?,? " +
+                "TOKEN_STATE) SELECT ?,?, AUTH_OAUTH2_APPLICATION.ID ,?,?,?,?,?,?,? " +
                 "FROM AUTH_OAUTH2_APPLICATION WHERE CLIENT_ID = ?";
 
         try (Connection connection = DAOUtil.getAuthConnection();
@@ -169,13 +170,39 @@ public class OAuthDAOImpl implements OAuthDAO {
 
                 statement.setString(1, accessTokenData.getAccessToken());
                 statement.setString(2, accessTokenData.getRefreshToken());
-                statement.setString(3, accessTokenData.getGrantType());
-                statement.setTimestamp(4, Timestamp.from(accessTokenData.getAccessTokenCreatedTime()));
-                statement.setTimestamp(5, Timestamp.from(accessTokenData.getRefreshTokenCreatedTime()));
-                statement.setLong(6, accessTokenData.getAccessTokenValidityPeriod());
-                statement.setLong(7, accessTokenData.getRefreshTokenValidityPeriod());
-                statement.setString(8, accessTokenData.getTokenState().toString());
-                statement.setString(9, accessTokenData.getClientId());
+                statement.setString(3, accessTokenData.getAuthUser());
+                statement.setString(4, accessTokenData.getGrantType());
+                statement.setTimestamp(5, Timestamp.from(accessTokenData.getAccessTokenCreatedTime()));
+                statement.setTimestamp(6, Timestamp.from(accessTokenData.getRefreshTokenCreatedTime()));
+                statement.setLong(7, accessTokenData.getAccessTokenValidityPeriod());
+                statement.setLong(8, accessTokenData.getRefreshTokenValidityPeriod());
+                statement.setString(9, accessTokenData.getTokenState().toString());
+                statement.setString(10, accessTokenData.getClientId());
+
+                statement.execute();
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                throw e;
+            } finally {
+                connection.setAutoCommit(DAOUtil.isAutoCommitAuth());
+            }
+        }
+    }
+
+    private void persistingTokenScopes(AccessTokenData accessTokenData) throws SQLException {
+        log.debug("Calling persistingTokenScopes for clientId: {}", accessTokenData.getClientId());
+
+        final String query = "INSERT INTO AUTH_OAUTH2_ACCESS_TOKEN_SCOPE (TOKEN_ID, " +
+                "TOKEN_SCOPE) VALUES ((SELECT ID FROM AUTH_OAUTH2_ACCESS_TOKEN WHERE ACCESS_TOKEN = ?),?)";
+
+        try (Connection connection = DAOUtil.getAuthConnection();
+                PreparedStatement statement = connection.prepareStatement(query)) {
+            try {
+                connection.setAutoCommit(false);
+
+                statement.setString(1, accessTokenData.getAccessToken());
+                statement.setString(2, accessTokenData.getScopes());
 
                 statement.execute();
                 connection.commit();

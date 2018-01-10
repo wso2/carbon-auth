@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.auth.client.registration.rest.api.impl;
 
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -29,6 +30,9 @@ import org.wso2.carbon.auth.client.registration.rest.api.RegisterApi;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.RegistrationRequestDTO;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.UpdateRequestDTO;
 import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
+import org.wso2.carbon.auth.user.store.internal.ConnectorDataHolder;
+import org.wso2.carbon.datasource.core.api.DataSourceService;
+import org.wso2.msf4j.Request;
 
 import javax.ws.rs.core.Response;
 
@@ -39,6 +43,8 @@ public class RegisterApiServiceImplExceptionTest extends AuthDAOIntegrationTestB
     private static final String CLIENT_NAME = "client1";
     private static final String REDIRECT_URL = "http://localhost/url1";
     private static final String GRANT_TYPE = "password";
+    private DataSourceService dataSourceService;
+    private Request request;
 
     public RegisterApiServiceImplExceptionTest() {
     }
@@ -54,6 +60,11 @@ public class RegisterApiServiceImplExceptionTest extends AuthDAOIntegrationTestB
         //to make every sql execution throws exception
         super.setupWithoutTables();
         log.info("Created databases without any tables");
+        dataSourceService = Mockito.mock(DataSourceService.class);
+        request = Mockito.mock(Request.class);
+        Mockito.when(request.getHeader("Authorization")).thenReturn("Basic YWRtaW46YWRtaW4=");
+        Mockito.when(dataSourceService.getDataSource("WSO2_UM_DB")).thenReturn(this.umDataSource.getDatasource());
+        ConnectorDataHolder.getInstance().setDataSourceService(dataSourceService);
     }
 
     @AfterClass
@@ -70,7 +81,7 @@ public class RegisterApiServiceImplExceptionTest extends AuthDAOIntegrationTestB
         registrationRequestDTO.addGrantTypesItem(GRANT_TYPE);
 
         RegisterApi registerApi = new RegisterApi();
-        Response registrationResponse = registerApi.registerApplication(registrationRequestDTO, null);
+        Response registrationResponse = registerApi.registerApplication(registrationRequestDTO, request);
         Assert.assertNotNull(registrationResponse);
         Assert.assertEquals(registrationResponse.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
     }

@@ -59,7 +59,7 @@ public class TokenDAOImpl implements TokenDAO {
             String userDomain, long timeCreated, long refreshTokenCreatedTime, int validityPeriod,
             int refreshTokenValidityPeriod, String tokenScopeHash, String tokenState, String userType, String grantType)
             throws SQLException {
-        String query = "INSERT INTO AUTH_ACCESS_TOKEN (ACCESS_TOKEN, "
+        String query = "INSERT INTO AUTH_OAUTH2_ACCESS_TOKEN (ACCESS_TOKEN, "
                 + "REFRESH_TOKEN, CONSUMER_KEY_ID, AUTHZ_USER, TIME_CREATED, "
                 + "REFRESH_TOKEN_TIME_CREATED, VALIDITY_PERIOD, REFRESH_TOKEN_VALIDITY_PERIOD, TOKEN_SCOPE_HASH, "
                 + "TOKEN_STATE, USER_TYPE, GRANT_TYPE) SELECT ?,?,(SELECT ID FROM AUTH_OAUTH2_APPLICATION "
@@ -119,11 +119,13 @@ public class TokenDAOImpl implements TokenDAO {
     public AccessTokenDTO getTokenInfo(String accessToken) throws SQLException {
         log.debug("Calling getTokenInfo for accessToken");
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
-        final String query = "SELECT TOKEN_ID, ACCESS_TOKEN, REFRESH_TOKEN, CLIENT_ID, AUTHZ_USER, "
-                + "TIME_CREATED, REFRESH_TOKEN_TIME_CREATED, VALIDITY_PERIOD, REFRESH_TOKEN_VALIDITY_PERIOD, "
-                + "TOKEN_SCOPE_HASH, TOKEN_STATE, USER_TYPE, GRANT_TYPE FROM AUTH_ACCESS_TOKEN INNER JOIN  "
-                + "AUTH_OAUTH2_APPLICATION  WHERE ACCESS_TOKEN = ? AND AUTH_ACCESS_TOKEN.CONSUMER_KEY_ID = "
-                + "AUTH_OAUTH2_APPLICATION.ID";
+        final String query = "SELECT AUTH_OAUTH2_ACCESS_TOKEN_SCOPE.TOKEN_ID, ACCESS_TOKEN, REFRESH_TOKEN, CLIENT_ID, "
+                + "AUTH_OAUTH2_ACCESS_TOKEN.AUTHZ_USER, TIME_CREATED, REFRESH_TOKEN_TIME_CREATED, VALIDITY_PERIOD, "
+                + "REFRESH_TOKEN_VALIDITY_PERIOD, TOKEN_SCOPE_HASH, TOKEN_STATE, USER_TYPE, GRANT_TYPE, TOKEN_SCOPE "
+                + "FROM AUTH_OAUTH2_ACCESS_TOKEN INNER JOIN  AUTH_OAUTH2_APPLICATION  ON ACCESS_TOKEN = ? AND "
+                + "AUTH_OAUTH2_ACCESS_TOKEN.CONSUMER_KEY_ID = AUTH_OAUTH2_APPLICATION.ID LEFT OUTER JOIN "
+                + "AUTH_OAUTH2_ACCESS_TOKEN_SCOPE ON AUTH_OAUTH2_ACCESS_TOKEN_SCOPE.TOKEN_ID = "
+                + "AUTH_OAUTH2_ACCESS_TOKEN.ID";
 
         try (Connection connection = DAOUtil.getAuthConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
@@ -146,6 +148,7 @@ public class TokenDAOImpl implements TokenDAO {
                     accessTokenDTO.setTokenState(rs.getString(JDBCAuthConstants.TOKEN_STATE));
                     accessTokenDTO.setUserType(rs.getString(JDBCAuthConstants.USER_TYPE));
                     accessTokenDTO.setGrantType(rs.getString(JDBCAuthConstants.GRANT_TYPE));
+                    accessTokenDTO.setScopes(rs.getString(JDBCAuthConstants.TOKEN_SCOPE));
                     return accessTokenDTO;
                 }
             }
