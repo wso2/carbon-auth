@@ -9,6 +9,8 @@ import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 import org.wso2.carbon.auth.oauth.rest.api.NotFoundException;
 import org.wso2.carbon.auth.oauth.rest.api.TokenApiService;
+import org.wso2.carbon.auth.oauth.rest.api.dto.TokenResponseDTO;
+import org.wso2.carbon.auth.oauth.rest.api.utils.TokenMappingUtil;
 import org.wso2.msf4j.Request;
 
 import java.util.HashMap;
@@ -39,9 +41,10 @@ public class TokenApiServiceImpl extends TokenApiService {
 
         try {
             AccessTokenContext context = tokenRequestHandler.generateToken(authorization, queryParameters);
-
             if (context.isSuccessful()) {
-                return Response.ok().entity(context.getAccessTokenResponse().getTokens().toString()).build();
+                TokenResponseDTO tokenResponseDTO = TokenMappingUtil
+                        .tokenResponseToDTO(context.getAccessTokenResponse());
+                return Response.ok().entity(tokenResponseDTO).build();
             } else {
                 ErrorObject error = context.getErrorObject();
                 return Response.status(error.getHTTPStatusCode()).build();

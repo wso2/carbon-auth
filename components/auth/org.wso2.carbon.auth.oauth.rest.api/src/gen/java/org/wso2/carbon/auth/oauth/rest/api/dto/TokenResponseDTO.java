@@ -1,8 +1,7 @@
 package org.wso2.carbon.auth.oauth.rest.api.dto;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
@@ -11,19 +10,19 @@ import java.util.Objects;
  * TokenResponseDTO
  */
 public class TokenResponseDTO   {
-  @JsonProperty("access_token")
+  @SerializedName("access_token")
   private String accessToken = null;
 
-  @JsonProperty("token_type")
+  @SerializedName("token_type")
   private String tokenType = null;
 
-  @JsonProperty("expires_in")
-  private String expiresIn = null;
+  @SerializedName("expires_in")
+  private Long expiresIn = null;
 
-  @JsonProperty("refresh_token")
+  @SerializedName("refresh_token")
   private String refreshToken = null;
 
-  @JsonProperty("scope")
+  @SerializedName("scope")
   private String scope = null;
 
   public TokenResponseDTO accessToken(String accessToken) {
@@ -62,7 +61,7 @@ public class TokenResponseDTO   {
     this.tokenType = tokenType;
   }
 
-  public TokenResponseDTO expiresIn(String expiresIn) {
+  public TokenResponseDTO expiresIn(Long expiresIn) {
     this.expiresIn = expiresIn;
     return this;
   }
@@ -72,11 +71,11 @@ public class TokenResponseDTO   {
    * @return expiresIn
   **/
   @ApiModelProperty(value = "The lifetime in seconds of the access token. ")
-  public String getExpiresIn() {
+  public Long getExpiresIn() {
     return expiresIn;
   }
 
-  public void setExpiresIn(String expiresIn) {
+  public void setExpiresIn(Long expiresIn) {
     this.expiresIn = expiresIn;
   }
 

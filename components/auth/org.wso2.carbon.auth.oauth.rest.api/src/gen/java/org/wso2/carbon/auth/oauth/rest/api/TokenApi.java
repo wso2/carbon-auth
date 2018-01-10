@@ -14,8 +14,21 @@ import org.wso2.msf4j.formparam.FormDataParam;
 import org.osgi.service.component.annotations.Component;
 
 import java.io.InputStream;
-import javax.ws.rs.*;
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
@@ -24,7 +37,7 @@ import javax.ws.rs.core.Response;
     service = Microservice.class,
     immediate = true
 )
-@Path("/uvindra/oauth/1.[\\d]+/token")
+@Path("/api/auth/oauth2/v1.[\\d]+/token")
 
 
 @ApplicationPath("/token")
@@ -36,7 +49,7 @@ public class TokenApi implements Microservice  {
     @POST
     
     @Consumes({ "application/x-www-form-urlencoded" })
-    @Produces({ "application/json;charset=UTF-8" })
+    @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "", notes = "", response = TokenResponseDTO.class, tags={ "OAuth Token", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "OK. Successful response from token endpoint. ", response = TokenResponseDTO.class),
