@@ -9,7 +9,6 @@ import org.wso2.msf4j.Request;
 
 import org.wso2.carbon.auth.scope.registration.rest.api.dto.ErrorDTO;
 import org.wso2.carbon.auth.scope.registration.rest.api.dto.ScopeDTO;
-import org.wso2.carbon.auth.scope.registration.rest.api.dto.ScopeToUpdateDTO;
 
 import java.util.List;
 import org.wso2.carbon.auth.scope.registration.rest.api.NotFoundException;
@@ -21,17 +20,17 @@ import javax.ws.rs.core.SecurityContext;
 
 public abstract class ScopesApiService {
     public abstract Response deleteScope(String name
- , Request request) throws NotFoundException;
+  ,Request request) throws NotFoundException;
     public abstract Response getScope(String name
- , Request request) throws NotFoundException;
+  ,Request request) throws NotFoundException;
     public abstract Response getScopes(Integer startIndex
  ,Integer count
- , Request request) throws NotFoundException;
+  ,Request request) throws NotFoundException;
     public abstract Response isScopeExists(String name
- , Request request) throws NotFoundException;
+  ,Request request) throws NotFoundException;
     public abstract Response registerScope(ScopeDTO scope
- , Request request) throws NotFoundException;
-    public abstract Response updateScope(ScopeToUpdateDTO scope
+  ,Request request) throws NotFoundException;
+    public abstract Response updateScope(ScopeDTO scope
  ,String name
- , Request request) throws NotFoundException;
+  ,Request request) throws NotFoundException;
 }

@@ -47,11 +47,9 @@ public class ScopesApiServiceImpl extends ScopesApiService {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
+
     @Override
-    public Response updateScope(ScopeToUpdateDTO scope
-, String name
- , Request request) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+    public Response updateScope(ScopeDTO scope, String name, Request request) throws NotFoundException {
+        return null;
     }
 }
