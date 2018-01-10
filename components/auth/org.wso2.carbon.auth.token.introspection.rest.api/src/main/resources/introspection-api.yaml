@@ -22,7 +22,7 @@ consumes:
 produces:
   - application/json
 paths:
-  /introspection:
+  /introspect:
     post:
       description: |
         This API is used to introspection.

@@ -31,9 +31,9 @@ import org.wso2.carbon.auth.token.introspection.dto.IntrospectionContext;
 import org.wso2.carbon.auth.token.introspection.dto.IntrospectionResponse;
 import org.wso2.carbon.auth.token.introspection.impl.IntrospectionManagerImpl;
 import org.wso2.carbon.auth.token.introspection.impl.TokenValidatorHandlerImpl;
-import org.wso2.carbon.auth.token.introspection.rest.api.IntrospectionApiService;
+import org.wso2.carbon.auth.token.introspection.rest.api.IntrospectApiService;
 import org.wso2.carbon.auth.token.introspection.rest.api.dto.IntrospectionResponseDTO;
-import org.wso2.carbon.auth.token.introspection.rest.api.factories.IntrospectionApiServiceFactory;
+import org.wso2.carbon.auth.token.introspection.rest.api.factories.IntrospectApiServiceFactory;
 
 import javax.ws.rs.core.Response;
 
@@ -49,7 +49,7 @@ public class IntrospectionApiServiceImplTest {
 
     @Test
     public void testIntrospect() throws Exception {
-        IntrospectionApiService service = IntrospectionApiServiceFactory.getIntrospectionApi();
+        IntrospectApiService service = IntrospectApiServiceFactory.getIntrospectApi();
         IntrospectionResponse introspectionResponse = new IntrospectionResponse();
         introspectionResponse.setActive(true);
 
@@ -61,16 +61,13 @@ public class IntrospectionApiServiceImplTest {
         PowerMockito.when(context.getIntrospectionResponse()).thenReturn(introspectionResponse);
 
         Response response = service.introspect("ASDF5F6sd587fdgfsakjdd", null);
-        String payload = (String) response.getEntity();
-        Gson gson =  new Gson();
-        IntrospectionResponseDTO dto = gson.fromJson(payload, IntrospectionResponseDTO.class);
+        IntrospectionResponseDTO dto  = (IntrospectionResponseDTO) response.getEntity();
         Assert.assertTrue(dto.getActive());
 
         PowerMockito.when(tokenValidatorHandler, "validate", Mockito.any(IntrospectionContext.class))
                 .thenThrow(IntrospectionException.class);
         response = service.introspect("inactive", null);
-        payload = (String) response.getEntity();
-        dto = gson.fromJson(payload, IntrospectionResponseDTO.class);
+        dto = (IntrospectionResponseDTO) response.getEntity();
         Assert.assertFalse(dto.getActive());
     }
 }

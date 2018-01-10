@@ -219,7 +219,8 @@
             com.nimbusds.oauth2.sdk.http.*;version="${com.nimbusd.oauth2-oidc-sdk.import.version.range}",
             com.nimbusds.oauth2.sdk.token.*;version="${com.nimbusd.oauth2-oidc-sdk.import.version.range}",
             javax.ws.rs.*; version="${javax.ws.rs.import.version.range}",
-            org.wso2.carbon.auth.oauth.*; version="${carbon.auth.version}"
+            org.wso2.carbon.auth.oauth.*; version="${carbon.auth.version}",
+            com.google.gson.*;version="${gson.version.range}"
         </import.package>
         <export.package>
             org.wso2.carbon.auth.oauth.rest.api.*; version="${carbon.auth.version}"

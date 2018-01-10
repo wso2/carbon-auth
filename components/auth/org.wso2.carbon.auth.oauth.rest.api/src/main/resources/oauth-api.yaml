@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   description: OAuth API
-  version: 1.0.0
+  version: 1.0
   title: OAuth API
   # put the contact info for your development or API team
   contact:
@@ -12,6 +12,11 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+schemes:
+  - https
+host: localhost
+basePath: /api/auth/oauth2/v1.0
 
 paths:
   /authorize:
@@ -60,7 +65,7 @@ paths:
       consumes:
         - application/x-www-form-urlencoded
       produces:
-        - application/json;charset=UTF-8
+        - application/json
       parameters:
         - in: header
           name: Authorization
@@ -134,16 +139,6 @@ paths:
               description: |
                 The content type of the body.
               type: string  
-
-      
-      
-
-
-# Added by API Auto Mocking Plugin
-host: virtserver.swaggerhub.com
-basePath: /uvindra/oauth/1.0.0
-schemes:
- - https
  
 definitions:
   TokenResponse:
@@ -161,7 +156,8 @@ definitions:
         description: |
           The type of the token issued.
       expires_in:
-        type: string
+        type: integer
+        format: int64
         description: |
           The lifetime in seconds of the access token.
       refresh_token:

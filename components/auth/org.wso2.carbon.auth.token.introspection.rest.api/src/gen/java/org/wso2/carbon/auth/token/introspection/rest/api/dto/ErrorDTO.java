@@ -1,8 +1,7 @@
 package org.wso2.carbon.auth.token.introspection.rest.api.dto;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
@@ -11,19 +10,19 @@ import java.util.Objects;
  * ErrorDTO
  */
 public class ErrorDTO   {
-  @JsonProperty("code")
+  @SerializedName("code")
   private String code = null;
 
-  @JsonProperty("httpStatusCode")
+  @SerializedName("httpStatusCode")
   private Integer httpStatusCode = null;
 
-  @JsonProperty("message")
+  @SerializedName("message")
   private String message = null;
 
-  @JsonProperty("description")
+  @SerializedName("description")
   private String description = null;
 
-  @JsonProperty("moreInfo")
+  @SerializedName("moreInfo")
   private String moreInfo = null;
 
   public ErrorDTO code(String code) {

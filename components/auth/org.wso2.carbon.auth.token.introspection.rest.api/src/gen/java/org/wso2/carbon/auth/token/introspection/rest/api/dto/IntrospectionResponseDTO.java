@@ -1,8 +1,6 @@
 package org.wso2.carbon.auth.token.introspection.rest.api.dto;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -12,25 +10,25 @@ import java.util.Objects;
  * IntrospectionResponseDTO
  */
 public class IntrospectionResponseDTO   {
-  @JsonProperty("active")
+  @SerializedName("active")
   private Boolean active = null;
 
-  @JsonProperty("username")
+  @SerializedName("username")
   private String username = null;
 
-  @JsonProperty("scope")
+  @SerializedName("scope")
   private String scope = null;
 
-  @JsonProperty("token_type")
+  @SerializedName("token_type")
   private String tokenType = null;
 
   @SerializedName("client_id")
   private String clientId = null;
 
-  @JsonProperty("exp")
+  @SerializedName("exp")
   private Integer exp = null;
 
-  @JsonProperty("iat")
+  @SerializedName("iat")
   private Integer iat = null;
 
   public IntrospectionResponseDTO active(Boolean active) {

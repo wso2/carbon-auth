@@ -181,8 +181,7 @@
             com.nimbusds.oauth2.sdk.*;version="${com.nimbusd.oauth2-oidc-sdk.import.version.range}",
             javax.ws.rs.*; version="${javax.ws.rs.import.version.range}",
             org.wso2.carbon.auth.token.introspection.*; version="${carbon.auth.version}",
-            com.google.gson.annotations.*,
-            com.google.gson.*,
+            com.google.gson.*;version="${gson.version.range}"
         </import.package>
         <export.package>
             org.wso2.carbon.auth.token.introspection.rest.api.*; version="${carbon.auth.version}"

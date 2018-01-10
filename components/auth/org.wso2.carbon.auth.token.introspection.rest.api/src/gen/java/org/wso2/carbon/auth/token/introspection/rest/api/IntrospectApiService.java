@@ -18,7 +18,7 @@ import java.io.InputStream;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-public abstract class IntrospectionApiService {
+public abstract class IntrospectApiService {
     public abstract Response introspect(String token
   ,Request request) throws NotFoundException;
 }
