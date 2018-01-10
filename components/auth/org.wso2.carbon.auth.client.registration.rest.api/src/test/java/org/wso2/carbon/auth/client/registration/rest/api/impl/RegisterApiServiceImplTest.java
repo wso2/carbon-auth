@@ -19,6 +19,7 @@
 package org.wso2.carbon.auth.client.registration.rest.api.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -31,6 +32,9 @@ import org.wso2.carbon.auth.client.registration.rest.api.dto.ApplicationDTO;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.RegistrationRequestDTO;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.UpdateRequestDTO;
 import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
+import org.wso2.carbon.auth.user.store.internal.ConnectorDataHolder;
+import org.wso2.carbon.datasource.core.api.DataSourceService;
+import org.wso2.msf4j.Request;
 
 import javax.ws.rs.core.Response;
 
@@ -43,6 +47,8 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
     private static final String REDIRECT_URL_2 = "http://localhost/url2";
     private static final String REDIRECT_URL_UPDATED = "http://localhost/updated/url1";
     private static final String GRANT_TYPE = "password";
+    private DataSourceService dataSourceService;
+    private Request request;
 
     public RegisterApiServiceImplTest() {
     }
@@ -57,6 +63,11 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
     public void setup() throws Exception {
         super.setup();
         log.info("Created databases");
+        dataSourceService = Mockito.mock(DataSourceService.class);
+        request = Mockito.mock(Request.class);
+        Mockito.when(request.getHeader("Authorization")).thenReturn("Basic YWRtaW46YWRtaW4=");
+        Mockito.when(dataSourceService.getDataSource("WSO2_UM_DB")).thenReturn(this.umDataSource.getDatasource());
+        ConnectorDataHolder.getInstance().setDataSourceService(dataSourceService);
     }
 
     @AfterClass
@@ -74,7 +85,7 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
             registrationRequestDTO.addGrantTypesItem(GRANT_TYPE);
 
             RegisterApi registerApi = new RegisterApi();
-            Response registrationResponse = registerApi.registerApplication(registrationRequestDTO, null);
+            Response registrationResponse = registerApi.registerApplication(registrationRequestDTO, request);
 
             Assert.assertNotNull(registrationResponse);
             Assert.assertNotNull(registrationResponse.getEntity());
@@ -126,7 +137,7 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
         registrationRequestDTO.addGrantTypesItem(GRANT_TYPE);
 
         RegisterApi registerApi = new RegisterApi();
-        Response registrationResponse = registerApi.registerApplication(registrationRequestDTO, null);
+        Response registrationResponse = registerApi.registerApplication(registrationRequestDTO, request);
 
         Assert.assertNotNull(registrationResponse);
         Assert.assertNotNull(registrationResponse.getEntity());

@@ -21,11 +21,15 @@
 package org.wso2.carbon.auth.oauth.impl;
 
 import com.nimbusds.oauth2.sdk.ClientCredentialsGrant;
+import com.nimbusds.oauth2.sdk.OAuth2Error;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.Scope;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
+import org.wso2.carbon.auth.client.registration.exception.ClientRegistrationDAOException;
+import org.wso2.carbon.auth.client.registration.model.Application;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
@@ -43,10 +47,12 @@ import javax.annotation.Nullable;
 public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
     private static final Logger log = LoggerFactory.getLogger(ClientCredentialsGrantHandlerImpl.class);
     private OAuthDAO oauthDAO;
+    private ApplicationDAO applicationDAO;
     private ClientLookup clientLookup;
 
-    ClientCredentialsGrantHandlerImpl(OAuthDAO oauthDAO) {
+    ClientCredentialsGrantHandlerImpl(OAuthDAO oauthDAO, ApplicationDAO applicationDAO) {
         this.oauthDAO = oauthDAO;
+        this.applicationDAO = applicationDAO;
         clientLookup = new ClientLookupImpl(oauthDAO);
     }
 
@@ -61,12 +67,15 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
         } catch (ParseException e) {
             log.info("Error while parsing Client Credentials Grant request: ", e.getMessage());
             context.setErrorObject(e.getErrorObject());
+        } catch (ClientRegistrationDAOException e) {
+            log.info("Error while parsing retrieving Client information: ", e.getMessage());
+            context.setErrorObject(OAuth2Error.INVALID_REQUEST);
         }
     }
 
     private void processClientCredentialsGrantRequest(String authorization, AccessTokenContext context,
                                              @Nullable String scopeValue, ClientCredentialsGrant request)
-                                                                                        throws OAuthDAOException {
+            throws OAuthDAOException, ClientRegistrationDAOException {
         log.debug("Calling processClientCredentialsGrantRequest");
         MutableBoolean haltExecution = new MutableBoolean(false);
 
@@ -75,6 +84,7 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
         if (haltExecution.isTrue()) {
             return;
         }
+        Application application = applicationDAO.getApplication(clientId);
         Scope scope;
 
         if (scopeValue != null) {
@@ -87,6 +97,9 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
 
         AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
         accessTokenData.setClientId(clientId);
+        if (application != null) {
+            accessTokenData.setAuthUser(application.getAuthUser());
+        }
         oauthDAO.addAccessTokenInfo(accessTokenData);
     }
 }

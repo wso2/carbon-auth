@@ -6,6 +6,10 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.ErrorDTO;
 import org.wso2.carbon.auth.core.exception.ErrorHandler;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.util.Base64;
 import java.util.Map;
 
 /**
@@ -39,5 +43,38 @@ public class RestAPIUtil {
         errorDTO.setHttpStatusCode(500);
         errorDTO.setDescription("Internal Server Error");
         return errorDTO;
+    }
+
+    /**
+     * Parse user credentials authorization header
+     *
+     * @param header authorization header value
+     * @return Object array with username/password
+     * @throws ParseException throws if a parse exception occurred
+     */
+    public static Object[] parse(String header) throws ParseException {
+        Charset UTF8_CHARSET = Charset.forName("UTF-8");
+        String[] parts = header.split("\\s");
+        if (parts.length != 2) {
+            throw new ParseException(
+                    "Malformed user basic authentication: Unexpected number of HTTP Authorization header value parts: "
+                            + parts.length);
+        } else if (!parts[0].equalsIgnoreCase("Basic")) {
+            throw new ParseException("HTTP authentication must be \"Basic\"");
+        } else {
+            String credentialsString = new String(Base64.getDecoder().decode(parts[1]), UTF8_CHARSET);
+            String[] credentials = credentialsString.split(":", 2);
+            if (credentials.length != 2) {
+                throw new ParseException("Malformed basic authentication: Missing credentials delimiter \":\"");
+            } else {
+                try {
+                    String username = URLDecoder.decode(credentials[0], UTF8_CHARSET.name());
+                    String password = URLDecoder.decode(credentials[1], UTF8_CHARSET.name());
+                    return new Object[] { username, password };
+                } catch (UnsupportedEncodingException | IllegalArgumentException e) {
+                    throw new ParseException("Malformed basic authentication: Invalid URL encoding", e);
+                }
+            }
+        }
     }
 }

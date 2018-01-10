@@ -26,6 +26,7 @@ import java.util.Objects;
 public class Application {
     private String clientId;
     private String clientSecret;
+    private String authUser;
     private String callBackUrl;
     private String grantTypes = "";
     private String clientName;
@@ -128,6 +129,7 @@ public class Application {
 
         return Objects.equals(clientId, that.clientId) &&
                 Objects.equals(clientSecret, that.clientSecret) &&
+                Objects.equals(authUser, that.authUser) &&
                 Objects.equals(clientName, that.clientName) &&
                 Objects.equals(callBackUrl, that.callBackUrl) &&
                 Objects.equals(grantTypes, that.grantTypes) &&
@@ -145,6 +147,7 @@ public class Application {
         return "Application{" +
                 "clientId='" + clientId + '\'' +
                 ", clientSecret='" + clientSecret + '\'' +
+                ", authUser='" + authUser + '\'' +
                 ", callBackUrl='" + callBackUrl + '\'' +
                 ", grantTypes='" + grantTypes + '\'' +
                 ", clientName='" + clientName + '\'' +
@@ -154,5 +157,13 @@ public class Application {
                 ", applicationAccessTokenExpiryTime='" + applicationAccessTokenExpiryTime + '\'' +
                 ", refreshTokenExpiryTime='" + refreshTokenExpiryTime + '\'' +
                 '}';
+    }
+
+    public String getAuthUser() {
+        return authUser;
+    }
+
+    public void setAuthUser(String authUser) {
+        this.authUser = authUser;
     }
 }

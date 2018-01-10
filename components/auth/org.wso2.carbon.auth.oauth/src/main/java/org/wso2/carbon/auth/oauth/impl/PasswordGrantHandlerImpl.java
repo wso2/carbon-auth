@@ -100,6 +100,7 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
 
         TokenGenerator.generateAccessToken(scope, context);
         AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
+        accessTokenData.setAuthUser((String) context.getParams().get("AUTH_USER"));
         accessTokenData.setClientId(clientId);
         oauthDAO.addAccessTokenInfo(accessTokenData);
     }

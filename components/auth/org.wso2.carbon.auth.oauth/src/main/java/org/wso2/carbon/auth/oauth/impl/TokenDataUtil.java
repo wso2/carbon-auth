@@ -17,6 +17,7 @@ class TokenDataUtil {
         AccessTokenData accessTokenData = new AccessTokenData();
         accessTokenData.setAccessToken(tokens.getAccessToken().getValue());
         accessTokenData.setRefreshToken(tokens.getRefreshToken().getValue());
+        accessTokenData.setScopes(tokens.getAccessToken().getScope().toString());
 
         Instant timestamp = Instant.now();
 

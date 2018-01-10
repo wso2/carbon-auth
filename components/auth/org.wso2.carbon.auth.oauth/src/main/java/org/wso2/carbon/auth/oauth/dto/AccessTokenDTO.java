@@ -23,6 +23,7 @@ package org.wso2.carbon.auth.oauth.dto;
 public class AccessTokenDTO {
     private int tokenID;
     private String accessToken;
+    private String scopes;
     private String refreshToken;
     private String consumerKey;
     private String authUser;
@@ -146,5 +147,13 @@ public class AccessTokenDTO {
 
     public void setGrantType(String grantType) {
         this.grantType = grantType;
+    }
+
+    public String getScopes() {
+        return scopes;
+    }
+
+    public void setScopes(String scopes) {
+        this.scopes = scopes;
     }
 }
