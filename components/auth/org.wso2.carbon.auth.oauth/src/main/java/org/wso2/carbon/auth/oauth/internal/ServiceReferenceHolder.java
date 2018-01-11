@@ -1,6 +1,6 @@
 package org.wso2.carbon.auth.oauth.internal;
 /*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -27,7 +27,7 @@ import org.wso2.carbon.secvault.SecureVault;
 import java.util.Map;
 
 /**
- * Class used to hold the APIM configuration
+ * Class used to hold the OAuth configuration
  */
 public class ServiceReferenceHolder {
     private static final Logger log = LoggerFactory.getLogger(ServiceReferenceHolder.class);
@@ -64,7 +64,7 @@ public class ServiceReferenceHolder {
                 log.error("Configuration provider is null");
             }
         } catch (ConfigurationException e) {
-            log.error("error getting config : org.wso2.carbon.apimgt.core.internal.APIMConfiguration", e);
+            log.error("error getting config : org.wso2.carbon.auth.core.internal.AuthConfiguration", e);
         }
 
         if (config == null) {
@@ -90,7 +90,7 @@ public class ServiceReferenceHolder {
             }
         } catch (ConfigurationException e) {
             log.error("Error while reading the configurations map of namespace : " +
-                    "org.wso2.carbon.apimgt.core.internal.APIMConfiguration", e);
+                    "org.wso2.carbon.auth.core.internal.AuthConfiguration", e);
         }
         return null;
     }
