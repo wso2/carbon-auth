@@ -25,14 +25,18 @@ import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import com.nimbusds.oauth2.sdk.token.Tokens;
+import org.wso2.carbon.auth.core.configuration.models.AuthConfiguration;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
+import org.wso2.carbon.auth.oauth.internal.ServiceReferenceHolder;
 
 /**
  * Contains token generation logic
  */
 public class TokenGenerator {
     static void generateAccessToken(Scope scope, AccessTokenContext context) {
-        BearerAccessToken accessToken = new BearerAccessToken(3600, scope);
+        AuthConfiguration authConfigs = ServiceReferenceHolder.getInstance().getAuthConfigurations();
+        long defaultValidityPeriod = authConfigs.getKeyManagerConfigs().getDefaultTokenValidityPeriod();
+        BearerAccessToken accessToken = new BearerAccessToken(defaultValidityPeriod, scope);
 
         RefreshToken refreshToken = new RefreshToken();
 
