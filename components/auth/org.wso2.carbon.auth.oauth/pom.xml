@@ -23,7 +23,7 @@
     <parent>
         <artifactId>auth</artifactId>
         <groupId>org.wso2.carbon.auth</groupId>
-        <version>1.0.13-SNAPSHOT</version>
+        <version>1.0.14-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -117,7 +117,8 @@
             org.osgi.util.tracker; version="${osgi.service.tracker.package.import.version.range}",
             org.wso2.carbon.kernel.*;version="${carbon.kernel.package.import.version.range}",
             com.nimbusds.oauth2.sdk.*;version="${com.nimbusd.oauth2-oidc-sdk.import.version.range}",
-            org.wso2.carbon.auth.core.*; version="${carbon.auth.version}"
+            org.wso2.carbon.auth.core.*; version="${carbon.auth.version}",
+            org.wso2.carbon.auth.client.registration.*; version="${carbon.auth.version}"
         </import.package>
         <export.package>
             org.wso2.carbon.auth.oauth.*; version="${carbon.auth.version}",

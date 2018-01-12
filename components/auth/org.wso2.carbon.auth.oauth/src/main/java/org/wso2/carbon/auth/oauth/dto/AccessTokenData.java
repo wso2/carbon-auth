@@ -27,6 +27,8 @@ import java.time.Instant;
  */
 public class AccessTokenData {
     private String accessToken;
+    private String authUser;
+    private String scopes;
     private String refreshToken;
     private String clientId;
     private String grantType;
@@ -106,5 +108,21 @@ public class AccessTokenData {
 
     public void setTokenState(TokenState tokenState) {
         this.tokenState = tokenState;
+    }
+
+    public String getScopes() {
+        return scopes;
+    }
+
+    public void setScopes(String scopes) {
+        this.scopes = scopes;
+    }
+
+    public String getAuthUser() {
+        return authUser;
+    }
+
+    public void setAuthUser(String authUser) {
+        this.authUser = authUser;
     }
 }

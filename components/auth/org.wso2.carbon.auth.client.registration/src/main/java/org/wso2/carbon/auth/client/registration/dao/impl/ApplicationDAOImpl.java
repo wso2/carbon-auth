@@ -59,6 +59,7 @@ public class ApplicationDAOImpl implements ApplicationDAO {
                             persistenceProcessor.getPreprocessedClientSecret(rs.getString("CLIENT_SECRET")));
                     */
                     data.setClientSecret(rs.getString("CLIENT_SECRET"));
+                    data.setAuthUser(rs.getString("AUTHZ_USER"));
                     data.setClientName(rs.getString("APP_NAME"));
                     data.setCallBackUrl(rs.getString("REDIRECT_URI"));
                     data.setGrantTypes(rs.getString("GRANT_TYPES"));
@@ -134,8 +135,8 @@ public class ApplicationDAOImpl implements ApplicationDAO {
 
     private void addClientInfoInDB(Application application) throws SQLException, ClientRegistrationDAOException {
         final String query = "INSERT INTO AUTH_OAUTH2_APPLICATION " +
-                "(CLIENT_ID, CLIENT_SECRET, APP_NAME, OAUTH_VERSION," +
-                " REDIRECT_URI, GRANT_TYPES) VALUES (?,?,?,?,?,?) ";
+                "(CLIENT_ID, CLIENT_SECRET, AUTHZ_USER, APP_NAME, OAUTH_VERSION," +
+                " REDIRECT_URI, GRANT_TYPES) VALUES (?,?,?,?,?,?,?) ";
 
         try (Connection connection = DAOUtil.getAuthConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
@@ -147,19 +148,20 @@ public class ApplicationDAOImpl implements ApplicationDAO {
                 statement.setString(2, persistenceProcessor.getProcessedClientSecret(application.getClientSecret()));
                 */
                 statement.setString(2, application.getClientSecret());
-                statement.setString(3, application.getClientName());
-                statement.setString(4, application.getOauthVersion());
+                statement.setString(3, application.getAuthUser());
+                statement.setString(4, application.getClientName());
+                statement.setString(5, application.getOauthVersion());
 
                 if (application.getCallBackUrl() != null) {
-                    statement.setString(5, application.getCallBackUrl());
+                    statement.setString(6, application.getCallBackUrl());
                 } else {
-                    statement.setNull(5, Types.VARCHAR);
+                    statement.setNull(6, Types.VARCHAR);
                 }
 
                 if (application.getGrantTypes() != null) {
-                    statement.setString(6, application.getGrantTypes());
+                    statement.setString(7, application.getGrantTypes());
                 } else {
-                    statement.setNull(6, Types.VARCHAR);
+                    statement.setNull(7, Types.VARCHAR);
                 }
 
                 statement.execute();

@@ -53,6 +53,9 @@ public class TokenValidatorHandlerImpl implements TokenValidatorHandler {
             buildIntrospectionError(context, "Access token expired");
             return;
         }
+
+        //todo: validate scopes
+
         IntrospectionResponse introspectionResponse = new IntrospectionResponse();
 
         // should be in seconds
@@ -61,9 +64,9 @@ public class TokenValidatorHandlerImpl implements TokenValidatorHandler {
         // should be in seconds
         introspectionResponse.setIat(accessTokenDTO.getTimeCreated() / 1000);
         // token scopes
-        introspectionResponse.setScope("");
+        introspectionResponse.setScope(accessTokenDTO.getScopes());
         // set user-name
-        introspectionResponse.setUsername("admin");
+        introspectionResponse.setUsername(accessTokenDTO.getAuthUser());
         // add client id
         introspectionResponse.setClientId(accessTokenDTO.getConsumerKey());
 

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.wso2.carbon.auth</groupId>
         <artifactId>auth</artifactId>
-        <version>1.0.13-SNAPSHOT</version>
+        <version>1.0.14-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -220,6 +220,7 @@
             com.nimbusds.oauth2.sdk.token.*;version="${com.nimbusd.oauth2-oidc-sdk.import.version.range}",
             javax.ws.rs.*; version="${javax.ws.rs.import.version.range}",
             org.wso2.carbon.auth.oauth.*; version="${carbon.auth.version}",
+            org.wso2.carbon.auth.client.registration.*; version="${carbon.auth.version}",
             com.google.gson.*;version="${gson.version.range}"
         </import.package>
         <export.package>

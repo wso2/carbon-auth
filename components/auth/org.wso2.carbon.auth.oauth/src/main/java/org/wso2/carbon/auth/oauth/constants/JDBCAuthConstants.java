@@ -36,5 +36,6 @@ public class JDBCAuthConstants {
     public static final String TOKEN_STATE = "TOKEN_STATE";
     public static final String USER_TYPE = "USER_TYPE";
     public static final String GRANT_TYPE = "GRANT_TYPE";
+    public static final String TOKEN_SCOPE = "TOKEN_SCOPE";
 
 }
