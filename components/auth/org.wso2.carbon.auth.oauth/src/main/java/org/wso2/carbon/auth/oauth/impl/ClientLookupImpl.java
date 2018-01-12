@@ -66,7 +66,8 @@ public class ClientLookupImpl implements ClientLookup {
                 return clientId.getValue();
             } catch (ParseException e) {
                 log.info("Error while parsing client credentials: ", e.getMessage());
-                context.setErrorObject(e.getErrorObject());
+                ErrorObject error = new ErrorObject(OAuth2Error.INVALID_REQUEST.getCode());
+                context.setErrorObject(error);
                 haltExecution.setTrue();
             } catch (OAuthDAOException e) {
                 log.error("Error while validating client credentials", e);

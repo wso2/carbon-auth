@@ -64,7 +64,7 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
             String scope = queryParameters.get(OAuthConstants.SCOPE_QUERY_PARAM);
             processPasswordGrantRequest(authorization, context, scope, request);
         } catch (ParseException e) {
-            log.info("Error while parsing Password Grant request: ", e.getMessage());
+            log.error("Error while parsing Password Grant request: ", e.getMessage());
             context.setErrorObject(e.getErrorObject());
         }
     }

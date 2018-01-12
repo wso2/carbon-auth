@@ -32,4 +32,6 @@ public interface TokenDAO {
     AccessTokenDTO getTokenInfoByID(String tokenID) throws SQLException;
 
     AccessTokenDTO getTokenInfo(String accessToken) throws SQLException;
+    AccessTokenDTO getTokenInfo(String refreshToken, String consumerkey) throws SQLException;
+
 }

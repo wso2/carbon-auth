@@ -145,8 +145,8 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
         Assert.assertTrue(registrationResponse.getEntity() instanceof ApplicationDTO);
         ApplicationDTO responseDTO = (ApplicationDTO)registrationResponse.getEntity();
         Assert.assertEquals(responseDTO.getClientName(), CLIENT_NAME_2);
-        //TODO: double check this validity
-        Assert.assertEquals(responseDTO.getRedirectUris().get(0),
-                "regexp=(http://localhost/url1|http://localhost/url2)");
+        Assert.assertEquals(responseDTO.getRedirectUris().size(),2);
+        Assert.assertTrue(responseDTO.getRedirectUris().contains(REDIRECT_URL_1));
+        Assert.assertTrue(responseDTO.getRedirectUris().contains(REDIRECT_URL_2));
     }
 }

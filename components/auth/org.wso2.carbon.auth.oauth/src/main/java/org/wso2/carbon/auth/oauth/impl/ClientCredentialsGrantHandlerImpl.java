@@ -65,10 +65,10 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
             String scope = queryParameters.get(OAuthConstants.SCOPE_QUERY_PARAM);
             processClientCredentialsGrantRequest(authorization, context, scope, request);
         } catch (ParseException e) {
-            log.info("Error while parsing Client Credentials Grant request: ", e.getMessage());
+            log.error("Error while parsing Client Credentials Grant request: ", e.getMessage());
             context.setErrorObject(e.getErrorObject());
         } catch (ClientRegistrationDAOException e) {
-            log.info("Error while parsing retrieving Client information: ", e.getMessage());
+            log.error("Error while parsing retrieving Client information: ", e.getMessage());
             context.setErrorObject(OAuth2Error.INVALID_REQUEST);
         }
     }

@@ -21,12 +21,11 @@ package org.wso2.carbon.auth.client.registration.rest.api.utils;
 import org.apache.commons.lang3.StringUtils;
 import org.wso2.carbon.auth.client.registration.constants.ClientRegistrationConstants;
 import org.wso2.carbon.auth.client.registration.model.Application;
-import org.wso2.carbon.auth.client.registration.rest.api.StringUtil;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.ApplicationDTO;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.RegistrationRequestDTO;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.UpdateRequestDTO;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,11 +44,26 @@ public class MappingUtil {
         applicationDTO.setClientName(application.getClientName());
         applicationDTO.setClientSecret(application.getClientSecret());
         applicationDTO.setClientId(application.getClientId());
-        List<String> redirectUrisList = new ArrayList<String>();
-        redirectUrisList.add(application.getCallBackUrl());
-        applicationDTO.setRedirectUris(redirectUrisList);
+        applicationDTO.setRedirectUris(extractCallBackUrlFromRegex(application.getCallBackUrl()));
 
         return applicationDTO;
+    }
+
+    /**
+     * parsed the regex represented callback url and return callback url as a list
+     *
+     * @param callbackurl regex callback url
+     * @return callback url list
+     */
+    public static List<String> extractCallBackUrlFromRegex(String callbackurl) {
+        if (StringUtils.isEmpty(callbackurl)) {
+            return null;
+        }
+        if (!callbackurl.startsWith(ClientRegistrationConstants.CALLBACK_URL_REGEXP_PREFIX)) {
+            return Arrays.asList(callbackurl);
+        }
+        String urls = callbackurl.substring(callbackurl.indexOf('(') + 1, callbackurl.indexOf(')'));
+        return Arrays.asList(urls.split("\\|"));
     }
 
     /**
@@ -92,10 +106,13 @@ public class MappingUtil {
 
         //TODO: After implement multi-urls to the oAuth application, we have to change this API call
         //TODO: need to validate before processing request
-        if (redirectUris.size() == 0 && (grantTypes.contains(
-                ClientRegistrationConstants.GrantTypes.AUTHORIZATION_CODE) || grantTypes.
-                contains(ClientRegistrationConstants.GrantTypes.IMPLICIT))) {
-            throw new IllegalStateException("Valid input has not been provided");
+        if (redirectUris.size() == 0) {
+            if ((grantTypes.contains(ClientRegistrationConstants.GrantTypes.AUTHORIZATION_CODE) || grantTypes.
+                    contains(ClientRegistrationConstants.GrantTypes.IMPLICIT))) {
+                throw new IllegalStateException("Valid input has not been provided");
+            } else {
+                return null;
+            }
         } else if (redirectUris.size() == 1) {
             String redirectUri = redirectUris.get(0);
             if (DCRMUtils.isRedirectionUriValid(redirectUri)) {

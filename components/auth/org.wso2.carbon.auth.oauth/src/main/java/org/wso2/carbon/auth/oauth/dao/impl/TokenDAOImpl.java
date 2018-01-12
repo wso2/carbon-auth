@@ -157,4 +157,48 @@ public class TokenDAOImpl implements TokenDAO {
         }
         return null;
     }
+
+    @Override
+    public AccessTokenDTO getTokenInfo(String refreshToken, String consumerkey) throws SQLException {
+        log.debug("Calling getTokenInfo from refreshToken, consumerkey");
+        AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
+        final String query = "SELECT AUTH_OAUTH2_ACCESS_TOKEN_SCOPE.TOKEN_ID, ACCESS_TOKEN, REFRESH_TOKEN, CLIENT_ID, "
+                + "AUTH_OAUTH2_ACCESS_TOKEN.AUTHZ_USER, TIME_CREATED, REFRESH_TOKEN_TIME_CREATED, VALIDITY_PERIOD, "
+                + "REFRESH_TOKEN_VALIDITY_PERIOD, TOKEN_SCOPE_HASH, TOKEN_STATE, USER_TYPE, GRANT_TYPE, TOKEN_SCOPE "
+                + "FROM AUTH_OAUTH2_ACCESS_TOKEN INNER JOIN  AUTH_OAUTH2_APPLICATION  ON REFRESH_TOKEN = ? AND "
+                + "CLIENT_ID = ? AND AUTH_OAUTH2_ACCESS_TOKEN.CONSUMER_KEY_ID = AUTH_OAUTH2_APPLICATION.ID "
+                + "LEFT OUTER JOIN AUTH_OAUTH2_ACCESS_TOKEN_SCOPE ON AUTH_OAUTH2_ACCESS_TOKEN_SCOPE.TOKEN_ID = "
+                + "AUTH_OAUTH2_ACCESS_TOKEN.ID";
+
+        try (Connection connection = DAOUtil.getAuthConnection();
+                PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, refreshToken);
+            statement.setString(2, consumerkey);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    accessTokenDTO.setTokenID(rs.getInt(JDBCAuthConstants.TOKEN_ID));
+                    accessTokenDTO.setAccessToken(rs.getString(JDBCAuthConstants.ACCESS_TOKEN));
+                    accessTokenDTO.setRefreshToken(rs.getString(JDBCAuthConstants.REFRESH_TOKEN));
+                    accessTokenDTO.setConsumerKey(rs.getString(JDBCAuthConstants.CLIENT_ID));
+                    accessTokenDTO.setAuthUser(rs.getString(JDBCAuthConstants.AUTHZ_USER));
+                    accessTokenDTO.setTimeCreated(rs.getTimestamp(JDBCAuthConstants.TIME_CREATED).getTime());
+                    accessTokenDTO.setRefreshTokenCreatedTime(
+                            rs.getTimestamp(JDBCAuthConstants.REFRESH_TOKEN_TIME_CREATED).getTime());
+                    accessTokenDTO.setValidityPeriod(rs.getInt(JDBCAuthConstants.VALIDITY_PERIOD));
+                    accessTokenDTO
+                            .setRefreshTokenValidityPeriod(rs.getInt(JDBCAuthConstants.REFRESH_TOKEN_VALIDITY_PERIOD));
+                    accessTokenDTO.setTokenScopeHash(rs.getString(JDBCAuthConstants.TOKEN_SCOPE_HASH));
+                    accessTokenDTO.setTokenState(rs.getString(JDBCAuthConstants.TOKEN_STATE));
+                    accessTokenDTO.setUserType(rs.getString(JDBCAuthConstants.USER_TYPE));
+                    accessTokenDTO.setGrantType(rs.getString(JDBCAuthConstants.GRANT_TYPE));
+                    accessTokenDTO.setScopes(rs.getString(JDBCAuthConstants.TOKEN_SCOPE));
+                    return accessTokenDTO;
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error occurred while getting token information", e);
+        }
+        return null;
+    }
 }
