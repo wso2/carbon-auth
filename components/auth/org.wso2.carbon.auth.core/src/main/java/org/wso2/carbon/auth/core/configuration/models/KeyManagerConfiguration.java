@@ -27,10 +27,9 @@ import org.wso2.carbon.config.annotation.Element;
 @Configuration(description = "Key Management Configurations")
 public class KeyManagerConfiguration {
 
-    @Element(description = "OAuth app validity period")
+    @Element(description = "Access token default validity period")
     private long defaultTokenValidityPeriod = 60L;
 
-    @Element(description = "Access token default validity period")
     public long getDefaultTokenValidityPeriod() {
         return defaultTokenValidityPeriod;
     }
