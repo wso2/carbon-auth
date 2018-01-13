@@ -21,7 +21,7 @@
     <parent>
         <artifactId>auth-features</artifactId>
         <groupId>org.wso2.carbon.auth</groupId>
-        <version>1.0.15-SNAPSHOT</version>
+        <version>1.0.15</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
