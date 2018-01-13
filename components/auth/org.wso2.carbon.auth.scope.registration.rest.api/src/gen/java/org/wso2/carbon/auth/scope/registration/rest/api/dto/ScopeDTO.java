@@ -1,8 +1,7 @@
 package org.wso2.carbon.auth.scope.registration.rest.api.dto;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
@@ -13,13 +12,13 @@ import java.util.Objects;
  * ScopeDTO
  */
 public class ScopeDTO   {
-  @JsonProperty("name")
+  @SerializedName("name")
   private String name = null;
 
-  @JsonProperty("description")
+  @SerializedName("description")
   private String description = null;
 
-  @JsonProperty("bindings")
+  @SerializedName("bindings")
   private List<String> bindings = new ArrayList<String>();
 
   public ScopeDTO name(String name) {

@@ -25,11 +25,18 @@
     <parent>
         <artifactId>auth</artifactId>
         <groupId>org.wso2.carbon.auth</groupId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.14-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>org.wso2.carbon.auth.scope.registration</artifactId>
-
-
+    <dependencies>
+    <dependency>
+        <groupId>org.wso2.carbon.auth</groupId>
+        <artifactId>org.wso2.carbon.auth.core</artifactId>
+    </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+    </dependencies>
 </project>
