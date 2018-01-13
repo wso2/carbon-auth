@@ -30,7 +30,10 @@ import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
+import org.wso2.carbon.auth.oauth.dao.TokenDAO;
+import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
+import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
 import java.util.Optional;
 
@@ -58,6 +61,14 @@ public class GrantHandlerFactory {
                 return Optional.of(new PasswordGrantHandlerImpl(oauthDAO));
             } else if (grantType.equals(GrantType.CLIENT_CREDENTIALS)) {
                 return Optional.of(new ClientCredentialsGrantHandlerImpl(oauthDAO, applicationDAO));
+            } else if (grantType.equals(GrantType.REFRESH_TOKEN)) {
+                TokenDAO tokenDAO = null;
+                try {
+                    tokenDAO = DAOFactory.getTokenDAO();
+                } catch (OAuthDAOException e) {
+                    log.error(e.getMessage(), e);
+                }
+                return Optional.of(new RefreshGrantHandler(tokenDAO, oauthDAO, applicationDAO));
             } else {
                 context.setErrorObject(OAuth2Error.INVALID_REQUEST);
                 haltExecution.setTrue();
