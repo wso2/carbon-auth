@@ -23,8 +23,8 @@ public abstract class ScopesApiService {
   ,Request request) throws NotFoundException;
     public abstract Response getScope(String name
   ,Request request) throws NotFoundException;
-    public abstract Response getScopes(Integer startIndex
- ,Integer count
+    public abstract Response getScopes(Integer offset
+ ,Integer limit
   ,Request request) throws NotFoundException;
     public abstract Response isScopeExists(String name
   ,Request request) throws NotFoundException;

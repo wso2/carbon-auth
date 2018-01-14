@@ -47,7 +47,6 @@ public class ScopeManagerImpl implements ScopeManager {
      *
      * @param scope details of the scope to be registered
      * @throws ScopeDAOException
-     * @throws ScopeDAOException
      */
     @Override
     public Scope registerScope(Scope scope) throws ScopeDAOException {

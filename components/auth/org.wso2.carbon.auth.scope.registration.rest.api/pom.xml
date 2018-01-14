@@ -71,6 +71,14 @@
             <artifactId>jackson-jaxrs-json-provider</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.auth</groupId>
+            <artifactId>org.wso2.carbon.auth.scope.registration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.auth</groupId>
+            <artifactId>org.wso2.carbon.auth.rest.api.commons</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <scope>test</scope>
@@ -158,13 +166,16 @@
             org.wso2.msf4j.*; version="${msf4j.package.import.version.range}",
             org.slf4j.*;version="${slf4j.logging.package.import.version.range}",
             org.apache.commons.lang3.*; version="${apache.commons.lang3.import.version.range}",
-            javax.ws.rs.*; version="${javax.ws.rs.import.version.range}"
+            javax.ws.rs.*; version="${javax.ws.rs.import.version.range}",
+            org.wso2.carbon.auth.scope.registration.*; version="${carbon.auth.version}",
+            org.wso2.carbon.auth.rest.api.commons.*; version="${carbon.auth.version}",
+            com.google.gson.*;version="${gson.version.range}"
         </import.package>
         <export.package>
             org.wso2.carbon.auth.scope.registration.rest.api.*; version="${carbon.auth.version}"
         </export.package>
         <carbon.component>
-            osgi.service; objectClass="org.wso2.msf4j.Microservice"; serviceCount="9"
+            osgi.service; objectClass="org.wso2.msf4j.Microservice"; serviceCount="1"
         </carbon.component>
     </properties>
 
