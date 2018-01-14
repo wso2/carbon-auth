@@ -14,7 +14,10 @@ import java.util.Map;
 
 /**
  * Utility class for Client Registration REST APIS.
+ * 
+ * @deprecated Use the RestAPIUtil inside rest.api.commons package for common methods
  */
+@Deprecated
 public class RestAPIUtil {
     private static final Logger log = LoggerFactory.getLogger(RestAPIUtil.class);
 
