@@ -243,6 +243,21 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.auth</groupId>
+                <artifactId>org.wso2.carbon.auth.scope.registration</artifactId>
+                <version>${carbon.auth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.auth</groupId>
+                <artifactId>org.wso2.carbon.auth.scope.registration.rest.api</artifactId>
+                <version>${carbon.auth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.auth</groupId>
+                <artifactId>org.wso2.carbon.auth.rest.api.commons</artifactId>
+                <version>${carbon.auth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.auth</groupId>
                 <artifactId>org.wso2.carbon.auth.test.common</artifactId>
                 <version>${carbon.auth.version}</version>
             </dependency>
