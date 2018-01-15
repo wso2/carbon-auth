@@ -45,8 +45,6 @@ public class ScopeManagerImplTestCase {
         Scope scope = new Scope("scope_Name", "scope_display_name", "scope_description");
         Mockito.when(scopeDAO.getScopeByName(Mockito.anyString())).thenReturn(scope);
         ScopeManagerImpl scopeManager = new ScopeManagerImpl(scopeDAO);
-        scopeManager.registerScope(scope);
-        scopeManager.deleteScope(scope.getName());
         Assert.assertNotNull(scopeManager.getScope("scope_Name").getName());
     }
 
@@ -58,6 +56,7 @@ public class ScopeManagerImplTestCase {
         ScopeManagerImpl scopeManager = new ScopeManagerImpl(scopeDAO);
         scopeManager.registerScope(scope);
         scopeManager.updateScope(scope);
+        //Assert update here properly
         Assert.assertNotNull(scopeManager.getScope("scope_Name").getName());
     }
 
