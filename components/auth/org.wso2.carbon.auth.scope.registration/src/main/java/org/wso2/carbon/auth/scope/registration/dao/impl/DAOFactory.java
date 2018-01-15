@@ -6,7 +6,7 @@ import org.wso2.carbon.auth.scope.registration.exceptions.ScopeDAOException;
  * Scope DAO Factory which returns DAO object.
  */
 public class DAOFactory {
-    public static ScopeDAOImpl getTokenDAO() throws ScopeDAOException {
+    public static ScopeDAOImpl getScopeDAO() throws ScopeDAOException {
         return new ScopeDAOImpl();
     }
 }

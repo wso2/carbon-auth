@@ -14,7 +14,8 @@ public class TokenApiServiceFactory {
     public static TokenApiService getTokenApi() {
         try {
             OAuthDAO oauthDAO = DAOFactory.getClientDAO();
-            ApplicationDAO applicationDAO = org.wso2.carbon.auth.client.registration.dao.impl.DAOFactory.getApplicationDAO();
+            ApplicationDAO applicationDAO = org.wso2.carbon.auth.client.registration.dao.impl.DAOFactory
+                    .getApplicationDAO();
             return new TokenApiServiceImpl(new TokenRequestHandlerImpl(oauthDAO, applicationDAO));
         } catch (OAuthDAOException e) {
             throw new IllegalStateException("Could not create AuthorizeApiService", e);

@@ -3,7 +3,7 @@ swagger: '2.0'
 # Prolog
 ######################################################
 info:
- version: "1.0.0"
+ version: "1.0"
  title: "WSO2 API Manager Scope Endpoint"
  description: |
    This document specifies a **OAuth2 Scope Endpoint** for WSO2 **API Manager** .
@@ -113,13 +113,13 @@ paths:
 
      parameters:
        -
-         name: startIndex
+         name: offset
          in: query
          description: start index of the list of scopes to be retrieved
          required: false
          type: integer
        -
-         name: count
+         name: limit
          in: query
          description: a limited number of scopes to be retrieved
          required: false

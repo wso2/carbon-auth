@@ -32,9 +32,11 @@
     <packaging>pom</packaging>
     <modules>
         <module>org.wso2.carbon.auth.core.feature</module>
+        <module>org.wso2.carbon.auth.rest.api.commons.feature</module>
         <module>org.wso2.carbon.auth.client.registration.rest.api.feature</module>
         <module>org.wso2.carbon.auth.token.introspection.rest.api.feature</module>
         <module>org.wso2.carbon.auth.oauth.rest.api.feature</module>
+        <module>org.wso2.carbon.auth.scope.registration.rest.api.feature</module>
         <module>org.wso2.carbon.auth.user.mgt.rest.api.feature</module>
         <module>org.wso2.carbon.auth.user.store.feature</module>
     </modules>

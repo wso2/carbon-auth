@@ -18,6 +18,7 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 
@@ -36,7 +37,7 @@ import javax.ws.rs.core.Response;
     service = Microservice.class,
     immediate = true
 )
-@Path(".[\\d]+/scopes")
+@Path("/api/auth/scope-registration/v1.[\\d]+/scopes")
 @Consumes({ "application/json" })
 @Produces({ "application/json" })
 @ApplicationPath("/scopes")
@@ -88,11 +89,11 @@ public class ScopesApi implements Microservice  {
         @io.swagger.annotations.ApiResponse(code = 404, message = "Not Found", response = ScopeDTO.class, responseContainer = "List"),
         
         @io.swagger.annotations.ApiResponse(code = 500, message = "Server Error", response = ScopeDTO.class, responseContainer = "List") })
-    public Response getScopes(@ApiParam(value = "start index of the list of scopes to be retrieved") @QueryParam("startIndex") Integer startIndex
-,@ApiParam(value = "a limited number of scopes to be retrieved") @QueryParam("count") Integer count
+    public Response getScopes(@ApiParam(value = "start index of the list of scopes to be retrieved") @QueryParam("offset") Integer offset
+,@ApiParam(value = "a limited number of scopes to be retrieved") @QueryParam("limit") Integer limit
  ,@Context Request request)
     throws NotFoundException {
-        return delegate.getScopes(startIndex,count,request);
+        return delegate.getScopes(offset,limit,request);
     }
     
     @HEAD

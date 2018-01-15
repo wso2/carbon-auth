@@ -20,8 +20,7 @@ package org.wso2.carbon.auth.scope.registration.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.auth.scope.registration.dao.impl.DAOFactory;
-import org.wso2.carbon.auth.scope.registration.dao.impl.ScopeDAOImpl;
+import org.wso2.carbon.auth.scope.registration.dao.ScopeDAO;
 import org.wso2.carbon.auth.scope.registration.dto.Scope;
 import org.wso2.carbon.auth.scope.registration.exceptions.ScopeDAOException;
 
@@ -32,14 +31,10 @@ import java.util.Set;
  */
 public class ScopeManagerImpl implements ScopeManager {
     private static final Logger log = LoggerFactory.getLogger(ScopeManagerImpl.class);
-    private ScopeDAOImpl scopeDAO;
+    private ScopeDAO scopeDAO;
 
-    public ScopeManagerImpl() {
-        try {
-            scopeDAO = DAOFactory.getTokenDAO();
-        } catch (ScopeDAOException e) {
-            log.error("DAO error while generating access token", e);
-        }
+    public ScopeManagerImpl(ScopeDAO scopeDAO) {
+        this.scopeDAO = scopeDAO;
     }
 
     /**
@@ -47,11 +42,11 @@ public class ScopeManagerImpl implements ScopeManager {
      *
      * @param scope details of the scope to be registered
      * @throws ScopeDAOException
-     * @throws ScopeDAOException
      */
     @Override
     public Scope registerScope(Scope scope) throws ScopeDAOException {
-        return new Scope();
+        scopeDAO.addScope(scope);
+        return scopeDAO.getScopeByName(scope.getName());
     }
 
     /**
@@ -75,7 +70,7 @@ public class ScopeManagerImpl implements ScopeManager {
      */
     @Override
     public Scope getScope(String name) throws ScopeDAOException {
-        return null;
+        return scopeDAO.getScopeByName(name);
     }
 
     /**
@@ -87,7 +82,7 @@ public class ScopeManagerImpl implements ScopeManager {
      */
     @Override
     public boolean isScopeExists(String name) throws ScopeDAOException {
-        return false;
+        return scopeDAO.isScopeExists(name);
     }
 
     /**
