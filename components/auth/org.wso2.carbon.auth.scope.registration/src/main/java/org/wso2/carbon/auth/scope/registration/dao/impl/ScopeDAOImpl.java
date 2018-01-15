@@ -198,11 +198,10 @@ public class ScopeDAOImpl implements ScopeDAO {
      * Get a scope by name
      *
      * @param name     name of the scope
-     * @param tenantID tenant ID
      * @return Scope for the provided ID
      * @throws ScopeDAOException IdentityOAuth2ScopeServerException
      */
-    public Scope getScopeByName(String name, int tenantID) throws ScopeDAOException {
+    public Scope getScopeByName(String name) throws ScopeDAOException {
 
         if (log.isDebugEnabled()) {
             log.debug("Get scope by name called for scope name:" + name);
@@ -214,7 +213,6 @@ public class ScopeDAOImpl implements ScopeDAO {
 
             try (PreparedStatement ps = conn.prepareStatement(SQLQueries.RETRIEVE_SCOPE_BY_NAME)) {
                 ps.setString(1, name);
-                ps.setInt(2, tenantID);
                 try (ResultSet rs = ps.executeQuery()) {
 
                     String description = null;
@@ -222,11 +220,11 @@ public class ScopeDAOImpl implements ScopeDAO {
                     List<String> bindings = new ArrayList<>();
 
                     while (rs.next()) {
-                        if (StringUtils.isBlank(description)) {
-                            description = rs.getString(2);
-                        }
                         if (StringUtils.isBlank(displayName)) {
-                            displayName = rs.getString(3);
+                            displayName = rs.getString(2);
+                        }
+                        if (StringUtils.isBlank(description)) {
+                            description = rs.getString(3);
                         }
                         if (StringUtils.isNotBlank(rs.getString(4))) {
                             bindings.add(rs.getString(4));
@@ -249,18 +247,17 @@ public class ScopeDAOImpl implements ScopeDAO {
      * Get existence of scope for the provided scope name
      *
      * @param scopeName name of the scope
-     * @param tenantID  tenant ID
      * @return true if scope is exists
      * @throws ScopeDAOException IdentityOAuth2ScopeServerException
      */
-    public boolean isScopeExists(String scopeName, int tenantID) throws ScopeDAOException {
+    public boolean isScopeExists(String scopeName) throws ScopeDAOException {
 
         if (log.isDebugEnabled()) {
             log.debug("Is scope exists called for scope:" + scopeName);
         }
 
         boolean isScopeExists = false;
-        int scopeID = getScopeIDByName(scopeName, tenantID);
+        int scopeID = getScopeIDByName(scopeName);
         if (scopeID != ScopeConstants.INVALID_SCOPE_ID) {
             isScopeExists = true;
         }
@@ -271,11 +268,10 @@ public class ScopeDAOImpl implements ScopeDAO {
      * Get scope ID for the provided scope name
      *
      * @param scopeName name of the scope
-     * @param tenantID  tenant ID
      * @return scope ID for the provided scope name
      * @throws ScopeDAOException IdentityOAuth2ScopeServerException
      */
-    public int getScopeIDByName(String scopeName, int tenantID) throws ScopeDAOException {
+    public int getScopeIDByName(String scopeName) throws ScopeDAOException {
 
         if (log.isDebugEnabled()) {
             log.debug("Get scope ID by name called for scope name:" + scopeName);
@@ -286,7 +282,6 @@ public class ScopeDAOImpl implements ScopeDAO {
 
             try (PreparedStatement ps = conn.prepareStatement(SQLQueries.RETRIEVE_SCOPE_ID_BY_NAME)) {
                 ps.setString(1, scopeName);
-                ps.setInt(2, tenantID);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         scopeID = rs.getInt(1);

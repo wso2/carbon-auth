@@ -65,6 +65,10 @@ public class RestApiConstants {
     public static final String WEB_PROTOCOL_SUFFIX = "://";
     public static final String SWAGGER_HOST_ELEMENT = "host";
     public static final String LOCATION_HEADER = "Location";
+
+    public static final String RESOURCE_PATH_SCOPES = "/scopes";
+    public static final String SCOPENAME_PARAM = "{scopeName}";
+    public static final String RESOURCE_PATH_SCOPE = RESOURCE_PATH_SCOPES + "/" + SCOPENAME_PARAM;
 }
 
 
