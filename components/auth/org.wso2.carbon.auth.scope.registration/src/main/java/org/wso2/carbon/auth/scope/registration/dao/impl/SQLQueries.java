@@ -43,20 +43,21 @@ public class SQLQueries {
                     "filteredScopes.DESCRIPTION, ScopeBindings.SCOPE_BINDING FROM " +
                     "(SELECT Scopes.SCOPE_ID, Scopes.NAME, Scopes.DISPLAY_NAME, Scopes.DESCRIPTION FROM " +
                     "AUTH_OAUTH2_SCOPE AS Scopes " +
-                    " LIMIT :limit; OFFSET :offset;) AS filteredScopes " +
+                    " OFFSET ? LIMIT ? ) AS filteredScopes " +
                     "LEFT JOIN AUTH_OAUTH2_SCOPE_BINDING AS ScopeBindings ON filteredScopes.SCOPE_ID=ScopeBindings" +
-                    ".SCOPE_ID";
+                    ".SCOPE_ID ORDER BY filteredScopes.NAME";
 
+    //todo check offset is not added
     public static final String RETRIEVE_SCOPES_WITH_PAGINATION_ORACLE =
             "SELECT filteredScopes.SCOPE_ID, filteredScopes.NAME, filteredScopes.DISPLAY_NAME, " +
                     "filteredScopes.DESCRIPTION, ScopeBindings.SCOPE_BINDING FROM " +
                     "(SELECT Scopes.SCOPE_ID, Scopes.NAME, Scopes.DISPLAY_NAME, Scopes.DESCRIPTION FROM " +
                     "AUTH_OAUTH2_SCOPE AS Scopes " +
-                    "WHERE Scopes.TENANT_ID = :" + ScopeConstants.SQLPlaceholders.TENANT_ID +
-                    "; AND ROWNUM < :limit;) AS filteredScopes " +
+                    "WHERE ROWNUM < :limit;) AS filteredScopes " +
                     "LEFT JOIN AUTH_OAUTH2_SCOPE_BINDING AS ScopeBindings ON " +
-                    "filteredScopes.SCOPE_ID=ScopeBindings.SCOPE_ID";
+                    "filteredScopes.SCOPE_ID=ScopeBindings.SCOPE_ID ORDER BY filteredScopes.NAME";
 
+    //todo check offset is not added
     public static final String RETRIEVE_SCOPES_WITH_PAGINATION_DB2SQL =
             "SELECT filteredScopes.SCOPE_ID, filteredScopes.NAME, filteredScopes.DISPLAY_NAME, " +
                     "filteredScopes.DESCRIPTION, ScopeBindings.SCOPE_BINDING FROM " +
@@ -65,8 +66,9 @@ public class SQLQueries {
                     "WHERE Scopes.TENANT_ID = :" + ScopeConstants.SQLPlaceholders.TENANT_ID +
                     "; FETCH FIRST :limit; ROWS ONLY) AS filteredScopes " +
                     "LEFT JOIN AUTH_OAUTH2_SCOPE_BINDING AS ScopeBindings ON filteredScopes.SCOPE_ID=ScopeBindings" +
-                    ".SCOPE_ID";
+                    ".SCOPE_ID ORDER BY filteredScopes.NAME";
 
+    //todo check offset is not added
     public static final String RETRIEVE_SCOPES_WITH_PAGINATION_MSSQL =
             "SELECT filteredScopes.SCOPE_ID, filteredScopes.NAME, filteredScopes.DISPLAY_NAME, " +
                     "filteredScopes.DESCRIPTION, ScopeBindings.SCOPE_BINDING FROM " +
@@ -75,8 +77,9 @@ public class SQLQueries {
                     "WHERE Scopes.TENANT_ID = :" + ScopeConstants.SQLPlaceholders.TENANT_ID +
                     ";) AS filteredScopes " +
                     "LEFT JOIN AUTH_OAUTH2_SCOPE_BINDING AS ScopeBindings ON " +
-                    "filteredScopes.SCOPE_ID=ScopeBindings.SCOPE_ID";
+                    "filteredScopes.SCOPE_ID=ScopeBindings.SCOPE_ID ORDER BY filteredScopes.NAME";
 
+    //todo check offset is not added
     public static final String RETRIEVE_SCOPES_WITH_PAGINATION_POSTGRESQL =
             "SELECT filteredScopes.SCOPE_ID, filteredScopes.NAME, filteredScopes.DISPLAY_NAME, " +
                     "filteredScopes.DESCRIPTION, ScopeBindings.SCOPE_BINDING FROM " +
@@ -85,8 +88,9 @@ public class SQLQueries {
                     "WHERE Scopes.TENANT_ID = :" + ScopeConstants.SQLPlaceholders.TENANT_ID +
                     "; LIMIT :limit;) AS filteredScopes " +
                     "LEFT JOIN AUTH_OAUTH2_SCOPE_BINDING AS ScopeBindings ON " +
-                    "filteredScopes.SCOPE_ID=ScopeBindings.SCOPE_ID";
+                    "filteredScopes.SCOPE_ID=ScopeBindings.SCOPE_ID ORDER BY filteredScopes.NAME";
 
+    //todo check offset is not added
     public static final String RETRIEVE_SCOPES_WITH_PAGINATION_INFORMIX =
             "SELECT filteredScopes.SCOPE_ID, filteredScopes.NAME, filteredScopes.DISPLAY_NAME, " +
                     "filteredScopes.DESCRIPTION, ScopeBindings.SCOPE_BINDING FROM " +
@@ -95,7 +99,7 @@ public class SQLQueries {
                     "WHERE Scopes.TENANT_ID = :" + ScopeConstants.SQLPlaceholders.TENANT_ID +
                     ";) RESULT) AS filteredScopes " +
                     "LEFT JOIN AUTH_OAUTH2_SCOPE_BINDING AS ScopeBindings ON " +
-                    "filteredScopes.SCOPE_ID=ScopeBindings.SCOPE_ID";
+                    "filteredScopes.SCOPE_ID=ScopeBindings.SCOPE_ID ORDER BY filteredScopes.NAME";
 
     public static final String RETRIEVE_SCOPE_BY_NAME = "SELECT Scopes.NAME, Scopes.DISPLAY_NAME, " + 
             "Scopes.DESCRIPTION, ScopeBindings.SCOPE_BINDING FROM AUTH_OAUTH2_SCOPE AS Scopes " +

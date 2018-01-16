@@ -21,19 +21,17 @@ package org.wso2.carbon.auth.scope.registration.dao;
 import org.wso2.carbon.auth.scope.registration.dto.Scope;
 import org.wso2.carbon.auth.scope.registration.exceptions.ScopeDAOException;
 
-import java.util.Set;
+import java.util.List;
 
 /**
- * 
+ * Scope DAO interface
  * 
  */
 public interface ScopeDAO {
     void addScope(Scope scope) throws ScopeDAOException;
-    Set<Scope> getAllScopes(int tenantID) throws ScopeDAOException;
-    Set<Scope> getScopesWithPagination(Integer offset, Integer limit, int tenantID) throws ScopeDAOException;
+    List<Scope> getScopesWithPagination(Integer offset, Integer limit) throws ScopeDAOException;
     Scope getScopeByName(String name) throws ScopeDAOException;
     boolean isScopeExists(String scopeName) throws ScopeDAOException;
-    int getScopeIDByName(String scopeName) throws ScopeDAOException;
-    void deleteScopeByName(String name, int tenantID) throws ScopeDAOException;
-    void updateScopeByName(Scope updatedScope, int tenantID) throws ScopeDAOException;
+    void deleteScopeByName(String name) throws ScopeDAOException;
+    void updateScopeByName(Scope updatedScope) throws ScopeDAOException;
 }

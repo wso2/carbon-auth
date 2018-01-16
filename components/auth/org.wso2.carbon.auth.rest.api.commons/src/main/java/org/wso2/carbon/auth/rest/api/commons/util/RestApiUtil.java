@@ -19,9 +19,14 @@ package org.wso2.carbon.auth.rest.api.commons.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.core.exception.ExceptionCodeHandler;
+import org.wso2.carbon.auth.core.exception.ExceptionCodes;
 import org.wso2.carbon.auth.rest.api.commons.RestApiConstants;
 import org.wso2.carbon.auth.rest.api.commons.dto.ErrorDTO;
 import org.wso2.msf4j.Request;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Utility class for all REST APIs.
@@ -43,7 +48,6 @@ public class RestApiUtil {
         return request.getProperty(LOGGED_IN_USER) != null ? request.getProperty(LOGGED_IN_USER).toString() : null;
     }
 
-
     /**
      * Returns an Internal Server Error DTO
      *
@@ -51,25 +55,76 @@ public class RestApiUtil {
      */
     public static ErrorDTO getInternalServerErrorDTO() {
         ErrorDTO errorDTO = new ErrorDTO();
-        errorDTO.setCode(500);
-        errorDTO.setMessage(RestApiConstants.STATUS_INTERNAL_SERVER_ERROR_MESSAGE_DEFAULT);
-        errorDTO.setDescription(RestApiConstants.STATUS_INTERNAL_SERVER_ERROR_DESCRIPTION_DEFAULT);
+        errorDTO.setCode(ExceptionCodes.INTERNAL_ERROR.getErrorCode());
+        errorDTO.setMessage(ExceptionCodes.INTERNAL_ERROR.getErrorMessage());
+        errorDTO.setDescription(ExceptionCodes.INTERNAL_ERROR.getErrorDescription());
         return errorDTO;
     }
 
     /**
-     * Returns a generic errorDTO
+     * Returns an errorDTO based on a provided ExceptionCodeHandler
      *
-     * @param message     specifies the error message
-     * @param code        error code.
-     * @param description error description.
-     * @return A generic errorDTO with the specified details
+     * @param exceptionCodeHandler with mapped HTTP error details
+     * @return An errorDTO with the specified details
      */
-    public static ErrorDTO getErrorDTO(String message, Integer code, String description) {
+    public static ErrorDTO getErrorDTO(ExceptionCodeHandler exceptionCodeHandler) {
         ErrorDTO errorDTO = new ErrorDTO();
-        errorDTO.setCode(code);
-        errorDTO.setMessage(message);
-        errorDTO.setDescription(description);
+        errorDTO.setCode(exceptionCodeHandler.getErrorCode());
+        errorDTO.setMessage(exceptionCodeHandler.getErrorMessage());
+        errorDTO.setDescription(exceptionCodeHandler.getErrorDescription());
         return errorDTO;
+    }
+
+    /**
+     * Returns the next/previous offset/limit parameters properly when current offset, 
+     * limit and size parameters are specified
+     *
+     * @param offset current starting index
+     * @param limit  current max records
+     * @param total  maximum index possible
+     * @return the next/previous offset/limit parameters as a hash-map
+     */
+    public static Map<String, Integer> getPaginationParams(Integer offset, Integer limit, Integer total) {
+        Map<String, Integer> result = new HashMap<>();
+        if (offset >= total || offset < 0) {
+            return result;
+        }
+
+        int start = offset;
+        int end = offset + limit - 1;
+
+        int nextStart = end + 1;
+        if (nextStart < total) {
+            result.put(RestApiConstants.PAGINATION_NEXT_OFFSET, nextStart);
+            result.put(RestApiConstants.PAGINATION_NEXT_LIMIT, limit);
+        }
+
+        int previousEnd = start - 1;
+        int previousStart = previousEnd - limit + 1;
+
+        if (previousEnd >= 0) {
+            if (previousStart < 0) {
+                result.put(RestApiConstants.PAGINATION_PREVIOUS_OFFSET, 0);
+                result.put(RestApiConstants.PAGINATION_PREVIOUS_LIMIT, limit);
+            } else {
+                result.put(RestApiConstants.PAGINATION_PREVIOUS_OFFSET, previousStart);
+                result.put(RestApiConstants.PAGINATION_PREVIOUS_LIMIT, limit);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns the paginated url for Scopes API
+     *
+     * @param offset starting index
+     * @param limit  max number of objects returned
+     * @return constructed paginated url
+     */
+    public static String getScopePaginatedURL(Integer offset, Integer limit) {
+        String paginatedURL = RestApiConstants.SCOPES_GET_PAGINATION_URL;
+        paginatedURL = paginatedURL.replace(RestApiConstants.LIMIT_PARAM, String.valueOf(limit));
+        paginatedURL = paginatedURL.replace(RestApiConstants.OFFSET_PARAM, String.valueOf(offset));
+        return paginatedURL;
     }
 }

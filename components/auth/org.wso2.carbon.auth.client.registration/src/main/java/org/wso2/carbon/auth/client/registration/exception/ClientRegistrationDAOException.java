@@ -19,14 +19,14 @@
 package org.wso2.carbon.auth.client.registration.exception;
 
 import org.wso2.carbon.auth.core.exception.AuthException;
-import org.wso2.carbon.auth.core.exception.ErrorHandler;
+import org.wso2.carbon.auth.core.exception.ExceptionCodeHandler;
 
 /**
  *  This is the Exception class for Client Registration DAO related exceptions.
  */
 public class ClientRegistrationDAOException extends AuthException {
 
-    public ClientRegistrationDAOException(String message, ErrorHandler code) {
+    public ClientRegistrationDAOException(String message, ExceptionCodeHandler code) {
         super(message, code);
     }
 

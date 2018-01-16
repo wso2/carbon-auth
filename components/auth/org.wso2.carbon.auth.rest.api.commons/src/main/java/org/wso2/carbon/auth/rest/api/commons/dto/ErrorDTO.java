@@ -28,7 +28,7 @@ import java.util.Objects;
  */
 public class ErrorDTO   {
     @SerializedName("code")
-    private Integer code = null;
+    private Long code = null;
 
     @SerializedName("message")
     private String message = null;
@@ -39,7 +39,7 @@ public class ErrorDTO   {
     @SerializedName("moreInfo")
     private String moreInfo = null;
 
-    public ErrorDTO code(Integer code) {
+    public ErrorDTO code(Long code) {
         this.code = code;
         return this;
     }
@@ -49,11 +49,11 @@ public class ErrorDTO   {
      * @return code
      **/
     @ApiModelProperty(value = "")
-    public Integer getCode() {
+    public Long getCode() {
         return code;
     }
 
-    public void setCode(Integer code) {
+    public void setCode(Long code) {
         this.code = code;
     }
 

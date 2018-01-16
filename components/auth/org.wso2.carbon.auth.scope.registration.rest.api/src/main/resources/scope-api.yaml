@@ -117,21 +117,21 @@ paths:
          in: query
          description: start index of the list of scopes to be retrieved
          required: false
+         default: 0
          type: integer
        -
          name: limit
          in: query
          description: a limited number of scopes to be retrieved
          required: false
+         default: 25
          type: integer
 
      responses:
        200:
          description: Successful Retrieved
          schema:
-           type: array
-           items:
-             $ref: '#/definitions/Scope'
+           $ref: '#/definitions/ScopeList'
        404:
          description: Not Found
          schema:
@@ -304,7 +304,7 @@ definitions:
 #-----------------------------------------------------
 # The Scope Object
 #-----------------------------------------------------
- Scope:
+  Scope:
    type: object
    required:
      - name
@@ -318,16 +318,55 @@ definitions:
        type: array
        items:
          type: string
+  #-----------------------------------------------------
+  # The Scope Object
+  #-----------------------------------------------------
+  ScopeList:
+    title: Scope List
+    properties:
+      count:
+        type: integer
+        description: |
+          Number of Scopes returned.
+        example: 1
+      list:
+        type: array
+        items:
+          $ref: '#/definitions/Scope'
+      pagination:
+        $ref: '#/definitions/Pagination'
 
-#-----------------------------------------------------
-# The Error Response object
-#-----------------------------------------------------
- Error:
-   type: object
-   properties:
-     code:
-       type: string
-     message:
-       type: string
-     description:
-       type: string
+  #-----------------------------------------------------
+  # The Pagination Info object
+  #-----------------------------------------------------
+  Pagination:
+    properties:
+      total:
+        type: integer
+      offset:
+        type: integer
+      limit:
+        type: integer
+      next:
+        type: string
+        description: |
+          Link to the next subset of resources qualified.
+          Empty if no more resources are to be returned.
+      previous:
+        type: string
+        description: |
+          Link to the previous subset of resources qualified.
+          Empty if current subset is the first subset returned.
+
+  #-----------------------------------------------------
+  # The Error Response object
+  #-----------------------------------------------------
+  Error:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      description:
+        type: string

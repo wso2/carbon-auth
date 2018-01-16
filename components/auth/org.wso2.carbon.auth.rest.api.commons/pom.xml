@@ -101,6 +101,10 @@
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.auth</groupId>
+            <artifactId>org.wso2.carbon.auth.core</artifactId>
+        </dependency>
     </dependencies>
     <properties>
         <import.package>
@@ -114,7 +118,8 @@
             com.google.gson.*,
             io.swagger.parser.*,
             io.swagger.models.*;version="${io.swagger.import.version.range}",
-            io.swagger.util.*;version="${io.swagger.import.version.range}"
+            io.swagger.util.*;version="${io.swagger.import.version.range}",
+            org.wso2.carbon.auth.core.*; version="${carbon.auth.version}"
         </import.package>
         <export.package>
             org.wso2.carbon.auth.rest.api.commons.*; version="${carbon.auth.version}",

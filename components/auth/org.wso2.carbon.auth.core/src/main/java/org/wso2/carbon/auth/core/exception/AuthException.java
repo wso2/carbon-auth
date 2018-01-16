@@ -26,13 +26,13 @@ package org.wso2.carbon.auth.core.exception;
  */
 public class AuthException extends Exception {
     
-    private ErrorHandler errorHandler;
+    private ExceptionCodeHandler errorHandler;
 
     /**
      * Get error handler object.
-     * @return ErrorHandler
+     * @return ExceptionCodeHandler
      */
-    public ErrorHandler getErrorHandler() {
+    public ExceptionCodeHandler getErrorHandler() {
         return errorHandler;
     }
 
@@ -85,7 +85,7 @@ public class AuthException extends Exception {
      * @param message Error message
      * @param code Exception code that need to pass to the error DTO
      */
-    public AuthException(String message, ErrorHandler code) {
+    public AuthException(String message, ExceptionCodeHandler code) {
         super(message);
         this.errorHandler = code;
     }
@@ -96,7 +96,7 @@ public class AuthException extends Exception {
      * @param cause throwable object.
      * @param code Exception code that need to pass to the error DTO
      */
-    public AuthException(String message, Throwable cause, ErrorHandler code) {
+    public AuthException(String message, Throwable cause, ExceptionCodeHandler code) {
         super(message, cause);
         this.errorHandler = code;
     }

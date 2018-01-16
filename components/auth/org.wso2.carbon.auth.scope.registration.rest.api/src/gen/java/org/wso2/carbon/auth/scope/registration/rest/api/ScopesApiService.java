@@ -9,6 +9,7 @@ import org.wso2.msf4j.Request;
 
 import org.wso2.carbon.auth.scope.registration.rest.api.dto.ErrorDTO;
 import org.wso2.carbon.auth.scope.registration.rest.api.dto.ScopeDTO;
+import org.wso2.carbon.auth.scope.registration.rest.api.dto.ScopeListDTO;
 
 import java.util.List;
 import org.wso2.carbon.auth.scope.registration.rest.api.NotFoundException;

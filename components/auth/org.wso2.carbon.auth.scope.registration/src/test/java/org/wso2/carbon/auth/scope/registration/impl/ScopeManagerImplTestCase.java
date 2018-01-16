@@ -24,8 +24,8 @@ import org.mockito.Mockito;
 import org.wso2.carbon.auth.scope.registration.dao.ScopeDAO;
 import org.wso2.carbon.auth.scope.registration.dto.Scope;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ScopeManagerImplTestCase {
 
@@ -64,14 +64,14 @@ public class ScopeManagerImplTestCase {
     public void getScopes() throws Exception {
         ScopeDAO scopeDAO = Mockito.mock(ScopeDAO.class);
         Scope scope = new Scope("scope_Name", "scope_display_name", "scope_description");
-        Set<Scope> scopeSet = new HashSet<>();
-        scopeSet.add(scope);
-        Mockito.when(scopeDAO.getScopesWithPagination(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).
-                thenReturn(scopeSet);
+        List<Scope> scopeList = new ArrayList<>();
+        scopeList.add(scope);
+        Mockito.when(scopeDAO.getScopesWithPagination(Mockito.anyInt(), Mockito.anyInt())).
+                thenReturn(scopeList);
         ScopeManagerImpl scopeManager = new ScopeManagerImpl(scopeDAO);
         scopeManager.registerScope(scope);
         scopeManager.updateScope(scope);
-        Assert.assertNull(scopeManager.getScopes(0, 2));
+        Assert.assertNotNull(scopeManager.getScopes(0, 2));
     }
 
     @Test

@@ -19,14 +19,14 @@
 package org.wso2.carbon.auth.core.test.common;
 
 import org.wso2.carbon.auth.core.exception.AuthException;
-import org.wso2.carbon.auth.core.exception.ErrorHandler;
+import org.wso2.carbon.auth.core.exception.ExceptionCodeHandler;
 
 /**
  *  This is the Exception class for Test Script Runner related exceptions.
  */
 public class ScriptRunnerException extends AuthException {
 
-    public ScriptRunnerException(String message, ErrorHandler code) {
+    public ScriptRunnerException(String message, ExceptionCodeHandler code) {
         super(message, code);
     }
 
