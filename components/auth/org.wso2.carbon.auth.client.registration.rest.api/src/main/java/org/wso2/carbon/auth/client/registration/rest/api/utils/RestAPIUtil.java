@@ -4,13 +4,11 @@ import com.nimbusds.oauth2.sdk.ErrorObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.ErrorDTO;
-import org.wso2.carbon.auth.core.exception.ErrorHandler;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.Base64;
-import java.util.Map;
 
 /**
  * Utility class for Client Registration REST APIS.

@@ -20,15 +20,21 @@
 
 package org.wso2.carbon.auth.core.exception;
 
+import java.util.Map;
+
 /**
  * This enum class holds error codes that we need to pass to upper level. 
  * You have to define your custom error codes here.
  */
-public enum ExceptionCodes implements ErrorHandler {
+public enum ExceptionCodes implements ExceptionCodeHandler {
     
     INTERNAL_ERROR(900300, "General Error", 500, "Server Error Occurred"),
     DAO_EXCEPTION(900301, "Internal server error.", 500, " Error occurred while persisting/retrieving data"),
-    DATA_NOT_FOUND(900302, "Data not found", 404, "Data not found");
+    DATA_NOT_FOUND(900302, "Data not found", 404, "Data not found"),
+
+    //scopes related exception codes
+    SCOPE_ALREADY_EXISTS(900400, "Resource already exists", 409, "A scope already exists with same name"),
+    SCOPE_NOT_FOUND(900401, "Not found", 404, "Scope not found");
 
     private final long errorCode;
     private final String errorMessage;
@@ -69,4 +75,12 @@ public enum ExceptionCodes implements ErrorHandler {
         return this.errorDescription;
     }
 
+    @Override
+    public String getErrorDescription(Map<String, Object> params) {
+        String modifiedDescription = this.getErrorDescription();
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            modifiedDescription = modifiedDescription.replace("${" + entry.getKey() + "}", entry.getValue().toString());
+        }
+        return modifiedDescription;
+    }
 }

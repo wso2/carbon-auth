@@ -20,21 +20,24 @@ package org.wso2.carbon.auth.scope.registration.rest.api.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.core.exception.ExceptionCodes;
 import org.wso2.carbon.auth.rest.api.commons.RestApiConstants;
+import org.wso2.carbon.auth.rest.api.commons.dto.ErrorDTO;
 import org.wso2.carbon.auth.rest.api.commons.util.RestApiUtil;
 import org.wso2.carbon.auth.scope.registration.dto.Scope;
 import org.wso2.carbon.auth.scope.registration.exceptions.ScopeDAOException;
 import org.wso2.carbon.auth.scope.registration.impl.ScopeManager;
-import org.wso2.carbon.auth.scope.registration.rest.api.ApiResponseMessage;
 import org.wso2.carbon.auth.scope.registration.rest.api.NotFoundException;
 import org.wso2.carbon.auth.scope.registration.rest.api.ScopesApiService;
 
 import org.wso2.carbon.auth.scope.registration.rest.api.dto.ScopeDTO;
+import org.wso2.carbon.auth.scope.registration.rest.api.dto.ScopeListDTO;
 import org.wso2.carbon.auth.scope.registration.rest.api.util.ScopeMappingUtil;
 import org.wso2.msf4j.Request;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import javax.ws.rs.core.Response;
 
 public class ScopesApiServiceImpl extends ScopesApiService {
@@ -48,8 +51,18 @@ public class ScopesApiServiceImpl extends ScopesApiService {
 
     @Override
     public Response deleteScope(String name, Request request) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        try {
+            if (!scopeManager.isScopeExists(name)) {
+                ErrorDTO errorDTO = RestApiUtil.getErrorDTO(ExceptionCodes.SCOPE_NOT_FOUND);
+                return Response.status(Response.Status.NOT_FOUND).entity(errorDTO).build();
+            }
+            scopeManager.deleteScope(name);
+            return Response.status(Response.Status.NO_CONTENT).build();
+        } catch (ScopeDAOException e) {
+            log.error("Error while deleting scope " + name, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(RestApiUtil.getInternalServerErrorDTO()).build();
+        }
     }
 
     @Override
@@ -58,8 +71,8 @@ public class ScopesApiServiceImpl extends ScopesApiService {
         try {
             scope = scopeManager.getScope(name);
             if (scope == null) {
-                //todo: proper error response
-                return Response.status(Response.Status.NOT_FOUND).build();
+                ErrorDTO errorDTO = RestApiUtil.getErrorDTO(ExceptionCodes.SCOPE_NOT_FOUND);
+                return Response.status(Response.Status.NOT_FOUND).entity(errorDTO).build();
             }
             ScopeDTO scopeDTO = ScopeMappingUtil.scopeModelToDTO(scope);
             return Response.ok().entity(scopeDTO).build();
@@ -72,15 +85,25 @@ public class ScopesApiServiceImpl extends ScopesApiService {
 
     @Override
     public Response getScopes(Integer offset, Integer limit, Request request) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        try {
+            List<Scope> scopeList = scopeManager.getScopes(offset, limit);
+
+            //todo fix total scope count with a new method
+            Integer totalScopeCount = scopeManager.getScopes(0, Integer.MAX_VALUE).size();
+
+            ScopeListDTO scopeListDTO = ScopeMappingUtil
+                    .scopeModelListToListDTO(scopeList, offset, limit, totalScopeCount);
+            return Response.ok().entity(scopeListDTO).build();
+        } catch (ScopeDAOException e) {
+            log.error("Error while retrieving scopes", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(RestApiUtil.getInternalServerErrorDTO()).build();
+        }
     }
 
     @Override
     public Response isScopeExists(String name, Request request) throws NotFoundException {
-
         boolean isScopeExists;
-
         try {
             isScopeExists = scopeManager.isScopeExists(name);
         } catch (ScopeDAOException e) {
@@ -99,6 +122,10 @@ public class ScopesApiServiceImpl extends ScopesApiService {
         Scope addedScope;
         Scope scopeToAdd = ScopeMappingUtil.scopeDTOToModel(scope);
         try {
+            if (scopeManager.isScopeExists(scope.getName())) {
+                ErrorDTO errorDTO = RestApiUtil.getErrorDTO(ExceptionCodes.SCOPE_ALREADY_EXISTS);
+                return Response.status(Response.Status.CONFLICT).entity(errorDTO).build();
+            }
             addedScope = scopeManager.registerScope(scopeToAdd);
             URI location = new URI(RestApiConstants.RESOURCE_PATH_SCOPE.replace(RestApiConstants.SCOPENAME_PARAM,
                     scope.getName()));
@@ -111,7 +138,20 @@ public class ScopesApiServiceImpl extends ScopesApiService {
     }
 
     @Override
-    public Response updateScope(ScopeDTO scope, String name, Request request) throws NotFoundException {
-        return null;
+    public Response updateScope(ScopeDTO scopeDTO, String name, Request request) throws NotFoundException {
+        try {
+            if (!scopeManager.isScopeExists(name)) {
+                ErrorDTO errorDTO = RestApiUtil.getErrorDTO(ExceptionCodes.SCOPE_NOT_FOUND);
+                return Response.status(Response.Status.NOT_FOUND).entity(errorDTO).build();
+            }
+            Scope scopeToUpdate = ScopeMappingUtil.scopeDTOToModel(scopeDTO);
+            Scope updatedScope = scopeManager.updateScope(scopeToUpdate);
+            ScopeDTO updatedScopeDTO = ScopeMappingUtil.scopeModelToDTO(updatedScope);
+            return Response.ok().entity(updatedScopeDTO).build();
+        } catch (ScopeDAOException e) {
+            log.error("Error while updating scope " + name, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(RestApiUtil.getInternalServerErrorDTO()).build();
+        }
     }
 }

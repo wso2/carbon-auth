@@ -22,15 +22,8 @@ package org.wso2.carbon.auth.rest.api.commons;
  */
 public class RestApiConstants {
 
-    public static final String STATUS_INTERNAL_SERVER_ERROR_MESSAGE_DEFAULT = "Internal server error";
-    public static final String STATUS_INTERNAL_SERVER_ERROR_DESCRIPTION_DEFAULT =
-            "The server encountered " + "an internal error. Please contact administrator.";
-    public static final String STATUS_NOT_FOUND_MESSAGE_DEFAULT = "Not Found";
-    public static final String STATUS_FORBIDDEN_MESSAGE_DEFAULT = "Forbidden";
-    public static final String STATUS_BAD_REQUEST_MESSAGE_DEFAULT = "Bad Request";
-    public static final String STATUS_CONFLICT_MESSAGE_RESOURCE_ALREADY_EXISTS = "Resource Already Exists";
-    public static final int PAGINATION_LIMIT_DEFAULT = 25;
-    public static final int PAGINATION_OFFSET_DEFAULT = 0;
+    public static final Integer PAGINATION_LIMIT_DEFAULT = 25;
+    public static final Integer PAGINATION_OFFSET_DEFAULT = 0;
     public static final String PAGINATION_NEXT_OFFSET = "next_offset";
     public static final String PAGINATION_NEXT_LIMIT = "next_limit";
     public static final String PAGINATION_PREVIOUS_OFFSET = "previous_offset";
@@ -69,6 +62,7 @@ public class RestApiConstants {
     public static final String RESOURCE_PATH_SCOPES = "/scopes";
     public static final String SCOPENAME_PARAM = "{scopeName}";
     public static final String RESOURCE_PATH_SCOPE = RESOURCE_PATH_SCOPES + "/" + SCOPENAME_PARAM;
+
+    public static final String SCOPES_GET_PAGINATION_URL =
+            RESOURCE_PATH_SCOPES + "?limit=" + LIMIT_PARAM + "&offset=" + OFFSET_PARAM;
 }
-
-

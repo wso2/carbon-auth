@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiParam;
 
 import org.wso2.carbon.auth.scope.registration.rest.api.dto.ErrorDTO;
 import org.wso2.carbon.auth.scope.registration.rest.api.dto.ScopeDTO;
+import org.wso2.carbon.auth.scope.registration.rest.api.dto.ScopeListDTO;
 import org.wso2.carbon.auth.scope.registration.rest.api.factories.ScopesApiServiceFactory;
 
 import org.wso2.msf4j.Microservice;
@@ -58,6 +59,7 @@ public class ScopesApi implements Microservice  {
     public Response deleteScope(@ApiParam(value = "scope name of the scope which need to get deleted",required=true) @PathParam("name") String name
  ,@Context Request request)
     throws NotFoundException {
+        
         return delegate.deleteScope(name,request);
     }
     
@@ -75,6 +77,7 @@ public class ScopesApi implements Microservice  {
     public Response getScope(@ApiParam(value = "scope name of the scope which the details to be retrieved",required=true) @PathParam("name") String name
  ,@Context Request request)
     throws NotFoundException {
+        
         return delegate.getScope(name,request);
     }
     
@@ -82,17 +85,20 @@ public class ScopesApi implements Microservice  {
     
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Returns all available Scopes ", notes = "This API is used to get all the available scopes. ", response = ScopeDTO.class, responseContainer = "List", tags={ "Scope Management", })
+    @io.swagger.annotations.ApiOperation(value = "Returns all available Scopes ", notes = "This API is used to get all the available scopes. ", response = ScopeListDTO.class, tags={ "Scope Management", })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 200, message = "Successful Retrieved", response = ScopeDTO.class, responseContainer = "List"),
+        @io.swagger.annotations.ApiResponse(code = 200, message = "Successful Retrieved", response = ScopeListDTO.class),
         
-        @io.swagger.annotations.ApiResponse(code = 404, message = "Not Found", response = ScopeDTO.class, responseContainer = "List"),
+        @io.swagger.annotations.ApiResponse(code = 404, message = "Not Found", response = ScopeListDTO.class),
         
-        @io.swagger.annotations.ApiResponse(code = 500, message = "Server Error", response = ScopeDTO.class, responseContainer = "List") })
-    public Response getScopes(@ApiParam(value = "start index of the list of scopes to be retrieved") @QueryParam("offset") Integer offset
-,@ApiParam(value = "a limited number of scopes to be retrieved") @QueryParam("limit") Integer limit
+        @io.swagger.annotations.ApiResponse(code = 500, message = "Server Error", response = ScopeListDTO.class) })
+    public Response getScopes(@ApiParam(value = "start index of the list of scopes to be retrieved", defaultValue="0") @DefaultValue("0") @QueryParam("offset") Integer offset
+,@ApiParam(value = "a limited number of scopes to be retrieved", defaultValue="25") @DefaultValue("25") @QueryParam("limit") Integer limit
  ,@Context Request request)
     throws NotFoundException {
+        offset = (offset == null ? Integer.valueOf("0"):offset);
+        limit = (limit == null ? Integer.valueOf("25"):limit);
+        
         return delegate.getScopes(offset,limit,request);
     }
     
@@ -110,6 +116,7 @@ public class ScopesApi implements Microservice  {
     public Response isScopeExists(@ApiParam(value = "scope name of the scope which the existance should be checked",required=true) @PathParam("name") String name
  ,@Context Request request)
     throws NotFoundException {
+        
         return delegate.isScopeExists(name,request);
     }
     
@@ -129,6 +136,7 @@ public class ScopesApi implements Microservice  {
     public Response registerScope(@ApiParam(value = "a scope with the bindings which to be registered" ,required=true) ScopeDTO scope
  ,@Context Request request)
     throws NotFoundException {
+        
         return delegate.registerScope(scope,request);
     }
     
@@ -147,6 +155,7 @@ public class ScopesApi implements Microservice  {
 ,@ApiParam(value = "scope name of the scope which need to get updated",required=true) @PathParam("name") String name
  ,@Context Request request)
     throws NotFoundException {
+        
         return delegate.updateScope(scope,name,request);
     }
 }

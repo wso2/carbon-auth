@@ -19,10 +19,12 @@
  */
 package org.wso2.carbon.auth.core.exception;
 
+import java.util.Map;
+
 /**
  * This error handler interface must use in all exceptions class, for example please see AuthException class.
  */
-public interface ErrorHandler {
+public interface ExceptionCodeHandler {
     /**
      * Get error code that defined in the enum
      * @return error code
@@ -52,4 +54,11 @@ public interface ErrorHandler {
     default int getHttpStatusCode() {
         return 500;
     }
+
+    /**
+     * 
+     * @param params
+     * @return
+     */
+    String getErrorDescription(Map<String, Object> params);
 }

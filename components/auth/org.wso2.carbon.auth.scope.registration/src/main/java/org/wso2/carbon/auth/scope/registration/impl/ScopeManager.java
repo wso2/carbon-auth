@@ -21,7 +21,7 @@ package org.wso2.carbon.auth.scope.registration.impl;
 import org.wso2.carbon.auth.scope.registration.dto.Scope;
 import org.wso2.carbon.auth.scope.registration.exceptions.ScopeDAOException;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Scope Manager Interface
@@ -29,7 +29,7 @@ import java.util.Set;
 public interface ScopeManager {
     Scope registerScope(Scope scope) throws ScopeDAOException;
 
-    Set<Scope> getScopes(Integer startIndex, Integer count)
+    List<Scope> getScopes(Integer startIndex, Integer count)
             throws ScopeDAOException;
 
     Scope getScope(String name) throws ScopeDAOException;

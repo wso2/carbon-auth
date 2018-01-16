@@ -24,7 +24,7 @@ import org.wso2.carbon.auth.scope.registration.dao.ScopeDAO;
 import org.wso2.carbon.auth.scope.registration.dto.Scope;
 import org.wso2.carbon.auth.scope.registration.exceptions.ScopeDAOException;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Scope Manager class which handle all scope management tasks
@@ -52,15 +52,15 @@ public class ScopeManagerImpl implements ScopeManager {
     /**
      * Retrieve the available scope list
      *
-     * @param startIndex Start Index of the result set to enforce pagination
-     * @param count      Number of elements in the result set to enforce pagination
+     * @param offset Start Index of the result set to enforce pagination
+     * @param limit      Number of elements in the result set to enforce pagination
      * @return Scope list
      * @throws ScopeDAOException
      */
     @Override
-    public Set<Scope> getScopes(Integer startIndex, Integer count)
+    public List<Scope> getScopes(Integer offset, Integer limit)
             throws ScopeDAOException {
-        return null;
+        return scopeDAO.getScopesWithPagination(offset, limit);
     }
 
     /**
@@ -93,7 +93,7 @@ public class ScopeManagerImpl implements ScopeManager {
      */
     @Override
     public void deleteScope(String name) throws ScopeDAOException {
-
+        scopeDAO.deleteScopeByName(name);
     }
 
     /**
@@ -105,7 +105,8 @@ public class ScopeManagerImpl implements ScopeManager {
      */
     @Override
     public Scope updateScope(Scope updatedScope) throws ScopeDAOException {
-        return null;
+        scopeDAO.updateScopeByName(updatedScope);
+        return scopeDAO.getScopeByName(updatedScope.getName());
     }
 
     /**

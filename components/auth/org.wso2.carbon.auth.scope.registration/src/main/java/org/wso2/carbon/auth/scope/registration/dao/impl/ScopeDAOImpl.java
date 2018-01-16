@@ -19,6 +19,7 @@
 
 package org.wso2.carbon.auth.scope.registration.dao.impl;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,11 +34,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Scope Data Access Object which handles scope data access.
@@ -73,85 +72,25 @@ public class ScopeDAOImpl implements ScopeDAO {
         }
     }
 
-
-    /**
-     * Get all available scopes
-     *
-     * @param tenantID tenant ID
-     * @return available scope list
-     * @throws ScopeDAOException IdentityOAuth2ScopeServerException
-     */
-    public Set<Scope> getAllScopes(int tenantID) throws ScopeDAOException {
-
-        if (log.isDebugEnabled()) {
-            log.debug("Get all scopes for tenantId  :" + tenantID);
-        }
-
-        Set<Scope> scopes = new HashSet<>();
-        Map<Integer, Scope> scopeMap = new HashMap<>();
-
-        try (Connection conn = DAOUtil.getAuthConnection()) {
-
-            try (PreparedStatement ps = conn.prepareStatement(SQLQueries.RETRIEVE_ALL_SCOPES)) {
-                ps.setInt(1, tenantID);
-                try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        int scopeID = rs.getInt(1);
-                        String name = rs.getString(2);
-                        String displayName = rs.getString(3);
-                        String description = rs.getString(4);
-                        final String binding = rs.getString(5);
-                        if (scopeMap.containsKey(scopeID) && scopeMap.get(scopeID) != null) {
-                            scopeMap.get(scopeID).setName(name);
-                            scopeMap.get(scopeID).setDescription(description);
-                            scopeMap.get(scopeID).setDisplayName(displayName);
-                            if (binding != null) {
-                                if (scopeMap.get(scopeID).getBindings() != null) {
-                                    scopeMap.get(scopeID).addBinding(binding);
-                                } else {
-                                    //TODO add bindings here
-                                    scopeMap.get(scopeID).setBindings(new ArrayList<String>());
-                                }
-                            }
-                        } else {
-                            scopeMap.put(scopeID, new Scope(name, displayName, description, new ArrayList<String>()));
-                            if (binding != null) {
-                                scopeMap.get(scopeID).addBinding(binding);
-                            }
-                        }
-                    }
-                }
-            }
-
-            for (Map.Entry<Integer, Scope> entry : scopeMap.entrySet()) {
-                scopes.add(entry.getValue());
-            }
-            return scopes;
-        } catch (SQLException e) {
-            String msg = "Error occurred while getting all scopes ";
-            throw new ScopeDAOException(msg, e);
-        }
-    }
-
     /**
      * Get Scopes with pagination
      *
      * @param offset   start index of the result set
      * @param limit    number of elements of the result set
-     * @param tenantID tenant ID
      * @return available scope list
      * @throws ScopeDAOException IdentityOAuth2ScopeServerException
      */
-    public Set<Scope> getScopesWithPagination(Integer offset, Integer limit, int tenantID) throws ScopeDAOException {
+    @SuppressFBWarnings("SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING")
+    public List<Scope> getScopesWithPagination(Integer offset, Integer limit) throws ScopeDAOException {
 
         if (log.isDebugEnabled()) {
-            log.debug("Get scopes with pagination for tenantId  :" + tenantID);
+            log.debug("Get scopes with pagination; offset=" + offset + ", limit=" + limit);
         }
 
-        Set<Scope> scopes = new HashSet<>();
-        Map<Integer, Scope> scopeMap = new HashMap<>();
+        List<Scope> scopes = new ArrayList<>();
+        Map<Integer, Scope> scopeMap = new LinkedHashMap<>();
         try (Connection conn = DAOUtil.getAuthConnection()) {
-            String query;
+            final String query;
             if (conn.getMetaData().getDriverName().contains("MySQL")
                     || conn.getMetaData().getDriverName().contains("H2")) {
                 query = SQLQueries.RETRIEVE_SCOPES_WITH_PAGINATION_MYSQL;
@@ -170,7 +109,7 @@ public class ScopeDAOImpl implements ScopeDAO {
             } else {
                 query = SQLQueries.RETRIEVE_SCOPES_WITH_PAGINATION_ORACLE;
             }
-            try (PreparedStatement preparedStatement = conn.prepareStatement(SQLQueries.RETRIEVE_SCOPE_BY_NAME)) {
+            try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
                 preparedStatement.setInt(1, offset);
                 preparedStatement.setInt(2, limit);
                 try (ResultSet rs = preparedStatement.executeQuery()) {
@@ -290,7 +229,7 @@ public class ScopeDAOImpl implements ScopeDAO {
      * @return scope ID for the provided scope name
      * @throws ScopeDAOException IdentityOAuth2ScopeServerException
      */
-    public int getScopeIDByName(String scopeName) throws ScopeDAOException {
+    private int getScopeIDByName(String scopeName) throws ScopeDAOException {
 
         if (log.isDebugEnabled()) {
             log.debug("Get scope ID by name called for scope name:" + scopeName);
@@ -318,18 +257,16 @@ public class ScopeDAOImpl implements ScopeDAO {
      * Delete a scope of the provided scope ID
      *
      * @param name     name of the scope
-     * @param tenantID tenant ID
-     * @throws ScopeDAOException IdentityOAuth2ScopeServerException
+     * @throws ScopeDAOException When error occured while deleting scope
      */
-    public void deleteScopeByName(String name, int tenantID) throws ScopeDAOException {
+    public void deleteScopeByName(String name) throws ScopeDAOException {
 
         if (log.isDebugEnabled()) {
             log.debug("Delete scope by name for scope name:" + name);
         }
 
         try (Connection conn = DAOUtil.getAuthConnection()) {
-
-            deleteScope(name, tenantID, conn);
+            deleteScope(name, conn);
             conn.commit();
         } catch (SQLException e) {
             String msg = "Error occurred while deleting scopes ";
@@ -341,17 +278,16 @@ public class ScopeDAOImpl implements ScopeDAO {
      * Update a scope of the provided scope name
      *
      * @param updatedScope details of the updated scope
-     * @param tenantID     tenant ID
      * @throws ScopeDAOException IdentityOAuth2ScopeServerException
      */
-    public void updateScopeByName(Scope updatedScope, int tenantID) throws ScopeDAOException {
+    public void updateScopeByName(Scope updatedScope) throws ScopeDAOException {
 
         if (log.isDebugEnabled()) {
             log.debug("Updae scope by name for scope name:" + updatedScope.getName());
         }
 
         try (Connection conn = DAOUtil.getAuthConnection()) {
-            deleteScope(updatedScope.getName(), tenantID, conn);
+            deleteScope(updatedScope.getName(), conn);
             addScope(updatedScope, conn);
             conn.commit();
         } catch (SQLException e) {
@@ -406,10 +342,9 @@ public class ScopeDAOImpl implements ScopeDAO {
         }
     }
 
-    private void deleteScope(String name, int tenantID, Connection conn) throws SQLException {
+    private void deleteScope(String name, Connection conn) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement(SQLQueries.DELETE_SCOPE_BY_NAME)) {
             ps.setString(1, name);
-            ps.setInt(2, tenantID);
             ps.execute();
         }
     }

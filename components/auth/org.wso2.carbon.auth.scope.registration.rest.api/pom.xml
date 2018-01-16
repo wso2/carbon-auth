@@ -166,6 +166,7 @@
             org.apache.commons.lang3.*; version="${apache.commons.lang3.import.version.range}",
             javax.ws.rs.*; version="${javax.ws.rs.import.version.range}",
             org.wso2.carbon.auth.scope.registration.*; version="${carbon.auth.version}",
+            org.wso2.carbon.auth.core.*; version="${carbon.auth.version}",
             org.wso2.carbon.auth.rest.api.commons.*; version="${carbon.auth.version}",
             com.google.gson.*;version="${gson.version.range}"
         </import.package>
