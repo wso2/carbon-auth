@@ -51,18 +51,17 @@ public class ScopeDAOImpl implements ScopeDAO {
      * @throws ScopeDAOException IdentityOAuth2ScopeException
      */
     public void addScope(Scope scope) throws ScopeDAOException {
-
         if (scope == null) {
             if (log.isDebugEnabled()) {
                 log.debug("Scope is not defined");
             }
+            String msg = "Scope cannot be null";
+            throw new ScopeDAOException(msg);
             //TODO Send Error
         }
-
         if (log.isDebugEnabled()) {
             log.debug("Adding scope :" + scope.getName());
         }
-
         try (Connection conn = DAOUtil.getAuthConnection()) {
             addScope(scope, conn);
             conn.commit();
@@ -75,8 +74,8 @@ public class ScopeDAOImpl implements ScopeDAO {
     /**
      * Get Scopes with pagination
      *
-     * @param offset   start index of the result set
-     * @param limit    number of elements of the result set
+     * @param offset start index of the result set
+     * @param limit  number of elements of the result set
      * @return available scope list
      * @throws ScopeDAOException IdentityOAuth2ScopeServerException
      */
@@ -94,7 +93,8 @@ public class ScopeDAOImpl implements ScopeDAO {
             if (conn.getMetaData().getDriverName().contains("MySQL")
                     || conn.getMetaData().getDriverName().contains("H2")) {
                 query = SQLQueries.RETRIEVE_SCOPES_WITH_PAGINATION_MYSQL;
-            } else if (conn.getMetaData().getDatabaseProductName().contains("DB2")) {
+                //TODO when other database support added we need to fix this
+            /*else if (conn.getMetaData().getDatabaseProductName().contains("DB2")) {
                 query = SQLQueries.RETRIEVE_SCOPES_WITH_PAGINATION_DB2SQL;
             } else if (conn.getMetaData().getDriverName().contains("MS SQL")) {
                 query = SQLQueries.RETRIEVE_SCOPES_WITH_PAGINATION_MSSQL;
@@ -106,6 +106,7 @@ public class ScopeDAOImpl implements ScopeDAO {
             } else if (conn.getMetaData().getDriverName().contains("Informix")) {
                 // Driver name = "IBM Informix JDBC Driver for IBM Informix Dynamic Server"
                 query = SQLQueries.RETRIEVE_SCOPES_WITH_PAGINATION_INFORMIX;
+            } */
             } else {
                 query = SQLQueries.RETRIEVE_SCOPES_WITH_PAGINATION_ORACLE;
             }
@@ -155,7 +156,7 @@ public class ScopeDAOImpl implements ScopeDAO {
     /**
      * Get a scope by name
      *
-     * @param name     name of the scope
+     * @param name name of the scope
      * @return Scope for the provided ID
      * @throws ScopeDAOException IdentityOAuth2ScopeServerException
      */
@@ -256,7 +257,7 @@ public class ScopeDAOImpl implements ScopeDAO {
     /**
      * Delete a scope of the provided scope ID
      *
-     * @param name     name of the scope
+     * @param name name of the scope
      * @throws ScopeDAOException When error occured while deleting scope
      */
     public void deleteScopeByName(String name) throws ScopeDAOException {
@@ -313,8 +314,9 @@ public class ScopeDAOImpl implements ScopeDAO {
                 }
             }
 
+            //TODO when other database support added we need to fix this
             // some JDBC Drivers returns this in the result, some don't
-            if (scopeID == 0) {
+            /*if (scopeID == 0) {
                 if (log.isDebugEnabled()) {
                     log.debug("JDBC Driver did not return the scope id, executing Select operation");
                 }
@@ -326,7 +328,7 @@ public class ScopeDAOImpl implements ScopeDAO {
                         }
                     }
                 }
-            }
+            }*/
 
             //Adding scope bindings
             try (PreparedStatement ps = conn.prepareStatement(SQLQueries.ADD_SCOPE_BINDING)) {

@@ -52,14 +52,44 @@
             <artifactId>powermock-module-junit4</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-
+    <build>
+    <plugins>
+        <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <configuration>
+                <excludes>
+                    <exclude>org/wso2/carbon/auth/core/test/**</exclude>
+                </excludes>
+            </configuration>
+        </plugin>
+        <!-- Specify this plugin to build the configuration class -->
+        <plugin>
+            <groupId>org.wso2.carbon.config</groupId>
+            <artifactId>org.wso2.carbon.config.maven.plugin</artifactId>
+            <version>${carbon.config.version}</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>create-doc</goal>
+                    </goals>
+                    <phase>compile</phase>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+    </build>
     <properties>
         <import.package>
             org.eclipse.osgi.util,
-            org.slf4j.*;version="${slf4j.logging.package.import.version.range}",
             org.osgi.framework.*;version="${osgi.framework.package.import.version.range}",
+            org.slf4j.*;version="${slf4j.logging.package.import.version.range}",
             org.eclipse.osgi.framework.console;version="${osgi.framework.console.package.import.version.range}",
             org.osgi.service.*;version="${equinox.osgi.services.package.import.version.range}",
             org.osgi.util.tracker; version="${osgi.service.tracker.package.import.version.range}",

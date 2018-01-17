@@ -69,10 +69,6 @@ public class Scope  {
         this.bindings = bindings;
     }
 
-    public void addBindings(List<String> bindings) {
-        this.bindings.addAll(bindings);
-    }
-
     public void addBinding(String binding) {
         this.bindings.add(binding);
     }
