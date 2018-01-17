@@ -127,9 +127,10 @@ public class ScopesApiServiceImpl extends ScopesApiService {
                 return Response.status(Response.Status.CONFLICT).entity(errorDTO).build();
             }
             addedScope = scopeManager.registerScope(scopeToAdd);
+            ScopeDTO addedScopeDTO = ScopeMappingUtil.scopeModelToDTO(addedScope);
             URI location = new URI(RestApiConstants.RESOURCE_PATH_SCOPE.replace(RestApiConstants.SCOPENAME_PARAM,
                     scope.getName()));
-            return Response.created(location).entity(addedScope).build();
+            return Response.created(location).entity(addedScopeDTO).build();
         } catch (ScopeDAOException | URISyntaxException e) {
             log.error("Error while registering scope " + scope.getName(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
