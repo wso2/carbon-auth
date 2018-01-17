@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
 import javax.ws.rs.core.Response;
 
 import static org.wso2.carbon.auth.scope.registration.rest.api.ScopeTestObjectCreator.SCOPE_NAME_1;
-import static org.wso2.carbon.auth.scope.registration.rest.api.ScopeTestObjectCreator.createDefaultScopeDTO;
+import static org.wso2.carbon.auth.scope.registration.rest.api.ScopeTestObjectCreator.createScopeDTO;
 import static org.wso2.carbon.auth.scope.registration.rest.api.ScopeTestObjectCreator.getNewErroneousScopesApiServiceImpl;
 import static org.wso2.carbon.auth.scope.registration.rest.api.ScopeTestObjectCreator.getNewMockedRequest;
 
@@ -60,7 +60,8 @@ public class ScopesApiServiceImplExceptionTest {
     @Test
     public void testRegisterScope() throws Exception {
         ScopesApiServiceImpl scopesApiService = getNewErroneousScopesApiServiceImpl();
-        Response registerScopeResponse = scopesApiService.registerScope(createDefaultScopeDTO(), getNewMockedRequest());
+        Response registerScopeResponse = scopesApiService
+                .registerScope(createScopeDTO(SCOPE_NAME_1), getNewMockedRequest());
         Assert.assertEquals(registerScopeResponse.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
     }
 
@@ -68,7 +69,7 @@ public class ScopesApiServiceImplExceptionTest {
     public void testUpdateScope() throws Exception {
         ScopesApiServiceImpl scopesApiService = getNewErroneousScopesApiServiceImpl();
         Response updateScopeResponse = scopesApiService
-                .updateScope(createDefaultScopeDTO(), SCOPE_NAME_1, getNewMockedRequest());
+                .updateScope(createScopeDTO(SCOPE_NAME_1), SCOPE_NAME_1, getNewMockedRequest());
         Assert.assertEquals(updateScopeResponse.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
     }
 

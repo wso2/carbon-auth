@@ -26,9 +26,10 @@ import org.wso2.carbon.auth.scope.registration.rest.api.dto.ScopeListDTO;
 
 import javax.ws.rs.core.Response;
 
-import static org.wso2.carbon.auth.scope.registration.rest.api.ScopeTestObjectCreator.createAdditionalScopeDTO;
-import static org.wso2.carbon.auth.scope.registration.rest.api.ScopeTestObjectCreator.createAnotherScopeDTO;
-import static org.wso2.carbon.auth.scope.registration.rest.api.ScopeTestObjectCreator.createDefaultScopeDTO;
+import static org.wso2.carbon.auth.scope.registration.rest.api.ScopeTestObjectCreator.SCOPE_NAME_1;
+import static org.wso2.carbon.auth.scope.registration.rest.api.ScopeTestObjectCreator.SCOPE_NAME_2;
+import static org.wso2.carbon.auth.scope.registration.rest.api.ScopeTestObjectCreator.SCOPE_NAME_3;
+import static org.wso2.carbon.auth.scope.registration.rest.api.ScopeTestObjectCreator.createScopeDTO;
 import static org.wso2.carbon.auth.scope.registration.rest.api.ScopeTestObjectCreator.getNewMockedRequest;
 import static org.wso2.carbon.auth.scope.registration.rest.api.ScopeTestObjectCreator.getNewScopesApiServiceImpl;
 
@@ -42,7 +43,7 @@ public class ScopesApiServiceImplTest {
         ScopesApiServiceImpl scopesApiService = getNewScopesApiServiceImpl();
 
         //register a new Scope
-        ScopeDTO scopeDTO = createDefaultScopeDTO();
+        ScopeDTO scopeDTO = createScopeDTO(SCOPE_NAME_1);
         Response scopeAddResponse = scopesApiService.registerScope(scopeDTO, getNewMockedRequest());
         Assert.assertEquals(scopeAddResponse.getStatus(), Response.Status.CREATED.getStatusCode());
         Assert.assertTrue(scopeDTO.equals(scopeAddResponse.getEntity()));
@@ -57,7 +58,7 @@ public class ScopesApiServiceImplTest {
         Assert.assertTrue(scopeDTO.equals(scopeGetResponse.getEntity()));
 
         //update the scope and validate
-        ScopeDTO scopeDTOUpdated = createDefaultScopeDTO();
+        ScopeDTO scopeDTOUpdated = createScopeDTO(SCOPE_NAME_1);
         scopeDTOUpdated.setDescription("scope1-description-updated");
 
         Response scopeUpdateResponse = scopesApiService
@@ -78,7 +79,7 @@ public class ScopesApiServiceImplTest {
         ScopesApiServiceImpl scopesApiService = getNewScopesApiServiceImpl();
 
         //register a new Scope
-        ScopeDTO scopeDTO = createDefaultScopeDTO();
+        ScopeDTO scopeDTO = createScopeDTO(SCOPE_NAME_1);
         Response scopeAddResponse = scopesApiService.registerScope(scopeDTO, getNewMockedRequest());
         Assert.assertEquals(scopeAddResponse.getStatus(), Response.Status.CREATED.getStatusCode());
         Assert.assertTrue(scopeDTO.equals(scopeAddResponse.getEntity()));
@@ -99,7 +100,7 @@ public class ScopesApiServiceImplTest {
     public void testUpdateInvalidScope() throws Exception {
         ScopesApiServiceImpl scopesApiService = getNewScopesApiServiceImpl();
         Response updateResponse = scopesApiService
-                .updateScope(createDefaultScopeDTO(), "invalid-name", getNewMockedRequest());
+                .updateScope(createScopeDTO(SCOPE_NAME_1), "invalid-name", getNewMockedRequest());
         Assert.assertEquals(updateResponse.getStatus(), Response.Status.NOT_FOUND.getStatusCode());
     }
 
@@ -123,23 +124,23 @@ public class ScopesApiServiceImplTest {
         ScopesApiServiceImpl scopesApiService = getNewScopesApiServiceImpl();
 
         //register a new Scope
-        ScopeDTO scopeDTO = createDefaultScopeDTO();
+        ScopeDTO scopeDTO = createScopeDTO(SCOPE_NAME_1);
         Response scopeAddResponse = scopesApiService.registerScope(scopeDTO, getNewMockedRequest());
         Assert.assertEquals(scopeAddResponse.getStatus(), Response.Status.CREATED.getStatusCode());
         Assert.assertTrue(scopeDTO.equals(scopeAddResponse.getEntity()));
 
         //register another new Scope
-        ScopeDTO scopeDTO2 = createAdditionalScopeDTO();
+        ScopeDTO scopeDTO2 = createScopeDTO(SCOPE_NAME_2);
         scopeAddResponse = scopesApiService.registerScope(scopeDTO2, getNewMockedRequest());
         Assert.assertEquals(scopeAddResponse.getStatus(), Response.Status.CREATED.getStatusCode());
         Assert.assertTrue(scopeDTO2.equals(scopeAddResponse.getEntity()));
-        
+
         //register another new Scope
-        ScopeDTO scopeDTO3 = createAnotherScopeDTO();
+        ScopeDTO scopeDTO3 = createScopeDTO(SCOPE_NAME_3);
         scopeAddResponse = scopesApiService.registerScope(scopeDTO3, getNewMockedRequest());
         Assert.assertEquals(scopeAddResponse.getStatus(), Response.Status.CREATED.getStatusCode());
         Assert.assertTrue(scopeDTO3.equals(scopeAddResponse.getEntity()));
-        
+
         //get scopes and validate
         Response scopesGetResponse = scopesApiService.getScopes(1, 1, getNewMockedRequest());
         Assert.assertEquals(scopesGetResponse.getStatus(), Response.Status.OK.getStatusCode());

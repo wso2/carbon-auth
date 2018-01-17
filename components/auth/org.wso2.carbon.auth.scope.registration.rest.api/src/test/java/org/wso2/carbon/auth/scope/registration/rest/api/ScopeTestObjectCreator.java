@@ -64,51 +64,17 @@ public class ScopeTestObjectCreator {
 
     /**
      * Creates a scope DTO
-     * 
-     * @return a ScopeDTO with some predefined params
-     */
-    public static ScopeDTO createDefaultScopeDTO() {
-        ScopeDTO scopeDTO = new ScopeDTO();
-        scopeDTO.setName(SCOPE_NAME_1);
-        scopeDTO.setDescription("scope1-description");
-        scopeDTO.setBindings(new ArrayList<String>() {{
-            add("role1");
-            add("role2");
-        }});
-        return scopeDTO;
-    }
-
-    /**
-     * Creates a scope DTO
      *
-     * @return a ScopeDTO with some predefined params
+     * @return a ScopeDTO based on the name
      */
-    public static ScopeDTO createAdditionalScopeDTO() {
+    public static ScopeDTO createScopeDTO(String name) {
         ScopeDTO scopeDTO = new ScopeDTO();
-        scopeDTO.setName(SCOPE_NAME_2);
-        scopeDTO.setDescription("scope2-description");
+        scopeDTO.setName(name);
+        scopeDTO.setDescription(name + "-description");
         scopeDTO.setBindings(new ArrayList<String>() {{
-            add("role1");
-            add("role2");
-            add("role3");
-        }});
-        return scopeDTO;
-    }
-
-    /**
-     * Creates a scope DTO
-     *
-     * @return a ScopeDTO with some predefined params
-     */
-    public static ScopeDTO createAnotherScopeDTO() {
-        ScopeDTO scopeDTO = new ScopeDTO();
-        scopeDTO.setName(SCOPE_NAME_3);
-        scopeDTO.setDescription("scope3-description");
-        scopeDTO.setBindings(new ArrayList<String>() {{
-            add("role1");
-            add("role2");
-            add("role3");
-            add("role4");
+            for (int i = 0; i < name.length(); i++) {
+                add("role" + i);
+            }
         }});
         return scopeDTO;
     }
