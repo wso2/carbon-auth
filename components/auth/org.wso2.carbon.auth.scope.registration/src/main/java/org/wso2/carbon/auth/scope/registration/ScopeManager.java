@@ -16,21 +16,27 @@
  * under the License.
  */
 
-package org.wso2.carbon.auth.scope.registration.exceptions;
+package org.wso2.carbon.auth.scope.registration;
 
-import org.wso2.carbon.auth.core.exception.AuthException;
-import org.wso2.carbon.auth.core.exception.ExceptionCodes;
+import org.wso2.carbon.auth.scope.registration.dto.Scope;
+import org.wso2.carbon.auth.scope.registration.exceptions.ScopeDAOException;
+
+import java.util.Set;
 
 /**
- * Scope DAO exception class extended from Auth Exception.
+ * Scope Manager Interface
  */
-public class ScopeDAOException extends AuthException {
+public interface ScopeManager {
+    Scope registerScope(Scope scope) throws ScopeDAOException;
 
-    public ScopeDAOException(String msg) {
-        super(msg, ExceptionCodes.DAO_EXCEPTION);
-    }
+    Set<Scope> getScopes(Integer startIndex, Integer count)
+            throws ScopeDAOException;
 
-    public ScopeDAOException(String msg, Throwable e) {
-        super(msg, e, ExceptionCodes.DAO_EXCEPTION);
-    }
+    Scope getScope(String name) throws ScopeDAOException;
+
+    boolean isScopeExists(String name) throws ScopeDAOException;
+
+    void deleteScope(String name) throws ScopeDAOException;
+
+    Scope updateScope(Scope updatedScope) throws ScopeDAOException;
 }
