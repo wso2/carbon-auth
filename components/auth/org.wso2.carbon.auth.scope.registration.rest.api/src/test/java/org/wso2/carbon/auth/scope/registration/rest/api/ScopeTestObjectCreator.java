@@ -28,7 +28,6 @@ import java.util.ArrayList;
 
 /**
  * Utility class used for generating test objects
- * 
  */
 public class ScopeTestObjectCreator {
     public static String SCOPE_NAME_1 = "scope1";
@@ -37,7 +36,7 @@ public class ScopeTestObjectCreator {
 
     /**
      * Creates a mocked Request object.
-     * 
+     *
      * @return mocked Request object
      */
     public static Request getNewMockedRequest() {
@@ -46,7 +45,7 @@ public class ScopeTestObjectCreator {
 
     /**
      * Create a ScopesApiServiceImpl based on an in memory DAO
-     * 
+     *
      * @return a ScopesApiServiceImpl based on an in memory DAO
      */
     public static ScopesApiServiceImpl getNewScopesApiServiceImpl() {
@@ -71,11 +70,13 @@ public class ScopeTestObjectCreator {
         ScopeDTO scopeDTO = new ScopeDTO();
         scopeDTO.setName(name);
         scopeDTO.setDescription(name + "-description");
-        scopeDTO.setBindings(new ArrayList<String>() {{
-            for (int i = 0; i < name.length(); i++) {
-                add("role" + i);
+        scopeDTO.setBindings(new ArrayList<String>() {
+            {
+                for (int i = 0; i < name.length(); i++) {
+                    add("role" + i);
+                }
             }
-        }});
+        });
         return scopeDTO;
     }
 }

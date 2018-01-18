@@ -18,7 +18,7 @@
 
 package org.wso2.carbon.auth.rest.api.commons.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -28,9 +28,19 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(description = "")
 public class ErrorListItemDTO {
 
-    private String code = null;
+    @SerializedName("code")
+    private Long code = null;
 
+    @SerializedName("message")
     private String message = null;
+
+    public ErrorListItemDTO() {
+    }
+
+    public ErrorListItemDTO(Long code, String message) {
+        this.code = code;
+        this.message = message;
+    }
 
     /**
      * Gets the error code.
@@ -38,12 +48,11 @@ public class ErrorListItemDTO {
      * @return Error code . for ex :900404
      **/
     @ApiModelProperty(required = true, value = "")
-    @JsonProperty("code")
-    public String getCode() {
+    public Long getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(Long code) {
         this.code = code;
     }
 
@@ -53,7 +62,6 @@ public class ErrorListItemDTO {
      * @return error message.
      **/
     @ApiModelProperty(required = true, value = "Description about individual errors occurred")
-    @JsonProperty("message")
     public String getMessage() {
         return message;
     }
