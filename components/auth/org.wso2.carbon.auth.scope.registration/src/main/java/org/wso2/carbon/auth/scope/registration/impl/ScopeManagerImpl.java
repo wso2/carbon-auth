@@ -18,8 +18,6 @@
 
 package org.wso2.carbon.auth.scope.registration.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.scope.registration.dao.ScopeDAO;
 import org.wso2.carbon.auth.scope.registration.dto.Scope;
 import org.wso2.carbon.auth.scope.registration.exceptions.ScopeDAOException;
@@ -30,7 +28,6 @@ import java.util.List;
  * Scope Manager class which handle all scope management tasks
  */
 public class ScopeManagerImpl implements ScopeManager {
-    private static final Logger log = LoggerFactory.getLogger(ScopeManagerImpl.class);
     private ScopeDAO scopeDAO;
 
     public ScopeManagerImpl(ScopeDAO scopeDAO) {
@@ -41,7 +38,7 @@ public class ScopeManagerImpl implements ScopeManager {
      * Register a scope with the bindings
      *
      * @param scope details of the scope to be registered
-     * @throws ScopeDAOException
+     * @throws ScopeDAOException Whenever register scope failed at DAO operation
      */
     @Override
     public Scope registerScope(Scope scope) throws ScopeDAOException {
@@ -55,7 +52,7 @@ public class ScopeManagerImpl implements ScopeManager {
      * @param offset Start Index of the result set to enforce pagination
      * @param limit      Number of elements in the result set to enforce pagination
      * @return Scope list
-     * @throws ScopeDAOException
+     * @throws ScopeDAOException Whenever get scopes failed at DAO operation
      */
     @Override
     public List<Scope> getScopes(Integer offset, Integer limit)
@@ -66,7 +63,7 @@ public class ScopeManagerImpl implements ScopeManager {
     /**
      * @param name Name of the scope which need to get retrieved
      * @return Retrieved Scope
-     * @throws ScopeDAOException
+     * @throws ScopeDAOException Whenever get scope failed at DAO operation
      */
     @Override
     public Scope getScope(String name) throws ScopeDAOException {
@@ -78,7 +75,7 @@ public class ScopeManagerImpl implements ScopeManager {
      *
      * @param name Name of the scope
      * @return true if scope with the given scope name exists
-     * @throws ScopeDAOException
+     * @throws ScopeDAOException Whenever check scope failed at DAO operation
      */
     @Override
     public boolean isScopeExists(String name) throws ScopeDAOException {
@@ -89,7 +86,7 @@ public class ScopeManagerImpl implements ScopeManager {
      * Delete the scope for the given scope ID
      *
      * @param name Scope ID of the scope which need to get deleted
-     * @throws ScopeDAOException
+     * @throws ScopeDAOException Whenever delete scope failed at DAO operation
      */
     @Override
     public void deleteScope(String name) throws ScopeDAOException {
@@ -101,24 +98,11 @@ public class ScopeManagerImpl implements ScopeManager {
      *
      * @param updatedScope details of updated scope
      * @return updated scope
-     * @throws ScopeDAOException
+     * @throws ScopeDAOException Whenever update scope failed at DAO operation
      */
     @Override
     public Scope updateScope(Scope updatedScope) throws ScopeDAOException {
         scopeDAO.updateScopeByName(updatedScope);
         return scopeDAO.getScopeByName(updatedScope.getName());
     }
-
-    /**
-     * List scopes with filtering
-     *
-     * @param startIndex Start Index of the result set to enforce pagination
-     * @param count      Number of elements in the result set to enforce pagination
-     * @return List of available scopes
-     * @throws ScopeDAOException
-     */
-    /*private Set<Scope> listScopesWithPagination(Integer startIndex, Integer count)
-            throws ScopeDAOException {
-        return null;
-    }*/
 }

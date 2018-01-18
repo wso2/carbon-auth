@@ -28,10 +28,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wso2.carbon.auth.core.datasource.DAOUtil;
-import org.wso2.carbon.auth.scope.registration.ScopeManagerImpl;
 import org.wso2.carbon.auth.scope.registration.dao.impl.DAOFactory;
 import org.wso2.carbon.auth.scope.registration.dto.Scope;
 import org.wso2.carbon.auth.scope.registration.exceptions.ScopeDAOException;
+import org.wso2.carbon.auth.scope.registration.impl.ScopeManagerImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +39,8 @@ import java.util.List;
 
 public class ScopeDAOIntegrationTest extends ScopeDAOIntegrationTestBase {
 
-    ScopeDAO scopeDAO;
-    ScopeManagerImpl scopeManager;
+    private ScopeDAO scopeDAO;
+    private ScopeManagerImpl scopeManager;
     private static final Logger log = LoggerFactory.getLogger(ScopeDAOIntegrationTest.class);
 
     public ScopeDAOIntegrationTest() {
