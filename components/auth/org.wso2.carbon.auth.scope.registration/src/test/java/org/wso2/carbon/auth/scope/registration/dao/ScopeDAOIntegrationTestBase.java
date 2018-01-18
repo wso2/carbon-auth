@@ -37,7 +37,7 @@ import java.sql.Statement;
  */
 public class ScopeDAOIntegrationTestBase {
     private String database;
-    protected DataSource authDataSource;
+    private DataSource authDataSource;
 
     private static final String H2 = "h2";
     private static final int MAX_RETRIES = 5;
@@ -47,14 +47,14 @@ public class ScopeDAOIntegrationTestBase {
 
     private static final Logger log = LoggerFactory.getLogger(AuthDAOIntegrationTestBase.class);
 
-    protected ScopeDAOIntegrationTestBase() {
+    ScopeDAOIntegrationTestBase() {
         database = System.getenv("DATABASE_TYPE");
         if (StringUtils.isEmpty(database)) {
             database = H2;
         }
     }
 
-    protected void init() throws Exception {
+    void init() throws Exception {
         // This used to check connection healthy
         if (H2.equals(database)) {
             authDataSource = AuthCoreTestUtil.getDataSource("jdbc:h2:mem:authdb", "sa", "sa", true);
@@ -86,7 +86,7 @@ public class ScopeDAOIntegrationTestBase {
         }
     }
 
-    protected void setup() throws Exception {
+    void setup() throws Exception {
         String authSqlFilePath = null;
         if (H2.equals(database)) {
             authSqlFilePath = ".." + File.separator + ".." + File.separator + ".." + File.separator
@@ -108,7 +108,7 @@ public class ScopeDAOIntegrationTestBase {
         DAOUtil.initializeAuthDataSource(authDataSource);
     }
 
-    protected void cleanup() throws Exception {
+    void cleanup() throws Exception {
         if (H2.equals(database)) {
             final String dropAllQuery = "DROP ALL OBJECTS DELETE FILES";
             try (Connection connection = authDataSource.getConnection();
@@ -119,7 +119,7 @@ public class ScopeDAOIntegrationTestBase {
     }
 
     @SuppressFBWarnings("SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE")
-    protected void executeOnAuthDb(final String query) throws Exception {
+    void executeOnAuthDb(final String query) throws Exception {
         if (H2.equals(database)) {
             try (Connection connection = authDataSource.getConnection();
                     Statement statement = connection.createStatement()) {

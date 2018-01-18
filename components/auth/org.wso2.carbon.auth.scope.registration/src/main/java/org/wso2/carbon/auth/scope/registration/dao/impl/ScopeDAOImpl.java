@@ -129,11 +129,11 @@ public class ScopeDAOImpl implements ScopeDAO {
                                     scopeMap.get(scopeID).addBinding(binding);
                                 } else {
                                     //TODO add bindings here
-                                    scopeMap.get(scopeID).setBindings(new ArrayList<String>());
+                                    scopeMap.get(scopeID).setBindings(new ArrayList<>());
                                 }
                             }
                         } else {
-                            scopeMap.put(scopeID, new Scope(name, displayName, description, new ArrayList<String>()));
+                            scopeMap.put(scopeID, new Scope(name, displayName, description, new ArrayList<>()));
                             if (binding != null) {
                                 scopeMap.get(scopeID).addBinding(binding);
 
