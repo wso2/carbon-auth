@@ -113,18 +113,4 @@ public class RestApiUtil {
         }
         return result;
     }
-
-    /**
-     * Returns the paginated url for Scopes API
-     *
-     * @param offset starting index
-     * @param limit  max number of objects returned
-     * @return constructed paginated url
-     */
-    public static String getScopePaginatedURL(Integer offset, Integer limit) {
-        String paginatedURL = RestApiConstants.SCOPES_GET_PAGINATION_URL;
-        paginatedURL = paginatedURL.replace(RestApiConstants.LIMIT_PARAM, String.valueOf(limit));
-        paginatedURL = paginatedURL.replace(RestApiConstants.OFFSET_PARAM, String.valueOf(offset));
-        return paginatedURL;
-    }
 }

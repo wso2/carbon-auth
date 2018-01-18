@@ -104,19 +104,31 @@ public class ScopeMappingUtil {
         String paginatedNext = "";
 
         if (paginatedParams.get(RestApiConstants.PAGINATION_PREVIOUS_OFFSET) != null) {
-            paginatedPrevious = RestApiUtil
-                    .getScopePaginatedURL(paginatedParams.get(RestApiConstants.PAGINATION_PREVIOUS_OFFSET),
+            paginatedPrevious = getScopePaginatedURL(paginatedParams.get(RestApiConstants.PAGINATION_PREVIOUS_OFFSET),
                             paginatedParams.get(RestApiConstants.PAGINATION_PREVIOUS_LIMIT));
         }
 
         if (paginatedParams.get(RestApiConstants.PAGINATION_NEXT_OFFSET) != null) {
-            paginatedNext = RestApiUtil
-                    .getScopePaginatedURL(paginatedParams.get(RestApiConstants.PAGINATION_NEXT_OFFSET),
+            paginatedNext = getScopePaginatedURL(paginatedParams.get(RestApiConstants.PAGINATION_NEXT_OFFSET),
                             paginatedParams.get(RestApiConstants.PAGINATION_NEXT_LIMIT));
         }
 
         paginationDTO.setNext(paginatedNext);
         paginationDTO.setPrevious(paginatedPrevious);
         return paginationDTO;
+    }
+
+    /**
+     * Returns the paginated url for Scopes API
+     *
+     * @param offset starting index
+     * @param limit  max number of objects returned
+     * @return constructed paginated url
+     */
+    public static String getScopePaginatedURL(Integer offset, Integer limit) {
+        String paginatedURL = RestApiConstants.SCOPES_GET_PAGINATION_URL;
+        paginatedURL = paginatedURL.replace(RestApiConstants.LIMIT_PARAM, String.valueOf(limit));
+        paginatedURL = paginatedURL.replace(RestApiConstants.OFFSET_PARAM, String.valueOf(offset));
+        return paginatedURL;
     }
 }

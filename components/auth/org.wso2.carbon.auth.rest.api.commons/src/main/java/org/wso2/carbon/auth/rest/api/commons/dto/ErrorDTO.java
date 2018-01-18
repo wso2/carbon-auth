@@ -21,6 +21,8 @@ package org.wso2.carbon.auth.rest.api.commons.dto;
 
 import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModelProperty;
+
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -37,7 +39,7 @@ public class ErrorDTO   {
     private String description = null;
 
     @SerializedName("moreInfo")
-    private String moreInfo = null;
+    private List<ErrorListItemDTO> moreInfo = null;
 
     public ErrorDTO code(Long code) {
         this.code = code;
@@ -93,7 +95,7 @@ public class ErrorDTO   {
         this.description = description;
     }
 
-    public ErrorDTO moreInfo(String moreInfo) {
+    public ErrorDTO moreInfo(List<ErrorListItemDTO> moreInfo) {
         this.moreInfo = moreInfo;
         return this;
     }
@@ -103,11 +105,11 @@ public class ErrorDTO   {
      * @return moreInfo
      **/
     @ApiModelProperty(value = "")
-    public String getMoreInfo() {
+    public List<ErrorListItemDTO> getMoreInfo() {
         return moreInfo;
     }
 
-    public void setMoreInfo(String moreInfo) {
+    public void setMoreInfo(List<ErrorListItemDTO> moreInfo) {
         this.moreInfo = moreInfo;
     }
 
