@@ -93,8 +93,7 @@ public class ScopeDAOIntegrationTestBase {
                     + "features" + File.separator + "auth-features" + File.separator
                     + "org.wso2.carbon.auth.core.feature" + File.separator + "resources"
                     + File.separator + "dbscripts" + File.separator + "auth" + File.separator + "h2.sql";
-            log.info("========================================================================" + authSqlFilePath);
-            //cleanup();
+            cleanup();
         }
         DAOUtil.clearAuthDataSource();
         DAOUtil.initializeAuthDataSource(authDataSource);
@@ -103,10 +102,12 @@ public class ScopeDAOIntegrationTestBase {
         }
     }
 
-    protected void setupWithoutTables() throws Exception {
-        DAOUtil.clearAuthDataSource();
-        DAOUtil.initializeAuthDataSource(authDataSource);
-    }
+// --Commented out by Inspection START (1/19/18 11:32 AM):
+//    protected void setupWithoutTables() {
+//        DAOUtil.clearAuthDataSource();
+//        DAOUtil.initializeAuthDataSource(authDataSource);
+//    }
+// --Commented out by Inspection STOP (1/19/18 11:32 AM)
 
     void cleanup() throws Exception {
         if (H2.equals(database)) {

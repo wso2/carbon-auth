@@ -258,7 +258,7 @@ public class ScopeDAOImpl implements ScopeDAO {
      * Delete a scope of the provided scope ID
      *
      * @param name name of the scope
-     * @throws ScopeDAOException When error occured while deleting scope
+     * @throws ScopeDAOException When error occurred while deleting scope
      */
     public void deleteScopeByName(String name) throws ScopeDAOException {
 
@@ -284,7 +284,7 @@ public class ScopeDAOImpl implements ScopeDAO {
     public void updateScopeByName(Scope updatedScope) throws ScopeDAOException {
 
         if (log.isDebugEnabled()) {
-            log.debug("Updae scope by name for scope name:" + updatedScope.getName());
+            log.debug("Update scope by name for scope name:" + updatedScope.getName());
         }
 
         try (Connection conn = DAOUtil.getAuthConnection()) {

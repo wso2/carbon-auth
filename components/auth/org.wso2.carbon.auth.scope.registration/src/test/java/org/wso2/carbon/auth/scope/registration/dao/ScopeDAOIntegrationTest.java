@@ -69,11 +69,9 @@ public class ScopeDAOIntegrationTest extends ScopeDAOIntegrationTestBase {
 
     @Test
     public void testAddScopeWithoutBinding() throws Exception {
-        Scope scope = new Scope();
+        Scope scope = new Scope("test_scope_name_without_binding", "test_scope_description",
+                "test_scope_display_name");
         Assert.assertNotNull(scope.getBindings());
-        scope.setName("test_scope_name_with_binding");
-        scope.setDescription("test_scope_description");
-        scope.setDisplayName("test_scope_display_name");
         scopeDAO.addScope(scope);
         scopeDAO.updateScopeByName(scope);
         //Test scope with binding is there in data store.
