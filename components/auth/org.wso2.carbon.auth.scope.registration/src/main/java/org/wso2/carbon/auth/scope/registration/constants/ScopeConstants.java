@@ -21,16 +21,6 @@ package org.wso2.carbon.auth.scope.registration.constants;
  */
 public class ScopeConstants {
 
-    public static final int MAX_FILTER_COUNT = 30;
     public static final int INVALID_SCOPE_ID = -1;
-
-    /**
-     * SQL Placeholders
-     */
-    public static final class SQLPlaceholders {
-        public static final String TENANT_ID = "tenant_id";
-        public static final String LIMIT = "limit";
-        public static final String OFFSET = "offset";
-    }
 
 }

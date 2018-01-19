@@ -17,12 +17,10 @@
  */
 package org.wso2.carbon.auth.scope.registration.dao.impl;
 
-import org.wso2.carbon.auth.scope.registration.constants.ScopeConstants;
-
 /**
  * Scopes Related SQL queries
  */
-public class SQLQueries {
+class SQLQueries {
 
     /**
      * Scope related queries
@@ -63,7 +61,6 @@ public class SQLQueries {
                     "filteredScopes.DESCRIPTION, ScopeBindings.SCOPE_BINDING FROM " +
                     "(SELECT Scopes.SCOPE_ID, Scopes.NAME, Scopes.DISPLAY_NAME, Scopes.DESCRIPTION FROM " +
                     "AUTH_OAUTH2_SCOPE AS Scopes " +
-                    "WHERE Scopes.TENANT_ID = :" + ScopeConstants.SQLPlaceholders.TENANT_ID +
                     "; FETCH FIRST :limit; ROWS ONLY) AS filteredScopes " +
                     "LEFT JOIN AUTH_OAUTH2_SCOPE_BINDING AS ScopeBindings ON filteredScopes.SCOPE_ID=ScopeBindings" +
                     ".SCOPE_ID ORDER BY filteredScopes.NAME";
@@ -74,7 +71,6 @@ public class SQLQueries {
                     "filteredScopes.DESCRIPTION, ScopeBindings.SCOPE_BINDING FROM " +
                     "(SELECT TOP :limit; SELECT Scopes.SCOPE_ID, Scopes.NAME, Scopes.DISPLAY_NAME," +
                     " Scopes.DESCRIPTION FROM AUTH_OAUTH2_SCOPE AS Scopes " +
-                    "WHERE Scopes.TENANT_ID = :" + ScopeConstants.SQLPlaceholders.TENANT_ID +
                     ";) AS filteredScopes " +
                     "LEFT JOIN AUTH_OAUTH2_SCOPE_BINDING AS ScopeBindings ON " +
                     "filteredScopes.SCOPE_ID=ScopeBindings.SCOPE_ID ORDER BY filteredScopes.NAME";
@@ -85,7 +81,6 @@ public class SQLQueries {
                     "filteredScopes.DESCRIPTION, ScopeBindings.SCOPE_BINDING FROM " +
                     "(SELECT Scopes.SCOPE_ID, Scopes.NAME, Scopes.DISPLAY_NAME, Scopes.DESCRIPTION FROM " +
                     "AUTH_OAUTH2_SCOPE AS Scopes " +
-                    "WHERE Scopes.TENANT_ID = :" + ScopeConstants.SQLPlaceholders.TENANT_ID +
                     "; LIMIT :limit;) AS filteredScopes " +
                     "LEFT JOIN AUTH_OAUTH2_SCOPE_BINDING AS ScopeBindings ON " +
                     "filteredScopes.SCOPE_ID=ScopeBindings.SCOPE_ID ORDER BY filteredScopes.NAME";
@@ -96,7 +91,6 @@ public class SQLQueries {
                     "filteredScopes.DESCRIPTION, ScopeBindings.SCOPE_BINDING FROM " +
                     "(SELECT FIRST :limit; * FROM  (SELECT Scopes.SCOPE_ID, Scopes.NAME, Scopes.DISPLAY_NAME, " +
                     "Scopes.DESCRIPTION FROM AUTH_OAUTH2_SCOPE AS Scopes " +
-                    "WHERE Scopes.TENANT_ID = :" + ScopeConstants.SQLPlaceholders.TENANT_ID +
                     ";) RESULT) AS filteredScopes " +
                     "LEFT JOIN AUTH_OAUTH2_SCOPE_BINDING AS ScopeBindings ON " +
                     "filteredScopes.SCOPE_ID=ScopeBindings.SCOPE_ID ORDER BY filteredScopes.NAME";
