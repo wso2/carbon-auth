@@ -89,11 +89,11 @@ public class ConnectorDataHolder {
         try {
             String uid = connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, user);
             if (uid != null) {
-                log.info("default user already exist");
+                log.debug("default user already exist");
                 return;
             }
         } catch (UserNotFoundException e) {
-            log.info("default user not exist");
+            log.error("default user not exist", e);
         } catch (UserStoreConnectorException e) {
             log.error("Error checking existing admin user", e);
         }
@@ -103,7 +103,7 @@ public class ConnectorDataHolder {
             PasswordCallback passwordCallback = new PasswordCallback(UserStoreConstants.PASSWORD_URI, false);
             passwordCallback.setPassword(password);
             connector.addCredential(userId, passwordCallback);
-            log.info("added default user admin");
+            log.debug("added default user admin");
         } catch (UserStoreConnectorException e) {
             log.error("Error adding admin user", e);
         }

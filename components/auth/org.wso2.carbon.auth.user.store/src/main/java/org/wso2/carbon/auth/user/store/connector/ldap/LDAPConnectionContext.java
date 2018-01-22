@@ -29,7 +29,6 @@ import java.util.Map;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
-//import javax.naming.directory.InitialDirContext;
 
 /**
  * LDAP connection initiation implementation
@@ -51,15 +50,12 @@ public class LDAPConnectionContext {
 
         environment.put(Context.INITIAL_CONTEXT_FACTORY, initialContextFactory);
         environment.put(Context.SECURITY_AUTHENTICATION, securityAuthentication);
-
         if (connectionName != null) {
             environment.put(Context.SECURITY_PRINCIPAL, connectionName);
         }
-
         if (connectionPassword != null) {
             environment.put(Context.SECURITY_CREDENTIALS, connectionPassword);
         }
-
         if (connectionURL != null) {
             environment.put(Context.PROVIDER_URL, connectionURL);
         }
@@ -71,7 +67,7 @@ public class LDAPConnectionContext {
 
         while (retry > 0) {
             try {
-//                                context = new InitialDirContext(environment);
+                //                context = new InitialDirContext(environment);
                 //                context = (DirContext) new LdapCtxFactory().getInitialContext(environment);
                 context = LdapCtxFactory.getLdapCtxInstance(environment.get(Context.PROVIDER_URL), environment);
                 return context;
@@ -81,9 +77,7 @@ public class LDAPConnectionContext {
                     throw new LDAPConnectorException("Error obtaining connection. " + e.getMessage(), e);
                 }
             }
-
             retry--;
-
             log.error("Trying again to get connection.");
             try {
                 Thread.sleep(1000);

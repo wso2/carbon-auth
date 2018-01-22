@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.ServiceReferenceHolder;
 import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
-//import org.wso2.carbon.auth.user.mgt.Constants;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 import org.wso2.carbon.auth.user.store.connector.PasswordHandler;
@@ -34,9 +33,6 @@ import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
-
-//import java.util.HashMap;
-//import java.util.Map;
 
 /**
  * Managing LDAP user store functions
@@ -67,9 +63,7 @@ public class LDAPUserStoreManager implements UserStoreManager {
             String password = (String) credential;
             String userId = userStoreConnector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, userName);
             Map info = userStoreConnector.getUserPasswordInfo(userId);
-
             PasswordHandler passwordHandler = new DefaultPasswordHandler();
-
             passwordHandler.setIterationCount((int) info.get(UserStoreConstants.ITERATION_COUNT));
             passwordHandler.setKeyLength((int) info.get(UserStoreConstants.KEY_LENGTH));
             String hashedPassword = passwordHandler
@@ -83,10 +77,13 @@ public class LDAPUserStoreManager implements UserStoreManager {
             }
 
         } catch (UserStoreConnectorException e) {
+            log.error("User Connector exception occurred", e);
             throw new UserStoreException("User Connector exception occurred", e);
         } catch (UserNotFoundException e) {
+            log.error("User not found exception occurred", e);
             throw new UserStoreException("User not found exception occurred", e);
         } catch (NoSuchAlgorithmException e) {
+            log.error("No such algorithm exception occurred", e);
             throw new UserStoreException("No such algorithm exception occurred", e);
         }
     }
