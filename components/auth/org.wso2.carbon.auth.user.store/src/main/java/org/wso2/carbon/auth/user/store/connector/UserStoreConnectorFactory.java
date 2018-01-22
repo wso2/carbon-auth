@@ -23,6 +23,7 @@ package org.wso2.carbon.auth.user.store.connector;
 import org.wso2.carbon.auth.core.ServiceReferenceHolder;
 import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.connector.jdbc.JDBCUserStoreConnector;
+import org.wso2.carbon.auth.user.store.connector.ldap.LDAPUserStoreConnector;
 import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
 
 /**
@@ -30,12 +31,14 @@ import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
  *
  */
 public class UserStoreConnectorFactory {
-    
+
     public static UserStoreConnector getUserStoreConnector() {
         UserStoreConfiguration userStoreConfiguration = ServiceReferenceHolder.getInstance().
                 getAuthConfiguration().getUserStoreConfiguration();
         if (UserStoreConstants.JDBC_CONNECTOR_TYPE.equals(userStoreConfiguration.getConnectorType())) {
             return new JDBCUserStoreConnector();
+        } else if (UserStoreConstants.LDAP_CONNECTOR_TYPE.equals(userStoreConfiguration.getConnectorType())) {
+            return new LDAPUserStoreConnector();
         }
         return new JDBCUserStoreConnector();
     }

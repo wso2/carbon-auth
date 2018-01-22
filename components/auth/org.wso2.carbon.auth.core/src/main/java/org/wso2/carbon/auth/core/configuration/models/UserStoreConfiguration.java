@@ -20,6 +20,7 @@
 
 package org.wso2.carbon.auth.core.configuration.models;
 
+import org.wso2.carbon.auth.core.Constants;
 import org.wso2.carbon.config.annotation.Element;
 
 import java.util.ArrayList;
@@ -29,25 +30,44 @@ import java.util.Map;
 
 /**
  * Class to hold user store configuration
- *
  */
 public class UserStoreConfiguration {
-    
+
     @Element(description = "Connector Type")
     private String connectorType = "JDBC";
-    
-    @Element(description = "Property Map")
-    private Map<String, Object> properties = new HashMap<>();
-    
+
+    @Element(description = "Super user ID")
+    private String superUser = "admin";
+
+    @Element(description = "Super user pass")
+    private String superUserPass = "admin";
+
+    @Element(description = "JDBC Property Map")
+    private Map<String, Object> jdbcProperties = new HashMap<>();
+
+    @Element(description = "LDAP Property Map")
+    private Map<String, Object> ldapProperties = new HashMap<>();
+
     @Element(description = "Read Only or not")
     private boolean readOnly = false;
-    
+
     @Element(description = "Attribute Mapping")
     private List<AttributeConfiguration> attributes = new ArrayList<AttributeConfiguration>();
-    
+
+    @Element(description = "Password hash algorithm")
+    private String hashAlgo = "SHA256";
+
+    @Element(description = "Password iteration count")
+    private int iterationCount = 4096;
+
+    @Element(description = "Password key length")
+    private int keyLength = 256;
+
     public UserStoreConfiguration() {
-        properties.put("dataSource", "WSO2_USER_DB");
+        populateJDBCDefaultProperties();
+        populateLDAPDefaultProperties();
         populateDefaultAttributes();
+
     }
 
     public String getConnectorType() {
@@ -56,14 +76,6 @@ public class UserStoreConfiguration {
 
     public void setConnectorType(String connectorType) {
         this.connectorType = connectorType;
-    }
-
-    public Map<String, Object> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
     }
 
     public List<AttributeConfiguration> getAttributes() {
@@ -81,12 +93,12 @@ public class UserStoreConfiguration {
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
     }
-    
+
     private void populateDefaultAttributes() {
         AttributeConfiguration userNameAttribute = new AttributeConfiguration("userName", "Username", true, ".*", true);
-        AttributeConfiguration nameAttribute = new AttributeConfiguration("givenName", "First Name", false, ".*", 
+        AttributeConfiguration nameAttribute = new AttributeConfiguration("givenName", "First Name", false, ".*",
                 false);
-        AttributeConfiguration lastNameAttribute = new AttributeConfiguration("lastName", "Last Name", false, ".*", 
+        AttributeConfiguration lastNameAttribute = new AttributeConfiguration("lastName", "Last Name", false, ".*",
                 false);
         AttributeConfiguration emailAttribute = new AttributeConfiguration("email", "Email", false, ".*", false);
         AttributeConfiguration addressAttribute = new AttributeConfiguration("address", "Address", false, ".*", false);
@@ -103,4 +115,83 @@ public class UserStoreConfiguration {
         attributes.add(organization);
     }
 
+    private void populateJDBCDefaultProperties() {
+        jdbcProperties.put(Constants.DATASOURCE, "WSO2_UM_DB");
+    }
+
+    private void populateLDAPDefaultProperties() {
+        ldapProperties.put(Constants.LDAP_CONNECTOR_CLASS,
+                "org.wso2.carbon.auth.user.store.connector.ldap.LDAPUserStoreConnector");
+        ldapProperties.put(Constants.LDAP_CONNECTION_URL, "ldap://localhost:10389");
+        ldapProperties.put(Constants.LDAP_CONNECTION_NAME, "uid=admin,ou=system");
+        ldapProperties.put(Constants.LDAP_CONNECTION_PASSWORD, "admin");
+        ldapProperties.put(Constants.LDAP_INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        ldapProperties.put(Constants.LDAP_SECURITY_AUTHENTICATION, "simple");
+        ldapProperties.put(Constants.LDAP_USER_SEARCH_BASE, "ou=Users,dc=wso2,dc=org");
+        ldapProperties.put(Constants.LDAP_USER_ENTRY_OBJECT_CLASS, "identityPerson");
+        ldapProperties.put(Constants.LDAP_USERNAME_ATTRIBUTE, "uid");
+        ldapProperties.put(Constants.LDAP_USERNAME_SEARCH_FILTER, "(&amp;(objectClass=person)(uid=?))");
+        ldapProperties.put(Constants.LDAP_USERNAME_LIST_FILTER, "(objectClass=person)");
+        ldapProperties.put(Constants.LDAP_GROUP_SEARCH_BASE, "ou=Groups,dc=wso2,dc=org");
+        ldapProperties.put(Constants.LDAP_GROUP_ENTRY_OBJECT_CLASS, "groupOfNames");
+        ldapProperties.put(Constants.LDAP_GROUP_ATTRIBUTE, "cn");
+        ldapProperties.put(Constants.LDAP_GROUP_SEARCH_FILTER, "(&amp;(objectClass=groupOfNames)(cn=?))");
+        ldapProperties.put(Constants.LDAP_GROUP_LIST_FILTER, "(objectClass=groupOfNames)");
+    }
+
+    public String getSuperUser() {
+        return superUser;
+    }
+
+    public void setSuperUser(String superUser) {
+        this.superUser = superUser;
+    }
+
+    public String getSuperUserPass() {
+        return superUserPass;
+    }
+
+    public void setSuperUserPass(String superUserPass) {
+        this.superUserPass = superUserPass;
+    }
+
+    public String getHashAlgo() {
+        return hashAlgo;
+    }
+
+    public void setHashAlgo(String hashAlgo) {
+        this.hashAlgo = hashAlgo;
+    }
+
+    public int getIterationCount() {
+        return iterationCount;
+    }
+
+    public void setIterationCount(int iterationCount) {
+        this.iterationCount = iterationCount;
+    }
+
+    public int getKeyLength() {
+        return keyLength;
+    }
+
+    public void setKeyLength(int keyLength) {
+        this.keyLength = keyLength;
+    }
+
+    public Map<String, Object> getJdbcProperties() {
+        return jdbcProperties;
+    }
+
+    public void setJdbcProperties(Map<String, Object> jdbcProperties) {
+        this.jdbcProperties = jdbcProperties;
+    }
+
+    public Map<String, Object> getLdapProperties() {
+        return ldapProperties;
+    }
+
+    public void setLdapProperties(Map<String, Object> ldapProperties) {
+        this.ldapProperties = ldapProperties;
+    }
 }

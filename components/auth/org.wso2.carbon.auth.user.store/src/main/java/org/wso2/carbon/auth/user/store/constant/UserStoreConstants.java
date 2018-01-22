@@ -27,7 +27,6 @@ package org.wso2.carbon.auth.user.store.constant;
 public class UserStoreConstants {
     
     public static final String JDBC_CONNECTOR_TYPE = "JDBC";
-    
     public static final String LDAP_CONNECTOR_TYPE = "LDAP";
     public static final String PASSWORD = "password";
     public static final String PASSWORD_SALT = "password_salt";

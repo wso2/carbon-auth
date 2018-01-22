@@ -31,12 +31,20 @@ import org.wso2.carbon.auth.client.registration.rest.api.RegisterApi;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.ApplicationDTO;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.RegistrationRequestDTO;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.UpdateRequestDTO;
+import org.wso2.carbon.auth.core.ServiceReferenceHolder;
+import org.wso2.carbon.auth.core.configuration.models.AuthConfiguration;
+import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
+import org.wso2.carbon.auth.user.store.constant.JDBCConnectorConstants;
+import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
 import org.wso2.carbon.auth.user.store.internal.ConnectorDataHolder;
+import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.msf4j.Request;
 
 import javax.ws.rs.core.Response;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
 
@@ -67,6 +75,15 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
         request = Mockito.mock(Request.class);
         Mockito.when(request.getHeader("Authorization")).thenReturn("Basic YWRtaW46YWRtaW4=");
         Mockito.when(dataSourceService.getDataSource("WSO2_UM_DB")).thenReturn(this.umDataSource.getDatasource());
+
+        AuthConfiguration authConfig = new AuthConfiguration();
+        UserStoreConfiguration storeConfiguration = new UserStoreConfiguration();
+        authConfig.setUserStoreConfiguration(storeConfiguration);
+
+        ConfigProvider configProvider = Mockito.mock(ConfigProvider.class);
+        Mockito.when(configProvider.getConfigurationObject(AuthConfiguration.class)).thenReturn(authConfig);
+        ServiceReferenceHolder.getInstance().setConfigProvider(configProvider);
+
         ConnectorDataHolder.getInstance().setDataSourceService(dataSourceService);
     }
 

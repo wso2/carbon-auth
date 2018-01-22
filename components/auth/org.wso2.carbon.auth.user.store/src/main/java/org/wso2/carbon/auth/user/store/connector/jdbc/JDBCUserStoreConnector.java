@@ -39,6 +39,7 @@ import org.wso2.carbon.auth.user.store.util.UserStoreUtil;
 import org.wso2.carbon.datasource.core.exception.DataSourceException;
 
 import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -62,12 +63,13 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
     protected UserStoreConfiguration userStoreConfig;
     protected String identityStoreId;
     protected Map<String, String> sqlQueries;
+    private Map<String, Object> properties;
 
     protected void loadQueries(Map<String, String> properties) {
 
-        String databaseType = (String) properties.get(JDBCConnectorConstants.DATABASE_TYPE);
+        String databaseType = properties.get(JDBCConnectorConstants.DATABASE_CLASS_NAME);
 
-        if (databaseType != null && (databaseType.equalsIgnoreCase("MySQL") || databaseType.equalsIgnoreCase("H2"))) {
+        if (databaseType != null && (databaseType.contains("MySQL") || databaseType.contains("H2"))) {
             sqlQueries = new MySQLFamilySQLQueryFactory().getQueries();
             if (log.isDebugEnabled()) {
                 log.debug("{} sql queries loaded for database type: {}.", sqlQueries.size(), databaseType);
@@ -84,10 +86,10 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
     @Override
     public void init(UserStoreConfiguration userStoreConfig) throws UserStoreConnectorException {
 
-        Map<String, Object> properties = userStoreConfig.getProperties();
+        this.properties = userStoreConfig.getJdbcProperties();
         Map<String, String> strProperties = new HashMap<String, String>();
 
-        for (Entry<String, Object> entry : properties.entrySet()) {
+        for (Entry<String, Object> entry : this.properties.entrySet()) {
             if (entry.getValue() instanceof String) {
                 strProperties.put(entry.getKey(), (String) entry.getValue());
             }
@@ -98,8 +100,17 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
         try {
             dataSource = ConnectorDataHolder.getInstance()
                     .getDataSource((String) properties.get(JDBCConnectorConstants.DATA_SOURCE));
+            if (dataSource == null) {
+                throw new UserStoreConnectorException("Datasource is not configured properly");
+            }
+            try (Connection con = dataSource.getConnection()) {
+                strProperties.put(JDBCConnectorConstants.DATABASE_CLASS_NAME, con.getMetaData().getDriverName());
+                this.properties.put(JDBCConnectorConstants.DATABASE_CLASS_NAME, con.getMetaData().getDriverName());
+            }
         } catch (DataSourceException e) {
             throw new UserStoreConnectorException("Error occurred while initiating data source.", e);
+        } catch (SQLException e) {
+            throw new UserStoreConnectorException("Error occurred while getting data source metadata.", e);
         }
 
         loadQueries(strProperties);
@@ -336,11 +347,10 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             throws UserStoreConnectorException {
 
         List<String> userIdsToReturn = new ArrayList<>();
-        Map<String, Object> properties = userStoreConfig.getProperties();
-        String databaseType = (String) properties.get(JDBCConnectorConstants.DATABASE_TYPE);
+        String databaseType = (String) this.properties.get(JDBCConnectorConstants.DATABASE_CLASS_NAME);
         String sqlQuerryForUserAttributes;
 
-        if (databaseType != null && (databaseType.equalsIgnoreCase("MySQL") || databaseType.equalsIgnoreCase("H2"))) {
+        if (databaseType != null && (databaseType.contains("MySQL") || databaseType.contains("H2"))) {
 
             sqlQuerryForUserAttributes = new MySQLFamilySQLQueryFactory()
                     .getQuerryForUserIdFromMultipleAttributes(attributes, offset, length);
@@ -653,7 +663,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
 
         int length;
 
-        String maxValue = (String) userStoreConfig.getProperties().get(JDBCConnectorConstants.MAX_ROW_LIMIT);
+        String maxValue = (String) this.properties.get(JDBCConnectorConstants.MAX_ROW_LIMIT);
 
         if (maxValue == null) {
             length = Integer.MAX_VALUE;
@@ -822,29 +832,15 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
     }
 
     private String getHashAlgo() {
-        String hashAlgo = "SHA256";
-        //TODO:Read algo from config
-        return hashAlgo;
+        return userStoreConfig.getHashAlgo();
     }
 
     private int getIterationCount() {
-        int iterationCount = 4096;
-        //TODO:Read iteration count from config
-        /*String iterationCountObj = null;
-        if (iterationCountObj != null) {
-            iterationCount = Integer.parseInt(iterationCountObj);
-        }*/
-        return iterationCount;
+        return userStoreConfig.getIterationCount();
     }
 
     private int getKeyLength() {
-        int keyLength = 256;
-        //TODO:Read key length from config
-        /*String keyLengthObj = null;
-        if (keyLengthObj != null) {
-            keyLength = Integer.parseInt(keyLengthObj);
-        } */
-        return keyLength;
+        return userStoreConfig.getKeyLength();
     }
 
 }

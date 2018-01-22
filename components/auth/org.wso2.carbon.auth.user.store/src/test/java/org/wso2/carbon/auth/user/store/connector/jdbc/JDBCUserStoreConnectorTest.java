@@ -37,15 +37,12 @@ import org.wso2.carbon.auth.user.store.connector.Constants;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnectorFactory;
 import org.wso2.carbon.auth.user.store.connector.testutil.Utils;
-import org.wso2.carbon.auth.user.store.constant.JDBCConnectorConstants;
 import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
 import org.wso2.carbon.auth.user.store.exception.GroupNotFoundException;
-import org.wso2.carbon.auth.user.store.exception.StoreException;
 import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 import org.wso2.carbon.auth.user.store.internal.ConnectorDataHolder;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
-import org.wso2.carbon.datasource.core.exception.DataSourceException;
 
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
@@ -64,7 +61,6 @@ import javax.security.auth.callback.PasswordCallback;
 @PrepareForTest({ ServiceReferenceHolder.class, SecretKeyFactory.class, LoggerFactory.class })
 public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
     private static final Logger log = LoggerFactory.getLogger(JDBCUserStoreConnectorTest.class);
-    @Mock
     UserStoreConfiguration userStoreConfiguration;
     @Mock
     ServiceReferenceHolder serviceReferenceHolder;
@@ -84,21 +80,19 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         super.init();
         super.setup();
 
+        userStoreConfiguration = new UserStoreConfiguration();
+        userStoreConfiguration.setConnectorType(UserStoreConstants.JDBC_CONNECTOR_TYPE);
+
         log.info("setup JDBCUserStoreConnectorTest");
         PowerMockito.mockStatic(ServiceReferenceHolder.class);
         PowerMockito.when(ServiceReferenceHolder.getInstance()).thenReturn(serviceReferenceHolder);
         PowerMockito.when(serviceReferenceHolder.getAuthConfiguration()).thenReturn(authConfiguration);
         PowerMockito.when(authConfiguration.getUserStoreConfiguration()).thenReturn(userStoreConfiguration);
-        PowerMockito.when(userStoreConfiguration.getConnectorType()).thenReturn(UserStoreConstants.JDBC_CONNECTOR_TYPE);
-
         PowerMockito.when(dataSourceService.getDataSource(Constants.DATASOURCE_WSO2UM_DB))
                 .thenReturn(this.umDataSource.getDatasource());
+
         ConnectorDataHolder.getInstance().setDataSourceService(dataSourceService);
 
-        Map map = new HashMap();
-        map.put(JDBCConnectorConstants.DATA_SOURCE, Constants.DATASOURCE_WSO2UM_DB);
-        map.put(JDBCConnectorConstants.DATABASE_TYPE, "H2");
-        PowerMockito.when(userStoreConfiguration.getProperties()).thenReturn(map);
         connector = UserStoreConnectorFactory.getUserStoreConnector();
         Assert.assertNotNull(connector);
         try {
@@ -130,48 +124,19 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
 
     @Test
     public void testInit() throws Exception {
-        Map map = new HashMap();
-        map.put(JDBCConnectorConstants.DATA_SOURCE, Constants.DATASOURCE_WSO2UM_DB);
-        map.put(JDBCConnectorConstants.DATABASE_TYPE, "MySql");
-        PowerMockito.when(userStoreConfiguration.getProperties()).thenReturn(map);
         try {
             connector.init(userStoreConfiguration);
         } catch (UserStoreConnectorException e) {
             Assert.fail("Exception not expected");
         }
 
-        map = new HashMap();
-        map.put(JDBCConnectorConstants.DATA_SOURCE, Constants.DATASOURCE_WSO2UM_DB);
-        map.put(JDBCConnectorConstants.DATABASE_TYPE, null);
-        PowerMockito.when(userStoreConfiguration.getProperties()).thenReturn(map);
-        try {
-            connector.init(userStoreConfiguration);
-            Assert.fail("Exception expected");
-        } catch (StoreException e) {
-            Assert.assertEquals("Invalid or unsupported database type specified in the configuration.", e.getMessage());
-        }
-
-        map = new HashMap();
-        map.put(JDBCConnectorConstants.DATA_SOURCE, Constants.DATASOURCE_WSO2UM_DB);
-        map.put(JDBCConnectorConstants.DATABASE_TYPE, "nuSuchType");
-        PowerMockito.when(userStoreConfiguration.getProperties()).thenReturn(map);
-        try {
-            connector.init(userStoreConfiguration);
-            Assert.fail("Exception expected");
-        } catch (StoreException e) {
-            Assert.assertEquals("Invalid or unsupported database type specified in the configuration.", e.getMessage());
-        }
-
-        PowerMockito.when(dataSourceService.getDataSource("nuSuchDataSource")).thenThrow(DataSourceException.class);
-        map = new HashMap();
-        map.put(JDBCConnectorConstants.DATA_SOURCE, "nuSuchDataSource");
-        map.put(JDBCConnectorConstants.DATABASE_TYPE, "H2");
-        PowerMockito.when(userStoreConfiguration.getProperties()).thenReturn(map);
+        userStoreConfiguration.getJdbcProperties()
+                .put(org.wso2.carbon.auth.core.Constants.DATASOURCE, "nuSuchDataSource");
         try {
             connector.init(userStoreConfiguration);
             Assert.fail("Exception expected");
         } catch (UserStoreConnectorException e) {
-            Assert.assertTrue(e.getCause() instanceof DataSourceException);
+            Assert.assertEquals("Datasource is not configured properly", e.getMessage());
         }
     }
 
