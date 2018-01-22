@@ -24,7 +24,7 @@ package org.wso2.carbon.auth.user.store.constant;
 public class JDBCConnectorConstants {
 
     public static final String DATA_SOURCE = "dataSource";
-    public static final String DATABASE_TYPE = "databaseType";
+    public static final String DATABASE_CLASS_NAME = "databaseClassName";
     public static final String MAX_ROW_LIMIT = "maxRowLimit";
 
     //Credential store connector properties

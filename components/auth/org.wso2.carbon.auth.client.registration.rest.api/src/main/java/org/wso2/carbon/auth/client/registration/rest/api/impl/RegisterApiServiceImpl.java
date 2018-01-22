@@ -17,7 +17,8 @@ import org.wso2.carbon.auth.client.registration.rest.api.utils.MappingUtil;
 import org.wso2.carbon.auth.client.registration.rest.api.utils.ParseException;
 import org.wso2.carbon.auth.client.registration.rest.api.utils.RestAPIUtil;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
-import org.wso2.carbon.auth.user.mgt.impl.JDBCUserStoreManager;
+import org.wso2.carbon.auth.user.mgt.UserStoreManager;
+import org.wso2.carbon.auth.user.mgt.UserStoreManagerFactory;
 import org.wso2.msf4j.Request;
 import javax.ws.rs.core.Response;
 
@@ -71,7 +72,7 @@ public class RegisterApiServiceImpl extends RegisterApiService {
             throws NotFoundException {
         ApplicationDTO applicationDTO;
         ClientRegistrationHandler handler;
-        JDBCUserStoreManager userStoreManager = new JDBCUserStoreManager();
+        UserStoreManager userStoreManager = UserStoreManagerFactory.getUserStoreManager();
         try {
             handler = ClientRegistrationFactory.getInstance().getClientRegistrationHandler();
             Application newApp = MappingUtil.registrationRequestToApplication(registrationRequest);

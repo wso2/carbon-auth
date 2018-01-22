@@ -1,0 +1,15 @@
+dn: cn=userPassInfo,cn=schema,cn=config
+objectClass: olcSchemaConfig
+cn: userPassInfo
+olcAttributeTypes: ( 1.3.6.1.4.1.37505.1.61
+        NAME 'userPasswordSalt'
+        EQUALITY caseIgnoreMatch
+        SUBSTR caseIgnoreSubstringsMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+olcObjectClasses: ( 1.3.6.1.4.1.37505.1.102
+    NAME 'userPassInfo'
+    DESC 'userPassInfo'
+    SUP inetOrgPerson
+    STRUCTURAL
+    MAY  ( userPasswordSalt )
+ )

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -35,13 +35,13 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 /**
- * Managing JDBC user store functions
+ * Managing LDAP user store functions
  */
-public class JDBCUserStoreManager implements UserStoreManager {
-    private static final Logger log = LoggerFactory.getLogger(JDBCUserStoreManager.class);
+public class LDAPUserStoreManager implements UserStoreManager {
+    private static Logger log = LoggerFactory.getLogger(LDAPUserStoreManager.class);
     private UserStoreConnector userStoreConnector;
 
-    public JDBCUserStoreManager() {
+    public LDAPUserStoreManager() {
         UserStoreConnector connector = UserStoreConnectorFactory.getUserStoreConnector();
         UserStoreConfiguration config = ServiceReferenceHolder.getInstance().getAuthConfiguration()
                 .getUserStoreConfiguration();
@@ -53,17 +53,17 @@ public class JDBCUserStoreManager implements UserStoreManager {
         this.userStoreConnector = connector;
     }
 
+    public LDAPUserStoreManager(UserStoreConnector userStoreConnector) {
+        this.userStoreConnector = userStoreConnector;
+    }
+
     @Override
     public boolean doAuthenticate(String userName, Object credential) throws UserStoreException {
-        //todo: check username and password
-
         try {
             String password = (String) credential;
             String userId = userStoreConnector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, userName);
             Map info = userStoreConnector.getUserPasswordInfo(userId);
-
             PasswordHandler passwordHandler = new DefaultPasswordHandler();
-
             passwordHandler.setIterationCount((int) info.get(UserStoreConstants.ITERATION_COUNT));
             passwordHandler.setKeyLength((int) info.get(UserStoreConstants.KEY_LENGTH));
             String hashedPassword = passwordHandler
@@ -77,10 +77,13 @@ public class JDBCUserStoreManager implements UserStoreManager {
             }
 
         } catch (UserStoreConnectorException e) {
+            log.error("User Connector exception occurred", e);
             throw new UserStoreException("User Connector exception occurred", e);
         } catch (UserNotFoundException e) {
+            log.error("User not found exception occurred", e);
             throw new UserStoreException("User not found exception occurred", e);
         } catch (NoSuchAlgorithmException e) {
+            log.error("No such algorithm exception occurred", e);
             throw new UserStoreException("No such algorithm exception occurred", e);
         }
     }

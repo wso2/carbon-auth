@@ -15,26 +15,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package org.wso2.carbon.auth.core.configuration.models;
-
-import org.wso2.carbon.config.annotation.Configuration;
-import org.wso2.carbon.config.annotation.Element;
+package org.wso2.carbon.auth.user.store.connector.ldap;
 
 /**
- * Class to hold key manager configurations
+ * Ldap related utils
  */
-@Configuration(description = "Key Management Configurations")
-public class KeyManagerConfiguration {
+public class LdapUtils {
+    public static final String CLAIM_USERNAME = "urn:ietf:params:scim:schemas:core:2.0:User:userName";
+    public static final String LDAP_CLAIM_USERNAME = "name";
 
-    @Element(description = "Access token default validity period")
-    private long defaultTokenValidityPeriod = 3600L;
-
-    public long getDefaultTokenValidityPeriod() {
-        return defaultTokenValidityPeriod;
-    }
-
-    public void setDefaultTokenValidityPeriod(long defaultTokenValidityPeriod) {
-        this.defaultTokenValidityPeriod = defaultTokenValidityPeriod;
+    public static String mappingClaim(String claim) {
+        if (CLAIM_USERNAME.equals(claim)) {
+            return LDAP_CLAIM_USERNAME;
+        }
+        return null;
     }
 }

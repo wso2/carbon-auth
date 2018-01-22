@@ -1,4 +1,4 @@
-#   Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved
+#   Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved
 #
 #   Licensed under the Apache License, Version 2.0 (the \"License\");
 #   you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
   # Auth Configuration Parameters
 wso2.carbon.auth:
     # User Store Configurations
-  userStoreConfiguration: !!org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration
+  userStoreConfiguration:
     attributes:
     - attribute: userName
       displayName: Username
@@ -57,10 +57,31 @@ wso2.carbon.auth:
       regex: .*
       required: false
       unique: false
-    connectorType: JDBC
-    properties:
-      dataSource: WSO2_USER_DB
+    connectorType: LDAP
+    hashAlgo: SHA256
+    iterationCount: 4096
+    jdbcProperties:
+      dataSource: WSO2_UM_DB
+    keyLength: 256
+    ldapProperties:
+      ldap.ConnectionPassword: admin
+      ldap.UserNameAttribute: uid
+      ldap.ConnectionName: uid=admin,ou=system
+      ldap.UserNameSearchFilter: (&amp;(objectClass=person)(uid=?))
+      ldap.ConnectionURL: ldap://localhost:10389
+      ldap.InitialContextFactory: com.sun.jndi.ldap.LdapCtxFactory
+      ldap.UserEntryObjectClass: identityPerson
+      ldap.SecurityAuthentication: simple
+      ldap.UserNameListFilter: (objectClass=person)
+      ldap.UserSearchBase: ou=Users,dc=wso2,dc=org
+      ldap.connectorClass: org.wso2.carbon.auth.user.store.connector.ldap.LDAPUserStoreConnector
     readOnly: true
+    superUser: admin
+    superUserPass: admin
+    # Key Management Configurations
+  keyManagerConfigs:
+      # Access token default validity period
+    defaultTokenValidityPeriod: 60
 
 wso2.securevault:
   secretRepository:

@@ -1,0 +1,7 @@
+dn: ou=Groups,dc=EXAMPLE,dc=ORG
+changetype: add
+objectClass: top
+objectClass: organizationalUnit
+ou: Groups
+
+

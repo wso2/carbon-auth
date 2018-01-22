@@ -36,7 +36,7 @@ import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
-import org.wso2.carbon.auth.user.mgt.impl.JDBCUserStoreManager;
+import org.wso2.carbon.auth.user.mgt.UserStoreManagerFactory;
 
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -109,9 +109,9 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
         String username = request.getUsername();
         Secret password = request.getPassword();
 
-        UserStoreManager jdbcUserStoreManager = new JDBCUserStoreManager();
+        UserStoreManager userStoreManager = UserStoreManagerFactory.getUserStoreManager();
         try {
-            return jdbcUserStoreManager.doAuthenticate(username, password.getValue());
+            return userStoreManager.doAuthenticate(username, password.getValue());
         } catch (UserStoreException e) {
             log.error(e.getMessage(), e);
         }

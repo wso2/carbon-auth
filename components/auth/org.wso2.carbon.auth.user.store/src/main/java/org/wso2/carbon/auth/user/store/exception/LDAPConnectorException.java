@@ -15,26 +15,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package org.wso2.carbon.auth.core.configuration.models;
-
-import org.wso2.carbon.config.annotation.Configuration;
-import org.wso2.carbon.config.annotation.Element;
+package org.wso2.carbon.auth.user.store.exception;
 
 /**
- * Class to hold key manager configurations
+ * Exception class for LDAP connection exceptions
  */
-@Configuration(description = "Key Management Configurations")
-public class KeyManagerConfiguration {
-
-    @Element(description = "Access token default validity period")
-    private long defaultTokenValidityPeriod = 3600L;
-
-    public long getDefaultTokenValidityPeriod() {
-        return defaultTokenValidityPeriod;
+public class LDAPConnectorException extends Exception {
+    public LDAPConnectorException() {
+        super();
     }
 
-    public void setDefaultTokenValidityPeriod(long defaultTokenValidityPeriod) {
-        this.defaultTokenValidityPeriod = defaultTokenValidityPeriod;
+    public LDAPConnectorException(String message) {
+        super(message);
+    }
+
+    public LDAPConnectorException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public LDAPConnectorException(Throwable cause) {
+        super(cause);
+    }
+
+    protected LDAPConnectorException(String message, Throwable cause, boolean enableSuppression,
+            boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 }
