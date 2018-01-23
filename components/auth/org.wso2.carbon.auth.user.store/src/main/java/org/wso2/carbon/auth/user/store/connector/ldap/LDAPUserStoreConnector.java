@@ -36,6 +36,7 @@ import org.wso2.carbon.auth.user.store.util.UserStoreUtil;
 import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.BasicAttributes;
 import javax.naming.directory.DirContext;
+import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchResult;
 import javax.security.auth.callback.PasswordCallback;
 
@@ -93,8 +95,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         matchAttrs.put(new BasicAttribute(mappedAttributeName, attributeValue));
 
         try {
-            //            NameParser ldapParser = context.getNameParser("");
-            //            Name compoundName = ldapParser.parse(userSearchBase);
             NamingEnumeration<SearchResult> enumeration = context.search(userSearchBase, matchAttrs);
             if (enumeration.hasMoreElements()) {
                 SearchResult next = enumeration.next();
@@ -124,8 +124,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         matchAttrs.put(new BasicAttribute(mappedAttributeName, attributeValue));
 
         try {
-            //            NameParser ldapParser = context.getNameParser("");
-            //            Name compoundName = ldapParser.parse(userSearchBase);
             NamingEnumeration<SearchResult> enumeration = context.search(userSearchBase, matchAttrs);
             while (enumeration.hasMoreElements()) {
                 SearchResult next = enumeration.next();
@@ -150,7 +148,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
 
         try {
             NameParser ldapParser = context.getNameParser("");
-            //            Name compoundName = ldapParser.parse(userSearchBase);
             Name compoundName = ldapParser.parse(usernameAttribute + "=" + userID + "," + userSearchBase);
             Attributes attributes = context.getAttributes(compoundName);
             NamingEnumeration<String> ids = attributes.getIDs();
@@ -159,7 +156,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
                 javax.naming.directory.Attribute attribute = attributes.get(id);
                 attributeList.add(new Attribute(id, (String) attribute.get()));
             }
-
         } catch (NamingException e) {
             log.error("Error while getting user from LDAP", e);
             throw new UserStoreConnectorException("Error while getting user from LDAP", e);
@@ -182,8 +178,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         matchAttrs.put(new BasicAttribute(mappedAttributeName, attributeValue));
 
         try {
-            //            NameParser ldapParser = context.getNameParser("");
-            //            Name compoundName = ldapParser.parse(userSearchBase);
             NamingEnumeration<SearchResult> enumeration = context.search(groupSearchBase, matchAttrs);
             if (enumeration.hasMoreElements()) {
                 SearchResult next = enumeration.next();
@@ -211,10 +205,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         Attributes matchAttrs = new BasicAttributes(true);
         String mappedAttributeName = LdapUtils.mappingClaim(attributeName);
         matchAttrs.put(new BasicAttribute(mappedAttributeName, attributeValue));
-
         try {
-            //            NameParser ldapParser = context.getNameParser("");
-            //            Name compoundName = ldapParser.parse(userSearchBase);
             NamingEnumeration<SearchResult> enumeration = context.search(groupSearchBase, matchAttrs);
             while (enumeration.hasMoreElements()) {
                 SearchResult next = enumeration.next();
@@ -239,7 +230,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
 
         try {
             NameParser ldapParser = context.getNameParser("");
-            //            Name compoundName = ldapParser.parse(userSearchBase);
             Name compoundName = ldapParser.parse(groupAttribute + "=" + groupId + "," + groupSearchBase);
             Attributes attributes = context.getAttributes(compoundName);
             NamingEnumeration<String> ids = attributes.getIDs();
@@ -248,7 +238,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
                 javax.naming.directory.Attribute attribute = attributes.get(id);
                 attributeList.add(new Attribute(id, (String) attribute.get()));
             }
-
         } catch (NamingException e) {
             log.error("Error while getting user from LDAP", e);
             throw new UserStoreConnectorException("Error while getting user from LDAP", e);
@@ -258,7 +247,34 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
 
     @Override
     public boolean isUserInGroup(String userId, String groupId) throws UserStoreConnectorException {
-        //todo: not yet implemented
+        DirContext context;
+        try {
+            context = ldapConnectionContext.getContext();
+        } catch (LDAPConnectorException e) {
+            throw new UserStoreConnectorException("Error getting LDAP context ", e);
+        }
+        try {
+            NameParser ldapParser = context.getNameParser("");
+            Name compoundName = ldapParser.parse(groupAttribute + "=" + groupId + "," + groupSearchBase);
+            Name userCompoundName = ldapParser.parse(usernameAttribute + "=" + userId + "," + userSearchBase);
+            Attributes attributes = context.getAttributes(compoundName);
+            NamingEnumeration<String> ids = attributes.getIDs();
+            while (ids.hasMoreElements()) {
+                String id = ids.next();
+                if (UserStoreConstants.LDAP_MEMBER_ATTRIBUTE.equals(id)) {
+                    javax.naming.directory.Attribute atts = attributes.get(id);
+                    for (int i = 0; i < atts.size(); i++) {
+                        if (atts.get(i).equals(userCompoundName.toString())) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            }
+        } catch (NamingException e) {
+            log.error("Error while getting user from LDAP", e);
+            throw new UserStoreConnectorException("Error while getting user from LDAP", e);
+        }
         return false;
     }
 
@@ -293,8 +309,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         BasicAttributes basicAttributes = getUserBasicAttributes(username);
         setClaims(attributes, basicAttributes, username);
         try {
-
-            //            context = (DirContext) context.lookup(userSearchBase);
             NameParser ldapParser = context.getNameParser("");
             Name compoundName = ldapParser.parse(usernameAttribute + "=" + username + "," + userSearchBase);
             context.createSubcontext(compoundName, basicAttributes);
@@ -308,8 +322,29 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
     @Override
     public String updateUserAttributes(String userIdentifier, List<Attribute> attributes)
             throws UserStoreConnectorException {
-        //todo: not yet implemented
-        return null;
+        DirContext context;
+        try {
+            context = ldapConnectionContext.getContext();
+        } catch (LDAPConnectorException e) {
+            throw new UserStoreConnectorException("Error getting LDAP context ", e);
+        }
+
+        ModificationItem[] basicAttributes = new ModificationItem[attributes.size()];
+        for (int i = 0; i < attributes.size(); i++) {
+            Attribute attribute = attributes.get(i);
+            basicAttributes[i] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
+                    new BasicAttribute(LdapUtils.mappingClaim(attribute.getAttributeName()),
+                            attribute.getAttributeValue()));
+        }
+        try {
+            NameParser ldapParser = context.getNameParser("");
+            Name compoundName = ldapParser.parse(usernameAttribute + "=" + userIdentifier + "," + userSearchBase);
+            context.modifyAttributes(compoundName, basicAttributes);
+        } catch (NamingException e) {
+            log.error("Error users of group", e);
+            throw new UserStoreConnectorException("Error users of group", e);
+        }
+        return userIdentifier;
     }
 
     @Override
@@ -320,10 +355,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         } catch (LDAPConnectorException e) {
             throw new UserStoreConnectorException("Error getting LDAP context ", e);
         }
-
         try {
-            //                        NameParser ldapParser = context.getNameParser("");
-            //            Name compoundName = ldapParser.parse(userSearchBase);
             context.destroySubcontext(usernameAttribute + "=" + userIdentifier + "," + userSearchBase);
         } catch (NamingException e) {
             log.error("Error while getting user from LDAP", e);
@@ -334,7 +366,9 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
     @Override
     public void updateGroupsOfUser(String userIdentifier, List<String> groupIdentifiers)
             throws UserStoreConnectorException {
-        //todo: not yet implemented
+        for (String groupId : groupIdentifiers) {
+            this.updateUsersOfGroup(groupId, Arrays.asList(userIdentifier));
+        }
     }
 
     @Override
@@ -348,7 +382,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
 
         String groupName = null;
         for (Attribute attribute : attributes) {
-            if (UserStoreConstants.CLAIM_USERNAME.equals(attribute.getAttributeName())) {
+            if (UserStoreConstants.GROUP_DISPLAY_NAME.equals(attribute.getAttributeName())) {
                 groupName = attribute.getAttributeValue();
                 break;
             }
@@ -356,8 +390,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         BasicAttributes basicAttributes = getGroupBasicAttributes(groupName);
         setClaims(attributes, basicAttributes, groupName);
         try {
-
-            //            context = (DirContext) context.lookup(userSearchBase);
             NameParser ldapParser = context.getNameParser("");
             Name compoundName = ldapParser.parse(groupAttribute + "=" + groupName + "," + groupSearchBase);
             context.createSubcontext(compoundName, basicAttributes);
@@ -370,15 +402,40 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
 
     @Override
     public Map<String, String> addGroups(Map<String, List<Attribute>> attributes) throws UserStoreConnectorException {
-        //todo: not yet implemented
-        return null;
+        Map<String, String> map = new HashMap<>();
+        for (Map.Entry aGroup : attributes.entrySet()) {
+            String gId = this.addGroup((List<Attribute>) aGroup.getValue());
+            map.put((String) aGroup.getKey(), gId);
+        }
+        return map;
     }
 
     @Override
     public String updateGroupAttributes(String groupIdentifier, List<Attribute> attributes)
             throws UserStoreConnectorException {
-        //todo: not yet implemented
-        return null;
+        DirContext context;
+        try {
+            context = ldapConnectionContext.getContext();
+        } catch (LDAPConnectorException e) {
+            throw new UserStoreConnectorException("Error getting LDAP context ", e);
+        }
+
+        ModificationItem[] basicAttributes = new ModificationItem[attributes.size()];
+        for (int i = 0; i < attributes.size(); i++) {
+            Attribute attribute = attributes.get(i);
+            basicAttributes[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
+                    new BasicAttribute(LdapUtils.mappingClaim(attribute.getAttributeName()),
+                            attribute.getAttributeValue()));
+        }
+        try {
+            NameParser ldapParser = context.getNameParser("");
+            Name compoundName = ldapParser.parse(groupAttribute + "=" + groupIdentifier + "," + groupSearchBase);
+            context.modifyAttributes(compoundName, basicAttributes);
+        } catch (NamingException e) {
+            log.error("Error users of group", e);
+            throw new UserStoreConnectorException("Error users of group", e);
+        }
+        return groupIdentifier;
     }
 
     @Override
@@ -389,10 +446,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         } catch (LDAPConnectorException e) {
             throw new UserStoreConnectorException("Error getting LDAP context ", e);
         }
-
         try {
-            //                        NameParser ldapParser = context.getNameParser("");
-            //            Name compoundName = ldapParser.parse(userSearchBase);
             context.destroySubcontext(groupAttribute + "=" + groupIdentifier + "," + groupSearchBase);
         } catch (NamingException e) {
             log.error("Error while getting user from LDAP", e);
@@ -403,7 +457,37 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
     @Override
     public void updateUsersOfGroup(String groupIdentifier, List<String> userIdentifiers)
             throws UserStoreConnectorException {
-        //todo: not yet implemented
+        DirContext context;
+        try {
+            context = ldapConnectionContext.getContext();
+        } catch (LDAPConnectorException e) {
+            throw new UserStoreConnectorException("Error getting LDAP context ", e);
+        }
+        try {
+            NameParser ldapParser = context.getNameParser("");
+            Name compoundName = ldapParser.parse(groupAttribute + "=" + groupIdentifier + "," + groupSearchBase);
+
+            Attributes groupAttributes = context.getAttributes(compoundName);
+            NamingEnumeration<String> ids = groupAttributes.getIDs();
+            Attributes newAttributes = new BasicAttributes(true);
+            while (ids.hasMoreElements()) {
+                String id = ids.next();
+                if (UserStoreConstants.LDAP_MEMBER_ATTRIBUTE.equals(id)) {
+                    javax.naming.directory.Attribute attribute = groupAttributes.get(id);
+                    for (int i = 0; i < userIdentifiers.size(); i++) {
+                        String uid = userIdentifiers.get(i);
+                        Name userCompoundName = ldapParser.parse(usernameAttribute + "=" + uid + "," + userSearchBase);
+                        log.info(userCompoundName.toString());
+                        attribute.add(userCompoundName.toString());
+                    }
+                    newAttributes.put(attribute);
+                    context.modifyAttributes(compoundName, DirContext.REPLACE_ATTRIBUTE, newAttributes);
+                }
+            }
+        } catch (NamingException e) {
+            log.error("Error users of group", e);
+            throw new UserStoreConnectorException("Error users of group", e);
+        }
     }
 
     @Override
@@ -438,9 +522,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         } catch (LDAPConnectorException e) {
             throw new UserStoreConnectorException("Error getting LDAP context ", e);
         }
-
         try {
-            //            context = (DirContext) context.lookup(userSearchBase);
             NameParser ldapParser = context.getNameParser("");
             Name compoundName = ldapParser.parse(usernameAttribute + "=" + userIdentifier + "," + userSearchBase);
             context.modifyAttributes(compoundName, DirContext.ADD_ATTRIBUTE, basicAttributes);
@@ -448,20 +530,64 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
             log.error("Error adding user credentials to LDAP", e);
             throw new UserStoreConnectorException("Error adding user credentials to LDAP", e);
         }
-
         return userIdentifier;
     }
 
     @Override
     public String updateCredentials(String userIdentifier, PasswordCallback passwordCallback)
             throws UserStoreConnectorException {
-        //todo: not yet implemented
-        return null;
+        DirContext context;
+        try {
+            context = ldapConnectionContext.getContext();
+        } catch (LDAPConnectorException e) {
+            throw new UserStoreConnectorException("Error getting LDAP context ", e);
+        }
+
+        char[] password = passwordCallback.getPassword();
+        String salt = UserStoreUtil.generateUUID();
+        String hashAlgo = getHashAlgo();
+        int iterationCount = getIterationCount();
+        int keyLength = getKeyLength();
+        PasswordHandler passwordHandler = new DefaultPasswordHandler();
+        passwordHandler.setIterationCount(iterationCount);
+        passwordHandler.setKeyLength(keyLength);
+        String hashedPassword;
+        try {
+            hashedPassword = passwordHandler.hashPassword(password, salt, hashAlgo);
+        } catch (NoSuchAlgorithmException e) {
+            throw new UserStoreConnectorException("Error while hashing the password.", e);
+        }
+
+        ModificationItem[] basicAttributes = new ModificationItem[2];
+        basicAttributes[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
+                new BasicAttribute(LDAPConnectorConstants.USER_PASSWORD_ATTRIBUTE_NAME, hashedPassword));
+        basicAttributes[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
+                new BasicAttribute(LDAPConnectorConstants.USER_PASSWORD_SALT_ATTRIBUTE_NAME, salt));
+        try {
+            NameParser ldapParser = context.getNameParser("");
+            Name compoundName = ldapParser.parse(usernameAttribute + "=" + userIdentifier + "," + userSearchBase);
+            context.modifyAttributes(compoundName, basicAttributes);
+        } catch (NamingException e) {
+            log.error("Error users of group", e);
+            throw new UserStoreConnectorException("Error users of group", e);
+        }
+        return userIdentifier;
     }
 
     @Override
     public void deleteCredential(String userIdentifier) throws UserStoreConnectorException {
-        //todo: not yet implemented
+        DirContext context;
+        try {
+            context = ldapConnectionContext.getContext();
+        } catch (LDAPConnectorException e) {
+            throw new UserStoreConnectorException("Error getting LDAP context ", e);
+        }
+        try {
+            context.destroySubcontext(usernameAttribute + "=" + userIdentifier + "," + userSearchBase);
+        } catch (NamingException e) {
+            log.error("Error while getting user from LDAP", e);
+            throw new UserStoreConnectorException("Error while getting user from LDAP", e);
+        }
     }
 
     @Override
@@ -472,10 +598,8 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         } catch (LDAPConnectorException e) {
             throw new UserStoreConnectorException("Error getting LDAP context ", e);
         }
-
         Attributes matchAttrs = new BasicAttributes(true);
         matchAttrs.put(new BasicAttribute(usernameAttribute, userId));
-
         try {
             NamingEnumeration<SearchResult> enumeration = context.search(userSearchBase, matchAttrs);
             while (enumeration.hasMoreElements()) {
@@ -510,9 +634,8 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
                 objectClass.add(userObjectClass.trim());
             }
         }
-        objectClass.add("extensibleObject");
+        objectClass.add(UserStoreConstants.LDAP_EXTENSIBLEOBJECT_ATTRIBUTE);
         basicAttributes.put(objectClass);
-
         BasicAttribute userNameAttribute = new BasicAttribute(usernameAttribute);
         userNameAttribute.add(username);
         basicAttributes.put(userNameAttribute);
@@ -521,26 +644,27 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
 
     protected BasicAttributes getGroupBasicAttributes(String groupName) {
         BasicAttributes basicAttributes = new BasicAttributes(true);
-        String userEntryObjectClassProperty = (String) this.properties.get(Constants.LDAP_GROUP_ENTRY_OBJECT_CLASS);
+        String groupEntryObjectClassProperty = (String) this.properties.get(Constants.LDAP_GROUP_ENTRY_OBJECT_CLASS);
         BasicAttribute objectClass = new BasicAttribute(Constants.OBJECT_CLASS_NAME);
-        String[] objectClassHierarchy = userEntryObjectClassProperty.split("/");
+        String[] objectClassHierarchy = groupEntryObjectClassProperty.split("/");
         for (String userObjectClass : objectClassHierarchy) {
             if (userObjectClass != null && !userObjectClass.trim().equals("")) {
                 objectClass.add(userObjectClass.trim());
             }
         }
-        objectClass.add("extensibleObject");
+        objectClass.add(UserStoreConstants.LDAP_EXTENSIBLEOBJECT_ATTRIBUTE);
         basicAttributes.put(objectClass);
-
         BasicAttribute userNameAttribute = new BasicAttribute(groupAttribute);
         userNameAttribute.add(groupName);
         basicAttributes.put(userNameAttribute);
+        BasicAttribute member = new BasicAttribute(UserStoreConstants.LDAP_MEMBER_ATTRIBUTE);
+        member.add("");
+        basicAttributes.put(member);
         return basicAttributes;
     }
 
     protected void setClaims(List<Attribute> attributes, BasicAttributes basicAttributes, String uniqueName) {
         log.debug("Processing user claims");
-
         boolean isSNExists = false;
         boolean isCNExists = false;
         for (Attribute attribute : attributes) {
@@ -556,16 +680,13 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
             uniqueNameAttribute.add(attribute.getAttributeValue());
             basicAttributes.put(uniqueNameAttribute);
         }
-
         // If required attributes cn, sn are not set during claim mapping,
         // set them as user names
-
         if (!isCNExists) {
             BasicAttribute cn = new BasicAttribute(Constants.ATTR_NAME_CN);
             cn.add(uniqueName);
             basicAttributes.put(cn);
         }
-
         if (!isSNExists) {
             BasicAttribute sn = new BasicAttribute(Constants.ATTR_NAME_SN);
             sn.add(uniqueName);
