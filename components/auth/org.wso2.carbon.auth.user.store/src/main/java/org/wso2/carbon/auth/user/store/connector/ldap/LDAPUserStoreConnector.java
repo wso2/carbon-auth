@@ -103,7 +103,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
                 throw new UserNotFoundException("User not found with the given attribute");
             }
         } catch (NamingException e) {
-            log.error("Error while getting user from LDAP", e);
             throw new UserStoreConnectorException("Error while getting user from LDAP", e);
         }
     }
@@ -130,7 +129,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
                 userList.add((String) next.getAttributes().get(usernameAttribute).get());
             }
         } catch (NamingException e) {
-            log.error("Error while getting user from LDAP", e);
             throw new UserStoreConnectorException("Error while getting user from LDAP", e);
         }
         return userList;
@@ -157,7 +155,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
                 attributeList.add(new Attribute(id, (String) attribute.get()));
             }
         } catch (NamingException e) {
-            log.error("Error while getting user from LDAP", e);
             throw new UserStoreConnectorException("Error while getting user from LDAP", e);
         }
         return attributeList;
@@ -186,7 +183,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
                 throw new GroupNotFoundException("User not found with the given attribute");
             }
         } catch (NamingException e) {
-            log.error("Error while getting user from LDAP", e);
             throw new UserStoreConnectorException("Error while getting user from LDAP", e);
         }
     }
@@ -212,7 +208,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
                 groupList.add((String) next.getAttributes().get(groupAttribute).get());
             }
         } catch (NamingException e) {
-            log.error("Error while getting user from LDAP", e);
             throw new UserStoreConnectorException("Error while getting user from LDAP", e);
         }
         return groupList;
@@ -239,7 +234,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
                 attributeList.add(new Attribute(id, (String) attribute.get()));
             }
         } catch (NamingException e) {
-            log.error("Error while getting user from LDAP", e);
             throw new UserStoreConnectorException("Error while getting user from LDAP", e);
         }
         return attributeList;
@@ -272,7 +266,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
                 }
             }
         } catch (NamingException e) {
-            log.error("Error while getting user from LDAP", e);
             throw new UserStoreConnectorException("Error while getting user from LDAP", e);
         }
         return false;
@@ -313,7 +306,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
             Name compoundName = ldapParser.parse(usernameAttribute + "=" + username + "," + userSearchBase);
             context.createSubcontext(compoundName, basicAttributes);
         } catch (NamingException e) {
-            log.error("Error adding user to LDAP", e);
             throw new UserStoreConnectorException("Error adding user to LDAP", e);
         }
         return username;
@@ -341,7 +333,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
             Name compoundName = ldapParser.parse(usernameAttribute + "=" + userIdentifier + "," + userSearchBase);
             context.modifyAttributes(compoundName, basicAttributes);
         } catch (NamingException e) {
-            log.error("Error users of group", e);
             throw new UserStoreConnectorException("Error users of group", e);
         }
         return userIdentifier;
@@ -358,7 +349,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         try {
             context.destroySubcontext(usernameAttribute + "=" + userIdentifier + "," + userSearchBase);
         } catch (NamingException e) {
-            log.error("Error while getting user from LDAP", e);
             throw new UserStoreConnectorException("Error while getting user from LDAP", e);
         }
     }
@@ -394,7 +384,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
             Name compoundName = ldapParser.parse(groupAttribute + "=" + groupName + "," + groupSearchBase);
             context.createSubcontext(compoundName, basicAttributes);
         } catch (NamingException e) {
-            log.error("Error adding user to LDAP", e);
             throw new UserStoreConnectorException("Error adding user to LDAP", e);
         }
         return groupName;
@@ -432,7 +421,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
             Name compoundName = ldapParser.parse(groupAttribute + "=" + groupIdentifier + "," + groupSearchBase);
             context.modifyAttributes(compoundName, basicAttributes);
         } catch (NamingException e) {
-            log.error("Error users of group", e);
             throw new UserStoreConnectorException("Error users of group", e);
         }
         return groupIdentifier;
@@ -449,7 +437,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         try {
             context.destroySubcontext(groupAttribute + "=" + groupIdentifier + "," + groupSearchBase);
         } catch (NamingException e) {
-            log.error("Error while getting user from LDAP", e);
             throw new UserStoreConnectorException("Error while getting user from LDAP", e);
         }
     }
@@ -485,7 +472,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
                 }
             }
         } catch (NamingException e) {
-            log.error("Error users of group", e);
             throw new UserStoreConnectorException("Error users of group", e);
         }
     }
@@ -527,7 +513,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
             Name compoundName = ldapParser.parse(usernameAttribute + "=" + userIdentifier + "," + userSearchBase);
             context.modifyAttributes(compoundName, DirContext.ADD_ATTRIBUTE, basicAttributes);
         } catch (NamingException e) {
-            log.error("Error adding user credentials to LDAP", e);
             throw new UserStoreConnectorException("Error adding user credentials to LDAP", e);
         }
         return userIdentifier;
@@ -568,7 +553,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
             Name compoundName = ldapParser.parse(usernameAttribute + "=" + userIdentifier + "," + userSearchBase);
             context.modifyAttributes(compoundName, basicAttributes);
         } catch (NamingException e) {
-            log.error("Error users of group", e);
             throw new UserStoreConnectorException("Error users of group", e);
         }
         return userIdentifier;
@@ -585,7 +569,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         try {
             context.destroySubcontext(usernameAttribute + "=" + userIdentifier + "," + userSearchBase);
         } catch (NamingException e) {
-            log.error("Error while getting user from LDAP", e);
             throw new UserStoreConnectorException("Error while getting user from LDAP", e);
         }
     }
@@ -618,7 +601,6 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
                 return info;
             }
         } catch (NamingException e) {
-            log.error("Error while getting user from LDAP", e);
             throw new UserStoreConnectorException("Error while getting user from LDAP", e);
         }
         return null;
