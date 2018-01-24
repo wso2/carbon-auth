@@ -19,7 +19,8 @@ package org.wso2.carbon.auth.user.store.connector;
 
 public class Constants {
     public static final String FAMILY_NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:User:name.familyName";
-    public static final String DISPLAY_NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:displayName";
+    public static final String GROUP_DISPLAY_NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:displayName";
+    public static final String USER_DISPLAY_NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:displayName";
     public static final String USERNAME_URI = "urn:ietf:params:scim:schemas:core:2.0:User:userName";
     public static final String PASSWORD_URI = "password";
     public static final String DATASOURCE_WSO2UM_DB = "WSO2_UM_DB";

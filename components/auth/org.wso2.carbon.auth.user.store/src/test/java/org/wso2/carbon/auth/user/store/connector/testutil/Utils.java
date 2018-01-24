@@ -30,7 +30,9 @@ public class Utils {
     public static String addUser(UserStoreConnector connector, String username, String password) {
         List<Attribute> attributeList = new ArrayList<>();
         attributeList.add(new Attribute(Constants.USERNAME_URI, username));
-        attributeList.add(new Attribute(Constants.PASSWORD_URI, password));
+        if (password != null) {
+            attributeList.add(new Attribute(Constants.PASSWORD_URI, password));
+        }
         return addUser(connector, attributeList);
     }
 
@@ -48,7 +50,7 @@ public class Utils {
 
     public static String addGroup(UserStoreConnector connector, String displayName) {
         List<Attribute> attributes = new ArrayList<>();
-        attributes.add(new Attribute(Constants.DISPLAY_NAME_URI, displayName));
+        attributes.add(new Attribute(Constants.GROUP_DISPLAY_NAME_URI, displayName));
         return addGroup(connector, attributes);
     }
 

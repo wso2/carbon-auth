@@ -17,17 +17,23 @@
  */
 package org.wso2.carbon.auth.user.store.connector.ldap;
 
+import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
+
 /**
  * Ldap related utils
  */
 public class LdapUtils {
-    public static final String CLAIM_USERNAME = "urn:ietf:params:scim:schemas:core:2.0:User:userName";
     public static final String LDAP_CLAIM_USERNAME = "name";
+    public static final String LDAP_DISPLAY_NAME = "displayName";
 
     public static String mappingClaim(String claim) {
-        if (CLAIM_USERNAME.equals(claim)) {
+        if (UserStoreConstants.CLAIM_USERNAME.equals(claim)) {
             return LDAP_CLAIM_USERNAME;
+        } else if (UserStoreConstants.GROUP_DISPLAY_NAME.equals(claim)) {
+            return LDAP_DISPLAY_NAME;
+        } else if (UserStoreConstants.USER_DISPLAY_NAME.equals(claim)) {
+            return LDAP_DISPLAY_NAME;
         }
-        return null;
+        return claim;
     }
 }
