@@ -93,7 +93,9 @@ public class ConnectorDataHolder {
                 return;
             }
         } catch (UserNotFoundException e) {
-            log.error("default user not exist", e);
+            //not logging exception since, this code is to handler default user populating logic
+            //when user not exist
+            log.warn("default user not exist");
         } catch (UserStoreConnectorException e) {
             log.error("Error checking existing admin user", e);
         }
