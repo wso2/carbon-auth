@@ -20,7 +20,8 @@
 
 package org.wso2.carbon.auth.oauth.impl;
 
-import com.nimbusds.oauth2.sdk.token.BearerTokenError;
+import com.nimbusds.oauth2.sdk.OAuth2Error;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,6 @@ public class TokenRequestHandlerImpl implements TokenRequestHandler {
     private OAuthDAO oauthDAO;
     private ApplicationDAO applicationDAO;
     private ClientLookup clientLookup;
-    public static final String UNAUTHORIZED_ERROR_CODE = "UNAUTHORIZED";
 
 
     public TokenRequestHandlerImpl(OAuthDAO oauthDAO, ApplicationDAO applicationDAO) {
@@ -59,8 +59,15 @@ public class TokenRequestHandlerImpl implements TokenRequestHandler {
             throws OAuthDAOException {
         log.debug("Calling generateToken");
         AccessTokenContext context = new AccessTokenContext();
-
+        boolean isAuthorized;
         String grantTypeValue = queryParameters.get(OAuthConstants.GRANT_TYPE_QUERY_PARAM);
+
+        if (StringUtils.isBlank(grantTypeValue)) {
+            String error = "Provided grant type is empty";
+            log.debug(error);
+            context.setErrorObject(OAuth2Error.INVALID_REQUEST);
+            return context;
+        }
 
         MutableBoolean haltExecution = new MutableBoolean(false);
 
@@ -77,12 +84,19 @@ public class TokenRequestHandlerImpl implements TokenRequestHandler {
                 } catch (ClientRegistrationDAOException e) {
                     throw new OAuthDAOException("Error getting client information from the DB", e);
                 }
-                boolean isAuthorized = grantHandler.get().isAuthorizedClient(application, grantTypeValue);
-                if (!isAuthorized) {
-                    String error = "The authenticated client is not authorized to use this authorization grant type";
+
+                if (application == null) {
+                    String error = "Provided client is not valid";
                     log.debug(error);
-                    BearerTokenError disAllowedGrantError = new BearerTokenError(UNAUTHORIZED_ERROR_CODE, error, 401);
-                    context.setErrorObject(disAllowedGrantError);
+                    context.setErrorObject(OAuth2Error.INVALID_CLIENT);
+                    return context;
+                }
+                
+                isAuthorized = grantHandler.get().isAuthorizedClient(application, grantTypeValue);
+                if (!isAuthorized) {
+                    String error = "Grant type is not allowed for the application";
+                    log.debug(error);
+                    context.setErrorObject(OAuth2Error.INVALID_GRANT);
                     return context;
                 }
                 grantHandler.get().process(authorization, context, queryParameters);
