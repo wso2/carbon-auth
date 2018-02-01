@@ -17,7 +17,6 @@
  */
 package org.wso2.carbon.auth.oauth.impl;
 
-import com.nimbusds.oauth2.sdk.GrantType;
 import com.nimbusds.oauth2.sdk.OAuth2Error;
 import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.token.BearerTokenError;
@@ -26,8 +25,6 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
-import org.wso2.carbon.auth.client.registration.exception.ClientRegistrationDAOException;
-import org.wso2.carbon.auth.client.registration.model.Application;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
@@ -48,7 +45,6 @@ public class RefreshGrantHandler implements GrantHandler {
     private static final Logger log = LoggerFactory.getLogger(RefreshGrantHandler.class);
     public static final BearerTokenError MISSING_TOKEN = new BearerTokenError((String) null, (String) null, 401);
     public static final int ALLOWED_MINIMUM_VALIDITY_PERIOD_IN_MILI = 1000000;
-    public static final String UNAUTHORIZED_ERROR_CODE = "UNAUTHORIZED";
     public static final String INVALID_GRANT_ERROR_CODE = "INVALID_GRANT";
     private TokenDAO tokenDAO;
     private OAuthDAO oauthDAO;
@@ -81,22 +77,6 @@ public class RefreshGrantHandler implements GrantHandler {
         if (haltExecution.isTrue()) {
             context.setErrorObject(context.getErrorObject());
             log.error(context.getErrorObject().getDescription());
-            return;
-        }
-        Application application;
-        try {
-            application = applicationDAO.getApplication(clientId);
-        } catch (ClientRegistrationDAOException e) {
-            log.error("Error getting client information from the DB", e);
-            throw new OAuthDAOException("Error getting client information from the DB", e);
-        }
-
-        boolean isAuthorized = isAuthorizedClient(application);
-        if (!isAuthorized) {
-            String error = "The authenticated client is not authorized to use this authorization grant type";
-            log.error(error);
-            BearerTokenError disAllowedGrantError = new BearerTokenError(UNAUTHORIZED_ERROR_CODE, error, 401);
-            context.setErrorObject(disAllowedGrantError);
             return;
         }
 
@@ -165,13 +145,5 @@ public class RefreshGrantHandler implements GrantHandler {
             return false;
         }
         return true;
-    }
-
-    private boolean isAuthorizedClient(Application application) {
-        if (application == null || StringUtils.isEmpty(application.getGrantTypes())) {
-            return false;
-        }
-
-        return application.getGrantTypes().contains(GrantType.REFRESH_TOKEN.getValue());
     }
 }
