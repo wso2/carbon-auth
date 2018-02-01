@@ -18,12 +18,12 @@
  *
  */
 
-package org.wso2.carbon.auth.client.registration.constants;
+package org.wso2.carbon.auth.client.registration;
 
 /**
  * This class holds the constants used by DynamicClientRegistration component.
  */
-public class ClientRegistrationConstants {
+public class Constants {
 
     public static final String CALLBACK_URL_REGEXP_PREFIX = "regexp=";
 

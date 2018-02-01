@@ -20,10 +20,14 @@
 
 package org.wso2.carbon.auth.oauth.impl;
 
+import com.nimbusds.oauth2.sdk.token.BearerTokenError;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
+import org.wso2.carbon.auth.client.registration.exception.ClientRegistrationDAOException;
+import org.wso2.carbon.auth.client.registration.model.Application;
+import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.TokenRequestHandler;
@@ -41,6 +45,9 @@ public class TokenRequestHandlerImpl implements TokenRequestHandler {
     private static final Logger log = LoggerFactory.getLogger(TokenRequestHandlerImpl.class);
     private OAuthDAO oauthDAO;
     private ApplicationDAO applicationDAO;
+    private ClientLookup clientLookup;
+    public static final String UNAUTHORIZED_ERROR_CODE = "UNAUTHORIZED";
+
 
     public TokenRequestHandlerImpl(OAuthDAO oauthDAO, ApplicationDAO applicationDAO) {
         this.oauthDAO = oauthDAO;
@@ -62,6 +69,22 @@ public class TokenRequestHandlerImpl implements TokenRequestHandler {
 
         if (haltExecution.isFalse()) {
             if (grantHandler.isPresent()) {
+                Application application;
+                this.clientLookup = new ClientLookupImpl(oauthDAO);
+                String clientId = clientLookup.getClientId(authorization, context, haltExecution);
+                try {
+                    application = applicationDAO.getApplication(clientId);
+                } catch (ClientRegistrationDAOException e) {
+                    throw new OAuthDAOException("Error getting client information from the DB", e);
+                }
+                boolean isAuthorized = grantHandler.get().isAuthorizedClient(application, grantTypeValue);
+                if (!isAuthorized) {
+                    String error = "The authenticated client is not authorized to use this authorization grant type";
+                    log.debug(error);
+                    BearerTokenError disAllowedGrantError = new BearerTokenError(UNAUTHORIZED_ERROR_CODE, error, 401);
+                    context.setErrorObject(disAllowedGrantError);
+                    return context;
+                }
                 grantHandler.get().process(authorization, context, queryParameters);
             }
         }
