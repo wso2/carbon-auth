@@ -38,8 +38,8 @@ import javax.ws.rs.core.Response;
     immediate = true
 )
 @Path("/api/scim2/v1.[\\d]+/Me")
-@Consumes({ "application/scim+json" })
-@Produces({ "application/scim+json" })
+@Consumes({ "application/json" })
+@Produces({ "application/json" })
 @ApplicationPath("/Me")
 @io.swagger.annotations.Api(description = "the Me API")
 public class MeApi implements Microservice  {
@@ -48,8 +48,8 @@ public class MeApi implements Microservice  {
     
     @DELETE
     
-    @Consumes({ "application/scim+json" })
-    @Produces({ "application/scim+json" })
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Delete user.", notes = "Delete the currently authenticated user ", response = void.class, tags={ "Me", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "OK. User successfully deleted. ", response = void.class),
@@ -64,8 +64,8 @@ public class MeApi implements Microservice  {
     
     @GET
     
-    @Consumes({ "application/scim+json" })
-    @Produces({ "application/scim+json" })
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Retrieve my user details.", notes = "Retrieve details of the currently authenticated user. ", response = UserDTO.class, tags={ "Me", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "OK. User details returned.  ", response = UserDTO.class),
@@ -80,8 +80,8 @@ public class MeApi implements Microservice  {
     
     @POST
     
-    @Consumes({ "application/scim+json" })
-    @Produces({ "application/scim+json" })
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Create user.", notes = "Create a User ", response = UserDTO.class, tags={ "Me", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 201, message = "Created. Successful response with the newly created object as entity in the body. Location header contains URL of newly created entity. ", response = UserDTO.class),
@@ -97,8 +97,8 @@ public class MeApi implements Microservice  {
     
     @PUT
     
-    @Consumes({ "application/scim+json" })
-    @Produces({ "application/scim+json" })
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Update user.", notes = "Update the currently authenticated user ", response = UserDTO.class, tags={ "Me", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 201, message = "Created. Successful response with the newly created object as entity in the body. Location header contains URL of newly created entity. ", response = UserDTO.class),

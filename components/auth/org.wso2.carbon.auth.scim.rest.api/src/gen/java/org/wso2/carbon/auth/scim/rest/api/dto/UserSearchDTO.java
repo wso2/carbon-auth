@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
 import org.wso2.carbon.auth.scim.rest.api.dto.AttributeDTO;
-import org.wso2.carbon.auth.scim.rest.api.dto.SchemaDTO;
 import java.util.Objects;
 
 /**
@@ -24,7 +23,7 @@ public class UserSearchDTO   {
   private String filter = null;
 
   @SerializedName("schemas")
-  private List<SchemaDTO> schemas = new ArrayList<SchemaDTO>();
+  private List<String> schemas = new ArrayList<String>();
 
   @SerializedName("attributes")
   private List<AttributeDTO> attributes = new ArrayList<AttributeDTO>();
@@ -83,12 +82,12 @@ public class UserSearchDTO   {
     this.filter = filter;
   }
 
-  public UserSearchDTO schemas(List<SchemaDTO> schemas) {
+  public UserSearchDTO schemas(List<String> schemas) {
     this.schemas = schemas;
     return this;
   }
 
-  public UserSearchDTO addSchemasItem(SchemaDTO schemasItem) {
+  public UserSearchDTO addSchemasItem(String schemasItem) {
     this.schemas.add(schemasItem);
     return this;
   }
@@ -98,11 +97,11 @@ public class UserSearchDTO   {
    * @return schemas
   **/
   @ApiModelProperty(value = "")
-  public List<SchemaDTO> getSchemas() {
+  public List<String> getSchemas() {
     return schemas;
   }
 
-  public void setSchemas(List<SchemaDTO> schemas) {
+  public void setSchemas(List<String> schemas) {
     this.schemas = schemas;
   }
 

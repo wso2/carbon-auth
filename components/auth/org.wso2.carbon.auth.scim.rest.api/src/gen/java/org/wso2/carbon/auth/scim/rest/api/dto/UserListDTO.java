@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
-import org.wso2.carbon.auth.scim.rest.api.dto.SchemaDTO;
 import org.wso2.carbon.auth.scim.rest.api.dto.UserDTO;
 import java.util.Objects;
 
@@ -21,7 +20,7 @@ public class UserListDTO   {
   private Integer itemsPerPage = null;
 
   @SerializedName("schemas")
-  private List<SchemaDTO> schemas = new ArrayList<SchemaDTO>();
+  private List<String> schemas = new ArrayList<String>();
 
   @SerializedName("Resources")
   private List<UserDTO> resources = new ArrayList<UserDTO>();
@@ -62,12 +61,12 @@ public class UserListDTO   {
     this.itemsPerPage = itemsPerPage;
   }
 
-  public UserListDTO schemas(List<SchemaDTO> schemas) {
+  public UserListDTO schemas(List<String> schemas) {
     this.schemas = schemas;
     return this;
   }
 
-  public UserListDTO addSchemasItem(SchemaDTO schemasItem) {
+  public UserListDTO addSchemasItem(String schemasItem) {
     this.schemas.add(schemasItem);
     return this;
   }
@@ -77,11 +76,11 @@ public class UserListDTO   {
    * @return schemas
   **/
   @ApiModelProperty(value = "")
-  public List<SchemaDTO> getSchemas() {
+  public List<String> getSchemas() {
     return schemas;
   }
 
-  public void setSchemas(List<SchemaDTO> schemas) {
+  public void setSchemas(List<String> schemas) {
     this.schemas = schemas;
   }
 

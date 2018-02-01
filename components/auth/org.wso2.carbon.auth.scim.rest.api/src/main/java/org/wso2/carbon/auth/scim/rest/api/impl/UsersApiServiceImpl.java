@@ -1,5 +1,6 @@
 package org.wso2.carbon.auth.scim.rest.api.impl;
 
+import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
@@ -99,7 +100,9 @@ public class UsersApiServiceImpl extends UsersApiService {
         try {
             userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
             UserResourceManager userResourceManager = new UserResourceManager();
-            SCIMResponse scimResponse = userResourceManager.create(body.toString(), userManager, null, null);
+            Gson gson = new Gson();
+            String bodyJsonString = gson.toJson(body);
+            SCIMResponse scimResponse = userResourceManager.create(bodyJsonString, userManager, null, null);
             return ApiServiceUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
             LOG.error("Error in initializing the CarbonAuthUserManager");

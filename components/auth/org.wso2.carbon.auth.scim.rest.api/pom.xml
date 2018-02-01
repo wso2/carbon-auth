@@ -172,7 +172,8 @@
             org.wso2.charon3.core.*; version="${charon.core.import.version}",
             org.wso2.msf4j.*; version="${msf4j.package.import.version.range}",
             org.wso2.carbon.auth.scim.*; version="${carbon.auth.version}",
-            org.wso2.carbon.auth.user.store.*; version="${carbon.auth.version}"
+            org.wso2.carbon.auth.user.store.*; version="${carbon.auth.version}",
+            com.google.gson.*;version="${gson.version.range}"
         </import.package>
         <export.package>
             org.wso2.carbon.auth.scim.rest.api.*; version="${carbon.auth.version}"

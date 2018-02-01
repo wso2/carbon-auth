@@ -39,8 +39,8 @@ import javax.ws.rs.core.Response;
     immediate = true
 )
 @Path("/api/scim2/v1.[\\d]+/Groups")
-@Consumes({ "application/scim+json" })
-@Produces({ "application/scim+json" })
+@Consumes({ "application/json" })
+@Produces({ "application/json" })
 @ApplicationPath("/Groups")
 @io.swagger.annotations.Api(description = "the Groups API")
 public class GroupsApi implements Microservice  {
@@ -49,8 +49,8 @@ public class GroupsApi implements Microservice  {
     
     @GET
     
-    @Consumes({ "application/scim+json" })
-    @Produces({ "application/scim+json" })
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Retrieve groups", notes = "Retrieve list of available groups qualifying under a given filter condition ", response = GroupListDTO.class, tags={ "Groups", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "OK. Groups returned.  ", response = GroupListDTO.class),
@@ -68,8 +68,8 @@ public class GroupsApi implements Microservice  {
     
     @DELETE
     @Path("/{id}")
-    @Consumes({ "application/scim+json" })
-    @Produces({ "application/scim+json" })
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "delete group", notes = "Delete a group ", response = void.class, tags={ "Group (Individual)", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "OK. Group successfully deleted. ", response = void.class),
@@ -85,8 +85,8 @@ public class GroupsApi implements Microservice  {
     
     @GET
     @Path("/{id}")
-    @Consumes({ "application/scim+json" })
-    @Produces({ "application/scim+json" })
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Get group", notes = "Get details of a group ", response = GroupDTO.class, tags={ "Group (Individual)", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "OK. Group details returned.  ", response = GroupDTO.class),
@@ -102,8 +102,8 @@ public class GroupsApi implements Microservice  {
     
     @PUT
     @Path("/{id}")
-    @Consumes({ "application/scim+json" })
-    @Produces({ "application/scim+json" })
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "update group", notes = "Update details of a group ", response = GroupDTO.class, tags={ "Group (Individual)", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 201, message = "Created. Successful response with the newly created object as entity in the body. Location header contains URL of newly created entity. ", response = GroupDTO.class),
@@ -120,8 +120,8 @@ public class GroupsApi implements Microservice  {
     
     @POST
     
-    @Consumes({ "application/scim+json" })
-    @Produces({ "application/scim+json" })
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Create a group", notes = "Create a new group ", response = GroupDTO.class, tags={ "Groups", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 201, message = "Created. Successful response with the newly created object as entity in the body. Location header contains URL of newly created entity. ", response = GroupDTO.class),

@@ -465,9 +465,6 @@ public class CarbonAuthUserManager implements UserManager {
                     getAttributeMapFromList(alttributeList), 1);
             
             // TODO : Get user groups
-
-            // set the id of the user from the unique user id.
-            scimUser.setId(userId);
             // set the schemas of the scim user
             scimUser.setSchemas();
             // set location
