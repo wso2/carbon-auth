@@ -561,10 +561,19 @@ public class CarbonAuthUserManager implements UserManager {
                     + " is not supported.");
         }
     }
-    
-    private List<Object> listUsersWithPagination(int startIndex, int count) throws CharonException {
-        //TODO: Add User store method to list userIds without passing attributes
-        return null;
+
+    private List<Object> listUsersWithPagination(int startIndex, int count)
+            throws NotImplementedException, CharonException, UserStoreConnectorException, BadRequestException {
+        List<String> userIdsList = userStoreConnector.listConnectorUserIds(startIndex, count);
+        List<Object> userObjectList = new ArrayList<>();
+        // we need to set the first item of the array to be the number of users in the given domain.
+        userObjectList.add(userIdsList.size());
+
+        for (String userId : userIdsList) {
+            User scimUser = getSCIMUser(userId);
+            userObjectList.add(scimUser);
+        }
+        return userObjectList;
     }
     
     /*private List<Object> listGroupsWithPaginationAndFilter(Node rootNode, int startIndex, int count) {

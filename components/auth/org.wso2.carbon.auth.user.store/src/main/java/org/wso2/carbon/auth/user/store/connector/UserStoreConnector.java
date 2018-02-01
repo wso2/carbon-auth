@@ -65,6 +65,17 @@ public interface UserStoreConnector {
             UserStoreConnectorException;
 
     /**
+     * List connector user ids for a given range.
+     *
+     * @param offset         Start position.
+     * @param length         Number of users to retrieve.
+     * @return List of connector user ids.
+     * @throws UserStoreConnectorException User Store Connector Exception.
+     */
+    List<String> listConnectorUserIds(int offset, int length) throws
+            UserStoreConnectorException;
+
+    /**
      * Retrieve attributes of the user with the given ID.
      *
      * @param userID ID of the user whose claims are requested

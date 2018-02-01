@@ -529,6 +529,14 @@ paths:
         Create a User
       tags:
         - Me
+      parameters:
+        - in: body
+          name: body
+          description: |
+            User object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/User'
       responses:
         201:
           description: |
@@ -562,6 +570,14 @@ paths:
         Update the currently authenticated user
       tags:
         - Me
+      parameters:
+        - in: body
+          name: body
+          description: |
+            User object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/User'
       responses:
         201:
           description: |
@@ -636,7 +652,7 @@ parameters:
     in: query
     description: |
       Number of elements returned in the paginated result.
-    default: 0
+    default: 25
     type: integer
     required: false
 
@@ -658,7 +674,6 @@ parameters:
     in: query
     description: |
       A filter expression to request a subset of the result.
-    default: 0
     type: string
     required: false
 

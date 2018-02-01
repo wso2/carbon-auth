@@ -1,8 +1,7 @@
 package org.wso2.carbon.auth.scim.rest.api.dto;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
@@ -11,10 +10,10 @@ import java.util.Objects;
  * MemberDTO
  */
 public class MemberDTO   {
-  @JsonProperty("display")
+  @SerializedName("display")
   private String display = null;
 
-  @JsonProperty("value")
+  @SerializedName("value")
   private String value = null;
 
   public MemberDTO display(String display) {

@@ -20,8 +20,10 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
+
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -45,6 +47,7 @@ import javax.ws.rs.core.Response;
 public class UsersApi implements Microservice  {
    private final UsersApiService delegate = UsersApiServiceFactory.getUsersApi();
 
+    
     @GET
     
     @Consumes({ "application/scim+json" })
@@ -57,12 +60,13 @@ public class UsersApi implements Microservice  {
         
         @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable. The requested media type is not supported. ", response = UserListDTO.class) })
     public Response usersGet(@ApiParam(value = "The index of the first element in the result.  ", defaultValue="0") @DefaultValue("0") @QueryParam("startIndex") Integer startIndex
-,@ApiParam(value = "Number of elements returned in the paginated result. ", defaultValue="0") @DefaultValue("0") @QueryParam("count") Integer count
-,@ApiParam(value = "A filter expression to request a subset of the result. ", defaultValue="0") @DefaultValue("0") @QueryParam("filter") String filter
+,@ApiParam(value = "Number of elements returned in the paginated result. ", defaultValue="25") @DefaultValue("25") @QueryParam("count") Integer count
+,@ApiParam(value = "A filter expression to request a subset of the result. ") @QueryParam("filter") String filter
  ,@Context Request request)
     throws NotFoundException {
         return delegate.usersGet(startIndex,count,filter,request);
     }
+    
     @DELETE
     @Path("/{id}")
     @Consumes({ "application/scim+json" })
@@ -79,6 +83,7 @@ public class UsersApi implements Microservice  {
     throws NotFoundException {
         return delegate.usersIdDelete(id,request);
     }
+    
     @GET
     @Path("/{id}")
     @Consumes({ "application/scim+json" })
@@ -95,6 +100,7 @@ public class UsersApi implements Microservice  {
     throws NotFoundException {
         return delegate.usersIdGet(id,request);
     }
+    
     @PUT
     @Path("/{id}")
     @Consumes({ "application/scim+json" })
@@ -112,6 +118,7 @@ public class UsersApi implements Microservice  {
     throws NotFoundException {
         return delegate.usersIdPut(id,body,request);
     }
+    
     @POST
     
     @Consumes({ "application/scim+json" })
@@ -128,6 +135,7 @@ public class UsersApi implements Microservice  {
     throws NotFoundException {
         return delegate.usersPost(body,request);
     }
+    
     @POST
     @Path("/.search")
     @Consumes({ "application/scim+json" })

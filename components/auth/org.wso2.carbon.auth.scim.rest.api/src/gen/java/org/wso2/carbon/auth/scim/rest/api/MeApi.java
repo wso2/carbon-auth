@@ -18,8 +18,10 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
+
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -43,6 +45,7 @@ import javax.ws.rs.core.Response;
 public class MeApi implements Microservice  {
    private final MeApiService delegate = MeApiServiceFactory.getMeApi();
 
+    
     @DELETE
     
     @Consumes({ "application/scim+json" })
@@ -58,6 +61,7 @@ public class MeApi implements Microservice  {
     throws NotFoundException {
         return delegate.meDelete(request);
     }
+    
     @GET
     
     @Consumes({ "application/scim+json" })
@@ -73,6 +77,7 @@ public class MeApi implements Microservice  {
     throws NotFoundException {
         return delegate.meGet(request);
     }
+    
     @POST
     
     @Consumes({ "application/scim+json" })
@@ -84,10 +89,12 @@ public class MeApi implements Microservice  {
         @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request. Invalid request or validation error ", response = UserDTO.class),
         
         @io.swagger.annotations.ApiResponse(code = 415, message = "Unsupported media type. The entity of the request was in a not supported format. ", response = UserDTO.class) })
-    public Response mePost( @Context Request request)
+    public Response mePost(@ApiParam(value = "User object that needs to be added " ,required=true) UserDTO body
+ ,@Context Request request)
     throws NotFoundException {
-        return delegate.mePost(request);
+        return delegate.mePost(body,request);
     }
+    
     @PUT
     
     @Consumes({ "application/scim+json" })
@@ -99,8 +106,9 @@ public class MeApi implements Microservice  {
         @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request. Invalid request or validation error ", response = UserDTO.class),
         
         @io.swagger.annotations.ApiResponse(code = 415, message = "Unsupported media type. The entity of the request was in a not supported format. ", response = UserDTO.class) })
-    public Response mePut( @Context Request request)
+    public Response mePut(@ApiParam(value = "User object that needs to be added " ,required=true) UserDTO body
+ ,@Context Request request)
     throws NotFoundException {
-        return delegate.mePut(request);
+        return delegate.mePut(body,request);
     }
 }

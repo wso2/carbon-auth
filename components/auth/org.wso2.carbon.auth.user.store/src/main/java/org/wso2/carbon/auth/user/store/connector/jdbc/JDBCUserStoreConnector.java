@@ -163,7 +163,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection())) {
             NamedPreparedStatement listUsersNamedPreparedStatement = new NamedPreparedStatement(
                     unitOfWork.getConnection(),
-                    sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_USERS_BY_ATTRIBUTE));
+                    sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_USER_IDS_BY_ATTRIBUTE));
             listUsersNamedPreparedStatement
                     .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_NAME, attributeName);
 
@@ -171,6 +171,44 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
                     .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_VALUE, attributeValue);
             listUsersNamedPreparedStatement.setInt(JDBCConnectorConstants.SQLPlaceholders.LENGTH, length);
             listUsersNamedPreparedStatement.setInt(JDBCConnectorConstants.SQLPlaceholders.OFFSET, startIndex);
+
+            try (ResultSet resultSet = listUsersNamedPreparedStatement.getPreparedStatement().executeQuery()) {
+
+                while (resultSet.next()) {
+                    String userUniqueId = resultSet.getString(DatabaseColumnNames.User.USER_UNIQUE_ID);
+                    userList.add(userUniqueId);
+                }
+            }
+
+            if (log.isDebugEnabled()) {
+                log.debug("{} users retrieved from identity store: {}.", userList.size(), identityStoreId);
+            }
+
+            return userList;
+        } catch (SQLException e) {
+            throw new UserStoreConnectorException("Error occurred while listing users.", e);
+        }
+    }
+
+    @Override
+    public List<String> listConnectorUserIds(int offset, int length) throws UserStoreConnectorException {
+        // Database handles start index as 0
+        if (offset > 0) {
+            offset--;
+        }
+        // Get the max allowed row count if the length is -1.
+        if (length == -1) {
+            length = getMaxRowRetrievalCount();
+        }
+
+        List<String> userList = new ArrayList<>();
+
+        try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection())) {
+            NamedPreparedStatement listUsersNamedPreparedStatement = new NamedPreparedStatement(
+                    unitOfWork.getConnection(),
+                    sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_USER_IDS));
+            listUsersNamedPreparedStatement.setInt(JDBCConnectorConstants.SQLPlaceholders.LENGTH, length);
+            listUsersNamedPreparedStatement.setInt(JDBCConnectorConstants.SQLPlaceholders.OFFSET, offset);
 
             try (ResultSet resultSet = listUsersNamedPreparedStatement.getPreparedStatement().executeQuery()) {
 

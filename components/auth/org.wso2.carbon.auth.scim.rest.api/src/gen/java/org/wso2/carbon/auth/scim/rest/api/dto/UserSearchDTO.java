@@ -1,8 +1,7 @@
 package org.wso2.carbon.auth.scim.rest.api.dto;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
@@ -15,19 +14,19 @@ import java.util.Objects;
  * UserSearchDTO
  */
 public class UserSearchDTO   {
-  @JsonProperty("startIndex")
+  @SerializedName("startIndex")
   private Integer startIndex = null;
 
-  @JsonProperty("count")
+  @SerializedName("count")
   private Integer count = null;
 
-  @JsonProperty("filter")
+  @SerializedName("filter")
   private String filter = null;
 
-  @JsonProperty("schemas")
+  @SerializedName("schemas")
   private List<SchemaDTO> schemas = new ArrayList<SchemaDTO>();
 
-  @JsonProperty("attributes")
+  @SerializedName("attributes")
   private List<AttributeDTO> attributes = new ArrayList<AttributeDTO>();
 
   public UserSearchDTO startIndex(Integer startIndex) {

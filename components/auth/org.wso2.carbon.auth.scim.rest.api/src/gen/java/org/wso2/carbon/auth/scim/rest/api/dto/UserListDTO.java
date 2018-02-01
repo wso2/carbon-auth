@@ -1,8 +1,7 @@
 package org.wso2.carbon.auth.scim.rest.api.dto;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
@@ -15,16 +14,16 @@ import java.util.Objects;
  * UserListDTO
  */
 public class UserListDTO   {
-  @JsonProperty("startIndex")
+  @SerializedName("startIndex")
   private Integer startIndex = null;
 
-  @JsonProperty("itemsPerPage")
+  @SerializedName("itemsPerPage")
   private Integer itemsPerPage = null;
 
-  @JsonProperty("schemas")
+  @SerializedName("schemas")
   private List<SchemaDTO> schemas = new ArrayList<SchemaDTO>();
 
-  @JsonProperty("Resources")
+  @SerializedName("Resources")
   private List<UserDTO> resources = new ArrayList<UserDTO>();
 
   public UserListDTO startIndex(Integer startIndex) {
