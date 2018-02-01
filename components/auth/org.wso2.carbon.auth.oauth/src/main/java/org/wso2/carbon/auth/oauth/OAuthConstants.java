@@ -50,4 +50,7 @@ public class OAuthConstants {
     public static final String AUTH_TYPE_BEARER = "Bearer";
 
     public static final String SCOPE_DEFAULT = "default";
+
+    public static final String UNAUTHORIZED_ERROR_CODE = "UNAUTHORIZED";
+    public static final String BAD_REQUEST = "BAD_REQUEST";
 }

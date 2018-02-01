@@ -24,7 +24,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
-import org.wso2.carbon.auth.client.registration.exception.ClientRegistrationDAOException;
 import org.wso2.carbon.auth.client.registration.model.Application;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
@@ -61,46 +60,6 @@ public class RefreshGrantHandlerTest {
         context = new AccessTokenContext();
         queryParameters = new HashMap<>();
         refreshGrantHandler = new RefreshGrantHandler(tokenDAO, oauthDAO, applicationDAO);
-    }
-
-    @Test
-    public void testProcessWithInValidateApplication() throws Exception {
-        authorization = "wrongheader";
-        refreshGrantHandler.process(authorization, context, queryParameters);
-        Assert.assertEquals(context.getErrorObject().getCode(), OAuth2Error.INVALID_REQUEST.getCode());
-
-        //invalid client
-        authorization = "Basic " + Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
-        Mockito.when(oauthDAO.isClientCredentialsValid(clientId, clientSecret)).thenReturn(false);
-        refreshGrantHandler.process(authorization, context, queryParameters);
-        Assert.assertEquals(context.getErrorObject().getCode(), OAuth2Error.INVALID_CLIENT.getCode());
-
-        // when no such application with clientID
-        Mockito.when(oauthDAO.isClientCredentialsValid(clientId, clientSecret)).thenReturn(true);
-        Mockito.when(applicationDAO.getApplication(clientId)).thenReturn(null);
-        refreshGrantHandler.process(authorization, context, queryParameters);
-        Assert.assertEquals(context.getErrorObject().getCode(), RefreshGrantHandler.UNAUTHORIZED_ERROR_CODE);
-
-        //Application with no empty grant types
-        Application application = new Application();
-        application.setGrantTypes("");
-        Mockito.when(applicationDAO.getApplication(clientId)).thenReturn(application);
-        refreshGrantHandler.process(authorization, context, queryParameters);
-        Assert.assertEquals(context.getErrorObject().getCode(), RefreshGrantHandler.UNAUTHORIZED_ERROR_CODE);
-
-        //Application not support refresh grant
-        application.setGrantTypes(GrantType.PASSWORD + " " + GrantType.CLIENT_CREDENTIALS);
-        refreshGrantHandler.process(authorization, context, queryParameters);
-        Assert.assertEquals(context.getErrorObject().getCode(), RefreshGrantHandler.UNAUTHORIZED_ERROR_CODE);
-
-        //Exception when getting application info
-        Mockito.when(applicationDAO.getApplication(clientId)).thenThrow(ClientRegistrationDAOException.class);
-        try {
-            refreshGrantHandler.process(authorization, context, queryParameters);
-            Assert.fail("Exception expected");
-        } catch (OAuthDAOException e) {
-            Assert.assertTrue(e.getCause() instanceof ClientRegistrationDAOException);
-        }
     }
 
     @Test
