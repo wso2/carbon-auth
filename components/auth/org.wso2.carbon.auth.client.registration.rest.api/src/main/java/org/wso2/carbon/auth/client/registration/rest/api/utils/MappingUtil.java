@@ -19,7 +19,7 @@
 package org.wso2.carbon.auth.client.registration.rest.api.utils;
 
 import org.apache.commons.lang3.StringUtils;
-import org.wso2.carbon.auth.client.registration.constants.ClientRegistrationConstants;
+import org.wso2.carbon.auth.client.registration.Constants;
 import org.wso2.carbon.auth.client.registration.model.Application;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.ApplicationDTO;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.RegistrationRequestDTO;
@@ -59,7 +59,7 @@ public class MappingUtil {
         if (StringUtils.isEmpty(callbackurl)) {
             return null;
         }
-        if (!callbackurl.startsWith(ClientRegistrationConstants.CALLBACK_URL_REGEXP_PREFIX)) {
+        if (!callbackurl.startsWith(Constants.CALLBACK_URL_REGEXP_PREFIX)) {
             return Arrays.asList(callbackurl);
         }
         String urls = callbackurl.substring(callbackurl.indexOf('(') + 1, callbackurl.indexOf(')'));
@@ -107,8 +107,8 @@ public class MappingUtil {
         //TODO: After implement multi-urls to the oAuth application, we have to change this API call
         //TODO: need to validate before processing request
         if (redirectUris.size() == 0) {
-            if ((grantTypes.contains(ClientRegistrationConstants.GrantTypes.AUTHORIZATION_CODE) || grantTypes.
-                    contains(ClientRegistrationConstants.GrantTypes.IMPLICIT))) {
+            if ((grantTypes.contains("authorization_code") || grantTypes.
+                    contains("implicit"))) {
                 throw new IllegalStateException("Valid input has not been provided");
             } else {
                 return null;
@@ -122,7 +122,7 @@ public class MappingUtil {
             }
 
         } else {
-            return ClientRegistrationConstants.CALLBACK_URL_REGEXP_PREFIX + createRegexPattern(redirectUris);
+            return "regexp=" + createRegexPattern(redirectUris);
         }
     }
 

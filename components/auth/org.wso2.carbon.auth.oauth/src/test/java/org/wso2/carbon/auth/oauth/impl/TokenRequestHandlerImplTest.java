@@ -34,7 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
 import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
-//import org.wso2.carbon.auth.oauth.IntegrationTestBase;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.TokenRequestHandler;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
@@ -114,7 +113,7 @@ public class TokenRequestHandlerImplTest extends AuthDAOIntegrationTestBase {
         // adding auth app details to the DB
         String query = "INSERT INTO AUTH_OAUTH2_APPLICATION " + "(CLIENT_ID, CLIENT_SECRET, APP_NAME, OAUTH_VERSION,"
                 + " REDIRECT_URI, GRANT_TYPES) VALUES ('" + ck + "'," + "'" + cs
-                + "','sampleApp','2.0','url','password') ";
+                + "','sampleApp','2.0','url','password refresh_token client_credentials authorization_code') ";
         super.executeOnAuthDb(query);
 
         //check no such grant
@@ -159,7 +158,7 @@ public class TokenRequestHandlerImplTest extends AuthDAOIntegrationTestBase {
         // check for password: wrong user info
         queryParameters.put(OAuthConstants.USERNAME, null);
         accessTokenContext = tokenRequestHandler.generateToken("Basic notvalid", queryParameters);
-        Assert.assertEquals(OAuth2Error.INVALID_REQUEST, accessTokenContext.getErrorObject());
+        Assert.assertEquals(OAuth2Error.INVALID_CLIENT, accessTokenContext.getErrorObject());
 
         queryParameters.put(OAuthConstants.USERNAME, username);
         // check for client credentials
@@ -195,7 +194,7 @@ public class TokenRequestHandlerImplTest extends AuthDAOIntegrationTestBase {
 
         // check missing Authorization header
         accessTokenContext = tokenRequestHandler.generateToken("", queryParameters);
-        Assert.assertEquals(OAuth2Error.INVALID_REQUEST, accessTokenContext.getErrorObject());
+        Assert.assertEquals(OAuth2Error.INVALID_CLIENT, accessTokenContext.getErrorObject());
 
         // check wrong Authorization header
         accessTokenContext = tokenRequestHandler.generateToken("Bearer", queryParameters);

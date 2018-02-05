@@ -20,6 +20,8 @@
 
 package org.wso2.carbon.auth.oauth;
 
+import org.apache.commons.lang3.StringUtils;
+import org.wso2.carbon.auth.client.registration.model.Application;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
@@ -37,4 +39,11 @@ public interface GrantHandler {
      */
     void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
             throws OAuthDAOException;
+
+    default boolean isAuthorizedClient(Application application, String grantType) {
+        if (application == null || StringUtils.isEmpty(application.getGrantTypes())) {
+            return false;
+        }
+        return application.getGrantTypes().contains(grantType);
+    }
 }
