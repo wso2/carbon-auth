@@ -363,7 +363,7 @@
             javax.crypto.*,
             org.wso2.carbon.datasource.core.*;version="${datasources.core.package.import.version.range}",
             org.wso2.carbon.kernel.*,
-            org.wso2.carbon.auth.core.*,
+            org.wso2.carbon.auth.core.*;
         </import.package>
 	</properties>
 

@@ -134,6 +134,12 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         return userList;
     }
 
+    @Override 
+    public List<String> listConnectorUserIds(int offset, int length) throws UserStoreConnectorException {
+        //Todo implement
+        throw new RuntimeException("Not supported yet!");
+    }
+
     @Override
     public List<Attribute> getUserAttributeValues(String userID) throws UserStoreConnectorException {
         DirContext context;

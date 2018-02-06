@@ -39,6 +39,7 @@
         <module>org.wso2.carbon.auth.scope.registration.rest.api.feature</module>
         <module>org.wso2.carbon.auth.user.mgt.rest.api.feature</module>
         <module>org.wso2.carbon.auth.user.store.feature</module>
+        <!--<module>org.wso2.carbon.auth.scim.rest.api.feature</module>-->
     </modules>
 
 </project>

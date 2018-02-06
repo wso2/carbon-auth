@@ -19,8 +19,10 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
+
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -36,18 +38,19 @@ import javax.ws.rs.core.Response;
     service = Microservice.class,
     immediate = true
 )
-@Path("/api/scim2/v1.[\\d]+/Groups")
-@Consumes({ "application/scim+json" })
-@Produces({ "application/scim+json" })
+@Path("/api/identity/scim2/v1.[\\d]+/Groups")
+@Consumes({ "application/json" })
+@Produces({ "application/json" })
 @ApplicationPath("/Groups")
 @io.swagger.annotations.Api(description = "the Groups API")
 public class GroupsApi implements Microservice  {
    private final GroupsApiService delegate = GroupsApiServiceFactory.getGroupsApi();
 
+    
     @GET
     
-    @Consumes({ "application/scim+json" })
-    @Produces({ "application/scim+json" })
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Retrieve groups", notes = "Retrieve list of available groups qualifying under a given filter condition ", response = GroupListDTO.class, tags={ "Groups", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "OK. Groups returned.  ", response = GroupListDTO.class),
@@ -56,16 +59,17 @@ public class GroupsApi implements Microservice  {
         
         @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable. The requested media type is not supported. ", response = GroupListDTO.class) })
     public Response groupsGet(@ApiParam(value = "The index of the first element in the result.  ", defaultValue="0") @DefaultValue("0") @QueryParam("startIndex") Integer startIndex
-,@ApiParam(value = "Number of elements returned in the paginated result. ", defaultValue="0") @DefaultValue("0") @QueryParam("count") Integer count
-,@ApiParam(value = "A filter expression to request a subset of the result. ", defaultValue="0") @DefaultValue("0") @QueryParam("filter") String filter
+,@ApiParam(value = "Number of elements returned in the paginated result. ", defaultValue="25") @DefaultValue("25") @QueryParam("count") Integer count
+,@ApiParam(value = "A filter expression to request a subset of the result. ") @QueryParam("filter") String filter
  ,@Context Request request)
     throws NotFoundException {
         return delegate.groupsGet(startIndex,count,filter,request);
     }
+    
     @DELETE
     @Path("/{id}")
-    @Consumes({ "application/scim+json" })
-    @Produces({ "application/scim+json" })
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "delete group", notes = "Delete a group ", response = void.class, tags={ "Group (Individual)", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "OK. Group successfully deleted. ", response = void.class),
@@ -78,10 +82,11 @@ public class GroupsApi implements Microservice  {
     throws NotFoundException {
         return delegate.groupsIdDelete(id,request);
     }
+    
     @GET
     @Path("/{id}")
-    @Consumes({ "application/scim+json" })
-    @Produces({ "application/scim+json" })
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Get group", notes = "Get details of a group ", response = GroupDTO.class, tags={ "Group (Individual)", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "OK. Group details returned.  ", response = GroupDTO.class),
@@ -94,10 +99,11 @@ public class GroupsApi implements Microservice  {
     throws NotFoundException {
         return delegate.groupsIdGet(id,request);
     }
+    
     @PUT
     @Path("/{id}")
-    @Consumes({ "application/scim+json" })
-    @Produces({ "application/scim+json" })
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "update group", notes = "Update details of a group ", response = GroupDTO.class, tags={ "Group (Individual)", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 201, message = "Created. Successful response with the newly created object as entity in the body. Location header contains URL of newly created entity. ", response = GroupDTO.class),
@@ -111,10 +117,11 @@ public class GroupsApi implements Microservice  {
     throws NotFoundException {
         return delegate.groupsIdPut(id,body,request);
     }
+    
     @POST
     
-    @Consumes({ "application/scim+json" })
-    @Produces({ "application/scim+json" })
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Create a group", notes = "Create a new group ", response = GroupDTO.class, tags={ "Groups", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 201, message = "Created. Successful response with the newly created object as entity in the body. Location header contains URL of newly created entity. ", response = GroupDTO.class),

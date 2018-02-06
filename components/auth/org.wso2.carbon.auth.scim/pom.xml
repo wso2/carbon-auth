@@ -25,7 +25,8 @@
     <parent>
         <groupId>org.wso2.carbon.auth</groupId>
         <artifactId>auth</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.29-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -75,9 +76,11 @@
             org.wso2.carbon.datasource.core.*;version="${datasources.core.package.import.version.range}",
             com.zaxxer.hikari.*; version="${hikari.package.import.version.range}",
             org.wso2.carbon.kernel.*;version="${carbon.kernel.package.import.version.range}",
+            org.wso2.carbon.auth.core.*; version="${carbon.auth.version}",
+            org.wso2.charon3.core.*; version="${charon.core.import.version}",
         </import.package>
         <export.package>
-            org.wso2.carbon.auth.scim.*; version="${carbon.auth.version}",
+            org.wso2.carbon.auth.scim.*; version="${carbon.auth.version}"
         </export.package>
         <dynamic.import.package>*</dynamic.import.package>
     </properties>
