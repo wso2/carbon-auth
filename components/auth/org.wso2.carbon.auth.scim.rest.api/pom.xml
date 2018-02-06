@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.wso2.carbon.auth</groupId>
         <artifactId>auth</artifactId>
-        <version>1.0.28-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -84,19 +84,6 @@
             <classifier>runtime</classifier>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.wso2.charon</groupId>
-            <artifactId>org.wso2.charon3.core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.auth</groupId>
-            <artifactId>org.wso2.carbon.auth.core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.auth</groupId>
-            <artifactId>org.wso2.carbon.auth.scim</artifactId>
-            <version>${carbon.auth.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -104,7 +91,7 @@
             <plugin>
                 <groupId>org.wso2.maven.plugins</groupId>
                 <artifactId>swagger2msf4j-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>1.0-SNAPSHOT</version>
                 <configuration>
                     <inputSpec>${project.basedir}/src/main/resources/scim-api.yaml</inputSpec>
                 </configuration>
@@ -148,6 +135,8 @@
                             <includeTestSourceDirectory>true</includeTestSourceDirectory>
                             <!--Exclude generated sources-->
                             <excludes>**/gen/**/*</excludes>
+                            <!--skip for generated resources-->
+                            <skip>true</skip>
                         </configuration>
                         <goals>
                             <goal>check</goal>
@@ -164,20 +153,16 @@
 
     <properties>
         <import.package>
+            org.wso2.msf4j.*; version="${msf4j.package.import.version.range}",
             org.slf4j.*;version="${slf4j.logging.package.import.version.range}",
             org.apache.commons.lang3.*; version="${apache.commons.lang3.import.version.range}",
-            javax.ws.rs.*; version="${javax.ws.rs.import.version.range}",
-            org.wso2.charon3.core.*; version="${charon.core.import.version}",
-            org.wso2.msf4j.*; version="${msf4j.package.import.version.range}",
-            org.wso2.carbon.auth.scim.*; version="${carbon.auth.version}",
-            org.wso2.carbon.auth.user.store.*; version="${carbon.auth.version}",
-            com.google.gson.*;version="${gson.version.range}"
+            javax.ws.rs.*; version="${javax.ws.rs.import.version.range}"
         </import.package>
         <export.package>
             org.wso2.carbon.auth.scim.rest.api.*; version="${carbon.auth.version}"
         </export.package>
         <carbon.component>
-            osgi.service; objectClass="org.wso2.msf4j.Microservice"; serviceCount="3"
+            osgi.service; objectClass="org.wso2.msf4j.Microservice"; serviceCount="9"
         </carbon.component>
     </properties>
 

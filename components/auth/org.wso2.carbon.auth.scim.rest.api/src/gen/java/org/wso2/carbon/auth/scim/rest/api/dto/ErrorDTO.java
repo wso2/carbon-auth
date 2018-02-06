@@ -1,7 +1,8 @@
 package org.wso2.carbon.auth.scim.rest.api.dto;
 
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
@@ -13,19 +14,19 @@ import java.util.Objects;
  * ErrorDTO
  */
 public class ErrorDTO   {
-  @SerializedName("code")
+  @JsonProperty("code")
   private Integer code = null;
 
-  @SerializedName("message")
+  @JsonProperty("message")
   private String message = null;
 
-  @SerializedName("description")
+  @JsonProperty("description")
   private String description = null;
 
-  @SerializedName("moreInfo")
+  @JsonProperty("moreInfo")
   private String moreInfo = null;
 
-  @SerializedName("error")
+  @JsonProperty("error")
   private List<ErrorListItemDTO> error = new ArrayList<ErrorListItemDTO>();
 
   public ErrorDTO code(Integer code) {

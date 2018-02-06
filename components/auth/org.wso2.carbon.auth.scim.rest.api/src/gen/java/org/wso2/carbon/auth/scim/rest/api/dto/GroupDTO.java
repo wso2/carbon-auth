@@ -1,32 +1,34 @@
 package org.wso2.carbon.auth.scim.rest.api.dto;
 
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
 import org.wso2.carbon.auth.scim.rest.api.dto.MemberDTO;
 import org.wso2.carbon.auth.scim.rest.api.dto.MetaDTO;
+import org.wso2.carbon.auth.scim.rest.api.dto.SchemaDTO;
 import java.util.Objects;
 
 /**
  * GroupDTO
  */
 public class GroupDTO   {
-  @SerializedName("meta")
+  @JsonProperty("meta")
   private MetaDTO meta = null;
 
-  @SerializedName("displayName")
+  @JsonProperty("displayName")
   private String displayName = null;
 
-  @SerializedName("schemas")
-  private List<String> schemas = new ArrayList<String>();
+  @JsonProperty("schemas")
+  private List<SchemaDTO> schemas = new ArrayList<SchemaDTO>();
 
-  @SerializedName("members")
+  @JsonProperty("members")
   private List<MemberDTO> members = new ArrayList<MemberDTO>();
 
-  @SerializedName("id")
+  @JsonProperty("id")
   private String id = null;
 
   public GroupDTO meta(MetaDTO meta) {
@@ -65,12 +67,12 @@ public class GroupDTO   {
     this.displayName = displayName;
   }
 
-  public GroupDTO schemas(List<String> schemas) {
+  public GroupDTO schemas(List<SchemaDTO> schemas) {
     this.schemas = schemas;
     return this;
   }
 
-  public GroupDTO addSchemasItem(String schemasItem) {
+  public GroupDTO addSchemasItem(SchemaDTO schemasItem) {
     this.schemas.add(schemasItem);
     return this;
   }
@@ -80,11 +82,11 @@ public class GroupDTO   {
    * @return schemas
   **/
   @ApiModelProperty(value = "")
-  public List<String> getSchemas() {
+  public List<SchemaDTO> getSchemas() {
     return schemas;
   }
 
-  public void setSchemas(List<String> schemas) {
+  public void setSchemas(List<SchemaDTO> schemas) {
     this.schemas = schemas;
   }
 

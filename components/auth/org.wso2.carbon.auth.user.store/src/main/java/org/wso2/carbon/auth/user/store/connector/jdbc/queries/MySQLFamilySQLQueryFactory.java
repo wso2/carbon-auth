@@ -76,7 +76,7 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
                     "LIMIT :length; " +
                     "OFFSET :offset;";
 
-    private static final String LIST_USER_IDS_BY_ATTRIBUTE =
+    private static final String LIST_USERS_BY_ATTRIBUTE =
             "SELECT AUTH_UM_USER.USER_UNIQUE_ID " +
                     "FROM AUTH_UM_USER LEFT JOIN AUTH_UM_USER_ATTRIBUTES " +
                     "ON AUTH_UM_USER_ATTRIBUTES.USER_ID = AUTH_UM_USER.ID " +
@@ -85,11 +85,6 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
                     "FROM AUTH_UM_ATTRIBUTES " +
                     "WHERE ATTR_NAME = :attr_name; ) " +
                     "AND AUTH_UM_USER_ATTRIBUTES.ATTR_VALUE = :attr_value; " +
-                    "LIMIT :length; " +
-                    "OFFSET :offset;";
-    private static final String LIST_USER_IDS =
-            "SELECT AUTH_UM_USER.USER_UNIQUE_ID " +
-                    "FROM AUTH_UM_USER " +
                     "LIMIT :length; " +
                     "OFFSET :offset;";
 
@@ -244,9 +239,7 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
         sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_GET_USER_ATTRIBUTES, GET_USER_ATTRIBUTES);
         sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_USERS_BY_ATTRIBUTE_PATTERN,
                 LIST_USERS_BY_ATTRIBUTE_PATTERN);
-        sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_USER_IDS_BY_ATTRIBUTE,
-                LIST_USER_IDS_BY_ATTRIBUTE);
-        sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_USER_IDS, LIST_USER_IDS);
+        sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_USERS_BY_ATTRIBUTE, LIST_USERS_BY_ATTRIBUTE);
         sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_GET_USER_ATTRIBUTES_FROM_NAME,
                 GET_USER_ATTRIBUTES_FROM_NAME);
         sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_IS_USER_IN_GROUP, IS_USER_IN_GROUP);

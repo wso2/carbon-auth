@@ -1,31 +1,33 @@
 package org.wso2.carbon.auth.scim.rest.api.dto;
 
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
 import org.wso2.carbon.auth.scim.rest.api.dto.AttributeDTO;
+import org.wso2.carbon.auth.scim.rest.api.dto.SchemaDTO;
 import java.util.Objects;
 
 /**
  * UserSearchDTO
  */
 public class UserSearchDTO   {
-  @SerializedName("startIndex")
+  @JsonProperty("startIndex")
   private Integer startIndex = null;
 
-  @SerializedName("count")
+  @JsonProperty("count")
   private Integer count = null;
 
-  @SerializedName("filter")
+  @JsonProperty("filter")
   private String filter = null;
 
-  @SerializedName("schemas")
-  private List<String> schemas = new ArrayList<String>();
+  @JsonProperty("schemas")
+  private List<SchemaDTO> schemas = new ArrayList<SchemaDTO>();
 
-  @SerializedName("attributes")
+  @JsonProperty("attributes")
   private List<AttributeDTO> attributes = new ArrayList<AttributeDTO>();
 
   public UserSearchDTO startIndex(Integer startIndex) {
@@ -82,12 +84,12 @@ public class UserSearchDTO   {
     this.filter = filter;
   }
 
-  public UserSearchDTO schemas(List<String> schemas) {
+  public UserSearchDTO schemas(List<SchemaDTO> schemas) {
     this.schemas = schemas;
     return this;
   }
 
-  public UserSearchDTO addSchemasItem(String schemasItem) {
+  public UserSearchDTO addSchemasItem(SchemaDTO schemasItem) {
     this.schemas.add(schemasItem);
     return this;
   }
@@ -97,11 +99,11 @@ public class UserSearchDTO   {
    * @return schemas
   **/
   @ApiModelProperty(value = "")
-  public List<String> getSchemas() {
+  public List<SchemaDTO> getSchemas() {
     return schemas;
   }
 
-  public void setSchemas(List<String> schemas) {
+  public void setSchemas(List<SchemaDTO> schemas) {
     this.schemas = schemas;
   }
 

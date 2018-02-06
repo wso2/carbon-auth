@@ -1,11 +1,13 @@
 package org.wso2.carbon.auth.scim.rest.api.dto;
 
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
+import org.wso2.carbon.auth.scim.rest.api.dto.SchemaDTO;
 import org.wso2.carbon.auth.scim.rest.api.dto.UserDTO;
 import java.util.Objects;
 
@@ -13,16 +15,16 @@ import java.util.Objects;
  * UserListDTO
  */
 public class UserListDTO   {
-  @SerializedName("startIndex")
+  @JsonProperty("startIndex")
   private Integer startIndex = null;
 
-  @SerializedName("itemsPerPage")
+  @JsonProperty("itemsPerPage")
   private Integer itemsPerPage = null;
 
-  @SerializedName("schemas")
-  private List<String> schemas = new ArrayList<String>();
+  @JsonProperty("schemas")
+  private List<SchemaDTO> schemas = new ArrayList<SchemaDTO>();
 
-  @SerializedName("Resources")
+  @JsonProperty("Resources")
   private List<UserDTO> resources = new ArrayList<UserDTO>();
 
   public UserListDTO startIndex(Integer startIndex) {
@@ -61,12 +63,12 @@ public class UserListDTO   {
     this.itemsPerPage = itemsPerPage;
   }
 
-  public UserListDTO schemas(List<String> schemas) {
+  public UserListDTO schemas(List<SchemaDTO> schemas) {
     this.schemas = schemas;
     return this;
   }
 
-  public UserListDTO addSchemasItem(String schemasItem) {
+  public UserListDTO addSchemasItem(SchemaDTO schemasItem) {
     this.schemas.add(schemasItem);
     return this;
   }
@@ -76,11 +78,11 @@ public class UserListDTO   {
    * @return schemas
   **/
   @ApiModelProperty(value = "")
-  public List<String> getSchemas() {
+  public List<SchemaDTO> getSchemas() {
     return schemas;
   }
 
-  public void setSchemas(List<String> schemas) {
+  public void setSchemas(List<SchemaDTO> schemas) {
     this.schemas = schemas;
   }
 

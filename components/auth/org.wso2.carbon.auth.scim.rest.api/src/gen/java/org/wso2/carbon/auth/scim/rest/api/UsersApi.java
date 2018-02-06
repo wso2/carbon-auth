@@ -20,10 +20,8 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
-
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -39,19 +37,18 @@ import javax.ws.rs.core.Response;
     service = Microservice.class,
     immediate = true
 )
-@Path("/api/identity/scim2/v1.[\\d]+/Users")
-@Consumes({ "application/json" })
-@Produces({ "application/json" })
+@Path("/api/scim2/v1.[\\d]+/Users")
+@Consumes({ "application/scim+json" })
+@Produces({ "application/scim+json" })
 @ApplicationPath("/Users")
 @io.swagger.annotations.Api(description = "the Users API")
 public class UsersApi implements Microservice  {
    private final UsersApiService delegate = UsersApiServiceFactory.getUsersApi();
 
-    
     @GET
     
-    @Consumes({ "application/json" })
-    @Produces({ "application/json" })
+    @Consumes({ "application/scim+json" })
+    @Produces({ "application/scim+json" })
     @io.swagger.annotations.ApiOperation(value = "Retrieve users", notes = "Retrieve list of available users qualifying under a given filter condition ", response = UserListDTO.class, tags={ "Users", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "OK. Users returned.  ", response = UserListDTO.class),
@@ -60,17 +57,16 @@ public class UsersApi implements Microservice  {
         
         @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable. The requested media type is not supported. ", response = UserListDTO.class) })
     public Response usersGet(@ApiParam(value = "The index of the first element in the result.  ", defaultValue="0") @DefaultValue("0") @QueryParam("startIndex") Integer startIndex
-,@ApiParam(value = "Number of elements returned in the paginated result. ", defaultValue="25") @DefaultValue("25") @QueryParam("count") Integer count
-,@ApiParam(value = "A filter expression to request a subset of the result. ") @QueryParam("filter") String filter
+,@ApiParam(value = "Number of elements returned in the paginated result. ", defaultValue="0") @DefaultValue("0") @QueryParam("count") Integer count
+,@ApiParam(value = "A filter expression to request a subset of the result. ", defaultValue="0") @DefaultValue("0") @QueryParam("filter") String filter
  ,@Context Request request)
     throws NotFoundException {
         return delegate.usersGet(startIndex,count,filter,request);
     }
-    
     @DELETE
     @Path("/{id}")
-    @Consumes({ "application/json" })
-    @Produces({ "application/json" })
+    @Consumes({ "application/scim+json" })
+    @Produces({ "application/scim+json" })
     @io.swagger.annotations.ApiOperation(value = "delete user", notes = "Delete a user ", response = void.class, tags={ "User (Individual)", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "OK. User successfully deleted. ", response = void.class),
@@ -83,28 +79,26 @@ public class UsersApi implements Microservice  {
     throws NotFoundException {
         return delegate.usersIdDelete(id,request);
     }
-    
     @GET
     @Path("/{id}")
-    @Consumes({ "application/json" })
-    @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Get user", notes = "Get details of a users ", response = void.class, tags={ "User (Individual)", })
+    @Consumes({ "application/scim+json" })
+    @Produces({ "application/scim+json" })
+    @io.swagger.annotations.ApiOperation(value = "Get user", notes = "Get details of a users ", response = UserDTO.class, tags={ "User (Individual)", })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 200, message = "OK. Users returned.  ", response = void.class),
+        @io.swagger.annotations.ApiResponse(code = 200, message = "OK. Users returned.  ", response = UserDTO.class),
         
-        @io.swagger.annotations.ApiResponse(code = 304, message = "Not Modified. Empty body because the client has already the latest version of the requested resource. ", response = void.class),
+        @io.swagger.annotations.ApiResponse(code = 304, message = "Not Modified. Empty body because the client has already the latest version of the requested resource. ", response = UserDTO.class),
         
-        @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable. The requested media type is not supported. ", response = void.class) })
+        @io.swagger.annotations.ApiResponse(code = 406, message = "Not Acceptable. The requested media type is not supported. ", response = UserDTO.class) })
     public Response usersIdGet(@ApiParam(value = "Resource Id of User or Group ",required=true) @PathParam("id") String id
  ,@Context Request request)
     throws NotFoundException {
         return delegate.usersIdGet(id,request);
     }
-    
     @PUT
     @Path("/{id}")
-    @Consumes({ "application/json" })
-    @Produces({ "application/json" })
+    @Consumes({ "application/scim+json" })
+    @Produces({ "application/scim+json" })
     @io.swagger.annotations.ApiOperation(value = "update user", notes = "Update details of a users ", response = UserDTO.class, tags={ "User (Individual)", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 201, message = "Created. Successful response with the newly created object as entity in the body. Location header contains URL of newly created entity. ", response = UserDTO.class),
@@ -118,11 +112,10 @@ public class UsersApi implements Microservice  {
     throws NotFoundException {
         return delegate.usersIdPut(id,body,request);
     }
-    
     @POST
     
-    @Consumes({ "application/json" })
-    @Produces({ "application/json" })
+    @Consumes({ "application/scim+json" })
+    @Produces({ "application/scim+json" })
     @io.swagger.annotations.ApiOperation(value = "Create a new user", notes = "Create a new user ", response = UserDTO.class, tags={ "Users", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 201, message = "Created. Successful response with the newly created object as entity in the body. Location header contains URL of newly created entity. ", response = UserDTO.class),
@@ -135,11 +128,10 @@ public class UsersApi implements Microservice  {
     throws NotFoundException {
         return delegate.usersPost(body,request);
     }
-    
     @POST
     @Path("/.search")
-    @Consumes({ "application/json" })
-    @Produces({ "application/json" })
+    @Consumes({ "application/scim+json" })
+    @Produces({ "application/scim+json" })
     @io.swagger.annotations.ApiOperation(value = "Search users", notes = "Create a new user ", response = UserListDTO.class, tags={ "Search Users", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 201, message = "Created. Successful response with the newly created object as entity in the body. Location header contains URL of newly created entity. ", response = UserListDTO.class),

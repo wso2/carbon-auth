@@ -86,8 +86,7 @@ public class JDBCConnectorConstants {
         public static final String SQL_QUERY_GET_USER_ATTRIBUTES = "sql_query_get_user_attributes";
         public static final String SQL_QUERY_LIST_USERS_BY_ATTRIBUTE_PATTERN =
                 "sql_query_list_users_by_attribute_pattern";
-        public static final String SQL_QUERY_LIST_USER_IDS_BY_ATTRIBUTE = "sql_query_list_user_ids_by_attribute";
-        public static final String SQL_QUERY_LIST_USER_IDS = "sql_query_list_user_ids";
+        public static final String SQL_QUERY_LIST_USERS_BY_ATTRIBUTE = "sql_query_list_users_by_attribute";
         public static final String SQL_QUERY_GET_USER_ATTRIBUTES_FROM_NAME = "sql_query_get_user_attributes_from_uri";
         public static final String SQL_QUERY_IS_USER_IN_GROUP = "sql_query_is_user_in_group";
         public static final String SQL_QUERY_LIST_GROUP_BY_ATTRIBUTE_PATTERN =
