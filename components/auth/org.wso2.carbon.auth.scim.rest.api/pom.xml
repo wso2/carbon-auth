@@ -95,7 +95,6 @@
         <dependency>
             <groupId>org.wso2.carbon.auth</groupId>
             <artifactId>org.wso2.carbon.auth.scim</artifactId>
-            <version>${carbon.auth.version}</version>
         </dependency>
     </dependencies>
 
