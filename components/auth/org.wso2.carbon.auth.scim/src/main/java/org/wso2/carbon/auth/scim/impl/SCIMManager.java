@@ -23,10 +23,13 @@ package org.wso2.carbon.auth.scim.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.wso2.carbon.auth.core.ServiceReferenceHolder;
+import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
 import org.wso2.carbon.auth.scim.impl.constants.SCIMCommonConstants;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnectorFactory;
+import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 import org.wso2.charon3.core.config.CharonConfiguration;
 import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
 
@@ -39,7 +42,7 @@ import java.util.Map;
  *
  */
 public class SCIMManager {
-    private static Logger logger = LoggerFactory.getLogger(SCIMManager.class);
+    private static Logger log = LoggerFactory.getLogger(SCIMManager.class);
     private static volatile SCIMManager carbonAuthSCIMManager;
     private static Map<String, String> endpointURLs = new HashMap<String, String>();
     
@@ -73,11 +76,14 @@ public class SCIMManager {
         CarbonAuthUserManager carbonAuthUserManager = null;
         // TO-DO : CarbonAuthUserManager should be initialized with UserManagement API
         UserStoreConnector userStoreConnector = UserStoreConnectorFactory.getUserStoreConnector();
-        if (userStoreConnector != null) {
-            carbonAuthUserManager = new CarbonAuthUserManager(userStoreConnector);
-        } else {
-            throw new AuthUserManagementException("Error while obtaining User Store COnnector");
+        UserStoreConfiguration config = ServiceReferenceHolder.getInstance().getAuthConfiguration()
+                .getUserStoreConfiguration();
+        try {
+            userStoreConnector.init(config);
+        } catch (UserStoreConnectorException e) {
+            log.error("Error occurred while init UserStoreConnector", e);
         }
+        carbonAuthUserManager = new CarbonAuthUserManager(userStoreConnector);
         return carbonAuthUserManager;
     }
     
