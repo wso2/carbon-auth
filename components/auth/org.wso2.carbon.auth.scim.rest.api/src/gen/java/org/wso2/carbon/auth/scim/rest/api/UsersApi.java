@@ -39,7 +39,7 @@ import javax.ws.rs.core.Response;
     service = Microservice.class,
     immediate = true
 )
-@Path("/api/scim2/v1.[\\d]+/Users")
+@Path("/api/identity/scim2/v1.[\\d]+/Users")
 @Consumes({ "application/json" })
 @Produces({ "application/json" })
 @ApplicationPath("/Users")

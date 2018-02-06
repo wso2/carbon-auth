@@ -427,6 +427,14 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
 
         String connectorUniqueId = UserStoreUtil.generateUUID();
 
+        //override the generated UUID if id is already present in the list of attributes
+        for (Attribute attribute: attributes) {
+            if (UserStoreConstants.CLAIM_ID.equals(attribute.getAttributeName())) {
+                connectorUniqueId = attribute.getAttributeValue();
+                break;
+            }
+        }
+
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
 
             NamedPreparedStatement addUserNamedPreparedStatement = new NamedPreparedStatement(

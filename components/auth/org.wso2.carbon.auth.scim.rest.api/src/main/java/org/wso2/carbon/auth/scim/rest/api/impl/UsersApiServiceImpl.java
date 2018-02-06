@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
 import org.wso2.carbon.auth.scim.impl.SCIMManager;
 import org.wso2.carbon.auth.scim.rest.api.NotFoundException;
+import org.wso2.carbon.auth.scim.rest.api.SCIMRESTAPIConstants;
 import org.wso2.carbon.auth.scim.rest.api.UsersApiService;
 import org.wso2.carbon.auth.scim.rest.api.dto.UserDTO;
 import org.wso2.carbon.auth.scim.rest.api.dto.UserSearchDTO;
@@ -24,13 +25,10 @@ import javax.ws.rs.core.Response;
 public class UsersApiServiceImpl extends UsersApiService {
     private static final Logger LOG = LoggerFactory.getLogger(GroupsApiServiceImpl.class);
 
-    private static final String USERS_URL = "http://localhost:8080/scim/Users";
-    private static final String GROUPS_URL = "http://localhost:8080/scim/Groups";
-    
     public UsersApiServiceImpl () {
         Map<String, String> endpointURLs = new HashMap<String, String>();
-        endpointURLs.put(SCIMConstants.USER_ENDPOINT, USERS_URL);
-        endpointURLs.put(SCIMConstants.GROUP_ENDPOINT, GROUPS_URL);
+        endpointURLs.put(SCIMConstants.USER_ENDPOINT, SCIMRESTAPIConstants.USERS_URL);
+        endpointURLs.put(SCIMConstants.GROUP_ENDPOINT, SCIMRESTAPIConstants.GROUPS_URL);
         //register endpoint URLs in AbstractResourceEndpoint since they are called with in the API
         AbstractResourceManager.setEndpointURLMap(endpointURLs);
     }
@@ -86,7 +84,9 @@ public class UsersApiServiceImpl extends UsersApiService {
         try {
             userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
             UserResourceManager userResourceManager = new UserResourceManager();
-            SCIMResponse scimResponse = userResourceManager.updateWithPUT(id, body.toString(), userManager, null, null);
+            Gson gson = new Gson();
+            String bodyJsonString = gson.toJson(body);
+            SCIMResponse scimResponse = userResourceManager.updateWithPUT(id, bodyJsonString, userManager, null, null);
             return ApiServiceUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
             LOG.error("Error in initializing the CarbonAuthUserManager");

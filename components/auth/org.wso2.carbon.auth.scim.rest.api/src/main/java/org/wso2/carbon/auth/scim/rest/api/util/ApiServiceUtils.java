@@ -19,9 +19,13 @@ package org.wso2.carbon.auth.scim.rest.api.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
 public class ApiServiceUtils{
@@ -35,12 +39,22 @@ public class ApiServiceUtils{
       *@param scimResponse
      * @return Response
      */
-    public static Response buildResponse(SCIMResponse scimResponse) {
+    public static Response buildResponse(SCIMResponse scimResponse) throws AuthUserManagementException {
         Response.ResponseBuilder responseBuilder = Response.status(scimResponse.getResponseStatus());
         Map<String, String> httpHeaders = scimResponse.getHeaderParamMap();
         if (httpHeaders != null && !httpHeaders.isEmpty()) {
             for (Map.Entry<String, String> entry : httpHeaders.entrySet()) {
-                responseBuilder.header(entry.getKey(), entry.getValue());
+                //skip the location header as it is supported by the framework to set the actual hostnames
+                if (HttpHeaders.LOCATION.equals(entry.getKey())) {
+                    try {
+                        responseBuilder.location(new URI(entry.getValue()));
+                    } catch (URISyntaxException e) {
+                        throw new AuthUserManagementException(
+                                "Error while setting Location URI for the resource in response", e);
+                    }
+                } else {
+                    responseBuilder.header(entry.getKey(), entry.getValue());
+                }
             }
         }
         if (scimResponse.getResponseMessage() != null) {

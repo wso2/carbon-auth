@@ -82,7 +82,14 @@ CREATE UNIQUE INDEX unique_ID_INDEX_1 ON AUTH_UM_USER (USER_UNIQUE_ID);
 CREATE UNIQUE INDEX unique_ID_INDEX_2 ON AUTH_UM_GROUP (GROUP_UNIQUE_ID);
 
 INSERT INTO `AUTH_UM_ATTRIBUTES` (`ID`, `ATTR_NAME`) VALUES
-(1, 'password'),
-(2, 'urn:ietf:params:scim:schemas:core:2.0:User:userName'),
-(3, 'urn:ietf:params:scim:schemas:core:2.0:Group:displayName'),
-(4, 'urn:ietf:params:scim:schemas:core:2.0:User:name.familyName');
+(1, 'urn:ietf:params:scim:schemas:core:2.0:id'),
+(2, 'urn:ietf:params:scim:schemas:core:2.0:meta.created'),
+(3, 'urn:ietf:params:scim:schemas:core:2.0:meta.lastModified'),
+(4, 'urn:ietf:params:scim:schemas:core:2.0:meta.resourceType'),
+(5, 'urn:ietf:params:scim:schemas:core:2.0:User:userName'),
+(6, 'urn:ietf:params:scim:schemas:core:2.0:User:displayName'),
+(7, 'urn:ietf:params:scim:schemas:core:2.0:User:name.familyName'),
+(8, 'urn:ietf:params:scim:schemas:core:2.0:User:name.givenName'),
+(9, 'urn:ietf:params:scim:schemas:core:2.0:User:emails.work'),
+(10, 'urn:ietf:params:scim:schemas:core:2.0:User:emails.home'),
+(11, 'urn:ietf:params:scim:schemas:core:2.0:Group:displayName');
