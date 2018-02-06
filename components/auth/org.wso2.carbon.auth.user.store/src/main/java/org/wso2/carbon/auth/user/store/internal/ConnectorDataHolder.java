@@ -34,7 +34,6 @@ import org.wso2.carbon.datasource.core.exception.DataSourceException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import javax.security.auth.callback.PasswordCallback;
 import javax.sql.DataSource;
 

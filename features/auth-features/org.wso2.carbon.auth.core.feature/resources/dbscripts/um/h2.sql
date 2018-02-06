@@ -88,8 +88,9 @@ INSERT INTO `AUTH_UM_ATTRIBUTES` (`ID`, `ATTR_NAME`) VALUES
 (4, 'urn:ietf:params:scim:schemas:core:2.0:meta.resourceType'),
 (5, 'urn:ietf:params:scim:schemas:core:2.0:User:userName'),
 (6, 'urn:ietf:params:scim:schemas:core:2.0:User:displayName'),
-(7, 'urn:ietf:params:scim:schemas:core:2.0:User:name.familyName'),
-(8, 'urn:ietf:params:scim:schemas:core:2.0:User:name.givenName'),
-(9, 'urn:ietf:params:scim:schemas:core:2.0:User:emails.work'),
-(10, 'urn:ietf:params:scim:schemas:core:2.0:User:emails.home'),
-(11, 'urn:ietf:params:scim:schemas:core:2.0:Group:displayName');
+(7, 'urn:ietf:params:scim:schemas:core:2.0:User:password'),
+(8, 'urn:ietf:params:scim:schemas:core:2.0:User:name.familyName'),
+(9, 'urn:ietf:params:scim:schemas:core:2.0:User:name.givenName'),
+(10, 'urn:ietf:params:scim:schemas:core:2.0:User:emails.work'),
+(11, 'urn:ietf:params:scim:schemas:core:2.0:User:emails.home'),
+(12, 'urn:ietf:params:scim:schemas:core:2.0:Group:displayName');
