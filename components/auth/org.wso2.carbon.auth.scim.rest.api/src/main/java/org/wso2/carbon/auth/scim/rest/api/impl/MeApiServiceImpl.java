@@ -8,7 +8,7 @@ import org.wso2.carbon.auth.scim.rest.api.MeApiService;
 import org.wso2.carbon.auth.scim.rest.api.NotFoundException;
 
 import org.wso2.carbon.auth.scim.rest.api.dto.UserDTO;
-import org.wso2.carbon.auth.scim.rest.api.util.ApiServiceUtils;
+import org.wso2.carbon.auth.scim.rest.api.util.SCIMRESTAPIUtils;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.protocol.endpoints.MeResourceManager;
@@ -16,6 +16,10 @@ import org.wso2.msf4j.Request;
 
 import javax.ws.rs.core.Response;
 
+/**
+ * REST API implementation class for logged in user
+ *
+ */
 public class MeApiServiceImpl extends MeApiService {
     private static final Logger LOG = LoggerFactory.getLogger(GroupsApiServiceImpl.class);
 
@@ -27,7 +31,7 @@ public class MeApiServiceImpl extends MeApiService {
             userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
             MeResourceManager meResourceManager = new MeResourceManager();
             SCIMResponse scimResponse = meResourceManager.delete(userUniqueId, userManager);
-            return ApiServiceUtils.buildResponse(scimResponse);
+            return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
             LOG.error("Error in initializing the CarbonAuthUserManager");
         }
@@ -42,7 +46,7 @@ public class MeApiServiceImpl extends MeApiService {
             userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
             MeResourceManager meResourceManager = new MeResourceManager();
             SCIMResponse scimResponse = meResourceManager.get(userUniqueId, userManager, null, null);
-            return ApiServiceUtils.buildResponse(scimResponse);
+            return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
             LOG.error("Error in initializing the CarbonAuthUserManager");
         }
@@ -56,7 +60,7 @@ public class MeApiServiceImpl extends MeApiService {
             userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
             MeResourceManager meResourceManager = new MeResourceManager();
             SCIMResponse scimResponse = meResourceManager.create(body.toString(), userManager, null, null);
-            return ApiServiceUtils.buildResponse(scimResponse);
+            return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
             LOG.error("Error in initializing the CarbonAuthUserManager");
         }
@@ -72,7 +76,7 @@ public class MeApiServiceImpl extends MeApiService {
             MeResourceManager meResourceManager = new MeResourceManager();
             SCIMResponse scimResponse = meResourceManager.updateWithPUT(userUniqueId, body.toString(), userManager,
                     null, null);
-            return ApiServiceUtils.buildResponse(scimResponse);
+            return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
             LOG.error("Error in initializing the CarbonAuthUserManager");
         }

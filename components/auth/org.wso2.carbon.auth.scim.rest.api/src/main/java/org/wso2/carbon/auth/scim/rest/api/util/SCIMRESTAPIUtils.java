@@ -17,8 +17,6 @@
  */
 package org.wso2.carbon.auth.scim.rest.api.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 
@@ -28,9 +26,13 @@ import java.util.Map;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
-public class ApiServiceUtils{
+/**
+ * Utility functions for SCIM REST API
+ * 
+ */
+public class SCIMRESTAPIUtils {
 
-    private ApiServiceUtils() {
+    private SCIMRESTAPIUtils() {
 
     }
 

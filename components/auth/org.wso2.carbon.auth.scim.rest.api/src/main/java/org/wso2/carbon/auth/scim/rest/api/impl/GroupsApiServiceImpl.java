@@ -8,7 +8,7 @@ import org.wso2.carbon.auth.scim.rest.api.GroupsApiService;
 import org.wso2.carbon.auth.scim.rest.api.NotFoundException;
 
 import org.wso2.carbon.auth.scim.rest.api.dto.GroupDTO;
-import org.wso2.carbon.auth.scim.rest.api.util.ApiServiceUtils;
+import org.wso2.carbon.auth.scim.rest.api.util.SCIMRESTAPIUtils;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.protocol.endpoints.GroupResourceManager;
@@ -16,6 +16,10 @@ import org.wso2.msf4j.Request;
 
 import javax.ws.rs.core.Response;
 
+/**
+ * REST API implementation class for SCIM groups
+ * 
+ */
 public class GroupsApiServiceImpl extends GroupsApiService {
     private static final Logger LOG = LoggerFactory.getLogger(GroupsApiServiceImpl.class);
 
@@ -28,7 +32,7 @@ public class GroupsApiServiceImpl extends GroupsApiService {
             GroupResourceManager groupResourceManager = new GroupResourceManager();
             SCIMResponse scimResponse = groupResourceManager.listWithGET(userManager, filter, startIndex, count,
                     null, null, null, null);
-            return ApiServiceUtils.buildResponse(scimResponse);
+            return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
             LOG.error("Error in initializing the CarbonAuthUserManager");
         }
@@ -42,7 +46,7 @@ public class GroupsApiServiceImpl extends GroupsApiService {
             userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
             GroupResourceManager groupResourceManager = new GroupResourceManager();
             SCIMResponse scimResponse = groupResourceManager.delete(id, userManager);
-            return ApiServiceUtils.buildResponse(scimResponse);
+            return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
             LOG.error("Error in initializing the CarbonAuthUserManager");
         }
@@ -56,7 +60,7 @@ public class GroupsApiServiceImpl extends GroupsApiService {
             userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
             GroupResourceManager groupResourceManager = new GroupResourceManager();
             SCIMResponse scimResponse = groupResourceManager.get(id, userManager, null, null);
-            return ApiServiceUtils.buildResponse(scimResponse);
+            return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
             LOG.error("Error in initializing the CarbonAuthUserManager");
         }
@@ -71,7 +75,7 @@ public class GroupsApiServiceImpl extends GroupsApiService {
             GroupResourceManager groupResourceManager = new GroupResourceManager();
             SCIMResponse scimResponse = groupResourceManager
                     .updateWithPUT(id, body.toString(), userManager, null, null);
-            return ApiServiceUtils.buildResponse(scimResponse);
+            return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
             LOG.error("Error in initializing the CarbonAuthUserManager");
         }
@@ -85,7 +89,7 @@ public class GroupsApiServiceImpl extends GroupsApiService {
             userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
             GroupResourceManager groupResourceManager = new GroupResourceManager();
             SCIMResponse scimResponse = groupResourceManager.create(body.toString(), userManager, null, null);
-            return ApiServiceUtils.buildResponse(scimResponse);
+            return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
             LOG.error("Error in initializing the CarbonAuthUserManager");
         }

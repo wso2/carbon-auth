@@ -18,6 +18,10 @@
 
 package org.wso2.carbon.auth.scim.rest.api;
 
+/**
+ * Constants used for SCIM REST API
+ * 
+ */
 public class SCIMRESTAPIConstants {
     public static final String USERS_URL = "/api/identity/scim2/v1.0/Users";
     public static final String GROUPS_URL = "/api/identity/scim2/v1.0/Groups";
