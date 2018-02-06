@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -16,22 +16,13 @@
  * under the License.
  */
 
-package org.wso2.carbon.auth.scim.exception;
-
-import org.wso2.carbon.auth.core.exception.AuthException;
+package org.wso2.carbon.auth.scim.rest.api;
 
 /**
- * Class to handle User Management Exceptions
- *
+ * Constants used for SCIM REST API
+ * 
  */
-public class AuthUserManagementException extends AuthException {
-
-    public AuthUserManagementException(String message) {
-        super(message);
-    }
-    
-    public AuthUserManagementException(String message, Throwable e) {
-        super(message, e);
-    }
-
+public class SCIMRESTAPIConstants {
+    public static final String USERS_URL = "/api/identity/scim2/v1.0/Users";
+    public static final String GROUPS_URL = "/api/identity/scim2/v1.0/Groups";
 }

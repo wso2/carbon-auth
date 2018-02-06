@@ -34,14 +34,14 @@ host: apis.wso2.com
 
 # The base path of the API.
 # Will be prefixed to all paths.
-basePath: /api/scim2/v1.0
+basePath: /api/identity/scim2/v1.0
 
 # The following media types can be passed as input in message bodies of the API.
 # The actual media type must be specified in the Content-Type header field of the request.
 # The default is json, i.e. the Content-Type header is not needed to
 # be set, but supporting it serves extensibility.
 consumes:
-  - application/scim+json
+  - application/json
 
 # The following media types may be passed as output in message bodies of the API.
 # The media type(s) consumable by the requestor is specified in the Accept header field
@@ -51,7 +51,7 @@ consumes:
 # The default of the Accept header is json, i.e. there is not needed to
 # set the value, but supporting it serves extensibility.
 produces:
-  - application/scim+json
+  - application/json
 paths:
 ######################################################
 # The "Users" resource APIs
@@ -204,8 +204,6 @@ paths:
           description: |
             OK.
             Users returned. 
-          schema:
-            $ref: '#/definitions/User'
           headers:
             Content-Type:
               description: |
@@ -529,6 +527,14 @@ paths:
         Create a User
       tags:
         - Me
+      parameters:
+        - in: body
+          name: body
+          description: |
+            User object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/User'
       responses:
         201:
           description: |
@@ -562,6 +568,14 @@ paths:
         Update the currently authenticated user
       tags:
         - Me
+      parameters:
+        - in: body
+          name: body
+          description: |
+            User object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/User'
       responses:
         201:
           description: |
@@ -636,7 +650,7 @@ parameters:
     in: query
     description: |
       Number of elements returned in the paginated result.
-    default: 0
+    default: 25
     type: integer
     required: false
 
@@ -658,7 +672,6 @@ parameters:
     in: query
     description: |
       A filter expression to request a subset of the result.
-    default: 0
     type: string
     required: false
 
@@ -684,7 +697,7 @@ definitions:
       schemas:
         type: array
         items:
-          $ref: '#/definitions/Schema'
+          type: string
       Resources:
         type: array
         items:
@@ -710,7 +723,7 @@ definitions:
       schemas:
         type: array
         items:
-          $ref: '#/definitions/Schema'
+          type: string
       attributes:
         type: array
         items:
@@ -720,13 +733,61 @@ definitions:
 #-----------------------------------------------------
   User:
     title: User
-    type: object
-#-----------------------------------------------------
-# The Schema resource
-#-----------------------------------------------------
-  Schema:
-    title: SCIM Resource Schema
-    type: string
+    properties:
+      id:
+        type: string
+      externalId:
+        type: string
+      meta:
+        $ref: '#/definitions/Meta'
+      userName:
+        type: string
+      password:
+        type: string
+      schemas:
+        type: array
+        items:
+          type: string
+      name: 
+        description: name related attributes
+        properties:
+          formatted:
+            description: | 
+              The full name, including all middle names, titles, and
+              suffixes as appropriate, formatted for display
+            type: string
+            example: Ms. Barbara Jane Jensen, III
+          familyName:
+            type: string
+            description: |
+              The family name of the User, or last name in most Western languages
+            example: Jensen
+          givenName:
+            description: |
+              The given name of the User, or first name in most Western languages
+            type: string
+            example: Barbara
+          middleName:
+            description: |
+              The middle name(s) of the User
+            type: string
+            example: Jane
+          honorificPrefix:
+            description: |
+              The honorific prefix(es) of the User, or title in most Western languages
+            type: string
+            example: Ms.
+          honorificSuffix:
+            description: |
+              The honorific suffix(es) of the User, or suffix in most Western languages
+            type: string
+            example: III
+      emails:
+        title: emails of the user
+        type: array
+        items:
+          type: object
+
 #-----------------------------------------------------
 # The Attributes resource
 #-----------------------------------------------------
@@ -755,7 +816,7 @@ definitions:
       schemas:
         type: array
         items:
-          $ref: '#/definitions/Schema'
+          type: string
       Resources:
         type: array
         items:
@@ -774,7 +835,7 @@ definitions:
       schemas:
         type: array
         items:
-          $ref: '#/definitions/Schema'
+          type: string
       members:
         type: array
         items:

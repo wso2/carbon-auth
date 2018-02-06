@@ -128,7 +128,9 @@
     </build>
 
     <properties>
-        <private.package>org.wso2.carbon.auth.core.internal</private.package>
+        <private.package>org.wso2.carbon.auth.core.internal,
+            org.apache.axiom.*; version="${imp.pkg.version.axiom}"
+        </private.package>
         <import.package>
             org.eclipse.osgi.util,
             org.slf4j.*;version="${slf4j.logging.package.import.version.range}",
