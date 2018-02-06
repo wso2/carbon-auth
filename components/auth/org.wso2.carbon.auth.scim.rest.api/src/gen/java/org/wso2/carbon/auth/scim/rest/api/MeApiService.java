@@ -21,8 +21,6 @@ import javax.ws.rs.core.SecurityContext;
 public abstract class MeApiService {
     public abstract Response meDelete( Request request) throws NotFoundException;
     public abstract Response meGet( Request request) throws NotFoundException;
-    public abstract Response mePost(UserDTO body
-  ,Request request) throws NotFoundException;
-    public abstract Response mePut(UserDTO body
-  ,Request request) throws NotFoundException;
+    public abstract Response mePost( Request request) throws NotFoundException;
+    public abstract Response mePut( Request request) throws NotFoundException;
 }

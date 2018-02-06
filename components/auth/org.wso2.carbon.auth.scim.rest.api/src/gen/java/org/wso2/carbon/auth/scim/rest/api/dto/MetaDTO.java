@@ -1,7 +1,8 @@
 package org.wso2.carbon.auth.scim.rest.api.dto;
 
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
@@ -10,16 +11,16 @@ import java.util.Objects;
  * MetaDTO
  */
 public class MetaDTO   {
-  @SerializedName("created")
+  @JsonProperty("created")
   private String created = null;
 
-  @SerializedName("lastModified")
+  @JsonProperty("lastModified")
   private String lastModified = null;
 
-  @SerializedName("location")
+  @JsonProperty("location")
   private String location = null;
 
-  @SerializedName("resourceType")
+  @JsonProperty("resourceType")
   private String resourceType = null;
 
   public MetaDTO created(String created) {

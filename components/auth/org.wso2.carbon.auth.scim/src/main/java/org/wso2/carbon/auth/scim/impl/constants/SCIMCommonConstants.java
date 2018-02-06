@@ -34,8 +34,11 @@ public class SCIMCommonConstants {
     public static final String GROUP_DIALECT = "urn:ietf:params:scim:schemas:core:2.0:Group";
     public static final String CORE_DIALECT = "urn:ietf:params:scim:schemas:core:2.0";
 
-    public static final String USERS_LOCATION = "/api/scim2/v1.0/Users";
-    public static final String GROUPS_LOCATION = "/api/scim2/v1.0/Users";
+    //TODO these are temporary values. These should be read from configurations
+    public static final String USERS_LOCATION = "/scim/v2/Users";
+    public static final String GROUPS_LOCATION = "/scim/v2/Group";
+    public static final String SERVICE_PROVIDER_CONFIG_LOCATION = "/scim/v2/ServiceProviderConfig";
+    public static final String RESOURCE_TYPE_LOCATION = "/scim/v2/ResourceType";
     //ServiceProviderConfigResource endpoint related constants
 
     public static final String DOCUMENTATION_URL = "";

@@ -34,7 +34,7 @@ import java.util.Map;
  * @since 1.0.0
  */
 @Component(
-        name = "org.wso2.carbon.auth.user.store.internal.ConnectorComponent",
+        name = "org.wso2.carbon.identity.mgt.store.connector.jdbc.internal.ConnectorComponent",
         immediate = true
 )
 public class ConnectorComponent {

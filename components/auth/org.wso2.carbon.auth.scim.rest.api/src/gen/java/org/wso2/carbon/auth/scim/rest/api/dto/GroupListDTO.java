@@ -1,31 +1,33 @@
 package org.wso2.carbon.auth.scim.rest.api.dto;
 
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
 import org.wso2.carbon.auth.scim.rest.api.dto.GroupDTO;
+import org.wso2.carbon.auth.scim.rest.api.dto.SchemaDTO;
 import java.util.Objects;
 
 /**
  * GroupListDTO
  */
 public class GroupListDTO   {
-  @SerializedName("startIndex")
+  @JsonProperty("startIndex")
   private Integer startIndex = null;
 
-  @SerializedName("itemsPerPage")
+  @JsonProperty("itemsPerPage")
   private Integer itemsPerPage = null;
 
-  @SerializedName("totalResults")
+  @JsonProperty("totalResults")
   private Integer totalResults = null;
 
-  @SerializedName("schemas")
-  private List<String> schemas = new ArrayList<String>();
+  @JsonProperty("schemas")
+  private List<SchemaDTO> schemas = new ArrayList<SchemaDTO>();
 
-  @SerializedName("Resources")
+  @JsonProperty("Resources")
   private List<GroupDTO> resources = new ArrayList<GroupDTO>();
 
   public GroupListDTO startIndex(Integer startIndex) {
@@ -82,12 +84,12 @@ public class GroupListDTO   {
     this.totalResults = totalResults;
   }
 
-  public GroupListDTO schemas(List<String> schemas) {
+  public GroupListDTO schemas(List<SchemaDTO> schemas) {
     this.schemas = schemas;
     return this;
   }
 
-  public GroupListDTO addSchemasItem(String schemasItem) {
+  public GroupListDTO addSchemasItem(SchemaDTO schemasItem) {
     this.schemas.add(schemasItem);
     return this;
   }
@@ -97,11 +99,11 @@ public class GroupListDTO   {
    * @return schemas
   **/
   @ApiModelProperty(value = "")
-  public List<String> getSchemas() {
+  public List<SchemaDTO> getSchemas() {
     return schemas;
   }
 
-  public void setSchemas(List<String> schemas) {
+  public void setSchemas(List<SchemaDTO> schemas) {
     this.schemas = schemas;
   }
 

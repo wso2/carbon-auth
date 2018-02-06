@@ -4,9 +4,9 @@ package org.wso2.carbon.auth.scim.rest.api.dto;
 import java.util.Objects;
 
 /**
- * UserDTO
+ * SchemaDTO
  */
-public class UserDTO   {
+public class SchemaDTO   {
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -27,7 +27,7 @@ public class UserDTO   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class UserDTO {\n");
+    sb.append("class SchemaDTO {\n");
     
     sb.append("}");
     return sb.toString();

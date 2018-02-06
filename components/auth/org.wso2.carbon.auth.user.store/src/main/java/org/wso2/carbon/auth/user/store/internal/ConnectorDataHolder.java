@@ -28,7 +28,6 @@ import org.wso2.carbon.auth.user.store.connector.UserStoreConnectorFactory;
 import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
 import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
-import org.wso2.carbon.auth.user.store.util.UserStoreUtil;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.datasource.core.exception.DataSourceException;
 
@@ -87,7 +86,6 @@ public class ConnectorDataHolder {
         }
         List<Attribute> attributeList = new ArrayList<>();
         attributeList.add(new Attribute(UserStoreConstants.CLAIM_USERNAME, user));
-        attributeList.add(new Attribute(UserStoreConstants.CLAIM_ID, UserStoreUtil.generateUUID()));
         try {
             String uid = connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, user);
             if (uid != null) {

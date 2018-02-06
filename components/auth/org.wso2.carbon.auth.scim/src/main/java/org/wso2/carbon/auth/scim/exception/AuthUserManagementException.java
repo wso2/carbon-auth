@@ -31,7 +31,7 @@ public class AuthUserManagementException extends AuthException {
     }
     
     public AuthUserManagementException(String message, Throwable e) {
-        super(message, e);
+        super(message);
     }
 
 }
