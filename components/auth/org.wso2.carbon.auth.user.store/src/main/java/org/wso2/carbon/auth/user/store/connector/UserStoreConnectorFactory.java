@@ -20,27 +20,29 @@
 
 package org.wso2.carbon.auth.user.store.connector;
 
-import org.wso2.carbon.auth.core.ServiceReferenceHolder;
-import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
+import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.connector.jdbc.JDBCUserStoreConnector;
 import org.wso2.carbon.auth.user.store.connector.ldap.LDAPUserStoreConnector;
 import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
+import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
+import org.wso2.carbon.auth.user.store.internal.ServiceReferenceHolder;
 
 /**
  * Factory class to create user store connector
- *
  */
 public class UserStoreConnectorFactory {
 
-    public static UserStoreConnector getUserStoreConnector() {
-        UserStoreConfiguration userStoreConfiguration = ServiceReferenceHolder.getInstance().
-                getAuthConfiguration().getUserStoreConfiguration();
+    public static UserStoreConnector getUserStoreConnector() throws UserStoreConnectorException {
+        UserStoreConfiguration userStoreConfiguration = ServiceReferenceHolder.getInstance()
+                .getUserStoreConfigurationService().getUserStoreConfiguration();
         if (UserStoreConstants.JDBC_CONNECTOR_TYPE.equals(userStoreConfiguration.getConnectorType())) {
-            return new JDBCUserStoreConnector();
+            JDBCUserStoreConnector connector = new JDBCUserStoreConnector();
+            connector.init(userStoreConfiguration);
+            return connector;
         } else if (UserStoreConstants.LDAP_CONNECTOR_TYPE.equals(userStoreConfiguration.getConnectorType())) {
             return new LDAPUserStoreConnector();
         }
-        return new JDBCUserStoreConnector();
+        throw new UserStoreConnectorException("User store connector type is not defined in configuration");
     }
 
 }

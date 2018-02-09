@@ -72,8 +72,8 @@ public class RegisterApiServiceImpl extends RegisterApiService {
             throws NotFoundException {
         ApplicationDTO applicationDTO;
         ClientRegistrationHandler handler;
-        UserStoreManager userStoreManager = UserStoreManagerFactory.getUserStoreManager();
         try {
+            UserStoreManager userStoreManager = UserStoreManagerFactory.getUserStoreManager();
             handler = ClientRegistrationFactory.getInstance().getClientRegistrationHandler();
             Application newApp = MappingUtil.registrationRequestToApplication(registrationRequest);
             String authHeader = request.getHeader("Authorization");

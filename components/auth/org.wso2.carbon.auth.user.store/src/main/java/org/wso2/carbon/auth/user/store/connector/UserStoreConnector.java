@@ -16,7 +16,7 @@
 
 package org.wso2.carbon.auth.user.store.connector;
 
-import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
+import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.exception.GroupNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;

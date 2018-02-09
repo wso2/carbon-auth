@@ -56,7 +56,7 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
 
     @Override
     public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
-            throws OAuthDAOException {
+            throws UserStoreException, OAuthDAOException {
         log.debug("Calling PasswordGrantHandlerImpl:process");
         try {
             ResourceOwnerPasswordCredentialsGrant request =
@@ -71,7 +71,8 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
 
     private void processPasswordGrantRequest(String authorization, AccessTokenContext context,
                                              @Nullable String scopeValue,
-                                             ResourceOwnerPasswordCredentialsGrant request) throws OAuthDAOException {
+                                             ResourceOwnerPasswordCredentialsGrant request)
+            throws UserStoreException, OAuthDAOException {
         log.debug("calling processPasswordGrantRequest");
         MutableBoolean haltExecution = new MutableBoolean(false);
 
@@ -105,16 +106,11 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
         oauthDAO.addAccessTokenInfo(accessTokenData);
     }
 
-    private boolean validateGrant(ResourceOwnerPasswordCredentialsGrant request) {
+    private boolean validateGrant(ResourceOwnerPasswordCredentialsGrant request) throws UserStoreException {
         String username = request.getUsername();
         Secret password = request.getPassword();
 
         UserStoreManager userStoreManager = UserStoreManagerFactory.getUserStoreManager();
-        try {
-            return userStoreManager.doAuthenticate(username, password.getValue());
-        } catch (UserStoreException e) {
-            log.error(e.getMessage(), e);
-        }
-        return false;
+        return userStoreManager.doAuthenticate(username, password.getValue());
     }
 }

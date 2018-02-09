@@ -20,7 +20,7 @@ package org.wso2.carbon.auth.user.store.connector.jdbc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
+import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.connector.Attribute;
 import org.wso2.carbon.auth.user.store.connector.PasswordHandler;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
@@ -32,7 +32,7 @@ import org.wso2.carbon.auth.user.store.exception.GroupNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.StoreException;
 import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
-import org.wso2.carbon.auth.user.store.internal.ConnectorDataHolder;
+import org.wso2.carbon.auth.user.store.internal.ServiceReferenceHolder;
 import org.wso2.carbon.auth.user.store.util.NamedPreparedStatement;
 import org.wso2.carbon.auth.user.store.util.UnitOfWork;
 import org.wso2.carbon.auth.user.store.util.UserStoreUtil;
@@ -98,7 +98,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
         this.userStoreConfig = userStoreConfig;
 
         try {
-            dataSource = ConnectorDataHolder.getInstance()
+            dataSource = (DataSource) ServiceReferenceHolder.getInstance().getDataSourceService()
                     .getDataSource((String) properties.get(JDBCConnectorConstants.DATA_SOURCE));
             if (dataSource == null) {
                 throw new UserStoreConnectorException("Datasource is not configured properly");

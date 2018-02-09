@@ -23,10 +23,10 @@ package org.wso2.carbon.auth.scim.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.auth.core.ServiceReferenceHolder;
-import org.wso2.carbon.auth.core.configuration.models.AttributeConfiguration;
 import org.wso2.carbon.auth.scim.impl.constants.SCIMCommonConstants;
+import org.wso2.carbon.auth.scim.internal.ServiceReferenceHolder;
 import org.wso2.carbon.auth.scim.utils.SCIMClaimResolver;
+import org.wso2.carbon.auth.user.store.configuration.models.AttributeConfiguration;
 import org.wso2.carbon.auth.user.store.connector.Attribute;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
 import org.wso2.carbon.auth.user.store.exception.GroupNotFoundException;
@@ -57,24 +57,23 @@ import javax.security.auth.callback.PasswordCallback;
  * This is the wrapper class of Charon User Manager. This deals with the user management API. 
  * 
  */
-public class CarbonAuthUserManager implements UserManager {
+public class CarbonAuthSCIMUserManager implements UserManager {
     
-    private static Logger log = LoggerFactory.getLogger(CarbonAuthUserManager.class);
-    
-    UserStoreConnector userStoreConnector;
+    private static Logger log = LoggerFactory.getLogger(CarbonAuthSCIMUserManager.class);
+    private UserStoreConnector userStoreConnector;
     
     //Holds user attribute-name to attribute-info mapping
-    Map<String, AttributeConfiguration> attributeMappings = new HashMap<String, AttributeConfiguration>();
+    private Map<String, AttributeConfiguration> attributeMappings = new HashMap<String, AttributeConfiguration>();
     
-    public CarbonAuthUserManager(UserStoreConnector userStoreConnector) {
+    public CarbonAuthSCIMUserManager(UserStoreConnector userStoreConnector) {
         this.userStoreConnector = userStoreConnector;
         List<AttributeConfiguration> attributes = ServiceReferenceHolder.getInstance()
-                .getAuthConfiguration().getUserStoreConfiguration().getAttributes();
+                .getUserStoreConfigurationService().getUserStoreConfiguration().getAttributes();
         
         for (AttributeConfiguration attribute: attributes) {
-            attributeMappings.put(attribute.getAttribute(), attribute);
+            attributeMappings.put(attribute.getAttributeName(), attribute);
         }
-    }    
+    }
 
     @Override
     public User createUser(User user, Map<String, Boolean> requiredAttributes) throws CharonException,

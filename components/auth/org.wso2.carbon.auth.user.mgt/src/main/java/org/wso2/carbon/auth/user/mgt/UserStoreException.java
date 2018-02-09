@@ -17,10 +17,12 @@
  */
 package org.wso2.carbon.auth.user.mgt;
 
+import org.wso2.carbon.auth.core.exception.AuthException;
+
 /**
  * Exception class for User store related exceptions
  */
-public class UserStoreException extends Exception {
+public class UserStoreException extends AuthException {
     public UserStoreException() {
         super();
     }

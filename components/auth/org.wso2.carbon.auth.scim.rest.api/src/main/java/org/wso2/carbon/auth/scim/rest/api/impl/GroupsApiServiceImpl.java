@@ -2,11 +2,10 @@ package org.wso2.carbon.auth.scim.rest.api.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.scim.SCIMManager;
 import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
-import org.wso2.carbon.auth.scim.impl.SCIMManager;
 import org.wso2.carbon.auth.scim.rest.api.GroupsApiService;
 import org.wso2.carbon.auth.scim.rest.api.NotFoundException;
-
 import org.wso2.carbon.auth.scim.rest.api.dto.GroupDTO;
 import org.wso2.carbon.auth.scim.rest.api.util.SCIMRESTAPIUtils;
 import org.wso2.charon3.core.extensions.UserManager;
@@ -28,13 +27,13 @@ public class GroupsApiServiceImpl extends GroupsApiService {
             throws NotFoundException {
         UserManager userManager;
         try {
-            userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
+            userManager = SCIMManager.getInstance().getCarbonAuthSCIMUserManager();
             GroupResourceManager groupResourceManager = new GroupResourceManager();
             SCIMResponse scimResponse = groupResourceManager.listWithGET(userManager, filter, startIndex, count,
                     null, null, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthUserManager");
+            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -43,12 +42,12 @@ public class GroupsApiServiceImpl extends GroupsApiService {
     public Response groupsIdDelete(String id, Request request) throws NotFoundException {
         UserManager userManager;
         try {
-            userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
+            userManager = SCIMManager.getInstance().getCarbonAuthSCIMUserManager();
             GroupResourceManager groupResourceManager = new GroupResourceManager();
             SCIMResponse scimResponse = groupResourceManager.delete(id, userManager);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthUserManager");
+            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -57,12 +56,12 @@ public class GroupsApiServiceImpl extends GroupsApiService {
     public Response groupsIdGet(String id, Request request) throws NotFoundException {
         UserManager userManager;
         try {
-            userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
+            userManager = SCIMManager.getInstance().getCarbonAuthSCIMUserManager();
             GroupResourceManager groupResourceManager = new GroupResourceManager();
             SCIMResponse scimResponse = groupResourceManager.get(id, userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthUserManager");
+            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -71,13 +70,13 @@ public class GroupsApiServiceImpl extends GroupsApiService {
     public Response groupsIdPut(String id, GroupDTO body, Request request) throws NotFoundException {
         UserManager userManager;
         try {
-            userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
+            userManager = SCIMManager.getInstance().getCarbonAuthSCIMUserManager();
             GroupResourceManager groupResourceManager = new GroupResourceManager();
             SCIMResponse scimResponse = groupResourceManager
                     .updateWithPUT(id, body.toString(), userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthUserManager");
+            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -86,12 +85,12 @@ public class GroupsApiServiceImpl extends GroupsApiService {
     public Response groupsPost(GroupDTO body, Request request) throws NotFoundException {
         UserManager userManager;
         try {
-            userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
+            userManager = SCIMManager.getInstance().getCarbonAuthSCIMUserManager();
             GroupResourceManager groupResourceManager = new GroupResourceManager();
             SCIMResponse scimResponse = groupResourceManager.create(body.toString(), userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthUserManager");
+            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }

@@ -19,8 +19,6 @@ package org.wso2.carbon.auth.user.mgt.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.auth.core.ServiceReferenceHolder;
-import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 import org.wso2.carbon.auth.user.store.connector.PasswordHandler;
@@ -41,16 +39,12 @@ public class LDAPUserStoreManager implements UserStoreManager {
     private static Logger log = LoggerFactory.getLogger(LDAPUserStoreManager.class);
     private UserStoreConnector userStoreConnector;
 
-    public LDAPUserStoreManager() {
-        UserStoreConnector connector = UserStoreConnectorFactory.getUserStoreConnector();
-        UserStoreConfiguration config = ServiceReferenceHolder.getInstance().getAuthConfiguration()
-                .getUserStoreConfiguration();
+    public LDAPUserStoreManager() throws UserStoreException {
         try {
-            connector.init(config);
+            this.userStoreConnector = UserStoreConnectorFactory.getUserStoreConnector();
         } catch (UserStoreConnectorException e) {
-            log.error("Error occurred while init UserStoreConnector", e);
+            throw new UserStoreException("Error while initializing LDAP user store connector", e);
         }
-        this.userStoreConnector = connector;
     }
 
     public LDAPUserStoreManager(UserStoreConnector userStoreConnector) {

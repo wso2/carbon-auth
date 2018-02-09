@@ -35,7 +35,7 @@ public class TestUtil {
     public static boolean isAttributeExists(UserStoreConfiguration userStoreConfiguration, String attribute) {
         Assert.assertTrue(userStoreConfiguration.isReadOnly());
         for (AttributeConfiguration attributeConfiguration : userStoreConfiguration.getAttributes()) {
-            if (!StringUtils.isBlank(attribute) && attribute.equals(attributeConfiguration.getAttribute())) {
+            if (!StringUtils.isBlank(attribute) && attribute.equals(attributeConfiguration.getAttributeName())) {
                 return true;
             }
         }

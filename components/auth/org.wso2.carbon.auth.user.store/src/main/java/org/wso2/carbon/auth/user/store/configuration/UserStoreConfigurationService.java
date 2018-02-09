@@ -18,23 +18,22 @@
  *
  */
 
-package org.wso2.carbon.auth.core.configuration.models;
+package org.wso2.carbon.auth.user.store.configuration;
 
-import org.wso2.carbon.config.annotation.Configuration;
-import org.wso2.carbon.config.annotation.Element;
+import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 
 /**
- * Class to hold Auth configuration parameters and generate yaml file
+ * Service class to get configuration
+ *
  */
+public class UserStoreConfigurationService {
 
-@Configuration(namespace = "wso2.carbon.auth", description = "Auth Configuration Parameters")
-public class AuthConfiguration {
-
-    @Element(description = "Key Manager Configurations")
-    private KeyManagerConfiguration keyManagerConfigs = new KeyManagerConfiguration();
-
-    public KeyManagerConfiguration getKeyManagerConfigs() {
-        return keyManagerConfigs;
+    private UserStoreConfiguration userStoreConfiguration;
+    public UserStoreConfigurationService(UserStoreConfiguration userStoreConfiguration) {
+        this.userStoreConfiguration = userStoreConfiguration;
     }
 
+    public UserStoreConfiguration getUserStoreConfiguration() {
+        return userStoreConfiguration;
+    }
 }

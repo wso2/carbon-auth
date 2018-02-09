@@ -618,13 +618,14 @@
         <apache.servicemix.jcip-annotations.version>1.0_1</apache.servicemix.jcip-annotations.version>
         <apache.servicemix.jcip-annotations.bundle.version>1.0.0.1</apache.servicemix.jcip-annotations.bundle.version>
         <carbon.config.version>2.1.4</carbon.config.version>
-
-        <!-- Jacoco for code coverage -->
-        <jacoco.version>0.8.0</jacoco.version>
+        <carbon.config.package.import.version.range>[2.0.0, 3.0.0)</carbon.config.package.import.version.range>
         <charon.core.version>3.0.5</charon.core.version>
-        <charon.core.import.version>3.0.5</charon.core.import.version>
+        <charon.core.import.version.range>[3.0.0, 4.0.0)</charon.core.import.version.range>
         <securevault.version>5.0.8</securevault.version>
         <gson.version.range>[2.2,3)</gson.version.range>
+        
+        <!-- Jacoco for code coverage -->
+        <jacoco.version>0.8.0</jacoco.version>
     </properties>
 
 </project>

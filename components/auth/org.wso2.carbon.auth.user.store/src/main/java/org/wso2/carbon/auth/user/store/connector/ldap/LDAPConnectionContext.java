@@ -21,7 +21,7 @@ import com.sun.jndi.ldap.LdapCtxFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.Constants;
-import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
+import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.exception.LDAPConnectorException;
 
 import java.util.Hashtable;
