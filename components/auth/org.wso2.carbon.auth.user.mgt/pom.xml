@@ -109,7 +109,7 @@
         </import.package>
         <export.package>
             !org.wso2.carbon.auth.user.mgt.internal,
-            org.wso2.carbon.auth.user.mgt.*; version="${carbon.auth.version}",
+            org.wso2.carbon.auth.user.mgt.*; version="${carbon.auth.version}"
         </export.package>
         <dynamic.import.package>*</dynamic.import.package>
     </properties>

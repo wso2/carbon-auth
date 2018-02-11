@@ -32,7 +32,7 @@ import org.wso2.carbon.auth.user.store.configuration.UserStoreConfigurationServi
  * @since 1.0.0
  */
 @Component(
-        name = "org.wso2.carbon.auth.user.mgt",
+        name = "org.wso2.carbon.auth.scim",
         immediate = true
 )
 public class SCIMComponent {
