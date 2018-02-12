@@ -9,6 +9,10 @@ import org.wso2.carbon.auth.oauth.impl.TokenRequestHandlerImpl;
 import org.wso2.carbon.auth.oauth.rest.api.TokenApiService;
 import org.wso2.carbon.auth.oauth.rest.api.impl.TokenApiServiceImpl;
 
+/**
+ * Factory class to be used for Token API
+ *
+ */
 public class TokenApiServiceFactory {
 
     public static TokenApiService getTokenApi() {

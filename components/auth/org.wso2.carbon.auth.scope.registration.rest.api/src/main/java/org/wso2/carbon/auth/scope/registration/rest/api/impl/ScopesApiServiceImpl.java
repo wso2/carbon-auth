@@ -40,6 +40,10 @@ import java.net.URISyntaxException;
 import java.util.List;
 import javax.ws.rs.core.Response;
 
+/**
+ * Scope API implementation class
+ * 
+ */
 public class ScopesApiServiceImpl extends ScopesApiService {
 
     private static final Logger log = LoggerFactory.getLogger(ScopesApiServiceImpl.class);

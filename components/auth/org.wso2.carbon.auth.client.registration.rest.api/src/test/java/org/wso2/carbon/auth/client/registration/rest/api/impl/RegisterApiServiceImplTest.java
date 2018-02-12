@@ -113,12 +113,12 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
             Assert.assertNotNull(registrationResponse.getEntity());
             Assert.assertEquals(registrationResponse.getStatus(), Response.Status.CREATED.getStatusCode());
             Assert.assertTrue(registrationResponse.getEntity() instanceof ApplicationDTO);
-            ApplicationDTO responseDTO = (ApplicationDTO)registrationResponse.getEntity();
+            ApplicationDTO responseDTO = (ApplicationDTO) registrationResponse.getEntity();
             Assert.assertEquals(responseDTO.getClientName(), CLIENT_NAME_1);
             Assert.assertTrue(responseDTO.getRedirectUris().contains(REDIRECT_URL_1));
 
             String clientId = responseDTO.getClientId();
-            
+
             Assert.assertTrue(StringUtils.isNotBlank(responseDTO.getClientId()));
             Assert.assertTrue(StringUtils.isNotBlank(responseDTO.getClientSecret()));
 
@@ -127,7 +127,7 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
             Assert.assertEquals(getResponse.getStatus(), Response.Status.OK.getStatusCode());
             Assert.assertNotNull(getResponse.getEntity());
             Assert.assertTrue(getResponse.getEntity() instanceof ApplicationDTO);
-            ApplicationDTO getResponseDTO = (ApplicationDTO)getResponse.getEntity();
+            ApplicationDTO getResponseDTO = (ApplicationDTO) getResponse.getEntity();
             Assert.assertEquals(getResponseDTO.getClientName(), CLIENT_NAME_1);
 
             UpdateRequestDTO updateRequestDTO = new UpdateRequestDTO();
@@ -138,10 +138,10 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
             Assert.assertEquals(updateResponse.getStatus(), Response.Status.OK.getStatusCode());
             Assert.assertNotNull(updateResponse.getEntity());
             Assert.assertTrue(updateResponse.getEntity() instanceof ApplicationDTO);
-            ApplicationDTO updateResponseDTO = (ApplicationDTO)updateResponse.getEntity();
+            ApplicationDTO updateResponseDTO = (ApplicationDTO) updateResponse.getEntity();
             Assert.assertEquals(updateResponseDTO.getClientName(), CLIENT_NAME_1);
             Assert.assertTrue(updateResponseDTO.getRedirectUris().contains(REDIRECT_URL_UPDATED));
-            
+
             Response deleteResponse = registerApi.deleteApplication(clientId, null);
             Assert.assertEquals(deleteResponse.getStatus(), Response.Status.NO_CONTENT.getStatusCode());
         } catch (Exception e) {
@@ -165,9 +165,9 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
         Assert.assertNotNull(registrationResponse.getEntity());
         Assert.assertEquals(registrationResponse.getStatus(), Response.Status.CREATED.getStatusCode());
         Assert.assertTrue(registrationResponse.getEntity() instanceof ApplicationDTO);
-        ApplicationDTO responseDTO = (ApplicationDTO)registrationResponse.getEntity();
+        ApplicationDTO responseDTO = (ApplicationDTO) registrationResponse.getEntity();
         Assert.assertEquals(responseDTO.getClientName(), CLIENT_NAME_2);
-        Assert.assertEquals(responseDTO.getRedirectUris().size(),2);
+        Assert.assertEquals(responseDTO.getRedirectUris().size(), 2);
         Assert.assertTrue(responseDTO.getRedirectUris().contains(REDIRECT_URL_1));
         Assert.assertTrue(responseDTO.getRedirectUris().contains(REDIRECT_URL_2));
     }

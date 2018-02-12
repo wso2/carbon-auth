@@ -30,9 +30,9 @@ import java.util.ArrayList;
  * Utility class used for generating test objects
  */
 public class ScopeTestObjectCreator {
-    public static String SCOPE_NAME_1 = "scope1";
-    public static String SCOPE_NAME_2 = "scope2";
-    public static String SCOPE_NAME_3 = "scope3";
+    public static final String SCOPE_NAME_1 = "scope1";
+    public static final String SCOPE_NAME_2 = "scope2";
+    public static final String SCOPE_NAME_3 = "scope3";
 
     /**
      * Creates a mocked Request object.

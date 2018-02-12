@@ -7,6 +7,10 @@ import org.wso2.carbon.auth.oauth.impl.AuthRequestHandlerImpl;
 import org.wso2.carbon.auth.oauth.rest.api.AuthorizeApiService;
 import org.wso2.carbon.auth.oauth.rest.api.impl.AuthorizeApiServiceImpl;
 
+/**
+ * Factory class to be used for Authorize API
+ * 
+ */
 public class AuthorizeApiServiceFactory {
 
     public static AuthorizeApiService getAuthorizeApi() {

@@ -13,6 +13,10 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.core.Response;
 
+/**
+ * Authorize API implementation class
+ * 
+ */
 public class AuthorizeApiServiceImpl extends AuthorizeApiService {
     private static final Logger log = LoggerFactory.getLogger(AuthorizeApiServiceImpl.class);
     private AuthRequestHandler authRequestHandler;

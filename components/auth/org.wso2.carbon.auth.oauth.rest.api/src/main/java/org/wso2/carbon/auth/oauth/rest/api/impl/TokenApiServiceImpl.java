@@ -19,6 +19,10 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.core.Response;
 
+/**
+ * Token API implementation class
+ * 
+ */
 public class TokenApiServiceImpl extends TokenApiService {
     private static final Logger log = LoggerFactory.getLogger(TokenApiServiceImpl.class);
     private TokenRequestHandler tokenRequestHandler;
