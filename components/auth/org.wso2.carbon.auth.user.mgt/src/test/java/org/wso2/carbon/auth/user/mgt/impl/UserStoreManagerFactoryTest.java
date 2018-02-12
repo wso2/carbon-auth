@@ -22,17 +22,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.wso2.carbon.auth.core.ServiceReferenceHolder;
-import org.wso2.carbon.auth.core.configuration.models.AuthConfiguration;
-import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 import org.wso2.carbon.auth.user.mgt.UserStoreManagerFactory;
+import org.wso2.carbon.auth.user.mgt.internal.ServiceReferenceHolder;
+import org.wso2.carbon.auth.user.store.configuration.UserStoreConfigurationService;
+import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnectorFactory;
 import org.wso2.carbon.auth.user.store.connector.jdbc.JDBCUserStoreConnector;
 import org.wso2.carbon.auth.user.store.connector.ldap.LDAPUserStoreConnector;
@@ -42,25 +43,25 @@ import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
 @PrepareForTest({ ServiceReferenceHolder.class, UserStoreConnectorFactory.class })
 public class UserStoreManagerFactoryTest {
     private static final Logger log = LoggerFactory.getLogger(UserStoreManagerFactoryTest.class);
-    @Mock
-    UserStoreConfiguration userStoreConfiguration;
+
     @Mock
     ServiceReferenceHolder serviceReferenceHolder;
-    @Mock
-    AuthConfiguration authConfiguration;
     @Mock
     JDBCUserStoreConnector jdbcUserStoreConnector;
     @Mock
     LDAPUserStoreConnector ldapUserStoreConnector;
-
+    @Mock
+    UserStoreConfiguration userStoreConfiguration;
+    
     @Before
     public void init() {
         PowerMockito.mockStatic(ServiceReferenceHolder.class);
         PowerMockito.mockStatic(UserStoreConnectorFactory.class);
 
+        UserStoreConfigurationService configurationService = new UserStoreConfigurationService(userStoreConfiguration);
         PowerMockito.when(ServiceReferenceHolder.getInstance()).thenReturn(serviceReferenceHolder);
-        PowerMockito.when(serviceReferenceHolder.getAuthConfiguration()).thenReturn(authConfiguration);
-        PowerMockito.when(authConfiguration.getUserStoreConfiguration()).thenReturn(userStoreConfiguration);
+        Mockito.when(serviceReferenceHolder.getUserStoreConfigurationService())
+                .thenReturn(configurationService);
     }
 
     @Test

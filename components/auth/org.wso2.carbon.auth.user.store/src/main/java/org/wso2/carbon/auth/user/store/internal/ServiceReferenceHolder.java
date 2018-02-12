@@ -39,7 +39,7 @@ public class ServiceReferenceHolder {
     private ServiceReferenceHolder() {
     }
 
-    void setConfigProvider(ConfigProvider configProvider) {
+    public void setConfigProvider(ConfigProvider configProvider) {
         this.configProvider = configProvider;
     }
 
@@ -47,7 +47,7 @@ public class ServiceReferenceHolder {
         return configProvider;
     }
 
-    void setUserStoreConfigurationService(UserStoreConfigurationService userStoreConfigurationService) {
+    public void setUserStoreConfigurationService(UserStoreConfigurationService userStoreConfigurationService) {
         this.userStoreConfigurationService = userStoreConfigurationService;
     }
 
@@ -63,7 +63,7 @@ public class ServiceReferenceHolder {
         return dataSourceService;
     }
 
-    void setDataSourceService(DataSourceService dataSourceService) {
+    public void setDataSourceService(DataSourceService dataSourceService) {
         this.dataSourceService = dataSourceService;
     }
 }

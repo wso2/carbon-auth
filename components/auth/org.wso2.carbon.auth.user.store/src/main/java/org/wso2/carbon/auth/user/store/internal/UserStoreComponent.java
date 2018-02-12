@@ -30,21 +30,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.user.store.configuration.UserStoreConfigurationService;
 import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
-import org.wso2.carbon.auth.user.store.connector.Attribute;
-import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
-import org.wso2.carbon.auth.user.store.connector.UserStoreConnectorFactory;
-import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
-import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 import org.wso2.carbon.auth.user.store.util.UserStoreUtil;
 import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import javax.security.auth.callback.PasswordCallback;
 
 /**
  * OSGi component for carbon security connectors.
@@ -117,40 +109,12 @@ public class UserStoreComponent {
                 userStoreConfigurationService, null);
 
         //adding admin user
-        addAdminUser(config);
+        UserStoreUtil.addAdminUser(config);
     }
 
     @Deactivate
     protected void deactivate() {
         registration.unregister();
-    }
-
-    private void addAdminUser(UserStoreConfiguration config) throws UserStoreConnectorException {
-        //adding default admin user
-        char[] password = config.getSuperUserPass().toCharArray();
-        String user = config.getSuperUser();
-        UserStoreConnector connector = UserStoreConnectorFactory.getUserStoreConnector();
-
-        List<Attribute> attributeList = new ArrayList<>();
-        attributeList.add(new Attribute(UserStoreConstants.CLAIM_USERNAME, user));
-        attributeList.add(new Attribute(UserStoreConstants.CLAIM_ID, UserStoreUtil.generateUUID()));
-        try {
-            String uid = connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, user);
-            if (uid != null) {
-                log.debug("Admin user already exists.");
-                return;
-            }
-        } catch (UserNotFoundException e) {
-            //not logging exception since, this code is to handler default user populating logic
-            //when user not exist
-            log.debug("Admin user not exist", e);
-        }
-
-        String userId = connector.addUser(attributeList);
-        PasswordCallback passwordCallback = new PasswordCallback(UserStoreConstants.PASSWORD_URI, false);
-        passwordCallback.setPassword(password);
-        connector.addCredential(userId, passwordCallback);
-        log.debug("Added default admin user.");
     }
     
 /*    *//**

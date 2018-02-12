@@ -28,10 +28,9 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.auth.core.ServiceReferenceHolder;
-import org.wso2.carbon.auth.core.configuration.models.AuthConfiguration;
-import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
+import org.wso2.carbon.auth.user.store.configuration.UserStoreConfigurationService;
+import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.connector.Attribute;
 import org.wso2.carbon.auth.user.store.connector.Constants;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
@@ -41,7 +40,7 @@ import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
 import org.wso2.carbon.auth.user.store.exception.GroupNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
-import org.wso2.carbon.auth.user.store.internal.ConnectorDataHolder;
+import org.wso2.carbon.auth.user.store.internal.ServiceReferenceHolder;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 
 import java.security.NoSuchAlgorithmException;
@@ -65,13 +64,13 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
     @Mock
     ServiceReferenceHolder serviceReferenceHolder;
     @Mock
+    UserStoreConfigurationService userStoreConfigurationService;
+    @Mock
     UserStoreConnector connector;
     @Mock
     DataSourceService dataSourceService;
     @Mock
     SecretKeyFactory secretKeyFactory;
-    @Mock
-    AuthConfiguration authConfiguration;
 
     String connectorUniqueId = null;
 
@@ -86,12 +85,15 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         log.info("setup JDBCUserStoreConnectorTest");
         PowerMockito.mockStatic(ServiceReferenceHolder.class);
         PowerMockito.when(ServiceReferenceHolder.getInstance()).thenReturn(serviceReferenceHolder);
-        PowerMockito.when(serviceReferenceHolder.getAuthConfiguration()).thenReturn(authConfiguration);
-        PowerMockito.when(authConfiguration.getUserStoreConfiguration()).thenReturn(userStoreConfiguration);
+
+        PowerMockito.when(serviceReferenceHolder.getUserStoreConfigurationService())
+                .thenReturn(userStoreConfigurationService);
+        PowerMockito.when(serviceReferenceHolder.getDataSourceService())
+                .thenReturn(dataSourceService);
+        PowerMockito.when(userStoreConfigurationService.getUserStoreConfiguration())
+                .thenReturn(userStoreConfiguration);
         PowerMockito.when(dataSourceService.getDataSource(Constants.DATASOURCE_WSO2UM_DB))
                 .thenReturn(this.umDataSource.getDatasource());
-
-        ConnectorDataHolder.getInstance().setDataSourceService(dataSourceService);
 
         connector = UserStoreConnectorFactory.getUserStoreConnector();
         Assert.assertNotNull(connector);

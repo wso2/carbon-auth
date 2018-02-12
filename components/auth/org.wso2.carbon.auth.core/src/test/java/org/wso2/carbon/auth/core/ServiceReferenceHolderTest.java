@@ -25,7 +25,6 @@ import org.testng.annotations.Test;
 import org.wso2.carbon.auth.core.configuration.AuthConfigurationService;
 import org.wso2.carbon.auth.core.configuration.models.AuthConfiguration;
 import org.wso2.carbon.auth.core.configuration.models.ConfigModelsTest;
-import org.wso2.carbon.auth.core.util.TestUtil;
 import org.wso2.carbon.config.ConfigProviderFactory;
 import org.wso2.carbon.config.provider.ConfigProvider;
 
@@ -33,9 +32,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.wso2.carbon.auth.core.AuthCoreTestConstants.CONFIG_FILE_NAME;
+import static org.wso2.carbon.auth.core.AuthCoreTestConstants.DEFAULT_TOKEN_VALIDITY_PERIOD;
 import static org.wso2.carbon.auth.core.AuthCoreTestConstants.TEST_FOLDER_RELATIVE;
 import static org.wso2.carbon.auth.core.AuthCoreTestConstants.TEST_FOLDER_RESOURCES;
-import static org.wso2.carbon.auth.core.AuthCoreTestConstants.USER_STORE_TEAM_ATTR;
 
 public class ServiceReferenceHolderTest {
 
@@ -50,8 +49,6 @@ public class ServiceReferenceHolderTest {
             //Even after providing a null ConfigProvider, we should not get a null AuthConfiguration
             //It should give a AuthConfiguration object with default values
             Assert.assertNotNull(authConfiguration);
-            Assert.assertNotNull(authConfiguration.getUserStoreConfiguration());
-            Assert.assertFalse(authConfiguration.getUserStoreConfiguration().isReadOnly());
         } catch (Exception e) {
             String errorMessage = "Error while getting AuthConfiguration";
             log.error(errorMessage, e);
@@ -72,19 +69,14 @@ public class ServiceReferenceHolderTest {
 
             log.info("AuthConfiguration loaded from " + CONFIG_FILE_NAME, authConfiguration);
             Assert.assertNotNull(authConfiguration);
-            Assert.assertNotNull(authConfiguration.getUserStoreConfiguration());
-            Assert.assertTrue(authConfiguration.getUserStoreConfiguration().isReadOnly());
+            Assert.assertNotNull(authConfiguration.getKeyManagerConfigs());
+            Assert.assertEquals(authConfiguration.getKeyManagerConfigs().getDefaultTokenValidityPeriod(),
+                    DEFAULT_TOKEN_VALIDITY_PERIOD);
 
             Assert.assertNotNull(authConfigurationFromService);
-            Assert.assertNotNull(authConfigurationFromService.getUserStoreConfiguration());
-            Assert.assertTrue(authConfigurationFromService.getUserStoreConfiguration().isReadOnly());
-            if (TestUtil.isAttributeExists(authConfiguration.getUserStoreConfiguration(), USER_STORE_TEAM_ATTR)
-                    && TestUtil.isAttributeExists(authConfigurationFromService.getUserStoreConfiguration(),
-                    USER_STORE_TEAM_ATTR)) {
-                return;
-            }
-            //this line must not reach
-            Assert.fail("Unable to find \"" + USER_STORE_TEAM_ATTR + "\" attribute in the UserStoreConfiguration");
+            Assert.assertNotNull(authConfigurationFromService.getKeyManagerConfigs());
+            Assert.assertEquals(authConfigurationFromService.getKeyManagerConfigs().getDefaultTokenValidityPeriod(),
+                    DEFAULT_TOKEN_VALIDITY_PERIOD);
         } catch (Exception e) {
             String errorMessage = "Error while getting AuthConfiguration";
             log.error(errorMessage, e);

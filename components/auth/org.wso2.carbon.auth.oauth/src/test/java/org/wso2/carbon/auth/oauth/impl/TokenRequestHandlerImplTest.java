@@ -40,6 +40,8 @@ import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.user.mgt.impl.JDBCUserStoreManager;
+import org.wso2.carbon.auth.user.store.configuration.UserStoreConfigurationService;
+import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnectorFactory;
 import org.wso2.carbon.auth.user.store.connector.jdbc.DefaultPasswordHandler;
@@ -67,6 +69,15 @@ public class TokenRequestHandlerImplTest extends AuthDAOIntegrationTestBase {
     public void setup() throws Exception {
         super.init();
         super.setup();
+
+        UserStoreConfiguration userStoreConfiguration = new UserStoreConfiguration();
+        UserStoreConfigurationService userStoreConfigurationService = new UserStoreConfigurationService(
+                userStoreConfiguration);
+        org.wso2.carbon.auth.user.mgt.internal.ServiceReferenceHolder.getInstance()
+                .setUserStoreConfigurationService(userStoreConfigurationService);
+        org.wso2.carbon.auth.user.store.internal.ServiceReferenceHolder.getInstance()
+                .setUserStoreConfigurationService(userStoreConfigurationService);;
+
         log.info("setup TokenRequestHandlerImplTest");
     }
 

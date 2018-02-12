@@ -22,9 +22,7 @@ import org.mockito.Mockito;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.wso2.carbon.auth.core.ServiceReferenceHolder;
-import org.wso2.carbon.auth.core.configuration.models.AuthConfiguration;
-import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
+import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.connector.Attribute;
 import org.wso2.carbon.auth.user.store.connector.Constants;
 import org.wso2.carbon.auth.user.store.connector.PasswordHandler;
@@ -34,7 +32,7 @@ import org.wso2.carbon.auth.user.store.connector.testutil.Utils;
 import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
 import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
-import org.wso2.carbon.auth.user.store.internal.ConnectorDataHolder;
+import org.wso2.carbon.auth.user.store.internal.ServiceReferenceHolder;
 import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 
@@ -57,7 +55,6 @@ public class LDAPUserStoreConnectorIT {
     @BeforeMethod
     public void init() throws Exception {
         DataSourceService dataSourceService = Mockito.mock(DataSourceService.class);
-        AuthConfiguration authConfig = new AuthConfiguration();
         storeConfiguration = new UserStoreConfiguration();
         storeConfiguration.setConnectorType(UserStoreConstants.LDAP_CONNECTOR_TYPE);
         Map<String, Object> properties = new HashMap<>();
@@ -81,13 +78,13 @@ public class LDAPUserStoreConnectorIT {
         properties.put(org.wso2.carbon.auth.core.Constants.LDAP_GROUP_LIST_FILTER, "(objectClass=groupOfNames)");
 
         storeConfiguration.setLdapProperties(properties);
-        authConfig.setUserStoreConfiguration(storeConfiguration);
 
         ConfigProvider configProvider = Mockito.mock(ConfigProvider.class);
-        Mockito.when(configProvider.getConfigurationObject(AuthConfiguration.class)).thenReturn(authConfig);
+        Mockito.when(configProvider.getConfigurationObject(UserStoreConfiguration.class))
+                .thenReturn(storeConfiguration);
         ServiceReferenceHolder.getInstance().setConfigProvider(configProvider);
 
-        ConnectorDataHolder.getInstance().setDataSourceService(dataSourceService);
+        ServiceReferenceHolder.getInstance().setDataSourceService(dataSourceService);
 
         connector = new LDAPUserStoreConnector();
         connector.init(storeConfiguration);

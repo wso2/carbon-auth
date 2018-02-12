@@ -14,74 +14,9 @@
 
   # Auth Configuration Parameters
 wso2.carbon.auth:
-    # User Store Configurations
-  userStoreConfiguration:
-    attributes:
-    - attribute: userName
-      displayName: Username
-      regex: .*
-      required: true
-      unique: true
-    - attribute: givenName
-      displayName: First Name
-      regex: .*
-      required: false
-      unique: false
-    - attribute: lastName
-      displayName: Last Name
-      regex: .*
-      required: false
-      unique: false
-    - attribute: email
-      displayName: Email
-      regex: .*
-      required: false
-      unique: false
-    - attribute: phoneNumber
-      displayName: Phone Number
-      regex: .*
-      required: false
-      unique: false
-    - attribute: address
-      displayName: Address
-      regex: .*
-      required: false
-      unique: false
-    - attribute: organization
-      displayName: Organization
-      regex: .*
-      required: false
-      unique: false
-    - attribute: team
-      displayName: Team
-      regex: .*
-      required: false
-      unique: false
-    connectorType: LDAP
-    hashAlgo: SHA256
-    iterationCount: 4096
-    jdbcProperties:
-      dataSource: WSO2_UM_DB
-    keyLength: 256
-    ldapProperties:
-      ldap.ConnectionPassword: admin
-      ldap.UserNameAttribute: uid
-      ldap.ConnectionName: uid=admin,ou=system
-      ldap.UserNameSearchFilter: (&amp;(objectClass=person)(uid=?))
-      ldap.ConnectionURL: ldap://localhost:10389
-      ldap.InitialContextFactory: com.sun.jndi.ldap.LdapCtxFactory
-      ldap.UserEntryObjectClass: identityPerson
-      ldap.SecurityAuthentication: simple
-      ldap.UserNameListFilter: (objectClass=person)
-      ldap.UserSearchBase: ou=Users,dc=wso2,dc=org
-      ldap.connectorClass: org.wso2.carbon.auth.user.store.connector.ldap.LDAPUserStoreConnector
-    readOnly: true
-    superUser: admin
-    superUserPass: admin
-    # Key Management Configurations
   keyManagerConfigs:
       # Access token default validity period
-    defaultTokenValidityPeriod: 60
+    defaultTokenValidityPeriod: 100
 
 wso2.securevault:
   secretRepository:

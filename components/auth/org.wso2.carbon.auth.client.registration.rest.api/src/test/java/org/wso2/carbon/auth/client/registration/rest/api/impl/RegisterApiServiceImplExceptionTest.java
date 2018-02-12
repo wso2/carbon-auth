@@ -29,8 +29,11 @@ import org.testng.annotations.Test;
 import org.wso2.carbon.auth.client.registration.rest.api.RegisterApi;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.RegistrationRequestDTO;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.UpdateRequestDTO;
+import org.wso2.carbon.auth.core.configuration.models.AuthConfiguration;
 import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
-import org.wso2.carbon.auth.user.store.internal.ConnectorDataHolder;
+import org.wso2.carbon.auth.user.store.configuration.UserStoreConfigurationService;
+import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
+import org.wso2.carbon.auth.user.store.util.UserStoreUtil;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.msf4j.Request;
 
@@ -64,7 +67,18 @@ public class RegisterApiServiceImplExceptionTest extends AuthDAOIntegrationTestB
         request = Mockito.mock(Request.class);
         Mockito.when(request.getHeader("Authorization")).thenReturn("Basic YWRtaW46YWRtaW4=");
         Mockito.when(dataSourceService.getDataSource("WSO2_UM_DB")).thenReturn(this.umDataSource.getDatasource());
-        ConnectorDataHolder.getInstance().setDataSourceService(dataSourceService);
+
+        UserStoreConfiguration userStoreConfiguration = new UserStoreConfiguration();
+        UserStoreConfigurationService userStoreConfigurationService = new UserStoreConfigurationService(
+                userStoreConfiguration);
+
+        org.wso2.carbon.auth.user.mgt.internal.ServiceReferenceHolder.getInstance()
+                .setUserStoreConfigurationService(userStoreConfigurationService);
+
+        org.wso2.carbon.auth.user.store.internal.ServiceReferenceHolder.getInstance()
+                .setUserStoreConfigurationService(userStoreConfigurationService);
+        org.wso2.carbon.auth.user.store.internal.ServiceReferenceHolder.getInstance()
+                .setDataSourceService(dataSourceService);
     }
 
     @AfterClass
@@ -75,15 +89,21 @@ public class RegisterApiServiceImplExceptionTest extends AuthDAOIntegrationTestB
 
     @Test
     public void testRegisterApplicationUnsuccessful() throws Exception {
-        RegistrationRequestDTO registrationRequestDTO = new RegistrationRequestDTO();
-        registrationRequestDTO.setClientName(CLIENT_NAME);
-        registrationRequestDTO.addRedirectUrisItem(REDIRECT_URL);
-        registrationRequestDTO.addGrantTypesItem(GRANT_TYPE);
+        try {
+            RegistrationRequestDTO registrationRequestDTO = new RegistrationRequestDTO();
+            registrationRequestDTO.setClientName(CLIENT_NAME);
+            registrationRequestDTO.addRedirectUrisItem(REDIRECT_URL);
+            registrationRequestDTO.addGrantTypesItem(GRANT_TYPE);
 
-        RegisterApi registerApi = new RegisterApi();
-        Response registrationResponse = registerApi.registerApplication(registrationRequestDTO, request);
-        Assert.assertNotNull(registrationResponse);
-        Assert.assertEquals(registrationResponse.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+            RegisterApi registerApi = new RegisterApi();
+            Response registrationResponse = registerApi.registerApplication(registrationRequestDTO, request);
+            Assert.assertNotNull(registrationResponse);
+            Assert.assertEquals(registrationResponse.getStatus(),
+                    Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @Test

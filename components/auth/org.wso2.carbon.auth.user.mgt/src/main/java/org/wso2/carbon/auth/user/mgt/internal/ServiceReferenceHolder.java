@@ -38,7 +38,7 @@ public class ServiceReferenceHolder {
     private ServiceReferenceHolder() {
     }
 
-    void setUserStoreConfigurationService(UserStoreConfigurationService userStoreConfigurationService) {
+    public void setUserStoreConfigurationService(UserStoreConfigurationService userStoreConfigurationService) {
         this.userStoreConfigurationService = userStoreConfigurationService;
     }
 

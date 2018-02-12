@@ -54,7 +54,7 @@ public class RestAPIUtil {
      * @throws ParseException throws if a parse exception occurred
      */
     public static Object[] parse(String header) throws ParseException {
-        Charset UTF8_CHARSET = Charset.forName("UTF-8");
+        Charset charsetUTF8 = Charset.forName("UTF-8");
         String[] parts = header.split("\\s");
         if (parts.length != 2) {
             throw new ParseException(
@@ -63,14 +63,14 @@ public class RestAPIUtil {
         } else if (!parts[0].equalsIgnoreCase("Basic")) {
             throw new ParseException("HTTP authentication must be \"Basic\"");
         } else {
-            String credentialsString = new String(Base64.getDecoder().decode(parts[1]), UTF8_CHARSET);
+            String credentialsString = new String(Base64.getDecoder().decode(parts[1]), charsetUTF8);
             String[] credentials = credentialsString.split(":", 2);
             if (credentials.length != 2) {
                 throw new ParseException("Malformed basic authentication: Missing credentials delimiter \":\"");
             } else {
                 try {
-                    String username = URLDecoder.decode(credentials[0], UTF8_CHARSET.name());
-                    String password = URLDecoder.decode(credentials[1], UTF8_CHARSET.name());
+                    String username = URLDecoder.decode(credentials[0], charsetUTF8.name());
+                    String password = URLDecoder.decode(credentials[1], charsetUTF8.name());
                     return new Object[] { username, password };
                 } catch (UnsupportedEncodingException | IllegalArgumentException e) {
                     throw new ParseException("Malformed basic authentication: Invalid URL encoding", e);

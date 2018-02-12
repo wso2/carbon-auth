@@ -24,5 +24,5 @@ public class AuthCoreTestConstants {
     public static final String TEST_FOLDER_RELATIVE = "src" + File.separator + "test";
     public static final String TEST_FOLDER_RESOURCES = "resources";
     public static final String CONFIG_FILE_NAME = "wso2.carbon.auth.yaml";
-    public static final String USER_STORE_TEAM_ATTR = "team";
+    public static final long DEFAULT_TOKEN_VALIDITY_PERIOD = 100;
 }

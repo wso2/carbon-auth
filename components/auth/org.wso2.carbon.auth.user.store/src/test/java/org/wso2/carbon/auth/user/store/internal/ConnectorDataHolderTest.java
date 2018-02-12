@@ -6,7 +6,7 @@
  * in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.carbon.auth.user.store.connector.internal;
+package org.wso2.carbon.auth.user.store.internal;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,8 +25,7 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.wso2.carbon.auth.core.ServiceReferenceHolder;
-import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
+import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.connector.Constants;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnectorFactory;
@@ -34,7 +33,6 @@ import org.wso2.carbon.auth.user.store.connector.jdbc.JDBCUserStoreConnector;
 import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
 import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
-import org.wso2.carbon.auth.user.store.internal.ConnectorDataHolder;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.datasource.core.exception.DataSourceException;
 
@@ -45,7 +43,7 @@ import javax.sql.DataSource;
 @PrepareForTest({ UserStoreConnectorFactory.class })
 public class ConnectorDataHolderTest {
     private DataSourceService dataSourceService;
-    private ConnectorDataHolder holder;
+    private ServiceReferenceHolder holder;
     private UserStoreConnector connector;
     private String user = "admin";
     private String userId = "123456";
@@ -55,7 +53,7 @@ public class ConnectorDataHolderTest {
     public void init() throws Exception {
         PowerMockito.mockStatic(UserStoreConnectorFactory.class);
 
-        holder = ConnectorDataHolder.getInstance();
+        holder = ServiceReferenceHolder.getInstance();
         dataSourceService = Mockito.mock(DataSourceService.class);
         dataSource = Mockito.mock(DataSource.class);
         connector = Mockito.mock(JDBCUserStoreConnector.class);
@@ -63,23 +61,11 @@ public class ConnectorDataHolderTest {
         Mockito.when(UserStoreConnectorFactory.getUserStoreConnector()).thenReturn(connector);
         Mockito.when(connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, user)).thenReturn(userId);
         Mockito.when(dataSourceService.getDataSource(Constants.DATASOURCE_WSO2UM_DB)).thenReturn(dataSource);
+        holder.setDataSourceService(dataSourceService);
     }
 
     @Test
     public void testSetDataSourceService() throws Exception {
-        holder.setDataSourceService(dataSourceService);
-        checkAssertDataSource();
-
-        holder.setDataSourceService(null);
-        try {
-            holder.getDataSource(Constants.DATASOURCE_WSO2UM_DB);
-            Assert.fail("Exception expected");
-        } catch (RuntimeException e) {
-            Assert.assertEquals(e.getMessage(), "Datasource service is null. Cannot retrieve data source");
-        }
-
-        ServiceReferenceHolder.getInstance().getAuthConfiguration().getUserStoreConfiguration()
-                .setConnectorType(UserStoreConstants.LDAP_CONNECTOR_TYPE);
         holder.setDataSourceService(dataSourceService);
         checkAssertDataSource();
 
@@ -90,7 +76,7 @@ public class ConnectorDataHolderTest {
     }
 
     private void checkAssertDataSource() throws DataSourceException {
-        DataSource source = holder.getDataSource(Constants.DATASOURCE_WSO2UM_DB);
+        DataSource source = (DataSource) holder.getDataSourceService().getDataSource(Constants.DATASOURCE_WSO2UM_DB);
         Assert.assertEquals(dataSource, source);
     }
 
@@ -124,14 +110,6 @@ public class ConnectorDataHolderTest {
 
     @Test
     public void testGetDataSource() throws Exception {
-        holder.setDataSourceService(null);
-        try {
-            holder.getDataSource(Constants.DATASOURCE_WSO2UM_DB);
-            Assert.fail("Exception expected");
-        } catch (RuntimeException e) {
-            Assert.assertEquals(e.getMessage(), "Datasource service is null. Cannot retrieve data source");
-        }
-
         holder.setDataSourceService(dataSourceService);
         checkAssertDataSource();
     }
