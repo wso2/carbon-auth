@@ -17,7 +17,6 @@
  */
 package org.wso2.carbon.auth.token.introspection.rest.api.impl;
 
-import com.google.gson.Gson;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -19,8 +19,6 @@ package org.wso2.carbon.auth.user.mgt.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.auth.core.ServiceReferenceHolder;
-import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 import org.wso2.carbon.auth.user.store.connector.PasswordHandler;
@@ -41,16 +39,12 @@ public class JDBCUserStoreManager implements UserStoreManager {
     private static final Logger log = LoggerFactory.getLogger(JDBCUserStoreManager.class);
     private UserStoreConnector userStoreConnector;
 
-    public JDBCUserStoreManager() {
-        UserStoreConnector connector = UserStoreConnectorFactory.getUserStoreConnector();
-        UserStoreConfiguration config = ServiceReferenceHolder.getInstance().getAuthConfiguration()
-                .getUserStoreConfiguration();
+    public JDBCUserStoreManager() throws UserStoreException {
         try {
-            connector.init(config);
+            this.userStoreConnector = UserStoreConnectorFactory.getUserStoreConnector();
         } catch (UserStoreConnectorException e) {
-            log.error("Error occurred while init UserStoreConnector", e);
+            throw new UserStoreException("Error while initializing JDBC user store connector", e);
         }
-        this.userStoreConnector = connector;
     }
 
     @Override

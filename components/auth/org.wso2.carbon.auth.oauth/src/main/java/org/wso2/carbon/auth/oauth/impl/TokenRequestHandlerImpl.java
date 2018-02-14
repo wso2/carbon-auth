@@ -35,6 +35,8 @@ import org.wso2.carbon.auth.oauth.TokenRequestHandler;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
+import org.wso2.carbon.auth.oauth.exception.OAuthGrantException;
+import org.wso2.carbon.auth.user.mgt.UserStoreException;
 
 import java.util.Map;
 import java.util.Optional;
@@ -56,7 +58,7 @@ public class TokenRequestHandlerImpl implements TokenRequestHandler {
 
     @Override
     public AccessTokenContext generateToken(String authorization, Map<String, String> queryParameters)
-            throws OAuthDAOException {
+            throws OAuthDAOException, UserStoreException, OAuthGrantException {
         log.debug("Calling generateToken");
         AccessTokenContext context = new AccessTokenContext();
         boolean isAuthorized;

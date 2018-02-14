@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *   Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *   WSO2 Inc. licenses this file to you under the Apache License,
  *   Version 2.0 (the "License"); you may not use this file except
@@ -18,7 +18,7 @@
  *
  */
 
-package org.wso2.carbon.auth.core.configuration.models;
+package org.wso2.carbon.auth.user.store.configuration.models;
 
 import org.wso2.carbon.config.annotation.Element;
 
@@ -29,7 +29,10 @@ import org.wso2.carbon.config.annotation.Element;
 public class AttributeConfiguration {
     
     @Element(description = "Attribute name")
-    private String attribute;
+    private String attributeName;
+
+    @Element(description = "Attribute URI")
+    private String attributeUri;
     
     @Element(description = "Attribute display name")
     private String displayName;
@@ -46,22 +49,22 @@ public class AttributeConfiguration {
     public AttributeConfiguration() {
     }
 
-    public AttributeConfiguration(String attribute, String displayName, boolean required, 
-            String regex, boolean unique) {
-        this.attribute = attribute;
+    public AttributeConfiguration(String attributeName, String attributeUri, String displayName, boolean required,
+            String regex) {
+        this.attributeName = attributeName;
+        this.attributeUri = attributeUri;
         this.displayName = displayName;
         this.required = required;
         this.regex = regex;
-        this.unique = unique;
     }
 
 
-    public String getAttribute() {
-        return attribute;
+    public String getAttributeName() {
+        return attributeName;
     }
 
-    public void setAttribute(String attribute) {
-        this.attribute = attribute;
+    public void setAttributeName(String attributeName) {
+        this.attributeName = attributeName;
     }
 
     public boolean isUnique() {
@@ -94,6 +97,9 @@ public class AttributeConfiguration {
 
     public void setRegex(String regex) {
         this.regex = regex;
-    }    
-    
+    }
+
+    public String getAttributeUri() {
+        return attributeUri;
+    }
 }

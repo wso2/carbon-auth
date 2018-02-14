@@ -33,18 +33,15 @@ import org.wso2.carbon.auth.client.registration.rest.api.dto.RegistrationRequest
 import org.wso2.carbon.auth.client.registration.rest.api.dto.UpdateRequestDTO;
 import org.wso2.carbon.auth.core.ServiceReferenceHolder;
 import org.wso2.carbon.auth.core.configuration.models.AuthConfiguration;
-import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
-import org.wso2.carbon.auth.user.store.constant.JDBCConnectorConstants;
-import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
-import org.wso2.carbon.auth.user.store.internal.ConnectorDataHolder;
+import org.wso2.carbon.auth.user.store.configuration.UserStoreConfigurationService;
+import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
+import org.wso2.carbon.auth.user.store.util.UserStoreUtil;
 import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.msf4j.Request;
 
 import javax.ws.rs.core.Response;
-import java.util.HashMap;
-import java.util.Map;
 
 public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
 
@@ -76,15 +73,23 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
         Mockito.when(request.getHeader("Authorization")).thenReturn("Basic YWRtaW46YWRtaW4=");
         Mockito.when(dataSourceService.getDataSource("WSO2_UM_DB")).thenReturn(this.umDataSource.getDatasource());
 
+        UserStoreConfiguration userStoreConfiguration = new UserStoreConfiguration();
         AuthConfiguration authConfig = new AuthConfiguration();
-        UserStoreConfiguration storeConfiguration = new UserStoreConfiguration();
-        authConfig.setUserStoreConfiguration(storeConfiguration);
+        UserStoreConfigurationService userStoreConfigurationService = new UserStoreConfigurationService(
+                userStoreConfiguration);
 
         ConfigProvider configProvider = Mockito.mock(ConfigProvider.class);
         Mockito.when(configProvider.getConfigurationObject(AuthConfiguration.class)).thenReturn(authConfig);
         ServiceReferenceHolder.getInstance().setConfigProvider(configProvider);
+        org.wso2.carbon.auth.user.mgt.internal.ServiceReferenceHolder.getInstance()
+                .setUserStoreConfigurationService(userStoreConfigurationService);
 
-        ConnectorDataHolder.getInstance().setDataSourceService(dataSourceService);
+        org.wso2.carbon.auth.user.store.internal.ServiceReferenceHolder.getInstance()
+                .setUserStoreConfigurationService(userStoreConfigurationService);
+        org.wso2.carbon.auth.user.store.internal.ServiceReferenceHolder.getInstance()
+                .setDataSourceService(dataSourceService);
+
+        UserStoreUtil.addAdminUser(userStoreConfiguration);
     }
 
     @AfterClass
@@ -108,12 +113,12 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
             Assert.assertNotNull(registrationResponse.getEntity());
             Assert.assertEquals(registrationResponse.getStatus(), Response.Status.CREATED.getStatusCode());
             Assert.assertTrue(registrationResponse.getEntity() instanceof ApplicationDTO);
-            ApplicationDTO responseDTO = (ApplicationDTO)registrationResponse.getEntity();
+            ApplicationDTO responseDTO = (ApplicationDTO) registrationResponse.getEntity();
             Assert.assertEquals(responseDTO.getClientName(), CLIENT_NAME_1);
             Assert.assertTrue(responseDTO.getRedirectUris().contains(REDIRECT_URL_1));
 
             String clientId = responseDTO.getClientId();
-            
+
             Assert.assertTrue(StringUtils.isNotBlank(responseDTO.getClientId()));
             Assert.assertTrue(StringUtils.isNotBlank(responseDTO.getClientSecret()));
 
@@ -122,7 +127,7 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
             Assert.assertEquals(getResponse.getStatus(), Response.Status.OK.getStatusCode());
             Assert.assertNotNull(getResponse.getEntity());
             Assert.assertTrue(getResponse.getEntity() instanceof ApplicationDTO);
-            ApplicationDTO getResponseDTO = (ApplicationDTO)getResponse.getEntity();
+            ApplicationDTO getResponseDTO = (ApplicationDTO) getResponse.getEntity();
             Assert.assertEquals(getResponseDTO.getClientName(), CLIENT_NAME_1);
 
             UpdateRequestDTO updateRequestDTO = new UpdateRequestDTO();
@@ -133,10 +138,10 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
             Assert.assertEquals(updateResponse.getStatus(), Response.Status.OK.getStatusCode());
             Assert.assertNotNull(updateResponse.getEntity());
             Assert.assertTrue(updateResponse.getEntity() instanceof ApplicationDTO);
-            ApplicationDTO updateResponseDTO = (ApplicationDTO)updateResponse.getEntity();
+            ApplicationDTO updateResponseDTO = (ApplicationDTO) updateResponse.getEntity();
             Assert.assertEquals(updateResponseDTO.getClientName(), CLIENT_NAME_1);
             Assert.assertTrue(updateResponseDTO.getRedirectUris().contains(REDIRECT_URL_UPDATED));
-            
+
             Response deleteResponse = registerApi.deleteApplication(clientId, null);
             Assert.assertEquals(deleteResponse.getStatus(), Response.Status.NO_CONTENT.getStatusCode());
         } catch (Exception e) {
@@ -160,9 +165,9 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
         Assert.assertNotNull(registrationResponse.getEntity());
         Assert.assertEquals(registrationResponse.getStatus(), Response.Status.CREATED.getStatusCode());
         Assert.assertTrue(registrationResponse.getEntity() instanceof ApplicationDTO);
-        ApplicationDTO responseDTO = (ApplicationDTO)registrationResponse.getEntity();
+        ApplicationDTO responseDTO = (ApplicationDTO) registrationResponse.getEntity();
         Assert.assertEquals(responseDTO.getClientName(), CLIENT_NAME_2);
-        Assert.assertEquals(responseDTO.getRedirectUris().size(),2);
+        Assert.assertEquals(responseDTO.getRedirectUris().size(), 2);
         Assert.assertTrue(responseDTO.getRedirectUris().contains(REDIRECT_URL_1));
         Assert.assertTrue(responseDTO.getRedirectUris().contains(REDIRECT_URL_2));
     }

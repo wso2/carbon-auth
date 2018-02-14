@@ -29,23 +29,12 @@ import org.wso2.carbon.config.annotation.Element;
 
 @Configuration(namespace = "wso2.carbon.auth", description = "Auth Configuration Parameters")
 public class AuthConfiguration {
-    
-    @Element(description = "User Store Configurations")
-    private UserStoreConfiguration userStoreConfiguration = new UserStoreConfiguration();
 
     @Element(description = "Key Manager Configurations")
     private KeyManagerConfiguration keyManagerConfigs = new KeyManagerConfiguration();
 
-    public UserStoreConfiguration getUserStoreConfiguration() {
-        return userStoreConfiguration;
-    }
-
     public KeyManagerConfiguration getKeyManagerConfigs() {
         return keyManagerConfigs;
-    }
-
-    public void setUserStoreConfiguration(UserStoreConfiguration userStoreConfiguration) {
-        this.userStoreConfiguration = userStoreConfiguration;
     }
 
 }

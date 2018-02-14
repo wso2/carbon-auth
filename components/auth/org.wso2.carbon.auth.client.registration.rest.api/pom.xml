@@ -154,8 +154,6 @@
                             <includeTestSourceDirectory>true</includeTestSourceDirectory>
                             <!--Exclude generated sources-->
                             <excludes>**/gen/**/*</excludes>
-                            <!--skip for generated resources-->
-                            <skip>true</skip>
                         </configuration>
                         <goals>
                             <goal>check</goal>

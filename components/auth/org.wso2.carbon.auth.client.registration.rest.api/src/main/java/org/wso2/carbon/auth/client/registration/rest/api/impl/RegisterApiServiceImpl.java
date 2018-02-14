@@ -10,9 +10,12 @@ import org.wso2.carbon.auth.client.registration.dto.ClientRegistrationResponse;
 import org.wso2.carbon.auth.client.registration.exception.ClientRegistrationException;
 import org.wso2.carbon.auth.client.registration.impl.ClientRegistrationFactory;
 import org.wso2.carbon.auth.client.registration.model.Application;
-import org.wso2.carbon.auth.client.registration.rest.api.*;
-import org.wso2.carbon.auth.client.registration.rest.api.dto.*;
 import org.wso2.carbon.auth.client.registration.rest.api.NotFoundException;
+import org.wso2.carbon.auth.client.registration.rest.api.RegisterApiService;
+import org.wso2.carbon.auth.client.registration.rest.api.dto.ApplicationDTO;
+import org.wso2.carbon.auth.client.registration.rest.api.dto.ErrorDTO;
+import org.wso2.carbon.auth.client.registration.rest.api.dto.RegistrationRequestDTO;
+import org.wso2.carbon.auth.client.registration.rest.api.dto.UpdateRequestDTO;
 import org.wso2.carbon.auth.client.registration.rest.api.utils.MappingUtil;
 import org.wso2.carbon.auth.client.registration.rest.api.utils.ParseException;
 import org.wso2.carbon.auth.client.registration.rest.api.utils.RestAPIUtil;
@@ -20,8 +23,12 @@ import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 import org.wso2.carbon.auth.user.mgt.UserStoreManagerFactory;
 import org.wso2.msf4j.Request;
+
 import javax.ws.rs.core.Response;
 
+/**
+ * Implementation class for client registration and management service
+ */
 public class RegisterApiServiceImpl extends RegisterApiService {
     private static final Logger log = LoggerFactory.getLogger(RegisterApiServiceImpl.class);
 
@@ -72,8 +79,8 @@ public class RegisterApiServiceImpl extends RegisterApiService {
             throws NotFoundException {
         ApplicationDTO applicationDTO;
         ClientRegistrationHandler handler;
-        UserStoreManager userStoreManager = UserStoreManagerFactory.getUserStoreManager();
         try {
+            UserStoreManager userStoreManager = UserStoreManagerFactory.getUserStoreManager();
             handler = ClientRegistrationFactory.getInstance().getClientRegistrationHandler();
             Application newApp = MappingUtil.registrationRequestToApplication(registrationRequest);
             String authHeader = request.getHeader("Authorization");

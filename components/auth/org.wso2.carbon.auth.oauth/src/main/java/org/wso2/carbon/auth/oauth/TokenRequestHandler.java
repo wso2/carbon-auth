@@ -22,6 +22,8 @@ package org.wso2.carbon.auth.oauth;
 
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
+import org.wso2.carbon.auth.oauth.exception.OAuthGrantException;
+import org.wso2.carbon.auth.user.mgt.UserStoreException;
 
 import java.util.Map;
 
@@ -38,5 +40,5 @@ public interface TokenRequestHandler {
      * @return Access token
      */
     AccessTokenContext generateToken(String authorization, Map<String, String> queryParameters)
-            throws OAuthDAOException;
+            throws OAuthDAOException, OAuthGrantException, UserStoreException;
 }

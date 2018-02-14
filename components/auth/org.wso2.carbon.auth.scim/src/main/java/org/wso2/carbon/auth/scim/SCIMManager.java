@@ -1,31 +1,28 @@
 /*
+ * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- *   Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *   WSO2 Inc. licenses this file to you under the Apache License,
- *   Version 2.0 (the "License"); you may not use this file except
- *   in compliance with the License.
- *   You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing,
- *  software distributed under the License is distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *  KIND, either express or implied.  See the License for the
- *  specific language governing permissions and limitations
- *  under the License.
- *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
-package org.wso2.carbon.auth.scim.impl;
+package org.wso2.carbon.auth.scim;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.wso2.carbon.auth.core.ServiceReferenceHolder;
-import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
+import org.wso2.carbon.auth.scim.impl.CarbonAuthSCIMUserManager;
 import org.wso2.carbon.auth.scim.impl.constants.SCIMCommonConstants;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnectorFactory;
@@ -72,19 +69,15 @@ public class SCIMManager {
         registerCharonConfig();
     }
     
-    public CarbonAuthUserManager getCarbonAuthUserManager() throws AuthUserManagementException {
-        CarbonAuthUserManager carbonAuthUserManager = null;
-        // TO-DO : CarbonAuthUserManager should be initialized with UserManagement API
-        UserStoreConnector userStoreConnector = UserStoreConnectorFactory.getUserStoreConnector();
-        UserStoreConfiguration config = ServiceReferenceHolder.getInstance().getAuthConfiguration()
-                .getUserStoreConfiguration();
+    public CarbonAuthSCIMUserManager getCarbonAuthSCIMUserManager() throws AuthUserManagementException {
+        //TODO : CarbonAuthSCIMUserManager should be initialized with UserManagement API
+        UserStoreConnector userStoreConnector;
         try {
-            userStoreConnector.init(config);
+            userStoreConnector = UserStoreConnectorFactory.getUserStoreConnector();
+            return new CarbonAuthSCIMUserManager(userStoreConnector);
         } catch (UserStoreConnectorException e) {
-            log.error("Error occurred while init UserStoreConnector", e);
+            throw new AuthUserManagementException("User manager initialization failed");
         }
-        carbonAuthUserManager = new CarbonAuthUserManager(userStoreConnector);
-        return carbonAuthUserManager;
     }
     
     /*

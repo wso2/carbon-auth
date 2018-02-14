@@ -18,9 +18,11 @@
  *
  */
 
-package org.wso2.carbon.auth.core.configuration.models;
+package org.wso2.carbon.auth.user.store.configuration.models;
 
 import org.wso2.carbon.auth.core.Constants;
+import org.wso2.carbon.auth.user.store.configuration.DefaultAttributes;
+import org.wso2.carbon.config.annotation.Configuration;
 import org.wso2.carbon.config.annotation.Element;
 
 import java.util.ArrayList;
@@ -31,6 +33,8 @@ import java.util.Map;
 /**
  * Class to hold user store configuration
  */
+
+@Configuration(namespace = "wso2.carbon.auth.user.store", description = "Auth Configuration Parameters")
 public class UserStoreConfiguration {
 
     @Element(description = "Connector Type")
@@ -95,24 +99,12 @@ public class UserStoreConfiguration {
     }
 
     private void populateDefaultAttributes() {
-        AttributeConfiguration userNameAttribute = new AttributeConfiguration("userName", "Username", true, ".*", true);
-        AttributeConfiguration nameAttribute = new AttributeConfiguration("givenName", "First Name", false, ".*",
-                false);
-        AttributeConfiguration lastNameAttribute = new AttributeConfiguration("lastName", "Last Name", false, ".*",
-                false);
-        AttributeConfiguration emailAttribute = new AttributeConfiguration("email", "Email", false, ".*", false);
-        AttributeConfiguration addressAttribute = new AttributeConfiguration("address", "Address", false, ".*", false);
-        AttributeConfiguration phoneAttribute = new AttributeConfiguration("phoneNumber", "Phone Number", false, ".*",
-                false);
-        AttributeConfiguration organization = new AttributeConfiguration("organization", "Organization", false, ".*",
-                false);
-        attributes.add(userNameAttribute);
-        attributes.add(nameAttribute);
-        attributes.add(lastNameAttribute);
-        attributes.add(emailAttribute);
-        attributes.add(phoneAttribute);
-        attributes.add(addressAttribute);
-        attributes.add(organization);
+        for (DefaultAttributes attribute : DefaultAttributes.values()) {
+            AttributeConfiguration attributeConfiguration = new AttributeConfiguration(attribute.getAttributeName(),
+                    attribute.getAttributeUri(), attribute.getDisplayName(), attribute.isRequired(),
+                    attribute.getRegex());
+            attributes.add(attributeConfiguration);
+        }
     }
 
     private void populateJDBCDefaultProperties() {

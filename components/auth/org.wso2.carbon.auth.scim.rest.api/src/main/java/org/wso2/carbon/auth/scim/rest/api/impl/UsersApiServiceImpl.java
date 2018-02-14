@@ -3,8 +3,8 @@ package org.wso2.carbon.auth.scim.rest.api.impl;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.scim.SCIMManager;
 import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
-import org.wso2.carbon.auth.scim.impl.SCIMManager;
 import org.wso2.carbon.auth.scim.rest.api.NotFoundException;
 import org.wso2.carbon.auth.scim.rest.api.SCIMRESTAPIConstants;
 import org.wso2.carbon.auth.scim.rest.api.UsersApiService;
@@ -41,13 +41,13 @@ public class UsersApiServiceImpl extends UsersApiService {
             throws NotFoundException {
         UserManager userManager;
         try {
-            userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
+            userManager = SCIMManager.getInstance().getCarbonAuthSCIMUserManager();
             UserResourceManager userResourceManager = new UserResourceManager();
             SCIMResponse scimResponse = userResourceManager.listWithGET(userManager, filter, startIndex, count,
                     null, null, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthUserManager");
+            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -56,12 +56,12 @@ public class UsersApiServiceImpl extends UsersApiService {
     public Response usersIdDelete(String id, Request request) throws NotFoundException {
         UserManager userManager;
         try {
-            userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
+            userManager = SCIMManager.getInstance().getCarbonAuthSCIMUserManager();
             UserResourceManager userResourceManager = new UserResourceManager();
             SCIMResponse scimResponse = userResourceManager.delete(id, userManager);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthUserManager");
+            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -70,13 +70,13 @@ public class UsersApiServiceImpl extends UsersApiService {
     public Response usersIdGet(String id, Request request) throws NotFoundException {
         UserManager userManager;
         try {
-            userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
+            userManager = SCIMManager.getInstance().getCarbonAuthSCIMUserManager();
             UserResourceManager userResourceManager = new UserResourceManager();
             SCIMResponse scimResponse = userResourceManager.get(id, userManager, null, null);
 
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthUserManager");
+            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -85,14 +85,14 @@ public class UsersApiServiceImpl extends UsersApiService {
     public Response usersIdPut(String id, UserDTO body, Request request) throws NotFoundException {
         UserManager userManager;
         try {
-            userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
+            userManager = SCIMManager.getInstance().getCarbonAuthSCIMUserManager();
             UserResourceManager userResourceManager = new UserResourceManager();
             Gson gson = new Gson();
             String bodyJsonString = gson.toJson(body);
             SCIMResponse scimResponse = userResourceManager.updateWithPUT(id, bodyJsonString, userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthUserManager");
+            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -101,14 +101,14 @@ public class UsersApiServiceImpl extends UsersApiService {
     public Response usersPost(UserDTO body, Request request) throws NotFoundException {
         UserManager userManager;
         try {
-            userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
+            userManager = SCIMManager.getInstance().getCarbonAuthSCIMUserManager();
             UserResourceManager userResourceManager = new UserResourceManager();
             Gson gson = new Gson();
             String bodyJsonString = gson.toJson(body);
             SCIMResponse scimResponse = userResourceManager.create(bodyJsonString, userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthUserManager");
+            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -117,12 +117,12 @@ public class UsersApiServiceImpl extends UsersApiService {
     public Response usersSearchPost(UserSearchDTO body, Request request) throws NotFoundException {
         UserManager userManager;
         try {
-            userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
+            userManager = SCIMManager.getInstance().getCarbonAuthSCIMUserManager();
             UserResourceManager userResourceManager = new UserResourceManager();
             SCIMResponse scimResponse = userResourceManager.listWithPOST(body.toString(), userManager);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthUserManager.");
+            LOG.error("Error in initializing the CarbonAuthSCIMUserManager.");
         }
         return Response.serverError().build();
     }

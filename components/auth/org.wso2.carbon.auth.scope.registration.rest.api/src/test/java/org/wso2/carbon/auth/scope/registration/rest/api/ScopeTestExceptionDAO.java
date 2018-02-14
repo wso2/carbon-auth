@@ -22,7 +22,6 @@ import org.wso2.carbon.auth.scope.registration.dao.ScopeDAO;
 import org.wso2.carbon.auth.scope.registration.dto.Scope;
 import org.wso2.carbon.auth.scope.registration.exceptions.ScopeDAOException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

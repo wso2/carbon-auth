@@ -2,11 +2,10 @@ package org.wso2.carbon.auth.scim.rest.api.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.scim.SCIMManager;
 import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
-import org.wso2.carbon.auth.scim.impl.SCIMManager;
 import org.wso2.carbon.auth.scim.rest.api.MeApiService;
 import org.wso2.carbon.auth.scim.rest.api.NotFoundException;
-
 import org.wso2.carbon.auth.scim.rest.api.dto.UserDTO;
 import org.wso2.carbon.auth.scim.rest.api.util.SCIMRESTAPIUtils;
 import org.wso2.charon3.core.extensions.UserManager;
@@ -28,12 +27,12 @@ public class MeApiServiceImpl extends MeApiService {
         String userUniqueId = getUserId(request);
         UserManager userManager;
         try {
-            userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
+            userManager = SCIMManager.getInstance().getCarbonAuthSCIMUserManager();
             MeResourceManager meResourceManager = new MeResourceManager();
             SCIMResponse scimResponse = meResourceManager.delete(userUniqueId, userManager);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthUserManager");
+            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -43,12 +42,12 @@ public class MeApiServiceImpl extends MeApiService {
         String userUniqueId = getUserId(request);
         UserManager userManager;
         try {
-            userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
+            userManager = SCIMManager.getInstance().getCarbonAuthSCIMUserManager();
             MeResourceManager meResourceManager = new MeResourceManager();
             SCIMResponse scimResponse = meResourceManager.get(userUniqueId, userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthUserManager");
+            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -57,12 +56,12 @@ public class MeApiServiceImpl extends MeApiService {
     public Response mePost(UserDTO body, Request request) throws NotFoundException {
         UserManager userManager;
         try {
-            userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
+            userManager = SCIMManager.getInstance().getCarbonAuthSCIMUserManager();
             MeResourceManager meResourceManager = new MeResourceManager();
             SCIMResponse scimResponse = meResourceManager.create(body.toString(), userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthUserManager");
+            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -72,13 +71,13 @@ public class MeApiServiceImpl extends MeApiService {
         String userUniqueId = getUserId(request);
         UserManager userManager;
         try {
-            userManager = SCIMManager.getInstance().getCarbonAuthUserManager();
+            userManager = SCIMManager.getInstance().getCarbonAuthSCIMUserManager();
             MeResourceManager meResourceManager = new MeResourceManager();
             SCIMResponse scimResponse = meResourceManager.updateWithPUT(userUniqueId, body.toString(), userManager,
                     null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthUserManager");
+            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }

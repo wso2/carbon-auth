@@ -59,6 +59,10 @@
             <artifactId>org.wso2.carbon.auth.core</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.wso2.charon</groupId>
+            <artifactId>org.wso2.charon3.core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <scope>test</scope>
@@ -361,9 +365,10 @@
             javax.naming.*,
             javax.xml.*,
             javax.crypto.*,
+            org.wso2.charon3.core.*; version="${charon.core.import.version.range}",
+            org.wso2.carbon.config.*;version="${carbon.config.package.import.version.range}",
             org.wso2.carbon.datasource.core.*;version="${datasources.core.package.import.version.range}",
-            org.wso2.carbon.kernel.*,
-            org.wso2.carbon.auth.core.*;
+            org.wso2.carbon.auth.core.*; version="${carbon.auth.version}",
         </import.package>
 	</properties>
 

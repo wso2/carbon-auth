@@ -17,19 +17,19 @@
  */
 package org.wso2.carbon.auth.user.mgt;
 
-import org.wso2.carbon.auth.core.ServiceReferenceHolder;
-import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.mgt.impl.JDBCUserStoreManager;
 import org.wso2.carbon.auth.user.mgt.impl.LDAPUserStoreManager;
+import org.wso2.carbon.auth.user.mgt.internal.ServiceReferenceHolder;
+import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
 
 /**
  * Factory class for user store manager
  */
 public class UserStoreManagerFactory {
-    public static UserStoreManager getUserStoreManager() {
+    public static UserStoreManager getUserStoreManager() throws UserStoreException {
         UserStoreConfiguration userStoreConfiguration = ServiceReferenceHolder.getInstance().
-                getAuthConfiguration().getUserStoreConfiguration();
+                getUserStoreConfigurationService().getUserStoreConfiguration();
         if (UserStoreConstants.JDBC_CONNECTOR_TYPE.equals(userStoreConfiguration.getConnectorType())) {
             return new JDBCUserStoreManager();
         } else if (UserStoreConstants.LDAP_CONNECTOR_TYPE.equals(userStoreConfiguration.getConnectorType())) {

@@ -24,6 +24,10 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+/**
+ * Utility class used for Dynamic Client Registration Management functionality
+ *
+ */
 public class DCRMUtils {
 
     private static final Logger log = LoggerFactory.getLogger(DCRMUtils.class);

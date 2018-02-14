@@ -38,8 +38,8 @@ public class RegistrationRequestDTOTest {
 
     @Test
     public void testRegistrationRequestFromSetters() {
-        RegistrationRequestDTO RegistrationRequestDTO = getSampleRegistrationRequestFormSetters();
-        assertSampleRegistrationRequest(RegistrationRequestDTO);
+        RegistrationRequestDTO registrationRequestDTO = getSampleRegistrationRequestFormSetters();
+        assertSampleRegistrationRequest(registrationRequestDTO);
     }
 
     @Test
@@ -51,9 +51,11 @@ public class RegistrationRequestDTOTest {
     @Test
     public void testRegistrationRequestEquality() {
         RegistrationRequestDTO registrationRequestDTOFromSetters = getSampleRegistrationRequestFormBuilderPattern();
-        RegistrationRequestDTO registrationRequestDTOFromBuilderPattern = getSampleRegistrationRequestFormBuilderPattern();
+        RegistrationRequestDTO registrationRequestDTOFromBuilderPattern 
+                = getSampleRegistrationRequestFormBuilderPattern();
         Assert.assertEquals(registrationRequestDTOFromSetters, registrationRequestDTOFromBuilderPattern);
-        Assert.assertEquals(registrationRequestDTOFromSetters.hashCode(), registrationRequestDTOFromBuilderPattern.hashCode());
+        Assert.assertEquals(registrationRequestDTOFromSetters.hashCode(),
+                registrationRequestDTOFromBuilderPattern.hashCode());
     }
 
     private RegistrationRequestDTO getSampleRegistrationRequestFormSetters() {

@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.auth.core.util.TestUtil;
 import org.wso2.carbon.config.ConfigProviderFactory;
 import org.wso2.carbon.config.provider.ConfigProvider;
 
@@ -30,9 +29,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.wso2.carbon.auth.core.AuthCoreTestConstants.CONFIG_FILE_NAME;
+import static org.wso2.carbon.auth.core.AuthCoreTestConstants.DEFAULT_TOKEN_VALIDITY_PERIOD;
 import static org.wso2.carbon.auth.core.AuthCoreTestConstants.TEST_FOLDER_RELATIVE;
 import static org.wso2.carbon.auth.core.AuthCoreTestConstants.TEST_FOLDER_RESOURCES;
-import static org.wso2.carbon.auth.core.AuthCoreTestConstants.USER_STORE_TEAM_ATTR;
 
 public class ConfigModelsTest {
 
@@ -49,13 +48,9 @@ public class ConfigModelsTest {
                     .getConfigurationObject(AuthConfiguration.class);
             log.info("AuthConfiguration loaded from " + CONFIG_FILE_NAME, parentConfiguration);
 
-            UserStoreConfiguration userStoreConfiguration = parentConfiguration.getUserStoreConfiguration();
-            Assert.assertTrue(userStoreConfiguration.isReadOnly());
-            if (TestUtil.isAttributeExists(userStoreConfiguration, USER_STORE_TEAM_ATTR)) {
-                return;
-            }
-            //this line must not reach
-            Assert.fail("Unable to find \"" + USER_STORE_TEAM_ATTR + "\" attribute in the UserStoreConfiguration");
+            KeyManagerConfiguration keyManagerConfiguration = parentConfiguration.getKeyManagerConfigs();
+            Assert.assertNotNull(keyManagerConfiguration);
+            Assert.assertEquals(keyManagerConfiguration.getDefaultTokenValidityPeriod(), DEFAULT_TOKEN_VALIDITY_PERIOD);
         } catch (Exception e) {
             String errorMessage = "Error in building model from configuration - " + CONFIG_FILE_NAME;
             log.error(errorMessage, e);

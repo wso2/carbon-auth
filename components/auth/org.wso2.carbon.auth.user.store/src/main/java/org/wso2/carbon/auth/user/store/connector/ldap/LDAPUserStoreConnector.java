@@ -20,7 +20,7 @@ package org.wso2.carbon.auth.user.store.connector.ldap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.Constants;
-import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
+import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.connector.Attribute;
 import org.wso2.carbon.auth.user.store.connector.PasswordHandler;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;

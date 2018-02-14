@@ -11,6 +11,10 @@ import org.wso2.msf4j.Request;
 
 import javax.ws.rs.core.Response;
 
+/**
+ * Introspection API implementation class
+ * 
+ */
 public class IntrospectApiServiceImpl extends IntrospectApiService {
     @Override
     public Response introspect(String token, Request request) throws NotFoundException {

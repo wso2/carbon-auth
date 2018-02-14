@@ -7,6 +7,10 @@ import org.wso2.carbon.auth.scope.registration.impl.ScopeManagerImpl;
 import org.wso2.carbon.auth.scope.registration.rest.api.ScopesApiService;
 import org.wso2.carbon.auth.scope.registration.rest.api.impl.ScopesApiServiceImpl;
 
+/**
+ * Factory class for Scope API 
+ * 
+ */
 public class ScopesApiServiceFactory {
 
     public static ScopesApiService getScopesApi() {

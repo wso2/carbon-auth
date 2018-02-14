@@ -29,12 +29,16 @@ import java.util.Map;
 public enum ExceptionCodes implements ExceptionCodeHandler {
     
     INTERNAL_ERROR(900300, "General Error", 500, "Server Error Occurred"),
-    DAO_EXCEPTION(900301, "Internal server error.", 500, " Error occurred while persisting/retrieving data"),
+    DAO_EXCEPTION(900301, "Internal server error", 500, " Error occurred while persisting/retrieving data"),
     DATA_NOT_FOUND(900302, "Data not found", 404, "Data not found"),
 
     //scopes related exception codes
     SCOPE_ALREADY_EXISTS(900400, "Resource already exists", 409, "A scope already exists with same name"),
-    SCOPE_NOT_FOUND(900401, "Not found", 404, "Scope not found");
+    SCOPE_NOT_FOUND(900401, "Not found", 404, "Scope not found"),
+
+    //oauth2 grants related exception codes
+    OAUTH2_GRANT_PROCESS_EXCEPTION(900500, "Internal OAuth2 grant processing error", 500,
+            "Error while processing OAuth2 grant request");
 
     private final long errorCode;
     private final String errorMessage;

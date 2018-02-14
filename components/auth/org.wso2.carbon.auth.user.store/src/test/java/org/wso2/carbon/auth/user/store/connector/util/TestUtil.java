@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -16,12 +16,12 @@
  * under the License.
  */
 
-package org.wso2.carbon.auth.core.util;
+package org.wso2.carbon.auth.user.store.connector.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.testng.Assert;
-import org.wso2.carbon.auth.core.configuration.models.AttributeConfiguration;
-import org.wso2.carbon.auth.core.configuration.models.UserStoreConfiguration;
+import org.wso2.carbon.auth.user.store.configuration.models.AttributeConfiguration;
+import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 
 public class TestUtil {
 
@@ -35,7 +35,7 @@ public class TestUtil {
     public static boolean isAttributeExists(UserStoreConfiguration userStoreConfiguration, String attribute) {
         Assert.assertTrue(userStoreConfiguration.isReadOnly());
         for (AttributeConfiguration attributeConfiguration : userStoreConfiguration.getAttributes()) {
-            if (!StringUtils.isBlank(attribute) && attribute.equals(attributeConfiguration.getAttribute())) {
+            if (!StringUtils.isBlank(attribute) && attribute.equals(attributeConfiguration.getAttributeName())) {
                 return true;
             }
         }
