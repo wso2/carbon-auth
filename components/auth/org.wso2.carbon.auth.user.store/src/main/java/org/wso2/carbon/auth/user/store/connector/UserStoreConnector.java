@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.auth.user.store.connector;
 
+import org.wso2.carbon.auth.user.store.configuration.models.AttributeConfiguration;
 import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.exception.GroupNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
@@ -265,4 +266,7 @@ public interface UserStoreConnector {
 
     Map getUserPasswordInfo(String userId) throws UserStoreConnectorException;
 
+    AttributeConfiguration getAttributeConfigByURI(String uri) throws UserStoreConnectorException;
+
+    void addAttribute(AttributeConfiguration attributeConfiguration) throws UserStoreConnectorException;
 }

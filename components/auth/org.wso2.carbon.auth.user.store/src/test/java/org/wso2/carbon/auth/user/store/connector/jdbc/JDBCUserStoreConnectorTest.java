@@ -514,7 +514,7 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
 
         List<Attribute> attributes = connector.getUserAttributeValues(userId);
         attributes.forEach((Attribute attribute) -> {
-            if (Constants.FAMILY_NAME_URI.equalsIgnoreCase(attribute.getAttributeName())) {
+            if (Constants.FAMILY_NAME_URI.equalsIgnoreCase(attribute.getAttributeUri())) {
                 Assert.assertEquals(newFamilyName, attribute.getAttributeValue());
             }
         });
@@ -673,7 +673,7 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
 
         List<Attribute> attributes = connector.getGroupAttributeValues(groupId);
         attributes.forEach((Attribute attribute) -> {
-            if (Constants.FAMILY_NAME_URI.equalsIgnoreCase(attribute.getAttributeName())) {
+            if (Constants.FAMILY_NAME_URI.equalsIgnoreCase(attribute.getAttributeUri())) {
                 Assert.assertEquals(newFamilyName, attribute.getAttributeValue());
             }
         });

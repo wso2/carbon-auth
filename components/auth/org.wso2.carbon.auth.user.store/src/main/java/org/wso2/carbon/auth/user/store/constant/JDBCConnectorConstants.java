@@ -41,6 +41,11 @@ public class JDBCConnectorConstants {
         public static final String ATTRIBUTE_NAME = "attr_name";
         public static final String ATTRIBUTE_VALUE = "attr_value";
         public static final String ATTRIBUTE_VALUES = "attr_values";
+        public static final String ATTRIBUTE_URI = "attr_uri";
+        public static final String DISPLAY_NAME = "display_name";
+        public static final String REQUIRED = "required";
+        public static final String IS_UNIQUE = "is_unique";
+        public static final String REGEX = "regex";
         public static final String USER_ID = "user_id";
         public static final String GROUP_ID = "group_id";
         public static final String LENGTH = "length";
@@ -121,6 +126,8 @@ public class JDBCConnectorConstants {
         public static final String SQL_QUERY_UPDATE_CREDENTIAL = "sql_query_update_credential";
         public static final String SQL_QUERY_UPDATE_PASSWORD_INFO = "sql_query_update_password_info";
         public static final String SQL_QUERY_DELETE_CREDENTIAL = "sql_query_delete_credential";
+        public static final String SQL_QUERY_GET_ATTR_BY_URI = "sql_query_get_attr_by_uri";
+        public static final String SQL_QUERY_ADD_ATTR = "sql_query_add_attr";
         public static final String SQL_QUERY_GET_ROLE = "sql_query_get_role";
         public static final String SQL_QUERY_GET_ROLES_FOR_USER = "sql_query_get_roles_for_user";
         public static final String SQL_QUERY_GET_PERMISSIONS_FROM_RESOURCE_FOR_ROLE =

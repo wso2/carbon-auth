@@ -44,4 +44,6 @@ public class UserStoreConstants {
     public static final String LDAP_MEMBER_ATTRIBUTE = "member";
     public static final String LDAP_EXTENSIBLEOBJECT_ATTRIBUTE = "extensibleObject";
 
+    public static final String OPERATION_NOT_SUPPORTED_IN_LDAP = "Operation not supported in LDAP Connector";
+
 }

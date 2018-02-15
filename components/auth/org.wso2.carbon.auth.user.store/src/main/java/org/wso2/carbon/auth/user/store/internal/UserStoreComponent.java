@@ -108,6 +108,9 @@ public class UserStoreComponent {
                 UserStoreConfigurationService.class.getName(),
                 userStoreConfigurationService, null);
 
+        //add default attributes
+        UserStoreUtil.addDefaultAttributes(config);
+
         //adding admin user
         UserStoreUtil.addAdminUser(config);
     }

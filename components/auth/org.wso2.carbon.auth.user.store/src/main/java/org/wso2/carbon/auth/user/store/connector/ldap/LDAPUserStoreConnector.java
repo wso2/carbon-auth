@@ -20,6 +20,7 @@ package org.wso2.carbon.auth.user.store.connector.ldap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.Constants;
+import org.wso2.carbon.auth.user.store.configuration.models.AttributeConfiguration;
 import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.connector.Attribute;
 import org.wso2.carbon.auth.user.store.connector.PasswordHandler;
@@ -300,7 +301,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
 
         String username = null;
         for (Attribute attribute : attributes) {
-            if (UserStoreConstants.CLAIM_USERNAME.equals(attribute.getAttributeName())) {
+            if (UserStoreConstants.CLAIM_USERNAME.equals(attribute.getAttributeUri())) {
                 username = attribute.getAttributeValue();
                 break;
             }
@@ -331,7 +332,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         for (int i = 0; i < attributes.size(); i++) {
             Attribute attribute = attributes.get(i);
             basicAttributes[i] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
-                    new BasicAttribute(LdapUtils.mappingClaim(attribute.getAttributeName()),
+                    new BasicAttribute(LdapUtils.mappingClaim(attribute.getAttributeUri()),
                             attribute.getAttributeValue()));
         }
         try {
@@ -378,7 +379,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
 
         String groupName = null;
         for (Attribute attribute : attributes) {
-            if (UserStoreConstants.GROUP_DISPLAY_NAME.equals(attribute.getAttributeName())) {
+            if (UserStoreConstants.GROUP_DISPLAY_NAME.equals(attribute.getAttributeUri())) {
                 groupName = attribute.getAttributeValue();
                 break;
             }
@@ -419,7 +420,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         for (int i = 0; i < attributes.size(); i++) {
             Attribute attribute = attributes.get(i);
             basicAttributes[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
-                    new BasicAttribute(LdapUtils.mappingClaim(attribute.getAttributeName()),
+                    new BasicAttribute(LdapUtils.mappingClaim(attribute.getAttributeUri()),
                             attribute.getAttributeValue()));
         }
         try {
@@ -612,6 +613,17 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         return null;
     }
 
+    @Override
+    public AttributeConfiguration getAttributeConfigByURI(String uri) throws UserStoreConnectorException {
+        throw new UnsupportedOperationException(UserStoreConstants.OPERATION_NOT_SUPPORTED_IN_LDAP);
+    }
+
+    @Override
+    public void addAttribute(AttributeConfiguration attributeConfiguration)
+            throws UserStoreConnectorException {
+        throw new UnsupportedOperationException(UserStoreConstants.OPERATION_NOT_SUPPORTED_IN_LDAP);
+    }
+
     protected BasicAttributes getUserBasicAttributes(String username) {
         BasicAttributes basicAttributes = new BasicAttributes(true);
         String userEntryObjectClassProperty = (String) this.properties.get(Constants.LDAP_USER_ENTRY_OBJECT_CLASS);
@@ -656,14 +668,14 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         boolean isSNExists = false;
         boolean isCNExists = false;
         for (Attribute attribute : attributes) {
-            if (Constants.ATTR_NAME_CN.equals(attribute.getAttributeName())) {
+            if (Constants.ATTR_NAME_CN.equals(attribute.getAttributeUri())) {
                 isCNExists = true;
-            } else if (Constants.ATTR_NAME_SN.equals(attribute.getAttributeName())) {
+            } else if (Constants.ATTR_NAME_SN.equals(attribute.getAttributeUri())) {
                 isSNExists = true;
             }
-            log.debug("Mapped attribute: " + attribute.getAttributeName());
+            log.debug("Mapped attribute: " + attribute.getAttributeUri());
             log.debug("Attribute value: " + attribute.getAttributeValue());
-            String ldapClaim = LdapUtils.mappingClaim(attribute.getAttributeName());
+            String ldapClaim = LdapUtils.mappingClaim(attribute.getAttributeUri());
             BasicAttribute uniqueNameAttribute = new BasicAttribute(ldapClaim);
             uniqueNameAttribute.add(attribute.getAttributeValue());
             basicAttributes.put(uniqueNameAttribute);

@@ -37,15 +37,19 @@ public enum DefaultAttributes {
 
     //User attributes
     USER_USER_NAME(UserSchemaConstants.USER_NAME, UserSchemaConstants.USER_NAME_URI, "User Name", true, ".*"),
-    USER_DISPLAY_NAME(UserSchemaConstants.DISPLAY_NAME, UserSchemaConstants.USER_NAME_URI, "User Name", true, ".*"),
+    USER_DISPLAY_NAME(UserSchemaConstants.DISPLAY_NAME, UserSchemaConstants.DISPLAY_NAME_URI, "Display Name", false,
+            ".*"),
     USER_PASSWORD(UserSchemaConstants.PASSWORD, UserSchemaConstants.PASSWORD_URI, "Password", true, ".*"),
-    USER_FAMILY_NAME(UserSchemaConstants.FAMILY_NAME, UserSchemaConstants.FAMILY_NAME_URI, "Family Name", true, ".*"),
-    USER_GIVEN_NAME(UserSchemaConstants.GIVEN_NAME, UserSchemaConstants.GIVEN_NAME, "Given Name", true, ".*"),
-    USER_EMAIL_PRIMARY("primaryEmail", UserSchemaConstants.EMAILS_PRIMARY_URI, "Primary Email", true, ".*"),
+    USER_FAMILY_NAME(UserSchemaConstants.FAMILY_NAME, UserSchemaConstants.FAMILY_NAME_URI, "Family Name", false, ".*"),
+    USER_GIVEN_NAME(UserSchemaConstants.GIVEN_NAME, UserSchemaConstants.GIVEN_NAME_URI, "Given Name", false, ".*"),
+    USER_EMAIL_PRIMARY("primaryEmail", UserSchemaConstants.EMAILS_PRIMARY_URI, "Primary Email", false, ".*"),
+    USER_EMAIL_WORK("workEmail", "urn:ietf:params:scim:schemas:core:2.0:User:emails.work", "Work Email", false, ".*"),
+    USER_EMAIL_HOME("homeEmail", "urn:ietf:params:scim:schemas:core:2.0:User:emails.home", "Home Email", false,
+            ".*"),
 
     //Group attributes
     GROUP_DISPLAY_NAME(GroupSchemaConstants.DISPLAY_NAME, GroupSchemaConstants.DISPLAY_NAME_URI, "Group Display Name",
-            true, ".*");
+            false, ".*");
 
     private final String attributeName;
     private final String attributeUri;

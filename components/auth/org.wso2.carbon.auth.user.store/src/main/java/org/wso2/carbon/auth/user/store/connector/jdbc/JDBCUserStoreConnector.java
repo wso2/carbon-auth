@@ -20,6 +20,7 @@ package org.wso2.carbon.auth.user.store.connector.jdbc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.user.store.configuration.models.AttributeConfiguration;
 import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.connector.Attribute;
 import org.wso2.carbon.auth.user.store.connector.PasswordHandler;
@@ -130,7 +131,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             NamedPreparedStatement namedPreparedStatement = new NamedPreparedStatement(unitOfWork.getConnection(),
                     sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_GET_USER_FROM_ATTRIBUTE));
 
-            namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_NAME, attributeName);
+            namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, attributeName);
             namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_VALUE, attributeValue);
 
             try (ResultSet resultSet = namedPreparedStatement.getPreparedStatement().executeQuery()) {
@@ -165,7 +166,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
                     unitOfWork.getConnection(),
                     sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_USER_IDS_BY_ATTRIBUTE));
             listUsersNamedPreparedStatement
-                    .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_NAME, attributeName);
+                    .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, attributeName);
 
             listUsersNamedPreparedStatement
                     .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_VALUE, attributeValue);
@@ -242,7 +243,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
 
                 while (resultSet.next()) {
                     Attribute attribute = new Attribute();
-                    attribute.setAttributeName(resultSet.getString(DatabaseColumnNames.UserAttributes.ATTR_NAME));
+                    attribute.setAttributeUri(resultSet.getString(DatabaseColumnNames.UserAttributes.ATTR_URI));
                     attribute.setAttributeValue(resultSet.getString(DatabaseColumnNames.UserAttributes.ATTR_VALUE));
                     userAttributes.add(attribute);
                 }
@@ -268,7 +269,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             NamedPreparedStatement namedPreparedStatement = new NamedPreparedStatement(unitOfWork.getConnection(),
                     sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_GET_GROUP_FROM_ATTRIBUTE));
 
-            namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_NAME, attributeName);
+            namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, attributeName);
             namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_VALUE, attributeValue);
 
             try (ResultSet resultSet = namedPreparedStatement.getPreparedStatement().executeQuery()) {
@@ -304,7 +305,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
                     unitOfWork.getConnection(),
                     sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_GROUP_BY_ATTRIBUTE));
             listGroupsNamedPreparedStatement
-                    .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_NAME, attributeName);
+                    .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, attributeName);
             listGroupsNamedPreparedStatement
                     .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_VALUE, attributeValue);
             listGroupsNamedPreparedStatement.setInt(JDBCConnectorConstants.SQLPlaceholders.LENGTH, length);
@@ -344,7 +345,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
 
                 while (resultSet.next()) {
                     Attribute attribute = new Attribute();
-                    attribute.setAttributeName(resultSet.getString(DatabaseColumnNames.GroupAttributes.ATTR_NAME));
+                    attribute.setAttributeUri(resultSet.getString(DatabaseColumnNames.GroupAttributes.ATTR_NAME));
                     attribute.setAttributeValue(resultSet.getString(DatabaseColumnNames.GroupAttributes.ATTR_VALUE));
                     groupAttributes.add(attribute);
                 }
@@ -429,9 +430,14 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
 
         //override the generated UUID if id is already present in the list of attributes
         for (Attribute attribute: attributes) {
-            if (UserStoreConstants.CLAIM_ID.equals(attribute.getAttributeName())) {
+            AttributeConfiguration configuration = getAttributeConfigByURI(attribute.getAttributeUri());
+            
+            if (UserStoreConstants.CLAIM_ID.equals(attribute.getAttributeUri())) {
                 connectorUniqueId = attribute.getAttributeValue();
-                break;
+            }
+            
+            if (configuration == null) {
+                throw new UserStoreConnectorException("Cannot find attribute uri " + attribute.getAttributeUri());
             }
         }
 
@@ -447,7 +453,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
                     sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_ADD_USER_ATTRIBUTES));
             for (Attribute attribute : attributes) {
                 namedPreparedStatement
-                        .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_NAME, attribute.getAttributeName());
+                        .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, attribute.getAttributeUri());
                 namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_VALUE,
                         attribute.getAttributeValue());
                 namedPreparedStatement
@@ -483,7 +489,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
                     sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_ADD_USER_ATTRIBUTES));
             for (Attribute attribute : attributes) {
                 namedPreparedStatement
-                        .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_NAME, attribute.getAttributeName());
+                        .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, attribute.getAttributeUri());
                 namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_VALUE,
                         attribute.getAttributeValue());
                 namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.USER_UNIQUE_ID, userIdentifier);
@@ -556,7 +562,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
                     sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_ADD_GROUP_ATTRIBUTES));
             for (Attribute attribute : attributes) {
                 namedPreparedStatement
-                        .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_NAME, attribute.getAttributeName());
+                        .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, attribute.getAttributeUri());
                 namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_VALUE,
                         attribute.getAttributeValue());
                 namedPreparedStatement
@@ -592,8 +598,8 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
                         addGroupNamedPreparedStatement.getPreparedStatement().addBatch();
 
                         for (Attribute attribute : entry.getValue()) {
-                            namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_NAME,
-                                    attribute.getAttributeName());
+                            namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI,
+                                    attribute.getAttributeUri());
                             namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_VALUE,
                                     attribute.getAttributeValue());
                             namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.GROUP_UNIQUE_ID,
@@ -642,7 +648,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
                     sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_ADD_GROUP_ATTRIBUTES));
             for (Attribute attribute : attributes) {
                 namedPreparedStatement
-                        .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_NAME, attribute.getAttributeName());
+                        .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, attribute.getAttributeUri());
                 namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_VALUE,
                         attribute.getAttributeValue());
                 namedPreparedStatement
@@ -874,6 +880,48 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             }
         } catch (SQLException e) {
             throw new UserStoreConnectorException("An error occurred while getting password info.", e);
+        }
+    }
+
+    @Override
+    public AttributeConfiguration getAttributeConfigByURI(String uri) throws UserStoreConnectorException {
+        try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection())) {
+            NamedPreparedStatement namedPreparedStatement = new NamedPreparedStatement(unitOfWork.getConnection(),
+                    sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_GET_ATTR_BY_URI));
+            namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, uri);
+
+            try (ResultSet resultSet = namedPreparedStatement.getPreparedStatement().executeQuery()) {
+                if (resultSet.next()) {
+                    String attributeName = resultSet.getString(DatabaseColumnNames.ATTRIBUTE.NAME);
+                    String attributeUri = resultSet.getString(DatabaseColumnNames.ATTRIBUTE.URI);
+                    String displayName = resultSet.getString(DatabaseColumnNames.ATTRIBUTE.DISPLAY_NAME);
+                    String regex = resultSet.getString(DatabaseColumnNames.ATTRIBUTE.REGEX);
+                    Boolean required = resultSet.getBoolean(DatabaseColumnNames.ATTRIBUTE.REQUIRED);
+                    return new AttributeConfiguration(attributeName, attributeUri, displayName, required, regex);
+                } else {
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new UserStoreConnectorException("An error occurred while getting attribute info of " + uri, e);
+        }
+    }
+
+    @Override
+    public void addAttribute(AttributeConfiguration config) throws UserStoreConnectorException {
+        try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection())) {
+            NamedPreparedStatement namedPrepStmt = new NamedPreparedStatement(unitOfWork.getConnection(),
+                    sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_ADD_ATTR));
+            namedPrepStmt.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_NAME, config.getAttributeName());
+            namedPrepStmt.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, config.getAttributeUri());
+            namedPrepStmt.setString(JDBCConnectorConstants.SQLPlaceholders.DISPLAY_NAME, config.getDisplayName());
+            namedPrepStmt.setString(JDBCConnectorConstants.SQLPlaceholders.REGEX, config.getRegex());
+            namedPrepStmt.setBoolean(JDBCConnectorConstants.SQLPlaceholders.REQUIRED, config.isRequired());
+            namedPrepStmt.getPreparedStatement().executeUpdate();
+            unitOfWork.endTransaction();
+        } catch (SQLException e) {
+            throw new UserStoreConnectorException(
+                    "An error occurred while adding attribute with uri " + config.getAttributeUri(), e);
         }
     }
 

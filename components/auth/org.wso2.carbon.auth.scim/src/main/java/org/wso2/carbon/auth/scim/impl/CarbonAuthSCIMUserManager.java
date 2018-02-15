@@ -67,6 +67,8 @@ public class CarbonAuthSCIMUserManager implements UserManager {
     
     public CarbonAuthSCIMUserManager(UserStoreConnector userStoreConnector) {
         this.userStoreConnector = userStoreConnector;
+        
+        // todo load from database
         List<AttributeConfiguration> attributes = ServiceReferenceHolder.getInstance()
                 .getUserStoreConfigurationService().getUserStoreConfiguration().getAttributes();
         
@@ -378,9 +380,9 @@ public class CarbonAuthSCIMUserManager implements UserManager {
      */
     private boolean isUserExist(List<Attribute> attributeList) {
         for (Attribute attribute : attributeList) {
-            String attributeName = attribute.getAttributeName();
+            String attributeName = attribute.getAttributeUri();
             String attributeValue = attribute.getAttributeValue();
-            if (attributeMappings.containsKey(attributeName) && attributeMappings.get(attributeName).isUnique()) {
+            if (attributeMappings.containsKey(attributeName)) {
                 try {
                     String userId = userStoreConnector.getConnectorUserId(attributeName, attributeValue);
                     if (!StringUtils.isEmpty(userId)) {
@@ -403,9 +405,9 @@ public class CarbonAuthSCIMUserManager implements UserManager {
      */
     private boolean isGroupExist(List<Attribute> attributeList) {
         for (Attribute attribute : attributeList) {
-            String attributeName = attribute.getAttributeName();
+            String attributeName = attribute.getAttributeUri();
             String attributeValue = attribute.getAttributeValue();
-            if (attributeMappings.containsKey(attributeName) && attributeMappings.get(attributeName).isUnique()) {
+            if (attributeMappings.containsKey(attributeName)) {
                 try {
                     String groupId = userStoreConnector.getConnectorGroupId(attributeName, attributeValue);
                     if (!StringUtils.isEmpty(groupId)) {
@@ -444,7 +446,7 @@ public class CarbonAuthSCIMUserManager implements UserManager {
     private Map<String, String> getAttributeMapFromList(List<Attribute> alttributeList) {
         Map<String, String> attributesMap = new HashMap<String, String>();
         for (Attribute attribute : alttributeList) {
-            attributesMap.put(attribute.getAttributeName(), attribute.getAttributeValue());
+            attributesMap.put(attribute.getAttributeUri(), attribute.getAttributeValue());
         }
         return attributesMap;
     }
@@ -473,7 +475,7 @@ public class CarbonAuthSCIMUserManager implements UserManager {
             
         } catch (NotFoundException e) {
             String errMsg = "Error in getting user from the userId :" + userId;
-            //Charon wrap exception to SCIMResponse and does not log exceptions
+            //Charon wrap exception to SCIMResponse and does not log exceptions so we need to log here
             log.error(errMsg, e);
             throw new CharonException(errMsg, e);
         }         

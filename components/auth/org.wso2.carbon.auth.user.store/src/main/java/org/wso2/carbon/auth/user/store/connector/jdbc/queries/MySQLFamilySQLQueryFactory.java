@@ -43,7 +43,7 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
                     "WHERE AUTH_UM_USER_ATTRIBUTES.ATTR_ID = " +
                     "(SELECT ID " +
                     "FROM AUTH_UM_ATTRIBUTES " +
-                    "WHERE ATTR_NAME = :attr_name; ) " +
+                    "WHERE ATTR_URI = :attr_uri; ) " +
                     "AND AUTH_UM_USER_ATTRIBUTES.ATTR_VALUE = :attr_value;";
 
     private static final String GET_GROUP_FROM_ATTRIBUTE =
@@ -53,11 +53,11 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
                     "WHERE AUTH_UM_GROUP_ATTRIBUTES.ATTR_ID = " +
                     "(SELECT ID " +
                     "FROM AUTH_UM_ATTRIBUTES " +
-                    "WHERE ATTR_NAME = :attr_name; ) " +
+                    "WHERE ATTR_URI = :attr_uri; ) " +
                     "AND AUTH_UM_GROUP_ATTRIBUTES.ATTR_VALUE = :attr_value;";
 
     private static final String GET_USER_ATTRIBUTES =
-            "SELECT ATTR_NAME, ATTR_VALUE " +
+            "SELECT ATTR_URI, ATTR_VALUE " +
                     "FROM AUTH_UM_USER_ATTRIBUTES LEFT JOIN AUTH_UM_ATTRIBUTES " +
                     "ON AUTH_UM_USER_ATTRIBUTES.ATTR_ID = AUTH_UM_ATTRIBUTES.ID " +
                     "WHERE USER_ID = (SELECT ID " +
@@ -71,7 +71,7 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
                     "WHERE AUTH_UM_USER_ATTRIBUTES.ATTR_ID = " +
                     "(SELECT ID " +
                     "FROM AUTH_UM_ATTRIBUTES " +
-                    "WHERE ATTR_NAME = :attr_name; ) " +
+                    "WHERE ATTR_URI = :attr_uri; ) " +
                     "AND AUTH_UM_USER_ATTRIBUTES.ATTR_VALUE LIKE :attr_value; " +
                     "LIMIT :length; " +
                     "OFFSET :offset;";
@@ -83,7 +83,7 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
                     "WHERE AUTH_UM_USER_ATTRIBUTES.ATTR_ID = " +
                     "(SELECT ID " +
                     "FROM AUTH_UM_ATTRIBUTES " +
-                    "WHERE ATTR_NAME = :attr_name; ) " +
+                    "WHERE ATTR_URI = :attr_uri; ) " +
                     "AND AUTH_UM_USER_ATTRIBUTES.ATTR_VALUE = :attr_value; " +
                     "LIMIT :length; " +
                     "OFFSET :offset;";
@@ -94,7 +94,7 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
                     "OFFSET :offset;";
 
     private static final String GET_USER_ATTRIBUTES_FROM_NAME =
-            "SELECT ATTR_NAME, ATTR_VALUE " +
+            "SELECT ATTR_URI, ATTR_VALUE " +
                     "FROM AUTH_UM_USER_ATTRIBUTES LEFT JOIN AUTH_UM_ATTRIBUTES " +
                     "ON AUTH_UM_USER_ATTRIBUTES.ATTR_ID = AUTH_UM_ATTRIBUTES.ID " +
                     "WHERE USER_ID = (SELECT ID " +
@@ -115,7 +115,7 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
                     "WHERE AUTH_UM_GROUP_ATTRIBUTES.ATTR_ID = " +
                     "(SELECT ID " +
                     "FROM AUTH_UM_ATTRIBUTES " +
-                    "WHERE ATTR_NAME = :attr_name; ) " +
+                    "WHERE ATTR_URI = :attr_uri; ) " +
                     "AND AUTH_UM_GROUP_ATTRIBUTES.ATTR_VALUE LIKE :attr_value; " +
                     "LIMIT :length; " +
                     "OFFSET :offset;";
@@ -127,13 +127,13 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
                     "WHERE AUTH_UM_GROUP_ATTRIBUTES.ATTR_ID = " +
                     "(SELECT ID " +
                     "FROM AUTH_UM_ATTRIBUTES " +
-                    "WHERE ATTR_NAME = :attr_name; ) " +
+                    "WHERE ATTR_URI = :attr_uri; ) " +
                     "AND AUTH_UM_GROUP_ATTRIBUTES.ATTR_VALUE = :attr_value; " +
                     "LIMIT :length; " +
                     "OFFSET :offset;";
 
     private static final String GET_GROUP_ATTRIBUTES =
-            "SELECT ATTR_NAME, ATTR_VALUE " +
+            "SELECT ATTR_URI, ATTR_VALUE " +
                     "FROM AUTH_UM_GROUP_ATTRIBUTES LEFT JOIN AUTH_UM_ATTRIBUTES " +
                     "ON AUTH_UM_GROUP_ATTRIBUTES.ATTR_ID = AUTH_UM_ATTRIBUTES.ID " +
                     "WHERE GROUP_ID = (SELECT ID " +
@@ -155,7 +155,7 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
 
     private static final String ADD_USER_ATTRIBUTES =
             "INSERT INTO AUTH_UM_USER_ATTRIBUTES (ATTR_ID, ATTR_VALUE, USER_ID) " +
-                    "VALUES ((SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_NAME = :attr_name;), :attr_value;, " +
+                    "VALUES ((SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_URI = :attr_uri;), :attr_value;, " +
                     "(SELECT ID FROM AUTH_UM_USER WHERE USER_UNIQUE_ID = :user_unique_id;)) ";
 
     private static final String ADD_USER =
@@ -164,7 +164,7 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
 
     private static final String ADD_GROUP_ATTRIBUTES =
             "INSERT INTO AUTH_UM_GROUP_ATTRIBUTES (ATTR_ID, ATTR_VALUE, GROUP_ID) " +
-                    "VALUES ((SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_NAME = :attr_name;), :attr_value;, " +
+                    "VALUES ((SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_URI = :attr_uri;), :attr_value;, " +
                     "(SELECT ID FROM AUTH_UM_GROUP WHERE GROUP_UNIQUE_ID = :group_unique_id;)) ";
 
     private static final String ADD_GROUP =
@@ -194,12 +194,12 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
 
     private static final String REMOVE_ATTRIBUTE_OF_USER =
             "DELETE FROM AUTH_UM_USER_ATTRIBUTES " +
-                    "WHERE ATTR_ID = (SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_NAME = :attr_name;) AND " +
+                    "WHERE ATTR_ID = (SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_URI = :attr_uri;) AND " +
                     "USER_ID = (SELECT ID FROM AUTH_UM_USER WHERE USER_UNIQUE_ID = :user_unique_id;) ";
 
     private static final String REMOVE_ATTRIBUTE_OF_GROUP =
             "DELETE FROM AUTH_UM_GROUP_ATTRIBUTES " +
-                    "WHERE ATTR_ID = (SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_NAME = :attr_name;) AND " +
+                    "WHERE ATTR_ID = (SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_URI = :attr_uri;) AND " +
                     "GROUP_ID = (SELECT ID FROM AUTH_UM_GROUP WHERE GROUP_UNIQUE_ID = :group_unique_id;) ";
 
     private static final String DELETE_USER =
@@ -211,11 +211,11 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
                     "WHERE GROUP_UNIQUE_ID = :group_unique_id;";
 
     private static final String UPDATE_USER_ATTRIBUTES = "UPDATE AUTH_UM_USER_ATTRIBUTES SET ATTR_VALUE = " +
-            ":attr_value; WHERE ATTR_ID = (SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_NAME = :attr_name;) AND " +
+            ":attr_value; WHERE ATTR_ID = (SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_URI = :attr_uri;) AND " +
             "USER_ID = (SELECT ID FROM AUTH_UM_USER WHERE USER_UNIQUE_ID = :user_unique_id;)";
 
     private static final String UPDATE_GROUP_ATTRIBUTES = "UPDATE AUTH_UM_GROUP_ATTRIBUTES SET ATTR_VALUE = " +
-            ":attr_value; WHERE ATTR_ID = (SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_NAME = :attr_name;) AND " +
+            ":attr_value; WHERE ATTR_ID = (SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_URI = :attr_uri;) AND " +
             "GROUP_ID = (SELECT ID FROM AUTH_UM_GROUP WHERE GROUP_UNIQUE_ID = :group_unique_id;)";
 
     private static final String ADD_PASSWORD_INFO = "INSERT INTO AUTH_UM_PASSWORD_INFO " +
@@ -235,6 +235,12 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
 
     private static final String DELETE_CREDENTIAL = "DELETE FROM AUTH_UM_PASSWORD " +
             "WHERE USER_UNIQUE_ID = :user_unique_id;";
+
+    private static final String ADD_ATTRIBUTE = "INSERT INTO AUTH_UM_ATTRIBUTES (ATTR_NAME, ATTR_URI, DISPLAY_NAME, " 
+            + "REQUIRED, REGEX) VALUES (:attr_name;, :attr_uri;, :display_name;, :required;, :regex;)";
+
+    private static final String GET_ATTRIBUTE_BY_URI = "SELECT ATTR_NAME, ATTR_URI, DISPLAY_NAME, " 
+            + "REQUIRED, REGEX FROM AUTH_UM_ATTRIBUTES WHERE ATTR_URI = :attr_uri;";
 
     public MySQLFamilySQLQueryFactory() {
 
@@ -288,6 +294,8 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
         sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_UPDATE_CREDENTIAL, UPDATE_CREDENTIAL);
         sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_UPDATE_PASSWORD_INFO, UPDATE_PASSWORD_INFO);
         sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_DELETE_CREDENTIAL, DELETE_CREDENTIAL);
+        sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_GET_ATTR_BY_URI, GET_ATTRIBUTE_BY_URI);
+        sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_ADD_ATTR, ADD_ATTRIBUTE);
     }
 
     public String getQuerryForUserIdFromMultipleAttributes(List<Attribute> attributes, int offset, int length) {
@@ -298,7 +306,7 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
             getUniqueUserQuerry
                     .append(" (SELECT AUTH_UM_USER_ATTRIBUTES.USER_ID FROM AUTH_UM_USER_ATTRIBUTES" +
                             " WHERE ATTR_ID = (SELECT ID FROM AUTH_UM_ATTRIBUTES WHERE ATTR_NAME = '")
-                    .append(attribute.getAttributeName())
+                    .append(attribute.getAttributeUri())
                     .append("' ) AND ATTR_VALUE = '")
                     .append(attribute.getAttributeValue())
                     .append("')");
