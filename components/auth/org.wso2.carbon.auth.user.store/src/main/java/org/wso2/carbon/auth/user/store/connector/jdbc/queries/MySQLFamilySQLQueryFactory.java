@@ -140,14 +140,14 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
                     "FROM AUTH_UM_GROUP " +
                     "WHERE GROUP_UNIQUE_ID = :group_id;)";
 
-    private static final String GET_GROUP_ATTRIBUTES_FROM_NAME =
-            "SELECT ATTR_NAME, ATTR_VALUE " +
-                    "FROM AUTH_UM_GROUP_ATTRIBUTES LEFT JOIN AUTH_UM_ATTRIBUTES " +
-                    "ON AUTH_UM_GROUP_ATTRIBUTES.ATTR_ID = AUTH_UM_ATTRIBUTES.ID " +
-                    "WHERE GROUP_ID = (SELECT ID " +
-                    "FROM AUTH_UM_GROUP " +
-                    "WHERE GROUP_UNIQUE_ID = :group_id;) " +
-                    "AND ATTR_NAME IN (:attr_names;)";
+//    private static final String GET_GROUP_ATTRIBUTES_FROM_NAME =
+//            "SELECT ATTR_NAME, ATTR_VALUE " +
+//                    "FROM AUTH_UM_GROUP_ATTRIBUTES LEFT JOIN AUTH_UM_ATTRIBUTES " +
+//                    "ON AUTH_UM_GROUP_ATTRIBUTES.ATTR_ID = AUTH_UM_ATTRIBUTES.ID " +
+//                    "WHERE GROUP_ID = (SELECT ID " +
+//                    "FROM AUTH_UM_GROUP " +
+//                    "WHERE GROUP_UNIQUE_ID = :group_id;) " +
+//                    "AND ATTR_NAME IN (:attr_names;)";
 
     private static final String COUNT_USERS = "SELECT COUNT(*) FROM AUTH_UM_USER";
 
@@ -260,8 +260,8 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
                 LIST_GROUP_BY_ATTRIBUTE_PATTERN);
         sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_GROUP_BY_ATTRIBUTE, LIST_GROUP_BY_ATTRIBUTE);
         sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_GET_GROUP_ATTRIBUTES, GET_GROUP_ATTRIBUTES);
-        sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_GET_GROUP_ATTRIBUTES_FROM_NAME,
-                GET_GROUP_ATTRIBUTES_FROM_NAME);
+//        sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_GET_GROUP_ATTRIBUTES_FROM_NAME,
+//                GET_GROUP_ATTRIBUTES_FROM_NAME);
         sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_COUNT_USERS, COUNT_USERS);
         sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_COUNT_GROUPS, COUNT_GROUPS);
 

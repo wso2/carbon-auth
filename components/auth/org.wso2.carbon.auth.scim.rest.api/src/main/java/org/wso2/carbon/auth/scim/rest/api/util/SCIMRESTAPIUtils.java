@@ -17,6 +17,7 @@
  */
 package org.wso2.carbon.auth.scim.rest.api.util;
 
+import com.google.gson.Gson;
 import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 
@@ -64,5 +65,15 @@ public class SCIMRESTAPIUtils {
         }
         responseBuilder.status(scimResponse.getResponseStatus());
         return responseBuilder.build();
+    }
+
+    /**
+     * Serialize the provided DTO and creates a JSON string
+     * 
+     * @param dto DTO object
+     * @return serialized JSON string from DTO
+     */
+    public static String getSerializedJsonStringFromBody(Object dto) {
+        return new Gson().toJson(dto);
     }
 }

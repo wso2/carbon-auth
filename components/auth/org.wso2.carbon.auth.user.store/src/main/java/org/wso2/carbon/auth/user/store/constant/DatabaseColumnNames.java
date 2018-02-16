@@ -71,14 +71,13 @@ public class DatabaseColumnNames {
     public static final class UserAttributes {
         public static final String ATTR_URI = "ATTR_URI";
         public static final String ATTR_VALUE = "ATTR_VALUE";
-        public static final String USER_ID = "USER_ID";
     }
 
     /**
      * Names of the GroupAttributes table columns.
      */
     public static final class GroupAttributes {
-        public static final String ATTR_NAME = "ATTR_NAME";
+        public static final String ATTR_URI = "ATTR_URI";
         public static final String ATTR_VALUE = "ATTR_VALUE";
     }
 

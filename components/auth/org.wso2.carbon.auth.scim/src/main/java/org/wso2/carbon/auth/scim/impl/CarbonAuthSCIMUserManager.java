@@ -304,7 +304,6 @@ public class CarbonAuthSCIMUserManager implements UserManager {
                                         BadRequestException, CharonException, NotFoundException {
         log.debug("Retrieving group: {} ", groupId);
         try {
-            // TODO : Check user exists
             
             return getSCIMGroup(groupId);
             
@@ -317,8 +316,8 @@ public class CarbonAuthSCIMUserManager implements UserManager {
     }
     
     @Override
-    public List<Object> listGroupsWithGET(Node arg0, int arg1, int arg2, String arg3, String arg4,
-            Map<String, Boolean> arg5) throws CharonException, NotImplementedException, BadRequestException {
+    public List<Object> listGroupsWithGET(Node rootNode, int startIndex, int count, String sortBy, String sortOrder,
+            Map<String, Boolean> requiredAttributes) throws CharonException, NotImplementedException, BadRequestException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -494,11 +493,8 @@ public class CarbonAuthSCIMUserManager implements UserManager {
             List<Attribute> alttributeList = userStoreConnector.getGroupAttributeValues(groupId);
             Group scimGroup = (Group) SCIMClaimResolver.constructSCIMObjectFromAttributes(
                     getAttributeMapFromList(alttributeList), 2);
-            
+
             // TODO : Get group members
-            
-            //set the id of the group from the unique group id.
-            scimGroup.setId(groupId);
             //set the schemas of the scim user
             scimGroup.setSchemas();
             //set location

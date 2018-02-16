@@ -1,5 +1,6 @@
 package org.wso2.carbon.auth.scim.rest.api.impl;
 
+import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.scim.SCIMManager;
@@ -72,8 +73,8 @@ public class GroupsApiServiceImpl extends GroupsApiService {
         try {
             userManager = SCIMManager.getInstance().getCarbonAuthSCIMUserManager();
             GroupResourceManager groupResourceManager = new GroupResourceManager();
-            SCIMResponse scimResponse = groupResourceManager
-                    .updateWithPUT(id, body.toString(), userManager, null, null);
+            String bodyJsonString = SCIMRESTAPIUtils.getSerializedJsonStringFromBody(body);
+            SCIMResponse scimResponse = groupResourceManager.updateWithPUT(id, bodyJsonString, userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
             LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
@@ -87,7 +88,8 @@ public class GroupsApiServiceImpl extends GroupsApiService {
         try {
             userManager = SCIMManager.getInstance().getCarbonAuthSCIMUserManager();
             GroupResourceManager groupResourceManager = new GroupResourceManager();
-            SCIMResponse scimResponse = groupResourceManager.create(body.toString(), userManager, null, null);
+            String bodyJsonString = SCIMRESTAPIUtils.getSerializedJsonStringFromBody(body);
+            SCIMResponse scimResponse = groupResourceManager.create(bodyJsonString, userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
             LOG.error("Error in initializing the CarbonAuthSCIMUserManager");

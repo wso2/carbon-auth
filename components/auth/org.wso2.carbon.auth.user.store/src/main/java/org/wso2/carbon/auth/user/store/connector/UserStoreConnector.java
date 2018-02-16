@@ -264,9 +264,29 @@ public interface UserStoreConnector {
      */
     void deleteCredential(String userIdentifier) throws UserStoreConnectorException;
 
+    /**
+     * Retrieve password information of a given user
+     * 
+     * @param userId user Id
+     * @return password information map
+     * @throws UserStoreConnectorException when issue occurred while retrieving password info
+     */
     Map getUserPasswordInfo(String userId) throws UserStoreConnectorException;
 
+    /**
+     * Get attribute config information from the attribute uri
+     * 
+     * @param uri attribute uri
+     * @return attribute config information
+     * @throws UserStoreConnectorException when issue occurred while retrieving attribute info
+     */
     AttributeConfiguration getAttributeConfigByURI(String uri) throws UserStoreConnectorException;
 
+    /**
+     * Add an attribute (user/group) to the store (DB)
+     * 
+     * @param attributeConfiguration attribute configuration object
+     * @throws UserStoreConnectorException when issue occurred while adding attribute configuration object to store (DB)
+     */
     void addAttribute(AttributeConfiguration attributeConfiguration) throws UserStoreConnectorException;
 }

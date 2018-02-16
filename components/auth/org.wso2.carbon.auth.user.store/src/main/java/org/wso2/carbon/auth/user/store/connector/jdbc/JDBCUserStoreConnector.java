@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.security.auth.callback.PasswordCallback;
 import javax.sql.DataSource;
@@ -345,7 +346,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
 
                 while (resultSet.next()) {
                     Attribute attribute = new Attribute();
-                    attribute.setAttributeUri(resultSet.getString(DatabaseColumnNames.GroupAttributes.ATTR_NAME));
+                    attribute.setAttributeUri(resultSet.getString(DatabaseColumnNames.GroupAttributes.ATTR_URI));
                     attribute.setAttributeValue(resultSet.getString(DatabaseColumnNames.GroupAttributes.ATTR_VALUE));
                     groupAttributes.add(attribute);
                 }
@@ -425,21 +426,11 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
 
     @Override
     public String addUser(List<Attribute> attributes) throws UserStoreConnectorException {
-
-        String connectorUniqueId = UserStoreUtil.generateUUID();
-
-        //override the generated UUID if id is already present in the list of attributes
-        for (Attribute attribute: attributes) {
-            AttributeConfiguration configuration = getAttributeConfigByURI(attribute.getAttributeUri());
-            
-            if (UserStoreConstants.CLAIM_ID.equals(attribute.getAttributeUri())) {
-                connectorUniqueId = attribute.getAttributeValue();
-            }
-            
-            if (configuration == null) {
-                throw new UserStoreConnectorException("Cannot find attribute uri " + attribute.getAttributeUri());
-            }
-        }
+        
+        String connectorUniqueId = Optional.ofNullable(getIdFromAttributes(attributes))
+                .orElse(UserStoreUtil.generateUUID());
+        //validate if all attributes are valid (exists in DB)
+        validateAttributes(attributes);
 
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
 
@@ -472,8 +463,10 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
     public String updateUserAttributes(String userIdentifier, List<Attribute> attributes)
             throws UserStoreConnectorException {
 
+        //validate if all attributes are valid (exists in DB)
+        validateAttributes(attributes);
+        
         //PUT operation
-
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
 
             //Delete the existing attributes
@@ -549,7 +542,10 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
     @Override
     public String addGroup(List<Attribute> attributes) throws UserStoreConnectorException {
 
-        String connectorUniqueId = UserStoreUtil.generateUUID();
+        String connectorUniqueId = Optional.ofNullable(getIdFromAttributes(attributes))
+                .orElse(UserStoreUtil.generateUUID());
+        //validate if all attributes are valid (exists in DB)
+        validateAttributes(attributes);
 
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
             NamedPreparedStatement addGroupNamedPreparedStatement = new NamedPreparedStatement(
@@ -935,6 +931,40 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
 
     private int getKeyLength() {
         return userStoreConfig.getKeyLength();
+    }
+
+    /**
+     * Validate attributes if they are already exist in the DB
+     *
+     * @param attributes list of attributes
+     * @throws UserStoreConnectorException if any attribute is not present in the DB
+     */
+    private void validateAttributes(List<Attribute> attributes) throws UserStoreConnectorException {
+        for (Attribute attribute : attributes) {
+            AttributeConfiguration configuration = getAttributeConfigByURI(attribute.getAttributeUri());
+            //throws an error if any attribute type is missing in the database.
+            if (configuration == null) {
+                throw new UserStoreConnectorException("Cannot find attribute uri " + attribute.getAttributeUri());
+            }
+        }
+    }
+
+    /**
+     * Retrieve the ID from the provided attributes
+     * 
+     * @param attributes list of attributes
+     * @return returns the attribute value with id attribute, null if id attribute not present
+     * @throws UserStoreConnectorException if error occurred while getting id attribute
+     */
+    private String getIdFromAttributes(List<Attribute> attributes) throws UserStoreConnectorException {
+        for (Attribute attribute: attributes) {
+            AttributeConfiguration configuration = getAttributeConfigByURI(attribute.getAttributeUri());
+            //override the generated UUID if id is already present in the list of attributes
+            if (UserStoreConstants.CLAIM_ID.equals(attribute.getAttributeUri())) {
+                return attribute.getAttributeValue();
+            }
+        }
+        return null;
     }
 
 }
