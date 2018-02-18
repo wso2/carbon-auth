@@ -1,6 +1,5 @@
 package org.wso2.carbon.auth.scim.rest.api.impl;
 
-import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.scim.SCIMManager;
@@ -8,6 +7,7 @@ import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
 import org.wso2.carbon.auth.scim.rest.api.GroupsApiService;
 import org.wso2.carbon.auth.scim.rest.api.NotFoundException;
 import org.wso2.carbon.auth.scim.rest.api.dto.GroupDTO;
+import org.wso2.carbon.auth.scim.rest.api.util.SCIMCharonInitializer;
 import org.wso2.carbon.auth.scim.rest.api.util.SCIMRESTAPIUtils;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.protocol.SCIMResponse;
@@ -21,7 +21,11 @@ import javax.ws.rs.core.Response;
  * 
  */
 public class GroupsApiServiceImpl extends GroupsApiService {
-    private static final Logger LOG = LoggerFactory.getLogger(GroupsApiServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(GroupsApiServiceImpl.class);
+
+    public GroupsApiServiceImpl() {
+        SCIMCharonInitializer.initializeOnceSCIMConfigs();
+    }
 
     @Override
     public Response groupsGet(Integer startIndex, Integer count, String filter, Request request)
@@ -34,7 +38,7 @@ public class GroupsApiServiceImpl extends GroupsApiService {
                     null, null, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -48,7 +52,7 @@ public class GroupsApiServiceImpl extends GroupsApiService {
             SCIMResponse scimResponse = groupResourceManager.delete(id, userManager);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -62,7 +66,7 @@ public class GroupsApiServiceImpl extends GroupsApiService {
             SCIMResponse scimResponse = groupResourceManager.get(id, userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -76,8 +80,8 @@ public class GroupsApiServiceImpl extends GroupsApiService {
             String bodyJsonString = SCIMRESTAPIUtils.getSerializedJsonStringFromBody(body);
             SCIMResponse scimResponse = groupResourceManager.updateWithPUT(id, bodyJsonString, userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
-        } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
+        } catch (Exception e) {
+            log.error("Error in initializing the CarbonAuthSCIMUserManager", e);
         }
         return Response.serverError().build();
     }
@@ -92,7 +96,7 @@ public class GroupsApiServiceImpl extends GroupsApiService {
             SCIMResponse scimResponse = groupResourceManager.create(bodyJsonString, userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }

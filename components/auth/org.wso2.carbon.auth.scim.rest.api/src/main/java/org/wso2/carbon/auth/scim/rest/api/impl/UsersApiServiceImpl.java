@@ -10,6 +10,7 @@ import org.wso2.carbon.auth.scim.rest.api.SCIMRESTAPIConstants;
 import org.wso2.carbon.auth.scim.rest.api.UsersApiService;
 import org.wso2.carbon.auth.scim.rest.api.dto.UserDTO;
 import org.wso2.carbon.auth.scim.rest.api.dto.UserSearchDTO;
+import org.wso2.carbon.auth.scim.rest.api.util.SCIMCharonInitializer;
 import org.wso2.carbon.auth.scim.rest.api.util.SCIMRESTAPIUtils;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.protocol.SCIMResponse;
@@ -26,14 +27,10 @@ import javax.ws.rs.core.Response;
  * REST API implementation class for SCIM users
  */
 public class UsersApiServiceImpl extends UsersApiService {
-    private static final Logger LOG = LoggerFactory.getLogger(GroupsApiServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(GroupsApiServiceImpl.class);
 
     public UsersApiServiceImpl() {
-        Map<String, String> endpointURLs = new HashMap<String, String>();
-        endpointURLs.put(SCIMConstants.USER_ENDPOINT, SCIMRESTAPIConstants.USERS_URL);
-        endpointURLs.put(SCIMConstants.GROUP_ENDPOINT, SCIMRESTAPIConstants.GROUPS_URL);
-        //register endpoint URLs in AbstractResourceEndpoint since they are called with in the API
-        AbstractResourceManager.setEndpointURLMap(endpointURLs);
+        SCIMCharonInitializer.initializeOnceSCIMConfigs();
     }
 
     @Override
@@ -47,7 +44,7 @@ public class UsersApiServiceImpl extends UsersApiService {
                     null, null, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -61,7 +58,7 @@ public class UsersApiServiceImpl extends UsersApiService {
             SCIMResponse scimResponse = userResourceManager.delete(id, userManager);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -76,7 +73,7 @@ public class UsersApiServiceImpl extends UsersApiService {
 
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -92,7 +89,7 @@ public class UsersApiServiceImpl extends UsersApiService {
             SCIMResponse scimResponse = userResourceManager.updateWithPUT(id, bodyJsonString, userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -108,7 +105,7 @@ public class UsersApiServiceImpl extends UsersApiService {
             SCIMResponse scimResponse = userResourceManager.create(bodyJsonString, userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -122,7 +119,7 @@ public class UsersApiServiceImpl extends UsersApiService {
             SCIMResponse scimResponse = userResourceManager.listWithPOST(body.toString(), userManager);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthSCIMUserManager.");
+            log.error("Error in initializing the CarbonAuthSCIMUserManager.");
         }
         return Response.serverError().build();
     }

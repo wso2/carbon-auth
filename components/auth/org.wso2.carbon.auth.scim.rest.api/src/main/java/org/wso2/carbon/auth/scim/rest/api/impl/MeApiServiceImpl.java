@@ -7,6 +7,7 @@ import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
 import org.wso2.carbon.auth.scim.rest.api.MeApiService;
 import org.wso2.carbon.auth.scim.rest.api.NotFoundException;
 import org.wso2.carbon.auth.scim.rest.api.dto.UserDTO;
+import org.wso2.carbon.auth.scim.rest.api.util.SCIMCharonInitializer;
 import org.wso2.carbon.auth.scim.rest.api.util.SCIMRESTAPIUtils;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.protocol.SCIMResponse;
@@ -20,7 +21,11 @@ import javax.ws.rs.core.Response;
  *
  */
 public class MeApiServiceImpl extends MeApiService {
-    private static final Logger LOG = LoggerFactory.getLogger(GroupsApiServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(GroupsApiServiceImpl.class);
+
+    public MeApiServiceImpl() {
+        SCIMCharonInitializer.initializeOnceSCIMConfigs();
+    }
 
     @Override
     public Response meDelete(Request request) throws NotFoundException {
@@ -32,7 +37,7 @@ public class MeApiServiceImpl extends MeApiService {
             SCIMResponse scimResponse = meResourceManager.delete(userUniqueId, userManager);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -47,7 +52,7 @@ public class MeApiServiceImpl extends MeApiService {
             SCIMResponse scimResponse = meResourceManager.get(userUniqueId, userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -61,7 +66,7 @@ public class MeApiServiceImpl extends MeApiService {
             SCIMResponse scimResponse = meResourceManager.create(body.toString(), userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -77,7 +82,7 @@ public class MeApiServiceImpl extends MeApiService {
                     null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            LOG.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error("Error in initializing the CarbonAuthSCIMUserManager");
         }
         return Response.serverError().build();
     }
@@ -88,7 +93,7 @@ public class MeApiServiceImpl extends MeApiService {
         if (authzUser instanceof String) {
             userUniqueId = (String) authzUser;
         } else {
-            LOG.error("User id not found in the request.");
+            log.error("User id not found in the request.");
         }
         return userUniqueId;
     }

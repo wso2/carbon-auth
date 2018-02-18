@@ -30,27 +30,9 @@ public class SCIMCommonConstants {
     public static final int USER = 1;
     public static final int GROUP = 2;
 
-    public static final String USER_DIALECT = "urn:ietf:params:scim:schemas:core:2.0:User";
-    public static final String GROUP_DIALECT = "urn:ietf:params:scim:schemas:core:2.0:Group";
-    public static final String CORE_DIALECT = "urn:ietf:params:scim:schemas:core:2.0";
-
-    public static final String USERS_LOCATION = "/api/scim2/v1.0/Users";
-    public static final String GROUPS_LOCATION = "/api/scim2/v1.0/Users";
-    //ServiceProviderConfigResource endpoint related constants
-
-    public static final String DOCUMENTATION_URL = "";
-    public static final int MAX_OPERATIONS = 1000;
-    public static final int MAX_PAYLOAD_SIZE = 1048576;
-    public static final int MAX_RESULTS = 200;
-    public static final int COUNT_FOR_PAGINATION = 200;
-
-    public static final String AUTHENTICATION_SCHEMES_NAME_1 = "HTTP Basic";
-    public static final String AUTHENTICATION_SCHEMES_DESCRIPTION_1 = "Authentication scheme using the HTTP Basic " +
-            "Standard";
-    public static final String AUTHENTICATION_SCHEMES_SPEC_URI_1 = "http://www.rfc-editor.org/info/rfc2617";
-    public static final String AUTHENTICATION_SCHEMES_DOCUMENTATION_URL_1 = "http://example.com/help/httpBasic.html";
-    public static final String AUTHENTICATION_SCHEMES_TYPE_1 = "httpbasic";
-    public static final Boolean AUTHENTICATION_SCHEMES_PRIMARY_1 = true;
+    public static final String USERS_LOCATION = "/api/identity/scim2/v1.0/Users";
+    public static final String GROUPS_LOCATION = "/api/identity/scim2/v1.0/Groups";
+    
 
     //todo: domain separator need to be defined in common place
     public static final String DOMAIN_SEPARATOR = "/";

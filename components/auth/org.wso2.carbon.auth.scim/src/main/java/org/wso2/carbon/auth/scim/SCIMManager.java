@@ -29,6 +29,7 @@ import org.wso2.carbon.auth.user.store.connector.UserStoreConnectorFactory;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 import org.wso2.charon3.core.config.CharonConfiguration;
 import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
+import org.wso2.charon3.core.schema.SCIMConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +45,6 @@ public class SCIMManager {
     private static Map<String, String> endpointURLs = new HashMap<String, String>();
     
     private SCIMManager() {
-        init();
     }
     
     public static SCIMManager getInstance() {
@@ -62,13 +62,6 @@ public class SCIMManager {
         }
     }
     
-    private void init() {
-        // register endpoint URLs in AbstractResourceEndpoint since they are called with in the API
-        registerEndpointURLs();
-        // register the charon related configurations
-        registerCharonConfig();
-    }
-    
     public CarbonAuthSCIMUserManager getCarbonAuthSCIMUserManager() throws AuthUserManagementException {
         //TODO : CarbonAuthSCIMUserManager should be initialized with UserManagement API
         UserStoreConnector userStoreConnector;
@@ -76,45 +69,8 @@ public class SCIMManager {
             userStoreConnector = UserStoreConnectorFactory.getUserStoreConnector();
             return new CarbonAuthSCIMUserManager(userStoreConnector);
         } catch (UserStoreConnectorException e) {
-            throw new AuthUserManagementException("User manager initialization failed");
+            throw new AuthUserManagementException("User manager initialization failed", e);
         }
-    }
-    
-    /*
-     * Resgister endpoint URLs in AbstractResourceEndpoint.
-     */
-    private void registerEndpointURLs() {
-        if (endpointURLs != null && !endpointURLs.isEmpty()) {
-            AbstractResourceManager.setEndpointURLMap(endpointURLs);
-        }
-    }
-    
-    /*
-     * This create the basic operational configurations for charon
-     */
-    private void registerCharonConfig() {
-        //config charon
-        //this values will be used in /ServiceProviderConfigResource endpoint
-        CharonConfiguration.getInstance().setDocumentationURL(SCIMCommonConstants.DOCUMENTATION_URL);
-        CharonConfiguration.getInstance().setBulkSupport(false,
-                SCIMCommonConstants.MAX_OPERATIONS,
-                SCIMCommonConstants.MAX_PAYLOAD_SIZE);
-        CharonConfiguration.getInstance().setSortSupport(false);
-        CharonConfiguration.getInstance().setETagSupport(false);
-        CharonConfiguration.getInstance().setChangePasswordSupport(true);
-        CharonConfiguration.getInstance().setFilterSupport(true, SCIMCommonConstants.MAX_RESULTS);
-        CharonConfiguration.getInstance().setPatchSupport(false);
-        CharonConfiguration.getInstance().setCountValueForPagination(SCIMCommonConstants.COUNT_FOR_PAGINATION);
-
-        Object[] auth1 = {SCIMCommonConstants.AUTHENTICATION_SCHEMES_NAME_1,
-                SCIMCommonConstants.AUTHENTICATION_SCHEMES_DESCRIPTION_1,
-                SCIMCommonConstants.AUTHENTICATION_SCHEMES_SPEC_URI_1,
-                SCIMCommonConstants.AUTHENTICATION_SCHEMES_DOCUMENTATION_URL_1,
-                SCIMCommonConstants.AUTHENTICATION_SCHEMES_TYPE_1,
-                SCIMCommonConstants.AUTHENTICATION_SCHEMES_PRIMARY_1};
-        ArrayList<Object[]> authList = new ArrayList<Object[]>();
-        authList.add(auth1);
-        CharonConfiguration.getInstance().setAuthenticationSchemes(authList);
     }
 
 }

@@ -25,4 +25,18 @@ package org.wso2.carbon.auth.scim.rest.api;
 public class SCIMRESTAPIConstants {
     public static final String USERS_URL = "/api/identity/scim2/v1.0/Users";
     public static final String GROUPS_URL = "/api/identity/scim2/v1.0/Groups";
+
+    public static final String DOCUMENTATION_URL = "";
+    public static final int MAX_OPERATIONS = 1000;
+    public static final int MAX_PAYLOAD_SIZE = 1048576;
+    public static final int MAX_RESULTS = 200;
+    public static final int COUNT_FOR_PAGINATION = 200;
+
+    public static final String AUTHENTICATION_SCHEMES_NAME_1 = "HTTP Basic";
+    public static final String AUTHENTICATION_SCHEMES_DESCRIPTION_1 = "Authentication scheme using the HTTP Basic " +
+            "Standard";
+    public static final String AUTHENTICATION_SCHEMES_SPEC_URI_1 = "http://www.rfc-editor.org/info/rfc2617";
+    public static final String AUTHENTICATION_SCHEMES_DOCUMENTATION_URL_1 = "http://example.com/help/httpBasic.html";
+    public static final String AUTHENTICATION_SCHEMES_TYPE_1 = "httpbasic";
+    public static final Boolean AUTHENTICATION_SCHEMES_PRIMARY_1 = true;
 }

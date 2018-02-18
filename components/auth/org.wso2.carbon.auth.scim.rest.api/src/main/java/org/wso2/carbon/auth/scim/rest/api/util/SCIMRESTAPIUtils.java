@@ -19,10 +19,17 @@ package org.wso2.carbon.auth.scim.rest.api.util;
 
 import com.google.gson.Gson;
 import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
+import org.wso2.carbon.auth.scim.impl.constants.SCIMCommonConstants;
+import org.wso2.carbon.auth.scim.rest.api.SCIMRESTAPIConstants;
+import org.wso2.charon3.core.config.CharonConfiguration;
 import org.wso2.charon3.core.protocol.SCIMResponse;
+import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
+import org.wso2.charon3.core.schema.SCIMConstants;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;

@@ -337,10 +337,19 @@ public class CarbonAuthSCIMUserManager implements UserManager {
     }
     
     @Override
-    public void deleteGroup(String arg0) throws NotFoundException, CharonException, NotImplementedException,
+    public void deleteGroup(String groupId) throws NotFoundException, CharonException, NotImplementedException,
             BadRequestException {
-        // TODO Auto-generated method stub
-        
+        log.debug("Deleting group: {}", groupId);
+        try {
+            userStoreConnector.deleteGroup(groupId);
+        } catch (UserStoreConnectorException e) {
+            String errMsg = "Error occurred while deleting group: " + groupId;
+            //Charon wrap exception to SCIMResponse and does not log exceptions
+            log.error(errMsg, e);
+            throw new CharonException(errMsg, e);
+        }
+
+        log.debug("Group with the id : {} is deleted through SCIM.", groupId);
     }
     
     @Override
