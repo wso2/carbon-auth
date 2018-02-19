@@ -221,6 +221,12 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
+    public List<String> listConnectorGroupIds(int offset, int length) throws UserStoreConnectorException {
+        //TODO: implement listConnectorGroupIds in LDAPUserStoreConnector
+        return null;
+    }
+
+    @Override
     public List<Attribute> getGroupAttributeValues(String groupId) throws UserStoreConnectorException {
         DirContext context;
         List<Attribute> attributeList = new ArrayList<>();

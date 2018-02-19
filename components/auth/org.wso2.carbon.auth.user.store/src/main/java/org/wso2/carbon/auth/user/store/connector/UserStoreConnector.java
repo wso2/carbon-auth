@@ -73,8 +73,7 @@ public interface UserStoreConnector {
      * @return List of connector user ids.
      * @throws UserStoreConnectorException User Store Connector Exception.
      */
-    List<String> listConnectorUserIds(int offset, int length) throws
-            UserStoreConnectorException;
+    List<String> listConnectorUserIds(int offset, int length) throws UserStoreConnectorException;
 
     /**
      * Retrieve attributes of the user with the given ID.
@@ -110,6 +109,16 @@ public interface UserStoreConnector {
      */
     List<String> listConnectorGroupIds(String attributeName, String attributeValue, int offset, int length) throws
             UserStoreConnectorException;
+
+    /**
+     * List connector group ids for a given range.
+     *
+     * @param offset         Start position.
+     * @param length         Number of groups to retrieve.
+     * @return List of connector group ids.
+     * @throws UserStoreConnectorException User Store Connector Exception.
+     */
+    List<String> listConnectorGroupIds(int offset, int length) throws UserStoreConnectorException;
 
     /**
      * Get all of the attributes that belongs to this group.

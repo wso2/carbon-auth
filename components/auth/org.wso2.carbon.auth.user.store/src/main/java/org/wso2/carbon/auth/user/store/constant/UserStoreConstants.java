@@ -46,4 +46,5 @@ public class UserStoreConstants {
 
     public static final String OPERATION_NOT_SUPPORTED_IN_LDAP = "Operation not supported in LDAP Connector";
 
+    public static final String USER_STORE_ID_CONST = "JDBC_0";
 }

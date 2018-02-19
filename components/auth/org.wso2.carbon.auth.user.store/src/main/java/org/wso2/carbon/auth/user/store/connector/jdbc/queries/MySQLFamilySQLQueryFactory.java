@@ -120,7 +120,7 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
                     "LIMIT :length; " +
                     "OFFSET :offset;";
 
-    private static final String LIST_GROUP_BY_ATTRIBUTE =
+    private static final String LIST_GROUPS_BY_ATTRIBUTE =
             "SELECT AUTH_UM_GROUP.GROUP_UNIQUE_ID " +
                     "FROM AUTH_UM_GROUP LEFT JOIN AUTH_UM_GROUP_ATTRIBUTES " +
                     "ON AUTH_UM_GROUP_ATTRIBUTES.GROUP_ID = AUTH_UM_GROUP.ID " +
@@ -129,6 +129,12 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
                     "FROM AUTH_UM_ATTRIBUTES " +
                     "WHERE ATTR_URI = :attr_uri; ) " +
                     "AND AUTH_UM_GROUP_ATTRIBUTES.ATTR_VALUE = :attr_value; " +
+                    "LIMIT :length; " +
+                    "OFFSET :offset;";
+
+    private static final String LIST_GROUPS =
+            "SELECT AUTH_UM_GROUP.GROUP_UNIQUE_ID " +
+                    "FROM AUTH_UM_GROUP " +
                     "LIMIT :length; " +
                     "OFFSET :offset;";
 
@@ -267,7 +273,8 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
         sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_IS_USER_IN_GROUP, IS_USER_IN_GROUP);
         sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_GROUP_BY_ATTRIBUTE_PATTERN,
                 LIST_GROUP_BY_ATTRIBUTE_PATTERN);
-        sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_GROUP_BY_ATTRIBUTE, LIST_GROUP_BY_ATTRIBUTE);
+        sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_GROUPS_BY_ATTRIBUTE, LIST_GROUPS_BY_ATTRIBUTE);
+        sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_GROUPS, LIST_GROUPS);
         sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_GET_GROUP_ATTRIBUTES, GET_GROUP_ATTRIBUTES);
         sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_USER_IDS_OF_GROUP, GET_USER_IDS_OF_GROUP);
         sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_GROUP_IDS_OF_USER, GET_GROUP_IDS_OF_USER);

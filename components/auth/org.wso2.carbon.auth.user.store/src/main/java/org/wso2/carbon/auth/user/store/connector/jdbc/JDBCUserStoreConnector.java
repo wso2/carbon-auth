@@ -63,7 +63,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
     private static Logger log = LoggerFactory.getLogger(JDBCUserStoreConnector.class);
     protected DataSource dataSource;
     protected UserStoreConfiguration userStoreConfig;
-    protected String identityStoreId;
+    protected String userStoreId;
     protected Map<String, String> sqlQueries;
     private Map<String, Object> properties;
 
@@ -87,7 +87,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
 
     @Override
     public void init(UserStoreConfiguration userStoreConfig) throws UserStoreConnectorException {
-
+        this.userStoreId = UserStoreConstants.USER_STORE_ID_CONST;
         this.properties = userStoreConfig.getJdbcProperties();
         Map<String, String> strProperties = new HashMap<String, String>();
 
@@ -118,7 +118,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
         loadQueries(strProperties);
 
         if (log.isDebugEnabled()) {
-            log.debug("JDBC identity store with id: {} initialized successfully.", identityStoreId);
+            log.debug("JDBC identity store with id: {} initialized successfully.", userStoreId);
         }
 
     }
@@ -183,7 +183,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             }
 
             if (log.isDebugEnabled()) {
-                log.debug("{} users retrieved from identity store: {}.", userList.size(), identityStoreId);
+                log.debug("{} users retrieved from identity store: {}.", userList.size(), userStoreId);
             }
 
             return userList;
@@ -221,7 +221,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             }
 
             if (log.isDebugEnabled()) {
-                log.debug("{} users retrieved from identity store: {}.", userList.size(), identityStoreId);
+                log.debug("{} users retrieved from identity store: {}.", userList.size(), userStoreId);
             }
 
             return userList;
@@ -251,7 +251,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
 
                 if (log.isDebugEnabled()) {
                     log.debug(userAttributes.size() + " attributes of user: {} retrieved from identity store: {}.",
-                            userId, identityStoreId);
+                            userId, userStoreId);
                 }
 
                 return userAttributes;
@@ -304,7 +304,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
 
             NamedPreparedStatement listGroupsNamedPreparedStatement = new NamedPreparedStatement(
                     unitOfWork.getConnection(),
-                    sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_GROUP_BY_ATTRIBUTE));
+                    sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_GROUPS_BY_ATTRIBUTE));
             listGroupsNamedPreparedStatement
                     .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, attributeName);
             listGroupsNamedPreparedStatement
@@ -322,7 +322,48 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
 
             if (log.isDebugEnabled()) {
                 log.debug(groups.size() + " groups retrieved for filter pattern {} from identity store: {}.",
-                        attributeValue, identityStoreId);
+                        attributeValue, userStoreId);
+            }
+
+            return groups;
+
+        } catch (SQLException e) {
+            throw new UserStoreConnectorException("Error occurred while retrieving group list.", e);
+        }
+    }
+
+    @Override
+    public List<String> listConnectorGroupIds(int startIndex, int length) throws UserStoreConnectorException {
+
+        // Database handles start index as 0
+        if (startIndex > 0) {
+            startIndex--;
+        }
+        // Get the max allowed row count if the length is -1.
+        if (length == -1) {
+            length = getMaxRowRetrievalCount();
+        }
+
+        List<String> groups = new ArrayList<>();
+
+        try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection())) {
+
+            NamedPreparedStatement listGroupsNamedPreparedStatement = new NamedPreparedStatement(
+                    unitOfWork.getConnection(),
+                    sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_GROUPS));
+            listGroupsNamedPreparedStatement.setInt(JDBCConnectorConstants.SQLPlaceholders.LENGTH, length);
+            listGroupsNamedPreparedStatement.setInt(JDBCConnectorConstants.SQLPlaceholders.OFFSET, startIndex);
+
+            try (ResultSet resultSet = listGroupsNamedPreparedStatement.getPreparedStatement().executeQuery()) {
+
+                while (resultSet.next()) {
+                    String groupUniqueId = resultSet.getString(DatabaseColumnNames.Group.GROUP_UNIQUE_ID);
+                    groups.add(groupUniqueId);
+                }
+            }
+
+            if (log.isDebugEnabled()) {
+                log.debug(groups.size() + " groups retrieved from identity store: {}.", userStoreId);
             }
 
             return groups;

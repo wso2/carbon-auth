@@ -97,7 +97,8 @@ public class JDBCConnectorConstants {
         public static final String SQL_QUERY_IS_USER_IN_GROUP = "sql_query_is_user_in_group";
         public static final String SQL_QUERY_LIST_GROUP_BY_ATTRIBUTE_PATTERN =
                 "sql_query_list_group_by_attribute_pattern";
-        public static final String SQL_QUERY_LIST_GROUP_BY_ATTRIBUTE = "sql_query_list_group_by_attribute";
+        public static final String SQL_QUERY_LIST_GROUPS_BY_ATTRIBUTE = "sql_query_list_group_by_attribute";
+        public static final String SQL_QUERY_LIST_GROUPS = "sql_query_list_group";
         public static final String SQL_QUERY_GET_GROUP_ATTRIBUTES = "sql_query_get_group_attributes";
 //        public static final String SQL_QUERY_GET_GROUP_ATTRIBUTES_FROM_NAME =
 //                "sql_query_get_group_attributes_from_name";

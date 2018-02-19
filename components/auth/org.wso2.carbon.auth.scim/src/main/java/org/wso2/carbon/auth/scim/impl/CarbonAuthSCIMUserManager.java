@@ -65,7 +65,7 @@ public class CarbonAuthSCIMUserManager implements UserManager {
     private UserStoreConnector userStoreConnector;
     
     //Holds user attribute-name to attribute-info mapping
-    private Map<String, AttributeConfiguration> attributeMappings = new HashMap<String, AttributeConfiguration>();
+    private Map<String, AttributeConfiguration> attributeMappings = new HashMap<>();
     
     public CarbonAuthSCIMUserManager(UserStoreConnector userStoreConnector) {
         this.userStoreConnector = userStoreConnector;
@@ -150,7 +150,8 @@ public class CarbonAuthSCIMUserManager implements UserManager {
             } 
             
             //check if it is a pagination only request.
-            if (sortOrder == null && sortBy == null && rootNode == null) {
+            //rootNode is null
+            if (sortOrder == null && sortBy == null) {
                 return listUsersWithPagination(startIndex, count);
             } else {
                 throw new NotImplementedException("Sorting is not supported.");
@@ -289,15 +290,34 @@ public class CarbonAuthSCIMUserManager implements UserManager {
     @Override
     public List<Object> listGroupsWithGET(Node rootNode, int startIndex, int count, String sortBy, String sortOrder,
             Map<String, Boolean> requiredAttributes) throws CharonException, NotImplementedException, BadRequestException {
-        // TODO Auto-generated method stub
-        return null;
+        log.debug("Listing Users");
+        try {
+            // check if it is a pagination and filter combination.
+            if (sortOrder == null && sortBy == null && rootNode != null) {
+                return listGroupsWithPaginationAndFilter(rootNode, startIndex, count);
+            }
+
+            //check if it is a pagination only request.
+            //rootNode is null
+            if (sortOrder == null && sortBy == null) {
+                return listGroupsWithPagination(startIndex, count);
+            } else {
+                throw new NotImplementedException("Sorting is not supported.");
+            }
+        } catch (UserStoreConnectorException e) {
+            String errMsg = "Error in listing users";
+            //Charon wrap exception to SCIMResponse and does not log exceptions
+            log.error(errMsg, e);
+            throw new CharonException(errMsg, e);
+        }
     }
 
     @Override
-    public List<Object> listGroupsWithPost(SearchRequest arg0, Map<String, Boolean> arg1)
+    public List<Object> listGroupsWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException {
-        // TODO Auto-generated method stub
-        return null;
+        // this is identical to getUsersWithGet.
+        return listGroupsWithGET(searchRequest.getFilter(), searchRequest.getStartIndex(), searchRequest.getCount(),
+                searchRequest.getSortBy(), searchRequest.getSortOder(), requiredAttributes);
     }
 
     @Override
@@ -490,7 +510,7 @@ public class CarbonAuthSCIMUserManager implements UserManager {
      * @return attribute list
      */
     private List<Attribute> getAttributeListFromMap(Map<String, String> attributesMap) {
-        List<Attribute> attributeList = new ArrayList<Attribute>();
+        List<Attribute> attributeList = new ArrayList<>();
         for (Map.Entry<String, String> entry : attributesMap.entrySet()) {
             Attribute attribute = 
                     new Attribute(entry.getKey(), entry.getValue());
@@ -505,7 +525,7 @@ public class CarbonAuthSCIMUserManager implements UserManager {
      * @return attribute map
      */
     private Map<String, String> getAttributeMapFromList(List<Attribute> alttributeList) {
-        Map<String, String> attributesMap = new HashMap<String, String>();
+        Map<String, String> attributesMap = new HashMap<>();
         for (Attribute attribute : alttributeList) {
             attributesMap.put(attribute.getAttributeUri(), attribute.getAttributeValue());
         }
@@ -667,6 +687,17 @@ public class CarbonAuthSCIMUserManager implements UserManager {
         }
     }
 
+    /**
+     * List users with pagination
+     * 
+     * @param startIndex pagination start index
+     * @param count pagination count
+     * @return list of users
+     * @throws NotImplementedException if unsupported filter model is provided.
+     * @throws CharonException if error occurred while constructing SCIM user object
+     * @throws UserStoreConnectorException if error occurred while connecting to user store
+     * @throws BadRequestException if error occurred while constructing SCIM user object
+     */
     private List<Object> listUsersWithPagination(int startIndex, int count)
             throws NotImplementedException, CharonException, UserStoreConnectorException, BadRequestException {
         List<String> userIdsList = userStoreConnector.listConnectorUserIds(startIndex, count);
@@ -680,9 +711,77 @@ public class CarbonAuthSCIMUserManager implements UserManager {
         }
         return userObjectList;
     }
-    
-    /*private List<Object> listGroupsWithPaginationAndFilter(Node rootNode, int startIndex, int count) {
-        return null;
-    }*/
+
+    /**
+     * List the groups with pagination and filter (Eq filter only)
+     * 
+     * @param rootNode filter model
+     * @param startIndex pagination start index
+     * @param count pagination count
+     * @return list of groups
+     * @throws NotImplementedException if unsupported filter model is provided.
+     * @throws CharonException if error occurred while constructing SCIM user object
+     * @throws UserStoreConnectorException if error occurred while connecting to user store
+     * @throws BadRequestException if error occurred while constructing SCIM user object
+     */
+    private List<Object> listGroupsWithPaginationAndFilter(Node rootNode, int startIndex, int count)
+            throws NotImplementedException, CharonException, UserStoreConnectorException, BadRequestException {
+        // Filter model simply consists of a binary tree where the terminal nodes are the filter expressions and
+        // non -terminal nodes are the logical operators.
+        // we currently do not support complex type filter
+        // eg : userName Eq vindula AND nickName sw J
+        if (rootNode.getRightNode() != null) {
+            throw new NotImplementedException("Complex filters are not implemented.");
+        }
+        if (rootNode.getLeftNode() != null) {
+            throw new NotImplementedException("Complex filters are not implemented.");
+        }
+        // we only support 'eq' filter
+        if (((ExpressionNode) (rootNode)).getOperation().equalsIgnoreCase("eq")) {
+            String attributeName = ((ExpressionNode) (rootNode)).getAttributeValue();
+            String attributeValue = ((ExpressionNode) (rootNode)).getValue();
+
+            List<String> groupIds = userStoreConnector.listConnectorGroupIds(attributeName, attributeValue,
+                    startIndex, count);
+            List<Object> groupObjList = new ArrayList<>();
+            // we need to set the first item of the array to be the number of users in the given domain.
+            groupObjList.add(groupIds.size());
+
+            for (String groupId : groupIds) {
+                Group scimGroup = getSCIMGroup(groupId, true);
+                groupObjList.add(scimGroup);
+            }
+            return groupObjList;
+
+        } else {
+            throw new NotImplementedException("Filter type :" + ((ExpressionNode) (rootNode)).getOperation()
+                    + " is not supported.");
+        }
+    }
+
+    /**
+     * List groups with pagination
+     * 
+     * @param startIndex pagination start index
+     * @param count pagination count
+     * @return list of groups
+     * @throws NotImplementedException if unsupported filter model is provided.
+     * @throws CharonException if error occurred while constructing SCIM user object
+     * @throws UserStoreConnectorException if error occurred while connecting to user store
+     * @throws BadRequestException if error occurred while constructing SCIM user object
+     */
+    private List<Object> listGroupsWithPagination(int startIndex, int count)
+            throws NotImplementedException, CharonException, UserStoreConnectorException, BadRequestException {
+        List<String> groupIdsList = userStoreConnector.listConnectorGroupIds(startIndex, count);
+        List<Object> groupObjList = new ArrayList<>();
+        // we need to set the first item of the array to be the number of users in the given domain.
+        groupObjList.add(groupIdsList.size());
+
+        for (String groupId : groupIdsList) {
+            Group scimGroup = getSCIMGroup(groupId, true);
+            groupObjList.add(scimGroup);
+        }
+        return groupObjList;
+    }
 
 }
