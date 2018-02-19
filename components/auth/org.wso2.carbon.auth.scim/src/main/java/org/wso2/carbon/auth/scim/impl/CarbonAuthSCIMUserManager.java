@@ -152,7 +152,7 @@ public class CarbonAuthSCIMUserManager implements UserManager {
         try {
             // TODO : Check user exists
             
-            return getSCIMUser(userId);
+            return getSCIMUser(userId, true);
             
         } catch (UserStoreConnectorException e) {
             String errMsg = "Error in getting user from the userId :" + userId;
@@ -324,7 +324,7 @@ public class CarbonAuthSCIMUserManager implements UserManager {
         log.debug("Retrieving group: {} ", groupId);
         try {
             
-            return getSCIMGroup(groupId);
+            return getSCIMGroup(groupId, true);
             
         } catch (UserStoreConnectorException e) {
             String errMsg = "Error in getting group from the groupId :" + groupId;
@@ -360,7 +360,7 @@ public class CarbonAuthSCIMUserManager implements UserManager {
 
         try {
             //check if group already exist
-            if (getSCIMGroup(oldGroup.getId()) == null) {
+            if (getSCIMGroup(oldGroup.getId(), false) == null) {
                 String errMsg = "Group " + oldGroup.getId() + " does not exist.";
                 log.error(errMsg);
                 throw new NotFoundException(errMsg);
@@ -422,7 +422,7 @@ public class CarbonAuthSCIMUserManager implements UserManager {
                         (SimpleAttribute) ((subValue)).getSubAttribute(
                                 SCIMConstants.CommonSchemaConstants.VALUE);
                 String userId = (String) valueAttribute.getValue();
-                if (getSCIMUser(userId) != null) {
+                if (getSCIMUser(userId, false) != null) {
                     userIds.add(userId);
                 } else {
                     String errorMsg = "User with Id " + userId + " does not exist in the system.";
@@ -558,25 +558,45 @@ public class CarbonAuthSCIMUserManager implements UserManager {
     }
     
     /**
+     * Get a SCIM user from the uuid
+     * 
      * @param userId user id
+     * @param includeGroups whether to include groups the user belongs to
      * @return user SCIM user object
      * @throws BadRequestException if error occurred while constructing SCIM user object
      * @throws CharonException if error occurred while constructing SCIM user object
      * @throws UserStoreConnectorException if error occurred while connecting to user store
      */
-    private User getSCIMUser(String userId) throws CharonException, BadRequestException, UserStoreConnectorException {
+    private User getSCIMUser(String userId, boolean includeGroups) throws CharonException, BadRequestException, UserStoreConnectorException {
         try {
             List<Attribute> attributeList = userStoreConnector.getUserAttributeValues(userId);
-            
+
             if (attributeList.size() == 0) {
-                //user not exists
+                //user does not exist
                 return null;
             }
+
             // construct the SCIM Object from the attributes
             User scimUser = (User) SCIMClaimResolver.constructSCIMObjectFromAttributes(
-                    getAttributeMapFromList(attributeList), 1);
+                    getAttributeMapFromList(attributeList), SCIMCommonConstants.USER);
 
-            // TODO : Get user groups
+            if (includeGroups) {
+                //set members of group
+                List<String> groupIds = userStoreConnector.getGroupIdsOfUser(userId);
+                if (groupIds != null) {
+                    for (String groupId : groupIds) {
+                        Optional<Group> group = Optional.ofNullable(getSCIMGroup(groupId, false));
+                        if (group.isPresent()) {
+                            scimUser.setGroup(null, group.get().getId(), group.get().getDisplayName());
+                        } else {
+                            log.warn("Group " + groupId + " recorded as a group of user " + userId + " but group "
+                                    + "does not exist in the system.");
+                        }
+                    }
+                }
+            }
+
+
             // set the schemas of the scim user
             scimUser.setSchemas();
             // set location
@@ -591,15 +611,18 @@ public class CarbonAuthSCIMUserManager implements UserManager {
             throw new CharonException(errMsg, e);
         }         
     }
-    
+
     /**
+     * Get a SCIM group from the uuid
+     * 
      * @param groupId unique group Id
+     * @param includeUsers whether to include users of the group
      * @return group SCIM group object
      * @throws UserStoreConnectorException if error occurred while connecting to user store
      * @throws CharonException if error occurred while constructing SCIM group object
      * @throws BadRequestException if error occurred while constructing SCIM group object
      */
-    private Group getSCIMGroup(String groupId) throws UserStoreConnectorException, CharonException, 
+    private Group getSCIMGroup(String groupId, boolean includeUsers) throws UserStoreConnectorException, CharonException, 
                                                                                         BadRequestException {
         try {
             List<Attribute> attributeList = userStoreConnector.getGroupAttributeValues(groupId);
@@ -610,18 +633,20 @@ public class CarbonAuthSCIMUserManager implements UserManager {
             }
 
             Group scimGroup = (Group) SCIMClaimResolver.constructSCIMObjectFromAttributes(
-                    getAttributeMapFromList(attributeList), 2);
+                    getAttributeMapFromList(attributeList), SCIMCommonConstants.GROUP);
 
-            //set members of group
-            List<String> userIds = userStoreConnector.getUserIdsOfGroup(groupId);
-            if (userIds != null) {
-                for (String userId : userIds) {
-                    Optional<User> user = Optional.ofNullable(getSCIMUser(userId));
-                    if (user.isPresent()) {
-                        scimGroup.setMember(user.get().getId(), user.get().getUserName());
-                    } else {
-                        log.warn("User " + userId + " recorded as member of group " + groupId + " but user " 
-                                + "does not exist in the system.");
+            if (includeUsers) {
+                //set members of group
+                List<String> userIds = userStoreConnector.getUserIdsOfGroup(groupId);
+                if (userIds != null) {
+                    for (String userId : userIds) {
+                        Optional<User> user = Optional.ofNullable(getSCIMUser(userId, false));
+                        if (user.isPresent()) {
+                            scimGroup.setMember(user.get().getId(), user.get().getUserName());
+                        } else {
+                            log.warn("User " + userId + " recorded as member of group " + groupId + " but user "
+                                    + "does not exist in the system.");
+                        }
                     }
                 }
             }
@@ -640,7 +665,7 @@ public class CarbonAuthSCIMUserManager implements UserManager {
             throw new CharonException(errMsg, e);
         }
     }
-    
+
     /**
      * List the users with pagination and filter (Eq filter only)
      * @param rootNode filter model
@@ -676,7 +701,7 @@ public class CarbonAuthSCIMUserManager implements UserManager {
             userObjectList.add(userIdsList.size());
 
             for (String userId : userIdsList) {
-                User scimUser = getSCIMUser(userId);
+                User scimUser = getSCIMUser(userId, true);
                 userObjectList.add(scimUser);
             }
             return userObjectList;
@@ -695,7 +720,7 @@ public class CarbonAuthSCIMUserManager implements UserManager {
         userObjectList.add(userIdsList.size());
 
         for (String userId : userIdsList) {
-            User scimUser = getSCIMUser(userId);
+            User scimUser = getSCIMUser(userId, true);
             userObjectList.add(scimUser);
         }
         return userObjectList;
