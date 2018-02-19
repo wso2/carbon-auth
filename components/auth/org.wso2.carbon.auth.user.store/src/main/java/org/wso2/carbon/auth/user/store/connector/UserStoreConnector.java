@@ -188,6 +188,32 @@ public interface UserStoreConnector {
             UserStoreConnectorException;
 
     /**
+     * Remove group list of user.
+     *
+     * @param userIdentifier   User identifier.
+     * @throws UserStoreConnectorException User Store Connector Exception.
+     */
+    void removeGroupsOfUser(String userIdentifier) throws UserStoreConnectorException;
+
+    /**
+     * Retrieves current members (users) of a given group
+     * 
+     * @param groupIdentifier id of the group
+     * @return current member Ids (user Ids) of the given group
+     * @throws UserStoreConnectorException when error occurred while getting users of group
+     */
+    List<String> getUserIdsOfGroup(String groupIdentifier) throws UserStoreConnectorException;
+
+    /**
+     * Retrieves current groups (roles) of a given user
+     *
+     * @param userIdentifier id of the group
+     * @return current group Ids (roles) of the given user
+     * @throws UserStoreConnectorException when error occurred while getting groups of user
+     */
+    List<String> getGroupIdsOfUser(String userIdentifier) throws UserStoreConnectorException;
+
+    /**
      * Adds a new group.
      *
      * @param attributes Attributes of the group.
@@ -233,8 +259,16 @@ public interface UserStoreConnector {
      * @throws UserStoreConnectorException User Store Connector Exception.
      */
     void updateUsersOfGroup(String groupIdentifier, List<String> userIdentifiers) throws
-            UserStoreConnectorException;
-    
+            UserStoreConnectorException;    
+
+    /**
+     * Remove user list of a group.
+     *
+     * @param groupIdentifier Group identifier.
+     * @throws UserStoreConnectorException User Store Connector Exception.
+     */
+    void removeUsersOfGroup(String groupIdentifier) throws UserStoreConnectorException;
+
     /**
      * Add user credentials.
      *

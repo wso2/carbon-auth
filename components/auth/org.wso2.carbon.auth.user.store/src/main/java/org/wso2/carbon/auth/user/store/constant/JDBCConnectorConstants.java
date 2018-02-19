@@ -128,6 +128,9 @@ public class JDBCConnectorConstants {
         public static final String SQL_QUERY_DELETE_CREDENTIAL = "sql_query_delete_credential";
         public static final String SQL_QUERY_GET_ATTR_BY_URI = "sql_query_get_attr_by_uri";
         public static final String SQL_QUERY_ADD_ATTR = "sql_query_add_attr";
+        public static final String SQL_QUERY_LIST_USER_IDS_OF_GROUP = "sql_query_get_users_of_group";
+        public static final String SQL_QUERY_LIST_GROUP_IDS_OF_USER = "sql_query_get_groups_of_user";
+
         public static final String SQL_QUERY_GET_ROLE = "sql_query_get_role";
         public static final String SQL_QUERY_GET_ROLES_FOR_USER = "sql_query_get_roles_for_user";
         public static final String SQL_QUERY_GET_PERMISSIONS_FROM_RESOURCE_FOR_ROLE =
@@ -138,8 +141,6 @@ public class JDBCConnectorConstants {
         public static final String SQL_QUERY_ADD_PERMISSIONS_TO_ROLE = "sql_query_add_role_permission";
         public static final String SQL_QUERY_ADD_PERMISSIONS_TO_ROLE_BY_UNIQUE_ID =
                 "sql_query_add_permissions_to_role_by_unique_id";
-        public static final String SQL_QUERY_GET_USERS_OF_ROLE = "sql_query_get_users_of_role";
-        public static final String SQL_QUERY_GET_GROUPS_OF_ROLE = "sql_query_get_groups_of_role";
         public static final String SQL_QUERY_DELETE_ROLE = "sql_query_delete_role";
         public static final String SQL_QUERY_DELETE_PERMISSION = "sql_query_delete_permission";
         public static final String SQL_QUERY_IS_USER_IN_ROLE = "sql_query_is_user_in_role";

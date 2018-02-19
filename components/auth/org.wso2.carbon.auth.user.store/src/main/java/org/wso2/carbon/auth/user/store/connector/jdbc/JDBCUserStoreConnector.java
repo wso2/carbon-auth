@@ -540,6 +540,66 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
+    public void removeGroupsOfUser(String userIdentifier) throws UserStoreConnectorException {
+        //PUT operation
+        try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
+            //remove already existing groups
+            NamedPreparedStatement deleteNamedPreparedStatement = new NamedPreparedStatement(unitOfWork.getConnection(),
+                    sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_REMOVE_ALL_GROUPS_OF_USER));
+            deleteNamedPreparedStatement
+                    .setString(JDBCConnectorConstants.SQLPlaceholders.USER_UNIQUE_ID, userIdentifier);
+            deleteNamedPreparedStatement.getPreparedStatement().executeUpdate();
+            unitOfWork.endTransaction();
+        } catch (SQLException e) {
+            throw new UserStoreConnectorException("Error occurred while deleting groups of user.", e);
+        }
+    }
+
+    @Override
+    public List<String> getUserIdsOfGroup(String groupIdentifier) throws UserStoreConnectorException {
+        List<String> userIdsToReturn = new ArrayList<>();
+        try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
+            NamedPreparedStatement getUsersOfGroupStatement = new NamedPreparedStatement(unitOfWork.getConnection(),
+                    sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_USER_IDS_OF_GROUP));
+            getUsersOfGroupStatement
+                    .setString(JDBCConnectorConstants.SQLPlaceholders.GROUP_UNIQUE_ID, groupIdentifier);
+            try (ResultSet resultSet = getUsersOfGroupStatement.getPreparedStatement().executeQuery()) {
+
+                while (resultSet.next()) {
+                    String userUniqueId = resultSet.getString(DatabaseColumnNames.User.USER_UNIQUE_ID);
+                    userIdsToReturn.add(userUniqueId);
+                }
+                
+                return userIdsToReturn;
+            }
+        } catch (SQLException e) {
+            throw new UserStoreConnectorException("Error occurred while updating groups of user.", e);
+        }
+    }
+
+    @Override
+    public List<String> getGroupIdsOfUser(String userIdentifier) throws UserStoreConnectorException {
+        List<String> groupIdsToReturn = new ArrayList<>();
+        try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
+            NamedPreparedStatement getUsersOfGroupStatement = new NamedPreparedStatement(unitOfWork.getConnection(),
+                    sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_GROUP_IDS_OF_USER));
+            getUsersOfGroupStatement
+                    .setString(JDBCConnectorConstants.SQLPlaceholders.USER_UNIQUE_ID, userIdentifier);
+            try (ResultSet resultSet = getUsersOfGroupStatement.getPreparedStatement().executeQuery()) {
+
+                while (resultSet.next()) {
+                    String userUniqueId = resultSet.getString(DatabaseColumnNames.Group.GROUP_UNIQUE_ID);
+                    groupIdsToReturn.add(userUniqueId);
+                }
+
+                return groupIdsToReturn;
+            }
+        } catch (SQLException e) {
+            throw new UserStoreConnectorException("Error occurred while updating groups of user.", e);
+        }
+    }
+
+    @Override
     public String addGroup(List<Attribute> attributes) throws UserStoreConnectorException {
 
         String connectorUniqueId = Optional.ofNullable(getIdFromAttributes(attributes))
@@ -698,7 +758,24 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             namedPreparedStatement.getPreparedStatement().executeBatch();
             unitOfWork.endTransaction();
         } catch (SQLException e) {
-            throw new UserStoreConnectorException("Error occurred while updating groups of user.", e);
+            throw new UserStoreConnectorException("Error occurred while updating users of group.", e);
+        }
+    }
+
+    @Override
+    public void removeUsersOfGroup(String groupIdentifier) throws UserStoreConnectorException {
+
+        //PUT operation
+        try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
+            //remove already existing users
+            NamedPreparedStatement deleteNamedPreparedStatement = new NamedPreparedStatement(unitOfWork.getConnection(),
+                    sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_REMOVE_ALL_USERS_OF_GROUP));
+            deleteNamedPreparedStatement
+                    .setString(JDBCConnectorConstants.SQLPlaceholders.GROUP_UNIQUE_ID, groupIdentifier);
+            deleteNamedPreparedStatement.getPreparedStatement().executeUpdate();
+            unitOfWork.endTransaction();
+        } catch (SQLException e) {
+            throw new UserStoreConnectorException("Error occurred while deleting users of group.", e);
         }
     }
 

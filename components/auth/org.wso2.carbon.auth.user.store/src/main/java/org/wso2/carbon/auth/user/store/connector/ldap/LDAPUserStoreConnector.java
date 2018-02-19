@@ -369,6 +369,23 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
+    public void removeGroupsOfUser(String userIdentifier) throws UserStoreConnectorException {
+        //TODO: implement removeGroupsOfUser in LDAPUserStoreConnector
+    }
+
+    @Override
+    public List<String> getUserIdsOfGroup(String groupIdentifier) throws UserStoreConnectorException {
+        //TODO: implement getUserIdsOfGroup in LDAPUserStoreConnector
+        return null;
+    }
+
+    @Override
+    public List<String> getGroupIdsOfUser(String userIdentifier) throws UserStoreConnectorException {
+        //TODO: implement getGroupIdsOfUser in LDAPUserStoreConnector
+        return null;
+    }
+
+    @Override
     public String addGroup(List<Attribute> attributes) throws UserStoreConnectorException {
         DirContext context;
         try {
@@ -481,6 +498,11 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         } catch (NamingException e) {
             throw new UserStoreConnectorException("Error users of group", e);
         }
+    }
+
+    @Override
+    public void removeUsersOfGroup(String groupIdentifier) throws UserStoreConnectorException {
+        //TODO: implement removeUsersOfGroup in LDAPUserStoreConnector
     }
 
     @Override

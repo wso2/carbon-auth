@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javax.security.auth.callback.PasswordCallback;
 
 /**
@@ -327,15 +328,63 @@ public class CarbonAuthSCIMUserManager implements UserManager {
             throws NotImplementedException, BadRequestException, CharonException {
         // TODO Auto-generated method stub
         return null;
-    }    
+    }
 
     @Override
-    public Group updateGroup(Group arg0, Group arg1, Map<String, Boolean> arg2) throws NotImplementedException,
-            BadRequestException, CharonException, NotFoundException {
-        // TODO Auto-generated method stub
-        return null;
+    public Group updateGroup(Group oldGroup, Group newGroup, Map<String, Boolean> requiredAttributes)
+            throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
+        log.debug("Updating group: {}", oldGroup.getId());
+        // TODO: Check group exists
+        Map<String, String> attributesMap = SCIMClaimResolver.getClaimsMap(newGroup);
+        // need to populate the supported claims/attributes. Then filter out 
+        // user attributes against the supported list ?
+        List<Attribute> attributeList = getAttributeListFromMap(attributesMap);
+
+        try {
+            userStoreConnector.updateGroupAttributes(oldGroup.getId(), attributeList);
+
+            // handle users of the group
+            Optional<MultiValuedAttribute> membersAttribute = Optional.ofNullable((MultiValuedAttribute) (newGroup
+                    .getAttribute(SCIMConstants.GroupSchemaConstants.MEMBERS)));
+            // list to store the group ids which will be used to create the group attribute in scim user.
+            List<String> userIds = new ArrayList<>();
+            if (membersAttribute.isPresent()) {
+                List<org.wso2.charon3.core.attributes.Attribute> subValues = membersAttribute.get()
+                        .getAttributeValues();
+
+                if (subValues != null && subValues.size() != 0) {
+                    for (org.wso2.charon3.core.attributes.Attribute subValue : subValues) {
+                        SimpleAttribute valueAttribute =
+                                (SimpleAttribute) ((subValue)).getSubAttribute(
+                                        SCIMConstants.CommonSchemaConstants.VALUE);
+                        userIds.add((String) valueAttribute.getValue());
+                    }
+                }
+                //need to add users groups if it is available in the request
+                if (userIds.size() != 0) {
+                    //now add the user's groups explicitly.
+                    userStoreConnector.updateUsersOfGroup(oldGroup.getId(), userIds);
+                } else {
+                    //ex : { .. "members" : [] }
+                    // then -> remove existing users of the group
+                    userStoreConnector.removeUsersOfGroup(oldGroup.getId());
+                }
+            } else {
+                //ex : { .. "members" : null } or "members" attribute not present at all.
+                // then -> remove existing users of the group
+                userStoreConnector.removeUsersOfGroup(oldGroup.getId());
+            }
+
+            // get the updated group from the user store and send it to client.
+            return this.getGroup(oldGroup.getId(), requiredAttributes);
+        } catch (UserStoreConnectorException e) {
+            String errMsg = "Error occurred while updating group: " + oldGroup.getId();
+            //Charon wrap exception to SCIMResponse and does not log exceptions
+            log.error(errMsg, e);
+            throw new CharonException(errMsg);
+        }
     }
-    
+
     @Override
     public void deleteGroup(String groupId) throws NotFoundException, CharonException, NotImplementedException,
             BadRequestException {
@@ -503,11 +552,19 @@ public class CarbonAuthSCIMUserManager implements UserManager {
             Group scimGroup = (Group) SCIMClaimResolver.constructSCIMObjectFromAttributes(
                     getAttributeMapFromList(alttributeList), 2);
 
-            // TODO : Get group members
-            //set the schemas of the scim user
+            //set members of group
+            List<String> userIds = userStoreConnector.getUserIdsOfGroup(groupId);
+            if (userIds != null) {
+                for (String userId : userIds) {
+                    User user = getSCIMUser(userId);
+                    scimGroup.setMember(user.getId(), user.getUserName());
+                }
+            }
+
+            //set the schemas of the group
             scimGroup.setSchemas();
             //set location
-            scimGroup.setLocation(SCIMCommonConstants.USERS_LOCATION + "/" + groupId);
+            scimGroup.setLocation(SCIMCommonConstants.GROUPS_LOCATION + "/" + groupId);
             
             return scimGroup;
             
