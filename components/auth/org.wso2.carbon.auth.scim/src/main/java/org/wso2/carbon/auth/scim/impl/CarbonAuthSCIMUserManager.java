@@ -107,27 +107,6 @@ public class CarbonAuthSCIMUserManager implements UserManager {
                 userStoreConnector.addCredential(userId, passwordCallback);
             }
             
-            // handle groups of the user
-            MultiValuedAttribute groupsAttribute = (MultiValuedAttribute) (
-                    user.getAttribute(SCIMConstants.UserSchemaConstants.GROUPS));
-            // list to store the group ids which will be used to create the group attribute in scim user.
-            List<String> groupIds = new ArrayList<>();
-            if (groupsAttribute != null) {
-                List<org.wso2.charon3.core.attributes.Attribute> subValues = groupsAttribute.getAttributeValues();
-
-                if (subValues != null && subValues.size() != 0) {
-                    for (org.wso2.charon3.core.attributes.Attribute subValue : subValues) {
-                        SimpleAttribute valueAttribute = (SimpleAttribute) subValue;
-                        groupIds.add((String) valueAttribute.getValue());
-                    }
-                }                    
-                //need to add users groups if it is available in the request
-                if (groupIds.size() != 0) {
-                    //now add the user's groups explicitly.
-                    userStoreConnector.updateGroupsOfUser(userId, groupIds);
-                }
-            }
-            
             log.debug("User: {} is created through SCIM.", user);
             // get the user again from the user store and send it to client.
             return this.getUser(userId, requiredAttributes);
@@ -150,10 +129,7 @@ public class CarbonAuthSCIMUserManager implements UserManager {
                                           BadRequestException, NotFoundException {
         log.debug("Retrieving user: {} ", userId);
         try {
-            // TODO : Check user exists
-            
             return getSCIMUser(userId, true);
-            
         } catch (UserStoreConnectorException e) {
             String errMsg = "Error in getting user from the userId :" + userId;
             //Charon wrap exception to SCIMResponse and does not log exceptions
@@ -199,7 +175,6 @@ public class CarbonAuthSCIMUserManager implements UserManager {
     public User updateUser(User user, Map<String, Boolean> requiredAttributes) throws NotImplementedException, 
                                 CharonException, BadRequestException, NotFoundException {
         log.debug("Updating user: {}", user);
-        // TODO : Check user exists
         Map<String, String> attributesMap = SCIMClaimResolver.getClaimsMap(user);
         // need to populate the supported claims/attributes. Then filter out 
         // user attributes against the supported list ?
@@ -217,30 +192,7 @@ public class CarbonAuthSCIMUserManager implements UserManager {
                 passwordCallback.setPassword(password);
                 userStoreConnector.updateCredentials(user.getId(), passwordCallback);
             }
-            
-            // handle groups of the user
-            MultiValuedAttribute groupsAttribute = (MultiValuedAttribute) (
-                    user.getAttribute(SCIMConstants.UserSchemaConstants.GROUPS));
-            // list to store the group ids which will be used to create the group attribute in scim user.
-            List<String> groupIds = new ArrayList<>();
-            if (groupsAttribute != null) {
-                List<org.wso2.charon3.core.attributes.Attribute> subValues = groupsAttribute.getAttributeValues();
 
-                if (subValues != null && subValues.size() != 0) {
-                    for (org.wso2.charon3.core.attributes.Attribute subValue : subValues) {
-                        SimpleAttribute valueAttribute =
-                            (SimpleAttribute) ((subValue)).getSubAttribute(
-                                     SCIMConstants.CommonSchemaConstants.VALUE);
-                        groupIds.add((String) valueAttribute.getValue());
-                    }
-                }                    
-                //need to add users groups if it is available in the request
-                if (groupIds.size() != 0) {
-                    //now add the user's groups explicitly.
-                    userStoreConnector.updateGroupsOfUser(user.getId(), groupIds);
-                }
-            }
-            
             // get the updated user from the user core and sent it to client.
             return this.getUser(user.getId(), requiredAttributes);
         } catch (UserStoreConnectorException e) {
@@ -255,8 +207,10 @@ public class CarbonAuthSCIMUserManager implements UserManager {
     public void deleteUser(String userId) throws NotFoundException, CharonException, NotImplementedException,
             BadRequestException {
         log.debug("Deleting user: {}", userId);
-        //TODO Check user exists
         try {
+            if(getSCIMUser(userId, false) == null) {
+                throw new NotFoundException("No user exists with the given id: " + userId);
+            }
             userStoreConnector.deleteUser(userId);
         } catch (UserStoreConnectorException e) {
             String errMsg = "Error occurred while deleting user: " + userId;
@@ -323,9 +277,7 @@ public class CarbonAuthSCIMUserManager implements UserManager {
                                         BadRequestException, CharonException, NotFoundException {
         log.debug("Retrieving group: {} ", groupId);
         try {
-            
             return getSCIMGroup(groupId, true);
-            
         } catch (UserStoreConnectorException e) {
             String errMsg = "Error in getting group from the groupId :" + groupId;
             // Charon wrap exception to SCIMResponse and does not log exceptions
@@ -439,6 +391,9 @@ public class CarbonAuthSCIMUserManager implements UserManager {
             BadRequestException {
         log.debug("Deleting group: {}", groupId);
         try {
+            if (getSCIMGroup(groupId, false) == null) {
+                throw new NotFoundException("No group exists with the given id: " + groupId);
+            }
             userStoreConnector.deleteGroup(groupId);
         } catch (UserStoreConnectorException e) {
             String errMsg = "Error occurred while deleting group: " + groupId;
