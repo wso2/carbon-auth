@@ -39,4 +39,8 @@ public class SCIMRESTAPIConstants {
     public static final String AUTHENTICATION_SCHEMES_DOCUMENTATION_URL_1 = "http://example.com/help/httpBasic.html";
     public static final String AUTHENTICATION_SCHEMES_TYPE_1 = "httpbasic";
     public static final Boolean AUTHENTICATION_SCHEMES_PRIMARY_1 = true;
+    
+    public static final String HEADER_AUTHORIZATION = "Authorization";
+    public static final String HEADER_AUTHORIZATION_BASIC = "Basic";
+    public static final String CHARSET_UTF8 = "UTF-8";
 }

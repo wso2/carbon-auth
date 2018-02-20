@@ -19,17 +19,21 @@ package org.wso2.carbon.auth.scim.rest.api.util;
 
 import com.google.gson.Gson;
 import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
-import org.wso2.carbon.auth.scim.impl.constants.SCIMCommonConstants;
 import org.wso2.carbon.auth.scim.rest.api.SCIMRESTAPIConstants;
-import org.wso2.charon3.core.config.CharonConfiguration;
+import org.wso2.carbon.auth.user.mgt.UserStoreException;
+import org.wso2.carbon.auth.user.mgt.UserStoreManager;
+import org.wso2.carbon.auth.user.mgt.UserStoreManagerFactory;
+import org.wso2.charon3.core.encoder.JSONEncoder;
+import org.wso2.charon3.core.exceptions.AbstractCharonException;
+import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.exceptions.UnauthorizedException;
 import org.wso2.charon3.core.protocol.SCIMResponse;
-import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
-import org.wso2.charon3.core.schema.SCIMConstants;
+import org.wso2.msf4j.Request;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.nio.charset.Charset;
+import java.util.Base64;
 import java.util.Map;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -82,5 +86,67 @@ public class SCIMRESTAPIUtils {
      */
     public static String getSerializedJsonStringFromBody(Object dto) {
         return new Gson().toJson(dto);
+    }
+
+    /**
+     * Authenticate the user an from the request and returns the username
+     *
+     * @param request Request object
+     * @return username if user is authenticated
+     * @throws CharonException    if failed to authenticate the user
+     * @throws UnauthorizedException if user is un authenticated
+     */
+    public static String getAuthenticatedUserName(Request request) throws CharonException, UnauthorizedException {
+        final String authorization = request.getHeader(SCIMRESTAPIConstants.HEADER_AUTHORIZATION);
+        boolean authenticated = false;
+        String[] values = null;
+        if (authorization != null && authorization.startsWith(SCIMRESTAPIConstants.HEADER_AUTHORIZATION_BASIC)) {
+            // Authorization: Basic base64credentials
+            String base64Credentials = authorization.substring(SCIMRESTAPIConstants.HEADER_AUTHORIZATION_BASIC.length())
+                    .trim();
+            String credentials = new String(Base64.getDecoder().decode(base64Credentials),
+                    Charset.forName(SCIMRESTAPIConstants.CHARSET_UTF8));
+            // credentials = username:password
+            values = credentials.split(":", 2);
+            if (values.length == 2) {
+                //authenticate the user
+                UserStoreManager userStoreManager = null;
+                try {
+                    userStoreManager = UserStoreManagerFactory.getUserStoreManager();
+                    authenticated = userStoreManager.doAuthenticate(values[0], values[1]);
+                } catch (UserStoreException e) {
+                    throw new CharonException("Error while authenticating user", e);
+                }
+            }
+        }
+
+        if (authenticated) {
+            return values[0];
+        } else {
+            throw new UnauthorizedException("User not authenticated");
+        }
+    }
+
+    /**
+     * Get error response from Charon exception
+     * 
+     * @param e CharonException
+     * @return error response from Charon exception
+     */
+    public static Response getResponseFromCharonException(AbstractCharonException e) {
+        JSONEncoder encoder = new JSONEncoder();
+        String responseStr = encoder.encodeSCIMException(e);
+        return Response.status(e.getStatus()).entity(responseStr).build();
+    }
+
+    /**
+     * Get internal SCIM error
+     */
+    @SuppressWarnings("ThrowableNotThrown") 
+    public static Response getSCIMInternalErrorResponse() {
+        JSONEncoder encoder = new JSONEncoder();
+        CharonException exception = new CharonException("Internal Error");
+        String responseStr = encoder.encodeSCIMException(exception);
+        return Response.status(exception.getStatus()).entity(responseStr).build();
     }
 }

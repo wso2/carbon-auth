@@ -426,33 +426,38 @@ public class CarbonAuthSCIMUserManager implements UserManager {
 
         log.debug("Group with the id : {} is deleted through SCIM.", groupId);
     }
-    
+
     @Override
     public User createMe(User user, Map<String, Boolean> requiredAttributes) throws CharonException, ConflictException,
             BadRequestException {
-        // Redirect to create user
-        return createUser(user, requiredAttributes);
+        throw new CharonException("Creating a user anonymously is not supported");
     }
-    
+
     @Override
-    public User getMe(String userId, Map<String, Boolean> requiredAttributes) throws CharonException, 
+    public User getMe(String userName, Map<String, Boolean> requiredAttributes) throws CharonException, 
             BadRequestException, NotFoundException {
-        // Redirect to get user
-        return getUser(userId, requiredAttributes);
+        try {
+            String userId = userStoreConnector
+                    .getConnectorUserId(SCIMConstants.UserSchemaConstants.USER_NAME_URI, userName);
+            return getUser(userId, requiredAttributes);
+        } catch (UserNotFoundException | UserStoreConnectorException e) {
+            String errMsg = "Error in getting user id from username";
+            //Charon wrap exception to SCIMResponse and does not log exceptions
+            log.error(errMsg, e);
+            throw new CharonException(errMsg, e);
+        }
     }
-    
+
     @Override
     public User updateMe(User userId, Map<String, Boolean> requiredAttributes) throws NotImplementedException, 
             CharonException, BadRequestException, NotFoundException {
-        // Redirect to update user
-        return updateUser(userId, requiredAttributes);
+        throw new NotImplementedException("Updating current user profile is not supported");
     }
 
     @Override
     public void deleteMe(String userId) throws NotFoundException, CharonException, NotImplementedException,
             BadRequestException {
-        // Redirect to delete user
-        deleteUser(userId);
+        throw new NotImplementedException("Deleting current user is not supported");
         
     }
     
@@ -786,6 +791,14 @@ public class CarbonAuthSCIMUserManager implements UserManager {
         return groupObjList;
     }
 
+    /**
+     * Handle UserStoreConnectorException when adding a resource
+     * 
+     * @param e UserStoreConnectorException
+     * @throws ConflictException UserStoreConnectorException due to resource already exist
+     * @throws CharonException UserStoreConnectorException due to a internal error 
+     * @throws BadRequestException UserStoreConnectorException due to issue with request params
+     */
     private void handleUserStoreExceptionWhenAdding(UserStoreConnectorException e)
             throws ConflictException, CharonException, BadRequestException {
         handleUserStoreException(e);
@@ -797,6 +810,14 @@ public class CarbonAuthSCIMUserManager implements UserManager {
         }
     }
 
+    /**
+     * Handle UserStoreConnectorException when updating a resource
+     * 
+     * @param e UserStoreConnectorException
+     * @throws CharonException UserStoreConnectorException due to a internal error 
+     * @throws NotFoundException UserStoreConnectorException due to resource does not exist
+     * @throws BadRequestException UserStoreConnectorException due to issue with request params
+     */
     private void handleUserStoreExceptionWhenUpdating(UserStoreConnectorException e)
             throws CharonException, NotFoundException, BadRequestException {
         handleUserStoreException(e);
@@ -808,6 +829,13 @@ public class CarbonAuthSCIMUserManager implements UserManager {
         }
     }
 
+    /**
+     * Handle UserStoreConnectorException for common cases
+     * 
+     * @param e UserStoreConnectorException
+     * @throws CharonException UserStoreConnectorException due to a internal error 
+     * @throws BadRequestException UserStoreConnectorException due to issue with request params
+     */
     private void handleUserStoreException(UserStoreConnectorException e)
             throws CharonException, BadRequestException {
         if (e.getErrorHandler() == null) {
