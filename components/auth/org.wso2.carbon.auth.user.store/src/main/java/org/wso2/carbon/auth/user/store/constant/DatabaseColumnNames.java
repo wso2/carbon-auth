@@ -53,7 +53,7 @@ public class DatabaseColumnNames {
         public static final String DISPLAY_NAME = "DISPLAY_NAME";
         public static final String REQUIRED = "REQUIRED";
         public static final String REGEX = "REGEX";
-        public static final String UNIQUE = "UNIQUE";
+        public static final String UNIQUENESS = "UNIQUENESS";
     }
 
     /**

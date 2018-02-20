@@ -252,10 +252,11 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
             "WHERE USER_UNIQUE_ID = :user_unique_id;";
 
     private static final String ADD_ATTRIBUTE = "INSERT INTO AUTH_UM_ATTRIBUTES (ATTR_NAME, ATTR_URI, DISPLAY_NAME, " 
-            + "REQUIRED, REGEX) VALUES (:attr_name;, :attr_uri;, :display_name;, :required;, :regex;)";
+            + "REQUIRED, REGEX, UNIQUENESS) VALUES (:attr_name;, :attr_uri;, :display_name;, :required;, :regex;, " 
+            + ":uniqueness;)";
 
     private static final String GET_ATTRIBUTE_BY_URI = "SELECT ATTR_NAME, ATTR_URI, DISPLAY_NAME, " 
-            + "REQUIRED, REGEX FROM AUTH_UM_ATTRIBUTES WHERE ATTR_URI = :attr_uri;";
+            + "REQUIRED, REGEX, UNIQUENESS FROM AUTH_UM_ATTRIBUTES WHERE ATTR_URI = :attr_uri;";
 
     public MySQLFamilySQLQueryFactory() {
 

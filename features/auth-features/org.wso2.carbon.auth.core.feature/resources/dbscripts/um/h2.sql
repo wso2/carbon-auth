@@ -32,7 +32,8 @@ CREATE TABLE AUTH_UM_ATTRIBUTES
   ATTR_URI VARCHAR(255)                        NOT NULL,
   DISPLAY_NAME VARCHAR(255)                    NOT NULL,
   REQUIRED BOOLEAN                             NOT NULL,
-  REGEX VARCHAR(255)                           NOT NULL
+  REGEX VARCHAR(255)                           NOT NULL,
+  UNIQUENESS INTEGER                           NOT NULL
 );
 
 CREATE TABLE AUTH_UM_USER_ATTRIBUTES

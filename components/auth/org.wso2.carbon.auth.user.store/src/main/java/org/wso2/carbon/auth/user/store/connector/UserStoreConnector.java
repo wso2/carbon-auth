@@ -43,26 +43,26 @@ public interface UserStoreConnector {
     /**
      * Get connector user id from unique attribute..
      *
-     * @param attributeName  Name of the attribute.
+     * @param attributeUri  Name of the attribute.
      * @param attributeValue Value of the attribute.
      * @return Connector user id.
      * @throws UserNotFoundException           User not found exception.
      * @throws UserStoreConnectorException User Store Connector Exception.
      */
-    String getConnectorUserId(String attributeName, String attributeValue) throws UserNotFoundException,
+    String getConnectorUserId(String attributeUri, String attributeValue) throws UserNotFoundException,
             UserStoreConnectorException;
 
     /**
      * List connector user ids from a attribute for a given range.
      *
-     * @param attributeName  Name of the attribute.
+     * @param attributeUri  Name of the attribute.
      * @param attributeValue Value of the attribute.
      * @param offset         Start position.
      * @param length         Number of users to retrieve.
      * @return List of connector user ids.
      * @throws UserStoreConnectorException User Store Connector Exception.
      */
-    List<String> listConnectorUserIds(String attributeName, String attributeValue, int offset, int length) throws
+    List<String> listConnectorUserIds(String attributeUri, String attributeValue, int offset, int length) throws
             UserStoreConnectorException;
 
     /**
@@ -88,26 +88,26 @@ public interface UserStoreConnector {
     /**
      * Get connector group id from unique attribute..
      *
-     * @param attributeName  Name of the attribute.
+     * @param attributeUri  Name of the attribute.
      * @param attributeValue Value of the attribute.
      * @return Connector group id.
      * @throws GroupNotFoundException          Group not found exception.
      * @throws UserStoreConnectorException User Store Connector Exception.
      */
-    String getConnectorGroupId(String attributeName, String attributeValue) throws GroupNotFoundException,
+    String getConnectorGroupId(String attributeUri, String attributeValue) throws GroupNotFoundException,
             UserStoreConnectorException;
 
     /**
      * List connector group ids from a attribute for a given range.
      *
-     * @param attributeName  Name of the attribute.
+     * @param attributeUri  Name of the attribute.
      * @param attributeValue Value of the attribute.
      * @param offset         Start position.
      * @param length         Number of groups to retrieve.
      * @return List of connector group ids.
      * @throws UserStoreConnectorException User Store Connector Exception.
      */
-    List<String> listConnectorGroupIds(String attributeName, String attributeValue, int offset, int length) throws
+    List<String> listConnectorGroupIds(String attributeUri, String attributeValue, int offset, int length) throws
             UserStoreConnectorException;
 
     /**

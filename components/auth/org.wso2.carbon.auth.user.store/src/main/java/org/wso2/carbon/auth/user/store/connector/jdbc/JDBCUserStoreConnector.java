@@ -20,7 +20,9 @@ package org.wso2.carbon.auth.user.store.connector.jdbc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.core.exception.TemplateExceptionCodes;
 import org.wso2.carbon.auth.user.store.configuration.models.AttributeConfiguration;
+import org.wso2.carbon.auth.user.store.configuration.models.Uniqueness;
 import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.connector.Attribute;
 import org.wso2.carbon.auth.user.store.connector.PasswordHandler;
@@ -29,6 +31,7 @@ import org.wso2.carbon.auth.user.store.connector.jdbc.queries.MySQLFamilySQLQuer
 import org.wso2.carbon.auth.user.store.constant.DatabaseColumnNames;
 import org.wso2.carbon.auth.user.store.constant.JDBCConnectorConstants;
 import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
+import org.wso2.carbon.auth.user.store.constant.UserStoreConstants.Operation;
 import org.wso2.carbon.auth.user.store.exception.GroupNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.StoreException;
 import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
@@ -124,7 +127,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
-    public String getConnectorUserId(String attributeName, String attributeValue)
+    public String getConnectorUserId(String attributeUri, String attributeValue)
             throws UserNotFoundException, UserStoreConnectorException {
 
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection())) {
@@ -132,7 +135,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             NamedPreparedStatement namedPreparedStatement = new NamedPreparedStatement(unitOfWork.getConnection(),
                     sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_GET_USER_FROM_ATTRIBUTE));
 
-            namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, attributeName);
+            namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, attributeUri);
             namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_VALUE, attributeValue);
 
             try (ResultSet resultSet = namedPreparedStatement.getPreparedStatement().executeQuery()) {
@@ -148,7 +151,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
-    public List<String> listConnectorUserIds(String attributeName, String attributeValue, int startIndex, int length)
+    public List<String> listConnectorUserIds(String attributeUri, String attributeValue, int startIndex, int length)
             throws UserStoreConnectorException {
 
         // Database handles start index as 0
@@ -167,7 +170,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
                     unitOfWork.getConnection(),
                     sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_USER_IDS_BY_ATTRIBUTE));
             listUsersNamedPreparedStatement
-                    .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, attributeName);
+                    .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, attributeUri);
 
             listUsersNamedPreparedStatement
                     .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_VALUE, attributeValue);
@@ -262,7 +265,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
-    public String getConnectorGroupId(String attributeName, String attributeValue)
+    public String getConnectorGroupId(String attributeUri, String attributeValue)
             throws GroupNotFoundException, UserStoreConnectorException {
 
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection())) {
@@ -270,7 +273,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             NamedPreparedStatement namedPreparedStatement = new NamedPreparedStatement(unitOfWork.getConnection(),
                     sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_GET_GROUP_FROM_ATTRIBUTE));
 
-            namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, attributeName);
+            namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, attributeUri);
             namedPreparedStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_VALUE, attributeValue);
 
             try (ResultSet resultSet = namedPreparedStatement.getPreparedStatement().executeQuery()) {
@@ -286,7 +289,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
-    public List<String> listConnectorGroupIds(String attributeName, String attributeValue, int startIndex, int length)
+    public List<String> listConnectorGroupIds(String attributeUri, String attributeValue, int startIndex, int length)
             throws UserStoreConnectorException {
 
         // Database handles start index as 0
@@ -306,7 +309,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
                     unitOfWork.getConnection(),
                     sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_LIST_GROUPS_BY_ATTRIBUTE));
             listGroupsNamedPreparedStatement
-                    .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, attributeName);
+                    .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, attributeUri);
             listGroupsNamedPreparedStatement
                     .setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_VALUE, attributeValue);
             listGroupsNamedPreparedStatement.setInt(JDBCConnectorConstants.SQLPlaceholders.LENGTH, length);
@@ -471,7 +474,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
         String connectorUniqueId = Optional.ofNullable(getIdFromAttributes(attributes))
                 .orElse(UserStoreUtil.generateUUID());
         //validate if all attributes are valid (exists in DB)
-        validateAttributes(attributes);
+        validateAttributes(attributes, UserStoreConstants.RESOURCE_USER, Operation.ADD);
 
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
 
@@ -505,8 +508,8 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             throws UserStoreConnectorException {
 
         //validate if all attributes are valid (exists in DB)
-        validateAttributes(attributes);
-        
+        validateAttributes(attributes, UserStoreConstants.RESOURCE_USER, Operation.UPDATE);
+
         //PUT operation
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
 
@@ -646,7 +649,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
         String connectorUniqueId = Optional.ofNullable(getIdFromAttributes(attributes))
                 .orElse(UserStoreUtil.generateUUID());
         //validate if all attributes are valid (exists in DB)
-        validateAttributes(attributes);
+        validateAttributes(attributes, UserStoreConstants.RESOURCE_GROUP, Operation.ADD);
 
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
             NamedPreparedStatement addGroupNamedPreparedStatement = new NamedPreparedStatement(
@@ -728,7 +731,8 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
     public String updateGroupAttributes(String groupIdentifier, List<Attribute> attributes)
             throws UserStoreConnectorException {
 
-        //PUT operation
+        //validate if all attributes are valid (exists in DB)
+        validateAttributes(attributes, UserStoreConstants.RESOURCE_GROUP, Operation.UPDATE);
 
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
 
@@ -1011,7 +1015,9 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
                     String displayName = resultSet.getString(DatabaseColumnNames.ATTRIBUTE.DISPLAY_NAME);
                     String regex = resultSet.getString(DatabaseColumnNames.ATTRIBUTE.REGEX);
                     Boolean required = resultSet.getBoolean(DatabaseColumnNames.ATTRIBUTE.REQUIRED);
-                    return new AttributeConfiguration(attributeName, attributeUri, displayName, required, regex);
+                    int uniqueness = resultSet.getInt(DatabaseColumnNames.ATTRIBUTE.UNIQUENESS);
+                    return new AttributeConfiguration(attributeName, attributeUri, displayName, required, regex,
+                            Uniqueness.from(uniqueness));
                 } else {
                     return null;
                 }
@@ -1031,6 +1037,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
             namedPrepStmt.setString(JDBCConnectorConstants.SQLPlaceholders.DISPLAY_NAME, config.getDisplayName());
             namedPrepStmt.setString(JDBCConnectorConstants.SQLPlaceholders.REGEX, config.getRegex());
             namedPrepStmt.setBoolean(JDBCConnectorConstants.SQLPlaceholders.REQUIRED, config.isRequired());
+            namedPrepStmt.setInt(JDBCConnectorConstants.SQLPlaceholders.UNIQUENESS, config.getUniqueness().getValue());
             namedPrepStmt.getPreparedStatement().executeUpdate();
             unitOfWork.endTransaction();
         } catch (SQLException e) {
@@ -1057,12 +1064,59 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
      * @param attributes list of attributes
      * @throws UserStoreConnectorException if any attribute is not present in the DB
      */
-    private void validateAttributes(List<Attribute> attributes) throws UserStoreConnectorException {
+    private void validateAttributes(List<Attribute> attributes, int resourceType, Operation operation)
+            throws UserStoreConnectorException {
         for (Attribute attribute : attributes) {
+            boolean fail = false;
             AttributeConfiguration configuration = getAttributeConfigByURI(attribute.getAttributeUri());
             //throws an error if any attribute type is missing in the database.
             if (configuration == null) {
                 throw new UserStoreConnectorException("Cannot find attribute uri " + attribute.getAttributeUri());
+            }
+            
+            //Checking if there are already user or group exists in a system for the particular attribute if it is
+            //  specified as a unique attribute.
+            if (Uniqueness.GLOBAL == configuration.getUniqueness() || Uniqueness.SERVER == configuration
+                    .getUniqueness()) {
+                final String errorMsg =
+                        "A resource already exist with unique attribute " + configuration.getAttributeName()
+                                + " with value " + attribute.getAttributeValue();
+
+                //Retrieve the existing resources with unique attribute value
+                List<String> returnedResourceIds = new ArrayList<>();
+                if (resourceType == UserStoreConstants.RESOURCE_GROUP) {
+                    returnedResourceIds = listConnectorGroupIds(attribute.getAttributeUri(), attribute.getAttributeValue(), 0,
+                            2);
+                } else if (resourceType == UserStoreConstants.RESOURCE_USER) {
+                    returnedResourceIds = listConnectorUserIds(attribute.getAttributeUri(), attribute.getAttributeValue(), 0,
+                            2);
+                }
+
+                //Validation
+                if (returnedResourceIds.size() > 1) {
+                    //There are more than one resources with specified unique attribute value. Hence fail.
+                    fail = true;
+                } else if (returnedResourceIds.size() == 1) {
+                    //There is one resources with specified unique attribute value. The existing resource id should be 
+                    // equal to the current resource id. Otherwise fail.
+                    String resourceId = getIdFromAttributes(attributes);
+                    if (resourceId != null && !resourceId.equals(returnedResourceIds.get(0))) {
+                        fail = true;
+                    }
+                }
+
+                //handle if fail
+                if (fail) {
+                    if (Operation.ADD.equals(operation)) {
+                        throw new UserStoreConnectorException(errorMsg,
+                                new TemplateExceptionCodes.UniqueAttributeViolationAddingResource(
+                                        configuration.getAttributeName(), attribute.getAttributeValue()));
+                    } else {
+                        throw new UserStoreConnectorException(errorMsg,
+                                new TemplateExceptionCodes.UniqueAttributeViolationUpdatingResource(
+                                        configuration.getAttributeName(), attribute.getAttributeValue()));
+                    }
+                }
             }
         }
     }
@@ -1076,7 +1130,6 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
      */
     private String getIdFromAttributes(List<Attribute> attributes) throws UserStoreConnectorException {
         for (Attribute attribute: attributes) {
-            AttributeConfiguration configuration = getAttributeConfigByURI(attribute.getAttributeUri());
             //override the generated UUID if id is already present in the list of attributes
             if (UserStoreConstants.CLAIM_ID.equals(attribute.getAttributeUri())) {
                 return attribute.getAttributeValue();

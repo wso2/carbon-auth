@@ -102,7 +102,7 @@ public class UserStoreConfiguration {
         for (DefaultAttributes attribute : DefaultAttributes.values()) {
             AttributeConfiguration attributeConfiguration = new AttributeConfiguration(attribute.getAttributeName(),
                     attribute.getAttributeUri(), attribute.getDisplayName(), attribute.isRequired(),
-                    attribute.getRegex());
+                    attribute.getRegex(), attribute.getUniqueness());
             attributes.add(attributeConfiguration);
         }
     }

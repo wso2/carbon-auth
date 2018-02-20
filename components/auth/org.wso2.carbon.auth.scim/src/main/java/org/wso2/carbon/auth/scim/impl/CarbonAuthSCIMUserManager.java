@@ -23,6 +23,7 @@ package org.wso2.carbon.auth.scim.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.core.exception.TemplateExceptionCodes;
 import org.wso2.carbon.auth.scim.impl.constants.SCIMCommonConstants;
 import org.wso2.carbon.auth.scim.internal.ServiceReferenceHolder;
 import org.wso2.carbon.auth.scim.utils.SCIMClaimResolver;
@@ -112,16 +113,16 @@ public class CarbonAuthSCIMUserManager implements UserManager {
             return this.getUser(userId, requiredAttributes);
             
         } catch (UserStoreConnectorException e) {
-            String errMsg = "Error occurred while adding user: " + user + " to user store";
             //Charon wrap exception to SCIMResponse and does not log exceptions
-            log.error(errMsg, e);
-            throw new ConflictException(errMsg);
+            log.error("Error occurred while adding user: " + user + " to user store", e);
+            handleUserStoreExceptionWhenAdding(e);
         } catch (NotFoundException e) {
             String errMsg = "Error in retrieving newly added user: " + user + " from user store";
             //Charon wrap exception to SCIMResponse and does not log exceptions
             log.error(errMsg, e);
             throw new CharonException(errMsg, e);
         }
+        return null;
     }
     
     @Override
@@ -197,11 +198,11 @@ public class CarbonAuthSCIMUserManager implements UserManager {
             // get the updated user from the user core and sent it to client.
             return this.getUser(user.getId(), requiredAttributes);
         } catch (UserStoreConnectorException e) {
-            String errMsg = "Error occurred while updating user: " + user + " to user store";
             //Charon wrap exception to SCIMResponse and does not log exceptions
-            log.error(errMsg, e);
-            throw new CharonException(errMsg);
+            log.error("Error occurred while updating user: " + user + " to user store", e);
+            handleUserStoreExceptionWhenUpdating(e);
         }
+        return null;
     }
     
     @Override
@@ -266,11 +267,11 @@ public class CarbonAuthSCIMUserManager implements UserManager {
                 throw new CharonException(errMsg, e);
             }
         } catch (UserStoreConnectorException e) {
-            String errMsg = "Error occurred while adding group: " + group + " to user store";
             // Charon wrap exception to SCIMResponse and does not log exceptions
-            log.error(errMsg, e);
-            throw new CharonException(errMsg);
+            log.error("Error occurred while adding group: " + group + " to user store", e);
+            handleUserStoreExceptionWhenAdding(e);
         }
+        return null;
     }
 
     @Override
@@ -372,8 +373,9 @@ public class CarbonAuthSCIMUserManager implements UserManager {
             String errMsg = "Error occurred while updating group: " + oldGroup.getId();
             //Charon wrap exception to SCIMResponse and does not log exceptions
             log.error(errMsg, e);
-            throw new CharonException(errMsg);
+            handleUserStoreExceptionWhenUpdating(e);
         }
+        return null;
     }
 
     /**
@@ -784,4 +786,38 @@ public class CarbonAuthSCIMUserManager implements UserManager {
         return groupObjList;
     }
 
+    private void handleUserStoreExceptionWhenAdding(UserStoreConnectorException e)
+            throws ConflictException, CharonException, BadRequestException {
+        handleUserStoreException(e);
+
+        if (e.getErrorHandler().getHttpStatusCode() == SCIMCommonConstants.HTTPStatus.CONFLICT) {
+            throw new ConflictException(e.getErrorHandler().getErrorDescription());
+        } else {
+            throw new CharonException(SCIMCommonConstants.INTERNAL_ERROR_MESSAGE);
+        }
+    }
+
+    private void handleUserStoreExceptionWhenUpdating(UserStoreConnectorException e)
+            throws CharonException, NotFoundException, BadRequestException {
+        handleUserStoreException(e);
+
+        if (e.getErrorHandler().getHttpStatusCode() == SCIMCommonConstants.HTTPStatus.NOT_FOUND) {
+            throw new NotFoundException(e.getErrorHandler().getErrorDescription());
+        } else {
+            throw new CharonException(SCIMCommonConstants.INTERNAL_ERROR_MESSAGE);
+        }
+    }
+
+    private void handleUserStoreException(UserStoreConnectorException e)
+            throws CharonException, BadRequestException {
+        if (e.getErrorHandler() == null) {
+            throw new CharonException(SCIMCommonConstants.INTERNAL_ERROR_MESSAGE);
+        }
+        if (e.getErrorHandler().getHttpStatusCode() == SCIMCommonConstants.HTTPStatus.BAD_REQUEST) {
+            if (e.getErrorHandler() instanceof TemplateExceptionCodes.UniqueAttributeViolationUpdatingResource) {
+                throw new BadRequestException(e.getErrorHandler().getErrorDescription(),
+                        ResponseCodeConstants.UNIQUENESS);
+            }
+        }
+    }
 }

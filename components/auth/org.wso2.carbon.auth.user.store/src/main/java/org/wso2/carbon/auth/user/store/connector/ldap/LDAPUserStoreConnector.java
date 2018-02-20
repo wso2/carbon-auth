@@ -82,7 +82,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
-    public String getConnectorUserId(String attributeName, String attributeValue)
+    public String getConnectorUserId(String attributeUri, String attributeValue)
             throws UserNotFoundException, UserStoreConnectorException {
         DirContext context;
         try {
@@ -92,7 +92,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         }
 
         Attributes matchAttrs = new BasicAttributes(true);
-        String mappedAttributeName = LdapUtils.mappingClaim(attributeName);
+        String mappedAttributeName = LdapUtils.mappingClaim(attributeUri);
         matchAttrs.put(new BasicAttribute(mappedAttributeName, attributeValue));
 
         try {
@@ -109,7 +109,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
-    public List<String> listConnectorUserIds(String attributeName, String attributeValue, int offset, int length)
+    public List<String> listConnectorUserIds(String attributeUri, String attributeValue, int offset, int length)
             throws UserStoreConnectorException {
         DirContext context;
         List<String> userList = new ArrayList<>();
@@ -120,7 +120,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         }
 
         Attributes matchAttrs = new BasicAttributes(true);
-        String mappedAttributeName = LdapUtils.mappingClaim(attributeName);
+        String mappedAttributeName = LdapUtils.mappingClaim(attributeUri);
         matchAttrs.put(new BasicAttribute(mappedAttributeName, attributeValue));
 
         try {
@@ -168,7 +168,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
-    public String getConnectorGroupId(String attributeName, String attributeValue)
+    public String getConnectorGroupId(String attributeUri, String attributeValue)
             throws GroupNotFoundException, UserStoreConnectorException {
         DirContext context;
         try {
@@ -178,7 +178,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         }
 
         Attributes matchAttrs = new BasicAttributes(true);
-        String mappedAttributeName = LdapUtils.mappingClaim(attributeName);
+        String mappedAttributeName = LdapUtils.mappingClaim(attributeUri);
         matchAttrs.put(new BasicAttribute(mappedAttributeName, attributeValue));
 
         try {
@@ -195,7 +195,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
-    public List<String> listConnectorGroupIds(String attributeName, String attributeValue, int offset, int length)
+    public List<String> listConnectorGroupIds(String attributeUri, String attributeValue, int offset, int length)
             throws UserStoreConnectorException {
         DirContext context;
         List<String> groupList = new ArrayList<>();
@@ -206,7 +206,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         }
 
         Attributes matchAttrs = new BasicAttributes(true);
-        String mappedAttributeName = LdapUtils.mappingClaim(attributeName);
+        String mappedAttributeName = LdapUtils.mappingClaim(attributeUri);
         matchAttrs.put(new BasicAttribute(mappedAttributeName, attributeValue));
         try {
             NamingEnumeration<SearchResult> enumeration = context.search(groupSearchBase, matchAttrs);
