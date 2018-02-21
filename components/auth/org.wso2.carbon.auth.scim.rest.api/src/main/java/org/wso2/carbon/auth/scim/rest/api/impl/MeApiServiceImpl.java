@@ -35,6 +35,8 @@ import org.wso2.msf4j.Request;
 
 import javax.ws.rs.core.Response;
 
+import static org.wso2.carbon.auth.scim.rest.api.SCIMRESTAPIConstants.ERROR_SCIM_INITIALISATION;
+
 /**
  * REST API implementation class for logged in user
  */
@@ -67,7 +69,7 @@ public class MeApiServiceImpl extends MeApiService {
             SCIMResponse scimResponse = meResourceManager.get(userName, userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            log.error("Error in initializing the CarbonAuthSCIMUserManager", e);
+            log.error(ERROR_SCIM_INITIALISATION, e);
             return SCIMRESTAPIUtils.getSCIMInternalErrorResponse();
         }
     }

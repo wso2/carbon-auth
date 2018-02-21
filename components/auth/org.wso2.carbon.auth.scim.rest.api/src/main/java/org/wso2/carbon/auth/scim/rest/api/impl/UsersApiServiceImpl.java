@@ -36,6 +36,8 @@ import org.wso2.msf4j.Request;
 
 import javax.ws.rs.core.Response;
 
+import static org.wso2.carbon.auth.scim.rest.api.SCIMRESTAPIConstants.ERROR_SCIM_INITIALISATION;
+
 /**
  * REST API implementation class for SCIM users
  */
@@ -57,9 +59,9 @@ public class UsersApiServiceImpl extends UsersApiService {
                     null, null, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            log.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error(ERROR_SCIM_INITIALISATION, e);
+            return SCIMRESTAPIUtils.getSCIMInternalErrorResponse();
         }
-        return Response.serverError().build();
     }
 
     @Override
@@ -71,9 +73,9 @@ public class UsersApiServiceImpl extends UsersApiService {
             SCIMResponse scimResponse = userResourceManager.delete(id, userManager);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            log.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error(ERROR_SCIM_INITIALISATION, e);
+            return SCIMRESTAPIUtils.getSCIMInternalErrorResponse();
         }
-        return Response.serverError().build();
     }
 
     @Override
@@ -86,9 +88,9 @@ public class UsersApiServiceImpl extends UsersApiService {
 
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            log.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error(ERROR_SCIM_INITIALISATION, e);
+            return SCIMRESTAPIUtils.getSCIMInternalErrorResponse();
         }
-        return Response.serverError().build();
     }
 
     @Override
@@ -102,9 +104,9 @@ public class UsersApiServiceImpl extends UsersApiService {
             SCIMResponse scimResponse = userResourceManager.updateWithPUT(id, bodyJsonString, userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            log.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error(ERROR_SCIM_INITIALISATION, e);
+            return SCIMRESTAPIUtils.getSCIMInternalErrorResponse();
         }
-        return Response.serverError().build();
     }
 
     @Override
@@ -118,9 +120,9 @@ public class UsersApiServiceImpl extends UsersApiService {
             SCIMResponse scimResponse = userResourceManager.create(bodyJsonString, userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            log.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error(ERROR_SCIM_INITIALISATION, e);
+            return SCIMRESTAPIUtils.getSCIMInternalErrorResponse();
         }
-        return Response.serverError().build();
     }
 
     @Override
@@ -132,8 +134,8 @@ public class UsersApiServiceImpl extends UsersApiService {
             SCIMResponse scimResponse = userResourceManager.listWithPOST(body.toString(), userManager);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            log.error("Error in initializing the CarbonAuthSCIMUserManager.");
+            log.error(ERROR_SCIM_INITIALISATION, e);
+            return SCIMRESTAPIUtils.getSCIMInternalErrorResponse();
         }
-        return Response.serverError().build();
     }
 }

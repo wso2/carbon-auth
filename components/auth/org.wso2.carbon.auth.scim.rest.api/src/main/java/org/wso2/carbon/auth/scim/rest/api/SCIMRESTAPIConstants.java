@@ -43,4 +43,6 @@ public class SCIMRESTAPIConstants {
     public static final String HEADER_AUTHORIZATION = "Authorization";
     public static final String HEADER_AUTHORIZATION_BASIC = "Basic";
     public static final String CHARSET_UTF8 = "UTF-8";
+    
+    public static final String ERROR_SCIM_INITIALISATION = "Error in initializing the CarbonAuthSCIMUserManager";
 }

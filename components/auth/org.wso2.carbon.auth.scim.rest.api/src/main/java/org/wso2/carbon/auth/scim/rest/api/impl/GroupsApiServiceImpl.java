@@ -34,6 +34,8 @@ import org.wso2.msf4j.Request;
 
 import javax.ws.rs.core.Response;
 
+import static org.wso2.carbon.auth.scim.rest.api.SCIMRESTAPIConstants.ERROR_SCIM_INITIALISATION;
+
 /**
  * REST API implementation class for SCIM groups
  * 
@@ -56,9 +58,9 @@ public class GroupsApiServiceImpl extends GroupsApiService {
                     null, null, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            log.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error(ERROR_SCIM_INITIALISATION, e);
+            return SCIMRESTAPIUtils.getSCIMInternalErrorResponse();
         }
-        return Response.serverError().build();
     }
 
     @Override
@@ -70,9 +72,9 @@ public class GroupsApiServiceImpl extends GroupsApiService {
             SCIMResponse scimResponse = groupResourceManager.delete(id, userManager);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            log.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error(ERROR_SCIM_INITIALISATION, e);
+            return SCIMRESTAPIUtils.getSCIMInternalErrorResponse();
         }
-        return Response.serverError().build();
     }
 
     @Override
@@ -84,9 +86,9 @@ public class GroupsApiServiceImpl extends GroupsApiService {
             SCIMResponse scimResponse = groupResourceManager.get(id, userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            log.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error(ERROR_SCIM_INITIALISATION, e);
+            return SCIMRESTAPIUtils.getSCIMInternalErrorResponse();
         }
-        return Response.serverError().build();
     }
 
     @Override
@@ -98,10 +100,10 @@ public class GroupsApiServiceImpl extends GroupsApiService {
             String bodyJsonString = SCIMRESTAPIUtils.getSerializedJsonStringFromBody(body);
             SCIMResponse scimResponse = groupResourceManager.updateWithPUT(id, bodyJsonString, userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
-        } catch (Exception e) {
-            log.error("Error in initializing the CarbonAuthSCIMUserManager", e);
+        } catch (AuthUserManagementException e) {
+            log.error(ERROR_SCIM_INITIALISATION, e);
+            return SCIMRESTAPIUtils.getSCIMInternalErrorResponse();
         }
-        return Response.serverError().build();
     }
 
     @Override
@@ -114,8 +116,8 @@ public class GroupsApiServiceImpl extends GroupsApiService {
             SCIMResponse scimResponse = groupResourceManager.create(bodyJsonString, userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            log.error("Error in initializing the CarbonAuthSCIMUserManager");
+            log.error(ERROR_SCIM_INITIALISATION, e);
+            return SCIMRESTAPIUtils.getSCIMInternalErrorResponse();
         }
-        return Response.serverError().build();
     }
 }

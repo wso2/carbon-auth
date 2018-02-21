@@ -1130,7 +1130,6 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
      */
     private String getIdFromAttributes(List<Attribute> attributes) throws UserStoreConnectorException {
         for (Attribute attribute: attributes) {
-            //override the generated UUID if id is already present in the list of attributes
             if (UserStoreConstants.CLAIM_ID.equals(attribute.getAttributeUri())) {
                 return attribute.getAttributeValue();
             }
