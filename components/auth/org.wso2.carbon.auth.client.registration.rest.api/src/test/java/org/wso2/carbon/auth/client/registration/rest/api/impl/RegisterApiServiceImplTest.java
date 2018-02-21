@@ -89,6 +89,7 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
         org.wso2.carbon.auth.user.store.internal.ServiceReferenceHolder.getInstance()
                 .setDataSourceService(dataSourceService);
 
+        UserStoreUtil.addDefaultAttributes(userStoreConfiguration);
         UserStoreUtil.addAdminUser(userStoreConfiguration);
     }
 

@@ -27,6 +27,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A class to initialize charon configurations
+ * 
+ */
 public class SCIMCharonInitializer {
 
     private static boolean initialized = false;

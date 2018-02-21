@@ -51,6 +51,9 @@ public class UserStoreConstants {
     public static final int RESOURCE_USER = 0;
     public static final int RESOURCE_GROUP = 1;
 
+    /**
+     * ADD or UPDATE operation
+     */
     public enum Operation {
         ADD, UPDATE
     }

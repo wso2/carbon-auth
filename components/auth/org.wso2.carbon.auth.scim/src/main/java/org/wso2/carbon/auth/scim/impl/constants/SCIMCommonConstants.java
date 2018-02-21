@@ -38,11 +38,4 @@ public class SCIMCommonConstants {
     public static final String DOMAIN_SEPARATOR = "/";
 
     public static final String INTERNAL_ERROR_MESSAGE = "Internal error occurred.";
-
-    public class HTTPStatus {
-        public static final int CONFLICT = 409;
-        public static final int NOT_FOUND = 404;
-        public static final int BAD_REQUEST = 400;
-    }
 }
-

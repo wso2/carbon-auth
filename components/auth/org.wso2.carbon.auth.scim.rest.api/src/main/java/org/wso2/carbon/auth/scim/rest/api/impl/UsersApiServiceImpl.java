@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.scim.SCIMManager;
 import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
 import org.wso2.carbon.auth.scim.rest.api.NotFoundException;
-import org.wso2.carbon.auth.scim.rest.api.SCIMRESTAPIConstants;
 import org.wso2.carbon.auth.scim.rest.api.UsersApiService;
 import org.wso2.carbon.auth.scim.rest.api.dto.UserDTO;
 import org.wso2.carbon.auth.scim.rest.api.dto.UserSearchDTO;
@@ -32,13 +31,9 @@ import org.wso2.carbon.auth.scim.rest.api.util.SCIMCharonInitializer;
 import org.wso2.carbon.auth.scim.rest.api.util.SCIMRESTAPIUtils;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.protocol.SCIMResponse;
-import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon3.core.protocol.endpoints.UserResourceManager;
-import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.msf4j.Request;
 
-import java.util.HashMap;
-import java.util.Map;
 import javax.ws.rs.core.Response;
 
 /**

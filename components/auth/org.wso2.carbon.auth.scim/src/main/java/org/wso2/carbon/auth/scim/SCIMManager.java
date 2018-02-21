@@ -23,15 +23,10 @@ import org.slf4j.LoggerFactory;
 
 import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
 import org.wso2.carbon.auth.scim.impl.CarbonAuthSCIMUserManager;
-import org.wso2.carbon.auth.scim.impl.constants.SCIMCommonConstants;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnectorFactory;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
-import org.wso2.charon3.core.config.CharonConfiguration;
-import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
-import org.wso2.charon3.core.schema.SCIMConstants;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 

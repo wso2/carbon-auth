@@ -67,7 +67,7 @@ public class MeApiServiceImpl extends MeApiService {
             SCIMResponse scimResponse = meResourceManager.get(userName, userManager, null, null);
             return SCIMRESTAPIUtils.buildResponse(scimResponse);
         } catch (AuthUserManagementException e) {
-            log.error("Error in initializing the CarbonAuthSCIMUserManager" ,e);
+            log.error("Error in initializing the CarbonAuthSCIMUserManager", e);
             return SCIMRESTAPIUtils.getSCIMInternalErrorResponse();
         }
     }

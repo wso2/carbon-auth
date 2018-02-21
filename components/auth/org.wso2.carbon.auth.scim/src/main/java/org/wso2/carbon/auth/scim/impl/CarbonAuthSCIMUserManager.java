@@ -55,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.security.auth.callback.PasswordCallback;
+import javax.ws.rs.core.Response;
 
 /**
  * This is the wrapper class of Charon User Manager. This deals with the user management API. 
@@ -210,7 +211,7 @@ public class CarbonAuthSCIMUserManager implements UserManager {
             BadRequestException {
         log.debug("Deleting user: {}", userId);
         try {
-            if(getSCIMUser(userId, false) == null) {
+            if (getSCIMUser(userId, false) == null) {
                 throw new NotFoundException("No user exists with the given id: " + userId);
             }
             userStoreConnector.deleteUser(userId);
@@ -290,7 +291,8 @@ public class CarbonAuthSCIMUserManager implements UserManager {
     
     @Override
     public List<Object> listGroupsWithGET(Node rootNode, int startIndex, int count, String sortBy, String sortOrder,
-            Map<String, Boolean> requiredAttributes) throws CharonException, NotImplementedException, BadRequestException {
+            Map<String, Boolean> requiredAttributes)
+            throws CharonException, NotImplementedException, BadRequestException {
         log.debug("Listing Users");
         try {
             // check if it is a pagination and filter combination.
@@ -549,7 +551,8 @@ public class CarbonAuthSCIMUserManager implements UserManager {
      * @throws CharonException if error occurred while constructing SCIM user object
      * @throws UserStoreConnectorException if error occurred while connecting to user store
      */
-    private User getSCIMUser(String userId, boolean includeGroups) throws CharonException, BadRequestException, UserStoreConnectorException {
+    private User getSCIMUser(String userId, boolean includeGroups)
+            throws CharonException, BadRequestException, UserStoreConnectorException {
         try {
             List<Attribute> attributeList = userStoreConnector.getUserAttributeValues(userId);
 
@@ -604,8 +607,8 @@ public class CarbonAuthSCIMUserManager implements UserManager {
      * @throws CharonException if error occurred while constructing SCIM group object
      * @throws BadRequestException if error occurred while constructing SCIM group object
      */
-    private Group getSCIMGroup(String groupId, boolean includeUsers) throws UserStoreConnectorException, CharonException, 
-                                                                                        BadRequestException {
+    private Group getSCIMGroup(String groupId, boolean includeUsers)
+            throws UserStoreConnectorException, CharonException, BadRequestException {
         try {
             List<Attribute> attributeList = userStoreConnector.getGroupAttributeValues(groupId);
             
@@ -803,7 +806,7 @@ public class CarbonAuthSCIMUserManager implements UserManager {
             throws ConflictException, CharonException, BadRequestException {
         handleUserStoreException(e);
 
-        if (e.getErrorHandler().getHttpStatusCode() == SCIMCommonConstants.HTTPStatus.CONFLICT) {
+        if (e.getErrorHandler().getHttpStatusCode() == Response.Status.CONFLICT.getStatusCode()) {
             throw new ConflictException(e.getErrorHandler().getErrorDescription());
         } else {
             throw new CharonException(SCIMCommonConstants.INTERNAL_ERROR_MESSAGE);
@@ -822,7 +825,7 @@ public class CarbonAuthSCIMUserManager implements UserManager {
             throws CharonException, NotFoundException, BadRequestException {
         handleUserStoreException(e);
 
-        if (e.getErrorHandler().getHttpStatusCode() == SCIMCommonConstants.HTTPStatus.NOT_FOUND) {
+        if (e.getErrorHandler().getHttpStatusCode() == Response.Status.NOT_FOUND.getStatusCode()) {
             throw new NotFoundException(e.getErrorHandler().getErrorDescription());
         } else {
             throw new CharonException(SCIMCommonConstants.INTERNAL_ERROR_MESSAGE);
@@ -841,7 +844,7 @@ public class CarbonAuthSCIMUserManager implements UserManager {
         if (e.getErrorHandler() == null) {
             throw new CharonException(SCIMCommonConstants.INTERNAL_ERROR_MESSAGE);
         }
-        if (e.getErrorHandler().getHttpStatusCode() == SCIMCommonConstants.HTTPStatus.BAD_REQUEST) {
+        if (e.getErrorHandler().getHttpStatusCode() == Response.Status.BAD_REQUEST.getStatusCode()) {
             if (e.getErrorHandler() instanceof TemplateExceptionCodes.UniqueAttributeViolationUpdatingResource) {
                 throw new BadRequestException(e.getErrorHandler().getErrorDescription(),
                         ResponseCodeConstants.UNIQUENESS);

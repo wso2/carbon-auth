@@ -1085,11 +1085,11 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
                 //Retrieve the existing resources with unique attribute value
                 List<String> returnedResourceIds = new ArrayList<>();
                 if (resourceType == UserStoreConstants.RESOURCE_GROUP) {
-                    returnedResourceIds = listConnectorGroupIds(attribute.getAttributeUri(), attribute.getAttributeValue(), 0,
-                            2);
+                    returnedResourceIds = listConnectorGroupIds(attribute.getAttributeUri(),
+                            attribute.getAttributeValue(), 0, 2);
                 } else if (resourceType == UserStoreConstants.RESOURCE_USER) {
-                    returnedResourceIds = listConnectorUserIds(attribute.getAttributeUri(), attribute.getAttributeValue(), 0,
-                            2);
+                    returnedResourceIds = listConnectorUserIds(attribute.getAttributeUri(),
+                            attribute.getAttributeValue(), 0, 2);
                 }
 
                 //Validation
