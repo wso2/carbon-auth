@@ -19,7 +19,7 @@
 package org.wso2.carbon.auth.user.store.exception;
 
 import org.wso2.carbon.auth.core.exception.AuthException;
-import org.wso2.carbon.auth.core.exception.ExceptionCodes;
+import org.wso2.carbon.auth.core.exception.ExceptionCodeHandler;
 
 /**
  * Class to handle user store connector exceptions
@@ -34,7 +34,7 @@ public class UserStoreConnectorException extends AuthException {
         super(message);
     }
     
-    public UserStoreConnectorException(String message, ExceptionCodes code) {
+    public UserStoreConnectorException(String message, ExceptionCodeHandler code) {
         super(message, code);
     }
 

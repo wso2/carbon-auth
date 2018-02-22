@@ -42,20 +42,21 @@ public class AttributeConfiguration {
     
     @Element(description = "Attribute regex pattern")
     private String regex;
-    
-    @Element(description = "Attribute is unique or not")
-    private boolean unique;
+
+    @Element(description = "Attribute uniqueness")
+    private Uniqueness uniqueness;
 
     public AttributeConfiguration() {
     }
 
     public AttributeConfiguration(String attributeName, String attributeUri, String displayName, boolean required,
-            String regex) {
+            String regex, Uniqueness uniqueness) {
         this.attributeName = attributeName;
         this.attributeUri = attributeUri;
         this.displayName = displayName;
         this.required = required;
         this.regex = regex;
+        this.uniqueness = uniqueness;
     }
 
 
@@ -65,14 +66,6 @@ public class AttributeConfiguration {
 
     public void setAttributeName(String attributeName) {
         this.attributeName = attributeName;
-    }
-
-    public boolean isUnique() {
-        return unique;
-    }
-
-    public void setUnique(boolean unique) {
-        this.unique = unique;
     }
 
     public String getDisplayName() {
@@ -99,7 +92,19 @@ public class AttributeConfiguration {
         this.regex = regex;
     }
 
+    public void setAttributeUri(String attributeUri) {
+        this.attributeUri = attributeUri;
+    }
+
     public String getAttributeUri() {
         return attributeUri;
+    }
+
+    public Uniqueness getUniqueness() {
+        return uniqueness;
+    }
+
+    public void setUniqueness(Uniqueness uniqueness) {
+        this.uniqueness = uniqueness;
     }
 }

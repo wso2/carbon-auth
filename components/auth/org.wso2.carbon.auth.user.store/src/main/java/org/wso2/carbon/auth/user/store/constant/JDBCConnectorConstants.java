@@ -41,6 +41,11 @@ public class JDBCConnectorConstants {
         public static final String ATTRIBUTE_NAME = "attr_name";
         public static final String ATTRIBUTE_VALUE = "attr_value";
         public static final String ATTRIBUTE_VALUES = "attr_values";
+        public static final String ATTRIBUTE_URI = "attr_uri";
+        public static final String DISPLAY_NAME = "display_name";
+        public static final String REQUIRED = "required";
+        public static final String UNIQUENESS = "uniqueness";
+        public static final String REGEX = "regex";
         public static final String USER_ID = "user_id";
         public static final String GROUP_ID = "group_id";
         public static final String LENGTH = "length";
@@ -92,10 +97,11 @@ public class JDBCConnectorConstants {
         public static final String SQL_QUERY_IS_USER_IN_GROUP = "sql_query_is_user_in_group";
         public static final String SQL_QUERY_LIST_GROUP_BY_ATTRIBUTE_PATTERN =
                 "sql_query_list_group_by_attribute_pattern";
-        public static final String SQL_QUERY_LIST_GROUP_BY_ATTRIBUTE = "sql_query_list_group_by_attribute";
+        public static final String SQL_QUERY_LIST_GROUPS_BY_ATTRIBUTE = "sql_query_list_group_by_attribute";
+        public static final String SQL_QUERY_LIST_GROUPS = "sql_query_list_group";
         public static final String SQL_QUERY_GET_GROUP_ATTRIBUTES = "sql_query_get_group_attributes";
-        public static final String SQL_QUERY_GET_GROUP_ATTRIBUTES_FROM_NAME =
-                "sql_query_get_group_attributes_from_name";
+//        public static final String SQL_QUERY_GET_GROUP_ATTRIBUTES_FROM_NAME =
+//                "sql_query_get_group_attributes_from_name";
         public static final String SQL_QUERY_COUNT_USERS = "sql_query_count_users";
         public static final String SQL_QUERY_COUNT_GROUPS = "sql_query_count_groups";
         public static final String SQL_QUERY_ADD_USER_ATTRIBUTES = "sql_query_add_user_attributes";
@@ -121,6 +127,11 @@ public class JDBCConnectorConstants {
         public static final String SQL_QUERY_UPDATE_CREDENTIAL = "sql_query_update_credential";
         public static final String SQL_QUERY_UPDATE_PASSWORD_INFO = "sql_query_update_password_info";
         public static final String SQL_QUERY_DELETE_CREDENTIAL = "sql_query_delete_credential";
+        public static final String SQL_QUERY_GET_ATTR_BY_URI = "sql_query_get_attr_by_uri";
+        public static final String SQL_QUERY_ADD_ATTR = "sql_query_add_attr";
+        public static final String SQL_QUERY_LIST_USER_IDS_OF_GROUP = "sql_query_get_users_of_group";
+        public static final String SQL_QUERY_LIST_GROUP_IDS_OF_USER = "sql_query_get_groups_of_user";
+
         public static final String SQL_QUERY_GET_ROLE = "sql_query_get_role";
         public static final String SQL_QUERY_GET_ROLES_FOR_USER = "sql_query_get_roles_for_user";
         public static final String SQL_QUERY_GET_PERMISSIONS_FROM_RESOURCE_FOR_ROLE =
@@ -131,8 +142,6 @@ public class JDBCConnectorConstants {
         public static final String SQL_QUERY_ADD_PERMISSIONS_TO_ROLE = "sql_query_add_role_permission";
         public static final String SQL_QUERY_ADD_PERMISSIONS_TO_ROLE_BY_UNIQUE_ID =
                 "sql_query_add_permissions_to_role_by_unique_id";
-        public static final String SQL_QUERY_GET_USERS_OF_ROLE = "sql_query_get_users_of_role";
-        public static final String SQL_QUERY_GET_GROUPS_OF_ROLE = "sql_query_get_groups_of_role";
         public static final String SQL_QUERY_DELETE_ROLE = "sql_query_delete_role";
         public static final String SQL_QUERY_DELETE_PERMISSION = "sql_query_delete_permission";
         public static final String SQL_QUERY_IS_USER_IN_ROLE = "sql_query_is_user_in_role";

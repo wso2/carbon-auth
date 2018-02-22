@@ -124,6 +124,17 @@ public class NamedPreparedStatement {
     }
 
     /**
+     * Set <code>boolean</code> value for the named index.
+     *
+     * @param name  Name of the index.
+     * @param value Value to be replaced.
+     * @throws SQLException SQL Exception
+     */
+    public void setBoolean(String name, boolean value) throws SQLException {
+        preparedStatement.setBoolean(getIndex(name), value);
+    }
+
+    /**
      * Replace repeated indexes with the list of values.
      *
      * @param name   Name of the index.

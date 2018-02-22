@@ -1,23 +1,26 @@
 /*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 package org.wso2.carbon.auth.user.store.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.user.store.configuration.models.AttributeConfiguration;
 import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.connector.Attribute;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
@@ -88,5 +91,27 @@ public class UserStoreUtil {
         passwordCallback.setPassword(password);
         connector.addCredential(userId, passwordCallback);
         log.debug("Added default admin user.");
+    }
+
+    /**
+     * Add default user attributes
+     *
+     * @param config UserStoreConfiguration
+     * @throws UserStoreConnectorException when error occurs while adding default attributes
+     */
+    public static void addDefaultAttributes(UserStoreConfiguration config) throws UserStoreConnectorException {
+        UserStoreConnector connector = UserStoreConnectorFactory.getUserStoreConnector();
+        List<AttributeConfiguration> attributeConfigurations = config.getAttributes();
+
+        //Iterate the list of attribute in the config from last index to 0. If any config found to be exist in the DB, 
+        // then stop the process and return. This is done to reduce the effect to the startup time. 
+        // Any new attribute needs to be added to the last in the configuration.
+        for (int i = attributeConfigurations.size() - 1; i >= 0; i--) {
+            if (connector.getAttributeConfigByURI(attributeConfigurations.get(i).getAttributeUri()) == null) {
+                connector.addAttribute(attributeConfigurations.get(i));
+            } else {
+                return;
+            }
+        }
     }
 }

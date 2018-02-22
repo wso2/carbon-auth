@@ -20,6 +20,7 @@ package org.wso2.carbon.auth.user.store.connector.ldap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.Constants;
+import org.wso2.carbon.auth.user.store.configuration.models.AttributeConfiguration;
 import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.connector.Attribute;
 import org.wso2.carbon.auth.user.store.connector.PasswordHandler;
@@ -81,7 +82,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
-    public String getConnectorUserId(String attributeName, String attributeValue)
+    public String getConnectorUserId(String attributeUri, String attributeValue)
             throws UserNotFoundException, UserStoreConnectorException {
         DirContext context;
         try {
@@ -91,7 +92,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         }
 
         Attributes matchAttrs = new BasicAttributes(true);
-        String mappedAttributeName = LdapUtils.mappingClaim(attributeName);
+        String mappedAttributeName = LdapUtils.mappingClaim(attributeUri);
         matchAttrs.put(new BasicAttribute(mappedAttributeName, attributeValue));
 
         try {
@@ -108,7 +109,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
-    public List<String> listConnectorUserIds(String attributeName, String attributeValue, int offset, int length)
+    public List<String> listConnectorUserIds(String attributeUri, String attributeValue, int offset, int length)
             throws UserStoreConnectorException {
         DirContext context;
         List<String> userList = new ArrayList<>();
@@ -119,7 +120,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         }
 
         Attributes matchAttrs = new BasicAttributes(true);
-        String mappedAttributeName = LdapUtils.mappingClaim(attributeName);
+        String mappedAttributeName = LdapUtils.mappingClaim(attributeUri);
         matchAttrs.put(new BasicAttribute(mappedAttributeName, attributeValue));
 
         try {
@@ -167,7 +168,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
-    public String getConnectorGroupId(String attributeName, String attributeValue)
+    public String getConnectorGroupId(String attributeUri, String attributeValue)
             throws GroupNotFoundException, UserStoreConnectorException {
         DirContext context;
         try {
@@ -177,7 +178,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         }
 
         Attributes matchAttrs = new BasicAttributes(true);
-        String mappedAttributeName = LdapUtils.mappingClaim(attributeName);
+        String mappedAttributeName = LdapUtils.mappingClaim(attributeUri);
         matchAttrs.put(new BasicAttribute(mappedAttributeName, attributeValue));
 
         try {
@@ -194,7 +195,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
-    public List<String> listConnectorGroupIds(String attributeName, String attributeValue, int offset, int length)
+    public List<String> listConnectorGroupIds(String attributeUri, String attributeValue, int offset, int length)
             throws UserStoreConnectorException {
         DirContext context;
         List<String> groupList = new ArrayList<>();
@@ -205,7 +206,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         }
 
         Attributes matchAttrs = new BasicAttributes(true);
-        String mappedAttributeName = LdapUtils.mappingClaim(attributeName);
+        String mappedAttributeName = LdapUtils.mappingClaim(attributeUri);
         matchAttrs.put(new BasicAttribute(mappedAttributeName, attributeValue));
         try {
             NamingEnumeration<SearchResult> enumeration = context.search(groupSearchBase, matchAttrs);
@@ -217,6 +218,12 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
             throw new UserStoreConnectorException("Error while getting user from LDAP", e);
         }
         return groupList;
+    }
+
+    @Override
+    public List<String> listConnectorGroupIds(int offset, int length) throws UserStoreConnectorException {
+        //TODO: implement listConnectorGroupIds in LDAPUserStoreConnector
+        return null;
     }
 
     @Override
@@ -300,7 +307,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
 
         String username = null;
         for (Attribute attribute : attributes) {
-            if (UserStoreConstants.CLAIM_USERNAME.equals(attribute.getAttributeName())) {
+            if (UserStoreConstants.CLAIM_USERNAME.equals(attribute.getAttributeUri())) {
                 username = attribute.getAttributeValue();
                 break;
             }
@@ -331,7 +338,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         for (int i = 0; i < attributes.size(); i++) {
             Attribute attribute = attributes.get(i);
             basicAttributes[i] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
-                    new BasicAttribute(LdapUtils.mappingClaim(attribute.getAttributeName()),
+                    new BasicAttribute(LdapUtils.mappingClaim(attribute.getAttributeUri()),
                             attribute.getAttributeValue()));
         }
         try {
@@ -368,6 +375,23 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
+    public void removeGroupsOfUser(String userIdentifier) throws UserStoreConnectorException {
+        //TODO: implement removeGroupsOfUser in LDAPUserStoreConnector
+    }
+
+    @Override
+    public List<String> getUserIdsOfGroup(String groupIdentifier) throws UserStoreConnectorException {
+        //TODO: implement getUserIdsOfGroup in LDAPUserStoreConnector
+        return null;
+    }
+
+    @Override
+    public List<String> getGroupIdsOfUser(String userIdentifier) throws UserStoreConnectorException {
+        //TODO: implement getGroupIdsOfUser in LDAPUserStoreConnector
+        return null;
+    }
+
+    @Override
     public String addGroup(List<Attribute> attributes) throws UserStoreConnectorException {
         DirContext context;
         try {
@@ -378,7 +402,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
 
         String groupName = null;
         for (Attribute attribute : attributes) {
-            if (UserStoreConstants.GROUP_DISPLAY_NAME.equals(attribute.getAttributeName())) {
+            if (UserStoreConstants.GROUP_DISPLAY_NAME.equals(attribute.getAttributeUri())) {
                 groupName = attribute.getAttributeValue();
                 break;
             }
@@ -419,7 +443,7 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         for (int i = 0; i < attributes.size(); i++) {
             Attribute attribute = attributes.get(i);
             basicAttributes[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
-                    new BasicAttribute(LdapUtils.mappingClaim(attribute.getAttributeName()),
+                    new BasicAttribute(LdapUtils.mappingClaim(attribute.getAttributeUri()),
                             attribute.getAttributeValue()));
         }
         try {
@@ -480,6 +504,11 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         } catch (NamingException e) {
             throw new UserStoreConnectorException("Error users of group", e);
         }
+    }
+
+    @Override
+    public void removeUsersOfGroup(String groupIdentifier) throws UserStoreConnectorException {
+        //TODO: implement removeUsersOfGroup in LDAPUserStoreConnector
     }
 
     @Override
@@ -612,6 +641,17 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         return null;
     }
 
+    @Override
+    public AttributeConfiguration getAttributeConfigByURI(String uri) throws UserStoreConnectorException {
+        throw new UnsupportedOperationException(UserStoreConstants.OPERATION_NOT_SUPPORTED_IN_LDAP);
+    }
+
+    @Override
+    public void addAttribute(AttributeConfiguration attributeConfiguration)
+            throws UserStoreConnectorException {
+        throw new UnsupportedOperationException(UserStoreConstants.OPERATION_NOT_SUPPORTED_IN_LDAP);
+    }
+
     protected BasicAttributes getUserBasicAttributes(String username) {
         BasicAttributes basicAttributes = new BasicAttributes(true);
         String userEntryObjectClassProperty = (String) this.properties.get(Constants.LDAP_USER_ENTRY_OBJECT_CLASS);
@@ -656,14 +696,14 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
         boolean isSNExists = false;
         boolean isCNExists = false;
         for (Attribute attribute : attributes) {
-            if (Constants.ATTR_NAME_CN.equals(attribute.getAttributeName())) {
+            if (Constants.ATTR_NAME_CN.equals(attribute.getAttributeUri())) {
                 isCNExists = true;
-            } else if (Constants.ATTR_NAME_SN.equals(attribute.getAttributeName())) {
+            } else if (Constants.ATTR_NAME_SN.equals(attribute.getAttributeUri())) {
                 isSNExists = true;
             }
-            log.debug("Mapped attribute: " + attribute.getAttributeName());
+            log.debug("Mapped attribute: " + attribute.getAttributeUri());
             log.debug("Attribute value: " + attribute.getAttributeValue());
-            String ldapClaim = LdapUtils.mappingClaim(attribute.getAttributeName());
+            String ldapClaim = LdapUtils.mappingClaim(attribute.getAttributeUri());
             BasicAttribute uniqueNameAttribute = new BasicAttribute(ldapClaim);
             uniqueNameAttribute.add(attribute.getAttributeValue());
             basicAttributes.put(uniqueNameAttribute);

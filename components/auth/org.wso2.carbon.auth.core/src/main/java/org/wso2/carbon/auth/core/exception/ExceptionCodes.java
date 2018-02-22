@@ -20,8 +20,6 @@
 
 package org.wso2.carbon.auth.core.exception;
 
-import java.util.Map;
-
 /**
  * This enum class holds error codes that we need to pass to upper level. 
  * You have to define your custom error codes here.
@@ -77,14 +75,5 @@ public enum ExceptionCodes implements ExceptionCodeHandler {
     @Override
     public String getErrorDescription() {
         return this.errorDescription;
-    }
-
-    @Override
-    public String getErrorDescription(Map<String, Object> params) {
-        String modifiedDescription = this.getErrorDescription();
-        for (Map.Entry<String, Object> entry : params.entrySet()) {
-            modifiedDescription = modifiedDescription.replace("${" + entry.getKey() + "}", entry.getValue().toString());
-        }
-        return modifiedDescription;
     }
 }

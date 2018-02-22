@@ -45,6 +45,18 @@ public class DatabaseColumnNames {
     }
 
     /**
+     * Names of the ATTRIBUTE table columns.
+     */
+    public static final class ATTRIBUTE {
+        public static final String NAME = "ATTR_NAME";
+        public static final String URI = "ATTR_URI";
+        public static final String DISPLAY_NAME = "DISPLAY_NAME";
+        public static final String REQUIRED = "REQUIRED";
+        public static final String REGEX = "REGEX";
+        public static final String UNIQUENESS = "UNIQUENESS";
+    }
+
+    /**
      * Names of the Group table columns.
      */
     public static final class Role {
@@ -57,16 +69,15 @@ public class DatabaseColumnNames {
      * Names of the UserAttributes table columns.
      */
     public static final class UserAttributes {
-        public static final String ATTR_NAME = "ATTR_NAME";
+        public static final String ATTR_URI = "ATTR_URI";
         public static final String ATTR_VALUE = "ATTR_VALUE";
-        public static final String USER_ID = "USER_ID";
     }
 
     /**
      * Names of the GroupAttributes table columns.
      */
     public static final class GroupAttributes {
-        public static final String ATTR_NAME = "ATTR_NAME";
+        public static final String ATTR_URI = "ATTR_URI";
         public static final String ATTR_VALUE = "ATTR_VALUE";
     }
 

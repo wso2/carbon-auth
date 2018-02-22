@@ -253,7 +253,7 @@ public class LDAPUserStoreConnectorIT {
 
         attributes = connector.getUserAttributeValues(userID1);
         for (Attribute attribute : attributes) {
-            if (Constants.USER_DISPLAY_NAME_URI.equals(attribute.getAttributeName())) {
+            if (Constants.USER_DISPLAY_NAME_URI.equals(attribute.getAttributeUri())) {
                 Assert.assertEquals(attCommonValue, attribute.getAttributeValue());
                 return;
             }
@@ -324,7 +324,7 @@ public class LDAPUserStoreConnectorIT {
 
         attributes = connector.getGroupAttributeValues(groupId1);
         for (Attribute attribute : attributes) {
-            if (UserStoreConstants.NICKNAME.equals(attribute.getAttributeName())) {
+            if (UserStoreConstants.NICKNAME.equals(attribute.getAttributeUri())) {
                 Assert.assertEquals(newNickNameValue, attribute.getAttributeValue());
                 return;
             }

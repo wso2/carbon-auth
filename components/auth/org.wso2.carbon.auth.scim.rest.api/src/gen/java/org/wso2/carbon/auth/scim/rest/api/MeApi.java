@@ -46,22 +46,6 @@ public class MeApi implements Microservice  {
    private final MeApiService delegate = MeApiServiceFactory.getMeApi();
 
     
-    @DELETE
-    
-    @Consumes({ "application/json" })
-    @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Delete user.", notes = "Delete the currently authenticated user ", response = void.class, tags={ "Me", })
-    @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 200, message = "OK. User successfully deleted. ", response = void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 404, message = "Not Found. User to be deleted does not exist. ", response = void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 412, message = "Precondition Failed. The request has not been performed because one of the preconditions is not met. ", response = void.class) })
-    public Response meDelete( @Context Request request)
-    throws NotFoundException {
-        return delegate.meDelete(request);
-    }
-    
     @GET
     
     @Consumes({ "application/json" })
@@ -76,39 +60,5 @@ public class MeApi implements Microservice  {
     public Response meGet( @Context Request request)
     throws NotFoundException {
         return delegate.meGet(request);
-    }
-    
-    @POST
-    
-    @Consumes({ "application/json" })
-    @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Create user.", notes = "Create a User ", response = UserDTO.class, tags={ "Me", })
-    @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 201, message = "Created. Successful response with the newly created object as entity in the body. Location header contains URL of newly created entity. ", response = UserDTO.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request. Invalid request or validation error ", response = UserDTO.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 415, message = "Unsupported media type. The entity of the request was in a not supported format. ", response = UserDTO.class) })
-    public Response mePost(@ApiParam(value = "User object that needs to be added " ,required=true) UserDTO body
- ,@Context Request request)
-    throws NotFoundException {
-        return delegate.mePost(body,request);
-    }
-    
-    @PUT
-    
-    @Consumes({ "application/json" })
-    @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Update user.", notes = "Update the currently authenticated user ", response = UserDTO.class, tags={ "Me", })
-    @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 201, message = "Created. Successful response with the newly created object as entity in the body. Location header contains URL of newly created entity. ", response = UserDTO.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request. Invalid request or validation error ", response = UserDTO.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 415, message = "Unsupported media type. The entity of the request was in a not supported format. ", response = UserDTO.class) })
-    public Response mePut(@ApiParam(value = "User object that needs to be added " ,required=true) UserDTO body
- ,@Context Request request)
-    throws NotFoundException {
-        return delegate.mePut(body,request);
     }
 }

@@ -30,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
 import org.wso2.carbon.auth.user.store.configuration.UserStoreConfigurationService;
+import org.wso2.carbon.auth.user.store.configuration.models.AttributeConfiguration;
+import org.wso2.carbon.auth.user.store.configuration.models.Uniqueness;
 import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.connector.Attribute;
 import org.wso2.carbon.auth.user.store.connector.Constants;
@@ -41,7 +43,9 @@ import org.wso2.carbon.auth.user.store.exception.GroupNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 import org.wso2.carbon.auth.user.store.internal.ServiceReferenceHolder;
+import org.wso2.carbon.auth.user.store.util.UserStoreUtil;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
+import org.wso2.charon3.core.schema.SCIMConstants;
 
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
@@ -79,6 +83,7 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         super.init();
         super.setup();
 
+
         userStoreConfiguration = new UserStoreConfiguration();
         userStoreConfiguration.setConnectorType(UserStoreConstants.JDBC_CONNECTOR_TYPE);
 
@@ -95,13 +100,11 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         PowerMockito.when(dataSourceService.getDataSource(Constants.DATASOURCE_WSO2UM_DB))
                 .thenReturn(this.umDataSource.getDatasource());
 
+        //add default user attributes to the database
+        UserStoreUtil.addDefaultAttributes(new UserStoreConfiguration());
+
         connector = UserStoreConnectorFactory.getUserStoreConnector();
         Assert.assertNotNull(connector);
-        try {
-            connector.init(userStoreConfiguration);
-        } catch (UserStoreConnectorException e) {
-            Assert.fail("Exception not expected");
-        }
 
         List<Attribute> attributeList = new ArrayList<>();
         attributeList.add(new Attribute(Constants.PASSWORD_URI, "admin"));
@@ -153,7 +156,7 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         }
 
         try {
-            userId = connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "nouser");
+            connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "nouser");
             Assert.fail("Exception expected");
         } catch (UserNotFoundException e) {
             Assert.assertEquals("User not found with the given attribute", e.getMessage());
@@ -162,7 +165,7 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         //checking SQL exception path
         super.cleanup();
         try {
-            userId = connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "admin");
+            connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "admin");
             Assert.fail("Exception expected");
         } catch (UserStoreConnectorException e) {
             Assert.assertTrue(e.getCause() instanceof SQLException);
@@ -171,10 +174,12 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
 
     @Test
     public void testListConnectorUserIds() throws Exception {
+        final String familyName = "watson";
         for (int i = 0; i < 5; i++) {
             List<Attribute> attributeList = new ArrayList<>();
             attributeList.add(new Attribute(Constants.PASSWORD_URI, "admin" + i));
-            attributeList.add(new Attribute(Constants.USERNAME_URI, "user"));
+            attributeList.add(new Attribute(Constants.USERNAME_URI, "user" + i));
+            attributeList.add(new Attribute(SCIMConstants.UserSchemaConstants.FAMILY_NAME_URI, familyName));
             String userId = connector.addUser(attributeList);
             Assert.assertNotNull(userId);
         }
@@ -182,7 +187,8 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         List<String> userIds = null;
 
         try {
-            userIds = connector.listConnectorUserIds(UserStoreConstants.CLAIM_USERNAME, "user", 0, 3);
+            userIds = connector
+                    .listConnectorUserIds(SCIMConstants.UserSchemaConstants.FAMILY_NAME_URI, familyName, 0, 3);
             Assert.assertNotNull(userIds);
         } catch (UserStoreConnectorException e) {
             Assert.fail("Exception not expected");
@@ -193,7 +199,8 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         });
 
         try {
-            userIds = connector.listConnectorUserIds(UserStoreConstants.CLAIM_USERNAME, "user", 1, -1);
+            userIds = connector
+                    .listConnectorUserIds(SCIMConstants.UserSchemaConstants.FAMILY_NAME_URI, familyName, 1, -1);
             Assert.assertNotNull(userIds);
         } catch (UserStoreConnectorException e) {
             Assert.fail("Exception not expected");
@@ -206,7 +213,7 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         //checking SQL exception path
         super.cleanup();
         try {
-            userIds = connector.listConnectorUserIds(UserStoreConstants.CLAIM_USERNAME, "user", 0, 3);
+            connector.listConnectorUserIds(SCIMConstants.UserSchemaConstants.FAMILY_NAME_URI, "unknown", 0, 3);
             Assert.fail("Exception expected");
         } catch (UserStoreConnectorException e) {
             Assert.assertTrue(e.getCause() instanceof SQLException);
@@ -283,30 +290,29 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
 
     @Test
     public void testListConnectorGroupIds() throws Exception {
-        for (int i = 0; i < 5; i++) {
-            List<Attribute> attributeList = new ArrayList<>();
-            attributeList.add(new Attribute(Constants.GROUP_DISPLAY_NAME_URI, "SAME_GROUP"));
-            String connectorUniqueId = null;
-            try {
-                connectorUniqueId = connector.addGroup(attributeList);
-                Assert.assertNotNull(connectorUniqueId);
-            } catch (UserStoreConnectorException e) {
-                Assert.fail("Exception not expected");
-            }
+        
+        //adding group(s)
+        List<Attribute> attributeListGroup1 = new ArrayList<>();
+        attributeListGroup1.add(new Attribute(Constants.GROUP_DISPLAY_NAME_URI, "SAME_GROUP"));
+
+        String connectorUniqueId = null;
+        try {
+            connectorUniqueId = connector.addGroup(attributeListGroup1);
+            Assert.assertNotNull(connectorUniqueId);
+        } catch (UserStoreConnectorException e) {
+            Assert.fail("Exception not expected");
         }
 
+        //assertions
         List<String> groupIds = null;
-
         try {
-            groupIds = connector.listConnectorGroupIds(Constants.GROUP_DISPLAY_NAME_URI, "SAME_GROUP", 0, 3);
+            groupIds = connector.listConnectorGroupIds(Constants.GROUP_DISPLAY_NAME_URI, "SAME_GROUP", 0, 0);
             Assert.assertNotNull(groupIds);
         } catch (UserStoreConnectorException e) {
             Assert.fail("Exception not expected");
         }
-        Assert.assertEquals(3, groupIds.size());
-        groupIds.forEach((String id) -> {
-            Assert.assertNotNull(id);
-        });
+        Assert.assertEquals(0, groupIds.size());
+        groupIds.forEach(Assert::assertNotNull);
 
         try {
             groupIds = connector.listConnectorGroupIds(Constants.GROUP_DISPLAY_NAME_URI, "SAME_GROUP", 1, -1);
@@ -314,10 +320,8 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         } catch (UserStoreConnectorException e) {
             Assert.fail("Exception not expected");
         }
-        Assert.assertEquals(5, groupIds.size());
-        groupIds.forEach((String id) -> {
-            Assert.assertNotNull(id);
-        });
+        Assert.assertEquals(1, groupIds.size());
+        groupIds.forEach(Assert::assertNotNull);
 
         try {
             groupIds = connector.listConnectorGroupIds(Constants.GROUP_DISPLAY_NAME_URI, "NO_SUCH_GROUP", 0, -1);
@@ -428,20 +432,21 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
 
     @Test
     public void testGetUsers() throws Exception {
-        String user = "jdbcUser";
-        String pass = "pass";
-        String middleName = "middlename";
+        final String middleName = "middlename";
 
-        //add dummy attribute name
-        String query = "INSERT INTO `AUTH_UM_ATTRIBUTES` (`ATTR_NAME`) VALUES ('" + middleName + "');";
-        super.executeOnUmDb(query);
+        final String user = "jdbcUser";
+        final String pass = "pass";
+
+        AttributeConfiguration configuration = new AttributeConfiguration(middleName, middleName, middleName, false,
+                ".*", Uniqueness.NONE);
+        connector.addAttribute(configuration);
 
         try {
-            List<Attribute> attributeList = new ArrayList<>();
-            attributeList.add(new Attribute(Constants.USERNAME_URI, user));
-            attributeList.add(new Attribute(Constants.PASSWORD_URI, pass));
-            attributeList.add(new Attribute(middleName, middleName));
             for (int i = 0; i < 5; i++) {
+                List<Attribute> attributeList = new ArrayList<>();
+                attributeList.add(new Attribute(Constants.USERNAME_URI, user + i));
+                attributeList.add(new Attribute(Constants.PASSWORD_URI, pass + i));
+                attributeList.add(new Attribute(middleName, middleName));
                 connector.addUser(attributeList);
             }
         } catch (UserStoreConnectorException e) {
@@ -451,6 +456,14 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         List<Attribute> attributes = new ArrayList<>();
         attributes.add(new Attribute(middleName, middleName));
         List<String> list;
+        try {
+            list = connector.getUsers(attributes, 0, 3);
+            Assert.assertNotNull(list);
+            Assert.assertEquals(3, list.size());
+        } catch (UserStoreConnectorException e) {
+            Assert.fail("exception not expected");
+        }
+
         try {
             list = connector.getUsers(attributes, 0, 10);
             Assert.assertNotNull(list);
@@ -462,7 +475,7 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         //checking SQL exception path
         super.cleanup();
         try {
-            list = connector.getUsers(attributes, 0, 10);
+            connector.getUsers(attributes, 0, 10);
             Assert.fail("Exception expected");
         } catch (UserStoreConnectorException e) {
             Assert.assertTrue(e.getCause() instanceof SQLException);
@@ -514,7 +527,7 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
 
         List<Attribute> attributes = connector.getUserAttributeValues(userId);
         attributes.forEach((Attribute attribute) -> {
-            if (Constants.FAMILY_NAME_URI.equalsIgnoreCase(attribute.getAttributeName())) {
+            if (Constants.FAMILY_NAME_URI.equalsIgnoreCase(attribute.getAttributeUri())) {
                 Assert.assertEquals(newFamilyName, attribute.getAttributeValue());
             }
         });
@@ -673,7 +686,7 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
 
         List<Attribute> attributes = connector.getGroupAttributeValues(groupId);
         attributes.forEach((Attribute attribute) -> {
-            if (Constants.FAMILY_NAME_URI.equalsIgnoreCase(attribute.getAttributeName())) {
+            if (Constants.FAMILY_NAME_URI.equalsIgnoreCase(attribute.getAttributeUri())) {
                 Assert.assertEquals(newFamilyName, attribute.getAttributeValue());
             }
         });
@@ -733,7 +746,7 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         Assert.assertNotNull(groupId);
 
         for (int i = 0; i < 5; i++) {
-            userId = Utils.addUser(connector, user, pass);
+            userId = Utils.addUser(connector, user + i, pass + i);
             Assert.assertNotNull(userId);
             userList.add(userId);
             Utils.updateGroupsOfUser(connector, userId, Arrays.asList(groupId));
@@ -764,8 +777,8 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         });
 
         //add new users set
-        for (int i = 0; i < 5; i++) {
-            userId = Utils.addUser(connector, user, pass);
+        for (int i = 5; i < 10; i++) {
+            userId = Utils.addUser(connector, user + i, pass + i);
             Assert.assertNotNull(userId);
             newUserList.add(userId);
             Utils.updateGroupsOfUser(connector, userId, Arrays.asList(groupId));
@@ -854,7 +867,7 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
             Assert.fail("Exception not expected");
         }
         try {
-            info = connector.getUserPasswordInfo(userId);
+            connector.getUserPasswordInfo(userId);
             Assert.fail("Exception expected");
         } catch (UserStoreConnectorException e) {
             Assert.assertEquals("Password not found for the user.", e.getMessage());
@@ -899,7 +912,7 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         }
 
         try {
-            info = connector.getUserPasswordInfo(userId);
+            connector.getUserPasswordInfo(userId);
             Assert.fail("Exception expected");
         } catch (UserStoreConnectorException e) {
             Assert.assertTrue(e.getCause() instanceof SQLException);

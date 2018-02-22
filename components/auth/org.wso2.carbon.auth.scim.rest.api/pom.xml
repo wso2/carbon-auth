@@ -94,6 +94,10 @@
             <groupId>org.wso2.carbon.auth</groupId>
             <artifactId>org.wso2.carbon.auth.scim</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.auth</groupId>
+            <artifactId>org.wso2.carbon.auth.user.mgt</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -168,6 +172,7 @@
             org.wso2.msf4j.*; version="${msf4j.package.import.version.range}",
             org.wso2.carbon.auth.scim.*; version="${carbon.auth.version}",
             org.wso2.carbon.auth.user.store.*; version="${carbon.auth.version}",
+            org.wso2.carbon.auth.user.mgt.*; version="${carbon.auth.version}",
             com.google.gson.*;version="${gson.version.range}"
         </import.package>
         <export.package>

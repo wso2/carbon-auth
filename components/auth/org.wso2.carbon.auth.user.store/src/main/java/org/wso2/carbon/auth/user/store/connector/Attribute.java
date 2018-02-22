@@ -21,7 +21,7 @@ package org.wso2.carbon.auth.user.store.connector;
  */
 public class Attribute {
 
-    private String attributeName;
+    private String attributeUri;
 
     private String attributeValue;
 
@@ -31,16 +31,16 @@ public class Attribute {
 
     public Attribute(String attributeName, String attributeValue) {
 
-        this.attributeName = attributeName;
+        this.attributeUri = attributeName;
         this.attributeValue = attributeValue;
     }
 
-    public String getAttributeName() {
-        return attributeName;
+    public String getAttributeUri() {
+        return attributeUri;
     }
 
-    public void setAttributeName(String attributeName) {
-        this.attributeName = attributeName;
+    public void setAttributeUri(String attributeUri) {
+        this.attributeUri = attributeUri;
     }
 
     public String getAttributeValue() {
