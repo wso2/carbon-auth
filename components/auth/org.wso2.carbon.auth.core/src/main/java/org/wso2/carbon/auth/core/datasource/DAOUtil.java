@@ -33,6 +33,7 @@ public class DAOUtil {
     private static final Logger log = LoggerFactory.getLogger(DAOUtil.class);
     private static DataSource userManagementDataSource;
     private static DataSource authDataSource;
+    public static final String DAO_ERROR_PREFIX = "Error occurred in DAO layer while ";
 
     private DAOUtil() {
 

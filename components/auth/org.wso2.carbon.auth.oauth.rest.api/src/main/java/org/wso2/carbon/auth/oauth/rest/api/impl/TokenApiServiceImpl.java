@@ -6,13 +6,10 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.TokenRequestHandler;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
-import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
-import org.wso2.carbon.auth.oauth.exception.OAuthGrantException;
 import org.wso2.carbon.auth.oauth.rest.api.NotFoundException;
 import org.wso2.carbon.auth.oauth.rest.api.TokenApiService;
 import org.wso2.carbon.auth.oauth.rest.api.dto.TokenResponseDTO;
 import org.wso2.carbon.auth.oauth.rest.api.utils.TokenMappingUtil;
-import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.msf4j.Request;
 
 import java.util.HashMap;
@@ -55,7 +52,7 @@ public class TokenApiServiceImpl extends TokenApiService {
                 ErrorObject error = context.getErrorObject();
                 return Response.status(error.getHTTPStatusCode()).build();
             }
-        } catch (OAuthDAOException | UserStoreException | OAuthGrantException e) {
+        } catch (org.wso2.carbon.auth.core.exception.AuthException e) {
             log.error("DAO error while generating access token", e);
             return Response.status(e.getErrorHandler().getHttpStatusCode()).build();
         }

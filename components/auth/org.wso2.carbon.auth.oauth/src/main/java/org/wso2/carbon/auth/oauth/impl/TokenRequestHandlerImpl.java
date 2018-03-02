@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
 import org.wso2.carbon.auth.client.registration.exception.ClientRegistrationDAOException;
 import org.wso2.carbon.auth.client.registration.model.Application;
+import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
@@ -35,8 +36,6 @@ import org.wso2.carbon.auth.oauth.TokenRequestHandler;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
-import org.wso2.carbon.auth.oauth.exception.OAuthGrantException;
-import org.wso2.carbon.auth.user.mgt.UserStoreException;
 
 import java.util.Map;
 import java.util.Optional;
@@ -58,7 +57,7 @@ public class TokenRequestHandlerImpl implements TokenRequestHandler {
 
     @Override
     public AccessTokenContext generateToken(String authorization, Map<String, String> queryParameters)
-            throws OAuthDAOException, UserStoreException, OAuthGrantException {
+            throws AuthException {
         log.debug("Calling generateToken");
         AccessTokenContext context = new AccessTokenContext();
         boolean isAuthorized;

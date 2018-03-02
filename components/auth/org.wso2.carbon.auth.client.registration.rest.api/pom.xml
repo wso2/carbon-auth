@@ -177,6 +177,7 @@
             javax.ws.rs.*; version="${javax.ws.rs.import.version.range}",
             org.wso2.carbon.auth.client.registration.*; version="${carbon.auth.version}",
             org.wso2.carbon.auth.user.mgt.*; version="${carbon.auth.version}",
+            org.wso2.carbon.auth.core.*; version="${carbon.auth.version}",
             com.google.gson.*;version="${gson.version.range}"
         </import.package>
         <export.package>

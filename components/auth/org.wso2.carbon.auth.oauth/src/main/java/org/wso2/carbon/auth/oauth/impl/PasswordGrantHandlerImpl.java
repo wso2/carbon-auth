@@ -27,16 +27,16 @@ import com.nimbusds.oauth2.sdk.auth.Secret;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.core.api.UserNameMapper;
+import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
-import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
-import org.wso2.carbon.auth.user.mgt.UserStoreManagerFactory;
 
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -48,15 +48,20 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
     private static final Logger log = LoggerFactory.getLogger(PasswordGrantHandlerImpl.class);
     private OAuthDAO oauthDAO;
     private ClientLookup clientLookup;
+    private UserNameMapper userNameMapper;
+    private UserStoreManager userStoreManager;
 
-    PasswordGrantHandlerImpl(OAuthDAO oauthDAO) {
+    PasswordGrantHandlerImpl(OAuthDAO oauthDAO, UserNameMapper userNameMapper, ClientLookup clientLookup,
+                             UserStoreManager userStoreManager) {
         this.oauthDAO = oauthDAO;
-        clientLookup = new ClientLookupImpl(oauthDAO);
+        this.clientLookup = clientLookup;
+        this.userNameMapper = userNameMapper;
+        this.userStoreManager = userStoreManager;
     }
 
     @Override
     public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
-            throws UserStoreException, OAuthDAOException {
+            throws AuthException {
         log.debug("Calling PasswordGrantHandlerImpl:process");
         try {
             ResourceOwnerPasswordCredentialsGrant request =
@@ -72,7 +77,7 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
     private void processPasswordGrantRequest(String authorization, AccessTokenContext context,
                                              @Nullable String scopeValue,
                                              ResourceOwnerPasswordCredentialsGrant request)
-            throws UserStoreException, OAuthDAOException {
+            throws AuthException {
         log.debug("calling processPasswordGrantRequest");
         MutableBoolean haltExecution = new MutableBoolean(false);
 
@@ -101,16 +106,16 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
 
         TokenGenerator.generateAccessToken(scope, context);
         AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
-        accessTokenData.setAuthUser((String) context.getParams().get("AUTH_USER"));
+        String user = (String) context.getParams().get("AUTH_USER");
+        accessTokenData.setAuthUser(userNameMapper.getLoggedInPseudoNameFromUserID(user));
         accessTokenData.setClientId(clientId);
         oauthDAO.addAccessTokenInfo(accessTokenData);
+        accessTokenData.setAuthUser(user);
     }
 
     private boolean validateGrant(ResourceOwnerPasswordCredentialsGrant request) throws UserStoreException {
         String username = request.getUsername();
         Secret password = request.getPassword();
-
-        UserStoreManager userStoreManager = UserStoreManagerFactory.getUserStoreManager();
         return userStoreManager.doAuthenticate(username, password.getValue());
     }
 }

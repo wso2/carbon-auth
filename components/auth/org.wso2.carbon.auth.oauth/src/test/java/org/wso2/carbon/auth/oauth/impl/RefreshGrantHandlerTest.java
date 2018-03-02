@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
 import org.wso2.carbon.auth.client.registration.model.Application;
+import org.wso2.carbon.auth.core.api.UserNameMapper;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dao.TokenDAO;
@@ -42,6 +43,7 @@ public class RefreshGrantHandlerTest {
     private TokenDAO tokenDAO;
     private OAuthDAO oauthDAO;
     private ApplicationDAO applicationDAO;
+    private UserNameMapper userNameMapper;
     String clientId = "JgUsk2mQ_WL0ffmpRSpHDJWFjvEa";
     String clientSecret = "KQd8QXgV3bG1nFOGRDf7ib6HJu4a";
     String refreshToken = "sJZMLpTkK6u5FPFtLDPX3GIox19aNFR5jnbye_GzX9k";
@@ -55,11 +57,11 @@ public class RefreshGrantHandlerTest {
         oauthDAO = Mockito.mock(OAuthDAO.class);
         applicationDAO = Mockito.mock(ApplicationDAO.class);
         tokenDAO = Mockito.mock(TokenDAO.class);
-
+        userNameMapper = Mockito.mock(UserNameMapper.class);
         authorization = "Basic " + Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
         context = new AccessTokenContext();
         queryParameters = new HashMap<>();
-        refreshGrantHandler = new RefreshGrantHandler(tokenDAO, oauthDAO, applicationDAO);
+        refreshGrantHandler = new RefreshGrantHandler(tokenDAO, oauthDAO, applicationDAO, userNameMapper);
     }
 
     @Test

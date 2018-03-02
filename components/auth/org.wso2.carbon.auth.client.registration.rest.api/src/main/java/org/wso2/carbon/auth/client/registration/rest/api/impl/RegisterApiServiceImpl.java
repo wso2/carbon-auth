@@ -19,6 +19,9 @@ import org.wso2.carbon.auth.client.registration.rest.api.dto.UpdateRequestDTO;
 import org.wso2.carbon.auth.client.registration.rest.api.utils.MappingUtil;
 import org.wso2.carbon.auth.client.registration.rest.api.utils.ParseException;
 import org.wso2.carbon.auth.client.registration.rest.api.utils.RestAPIUtil;
+import org.wso2.carbon.auth.core.api.UserNameMapper;
+import org.wso2.carbon.auth.core.exception.AuthException;
+import org.wso2.carbon.auth.core.impl.UserNameMapperFactory;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 import org.wso2.carbon.auth.user.mgt.UserStoreManagerFactory;
@@ -82,6 +85,7 @@ public class RegisterApiServiceImpl extends RegisterApiService {
         try {
             UserStoreManager userStoreManager = UserStoreManagerFactory.getUserStoreManager();
             handler = ClientRegistrationFactory.getInstance().getClientRegistrationHandler();
+            UserNameMapper userNameMapper = UserNameMapperFactory.getInstance().getUserNameMapper();
             Application newApp = MappingUtil.registrationRequestToApplication(registrationRequest);
             String authHeader = request.getHeader("Authorization");
             if (StringUtils.isEmpty(authHeader)) {
@@ -97,7 +101,7 @@ public class RegisterApiServiceImpl extends RegisterApiService {
                 ErrorDTO errorDTO = RestAPIUtil.getErrorDTO(error);
                 return Response.status(error.getHTTPStatusCode()).entity(errorDTO).build();
             }
-            newApp.setAuthUser(user);
+            newApp.setAuthUser(userNameMapper.getLoggedInPseudoNameFromUserID(user));
             ClientRegistrationResponse registrationResponse = handler.registerApplication(newApp);
 
             if (!registrationResponse.isSuccessful()) {
@@ -119,6 +123,9 @@ public class RegisterApiServiceImpl extends RegisterApiService {
                     .entity(RestAPIUtil.getInternalServerErrorDTO()).build();
         } catch (ParseException e) {
             log.error("Error while parsing authorization header", e);
+            return Response.status(Response.Status.BAD_REQUEST).entity(RestAPIUtil.getInternalServerErrorDTO()).build();
+        } catch (AuthException e) {
+            log.error("Error while creating PseudoName", e);
             return Response.status(Response.Status.BAD_REQUEST).entity(RestAPIUtil.getInternalServerErrorDTO()).build();
         }
     }

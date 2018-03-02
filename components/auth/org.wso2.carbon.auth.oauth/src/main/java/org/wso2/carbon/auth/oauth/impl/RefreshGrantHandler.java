@@ -25,6 +25,8 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
+import org.wso2.carbon.auth.core.api.UserNameMapper;
+import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
@@ -50,12 +52,15 @@ public class RefreshGrantHandler implements GrantHandler {
     private OAuthDAO oauthDAO;
     private ApplicationDAO applicationDAO;
     private ClientLookup clientLookup;
+    private UserNameMapper userNameMapper;
 
-    public RefreshGrantHandler(TokenDAO tokenDAO, OAuthDAO oauthDAO, ApplicationDAO applicationDAO) {
+    public RefreshGrantHandler(TokenDAO tokenDAO, OAuthDAO oauthDAO, ApplicationDAO applicationDAO, UserNameMapper
+            userNameMapper) {
         this.tokenDAO = tokenDAO;
         this.oauthDAO = oauthDAO;
         this.applicationDAO = applicationDAO;
         this.clientLookup = new ClientLookupImpl(oauthDAO);
+        this.userNameMapper = userNameMapper;
     }
 
     /**
@@ -64,11 +69,11 @@ public class RefreshGrantHandler implements GrantHandler {
      * @param authorization   Authorization header client:secret as basic auth header
      * @param context         AccessTokenContext object that stores context information during request processing
      * @param queryParameters Map of query parameters sent
-     * @throws OAuthDAOException throws if token issuing error occurred
+     * @throws AuthException throws if token issuing error occurred
      */
     @Override
     public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
-            throws OAuthDAOException {
+            throws AuthException {
 
         MutableBoolean haltExecution = new MutableBoolean(false);
 
@@ -124,9 +129,11 @@ public class RefreshGrantHandler implements GrantHandler {
 
         TokenGenerator.generateAccessToken(scope, context);
         AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
-        accessTokenData.setAuthUser((String) context.getParams().get("AUTH_USER"));
+        String user = (String) context.getParams().get("AUTH_USER");
+        accessTokenData.setAuthUser(userNameMapper.getLoggedInPseudoNameFromUserID(user));
         accessTokenData.setClientId(clientId);
         oauthDAO.addAccessTokenInfo(accessTokenData);
+        accessTokenData.setAuthUser(user);
     }
 
     private boolean isRefreshTokenExpired(AccessTokenDTO accessTokenDTO) {

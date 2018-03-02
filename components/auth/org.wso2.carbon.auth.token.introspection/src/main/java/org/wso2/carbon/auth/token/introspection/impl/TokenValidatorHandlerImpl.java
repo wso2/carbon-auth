@@ -19,6 +19,9 @@ package org.wso2.carbon.auth.token.introspection.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.core.api.UserNameMapper;
+import org.wso2.carbon.auth.core.exception.AuthException;
+import org.wso2.carbon.auth.core.impl.UserNameMapperFactory;
 import org.wso2.carbon.auth.oauth.TokenManager;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
 import org.wso2.carbon.auth.oauth.impl.TokenManagerImpl;
@@ -39,6 +42,7 @@ public class TokenValidatorHandlerImpl implements TokenValidatorHandler {
     @Override
     public void validate(IntrospectionContext context) throws IntrospectionException {
         TokenValidator tokenValidator = new OAuth2TokenValidator();
+        UserNameMapper userNameMapper = UserNameMapperFactory.getInstance().getUserNameMapper();
         if (!tokenValidator.validateAccessToken(context)) {
             buildIntrospectionError(context, "Access token validation failed");
             return;
@@ -66,7 +70,14 @@ public class TokenValidatorHandlerImpl implements TokenValidatorHandler {
         // token scopes
         introspectionResponse.setScope(accessTokenDTO.getScopes());
         // set user-name
-        introspectionResponse.setUsername(accessTokenDTO.getAuthUser());
+        try {
+            introspectionResponse.setUsername(userNameMapper.getLoggedInUserIDFromPseudoName(accessTokenDTO
+                    .getAuthUser()));
+        } catch (AuthException e) {
+            String message = "Access token validation failed" + accessTokenDTO.getAuthUser();
+            log.error(message, e);
+            buildIntrospectionError(context, message);
+        }
         // add client id
         introspectionResponse.setClientId(accessTokenDTO.getConsumerKey());
 

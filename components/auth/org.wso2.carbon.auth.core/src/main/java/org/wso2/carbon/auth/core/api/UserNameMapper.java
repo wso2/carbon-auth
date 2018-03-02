@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *   Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *   WSO2 Inc. licenses this file to you under the Apache License,
  *   Version 2.0 (the "License"); you may not use this file except
@@ -17,26 +17,16 @@
  *  under the License.
  *
  */
+package org.wso2.carbon.auth.core.api;
 
-package org.wso2.carbon.auth.oauth;
 
 import org.wso2.carbon.auth.core.exception.AuthException;
-import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
-
-import java.util.Map;
 
 /**
- * Handles OAuth2 token related functionality
+ * This interface is having methods to exchange pseudo name with user name.
  */
-public interface TokenRequestHandler {
+public interface UserNameMapper {
+    String getLoggedInUserIDFromPseudoName(String pseudoName) throws AuthException;
 
-    /**
-     * Generate OAuth2 Access token
-     *
-     * @param authorization Authorization header
-     * @param queryParameters Query Parameters sent in request
-     * @return Access token
-     */
-    AccessTokenContext generateToken(String authorization, Map<String, String> queryParameters)
-            throws AuthException;
+    String getLoggedInPseudoNameFromUserID(String userName) throws AuthException;
 }
