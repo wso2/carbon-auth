@@ -28,6 +28,7 @@ import com.nimbusds.oauth2.sdk.Scope;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.core.api.UserNameMapper;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
@@ -45,10 +46,12 @@ public class AuthCodeGrantHandlerImpl implements GrantHandler {
     private static final Logger log = LoggerFactory.getLogger(AuthCodeGrantHandlerImpl.class);
     private OAuthDAO oauthDAO;
     private ClientLookup clientLookup;
+    private UserNameMapper userNameMapper;
 
-    AuthCodeGrantHandlerImpl(OAuthDAO oauthDAO) {
+    AuthCodeGrantHandlerImpl(OAuthDAO oauthDAO, UserNameMapper userNameMapper) {
         this.oauthDAO = oauthDAO;
         clientLookup = new ClientLookupImpl(oauthDAO);
+        this.userNameMapper = userNameMapper;
     }
 
     @Override
@@ -84,6 +87,7 @@ public class AuthCodeGrantHandlerImpl implements GrantHandler {
         TokenGenerator.generateAccessToken(scope, context);
 
         AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
+
         oauthDAO.addAccessTokenInfo(accessTokenData);
     }
 

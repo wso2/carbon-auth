@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
 import org.wso2.carbon.auth.client.registration.exception.ClientRegistrationDAOException;
 import org.wso2.carbon.auth.client.registration.model.Application;
+import org.wso2.carbon.auth.core.api.UserNameMapper;
+import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
@@ -49,11 +51,13 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
     private OAuthDAO oauthDAO;
     private ApplicationDAO applicationDAO;
     private ClientLookup clientLookup;
+    private UserNameMapper userNameMapper;
 
-    ClientCredentialsGrantHandlerImpl(OAuthDAO oauthDAO, ApplicationDAO applicationDAO) {
+    ClientCredentialsGrantHandlerImpl(OAuthDAO oauthDAO, ApplicationDAO applicationDAO, UserNameMapper userNameMapper) {
         this.oauthDAO = oauthDAO;
         this.applicationDAO = applicationDAO;
         clientLookup = new ClientLookupImpl(oauthDAO);
+        this.userNameMapper = userNameMapper;
     }
 
     @Override
@@ -70,12 +74,15 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
         } catch (ClientRegistrationDAOException e) {
             log.error("Error while parsing retrieving Client information: ", e.getMessage());
             context.setErrorObject(OAuth2Error.INVALID_REQUEST);
+        } catch (AuthException e) {
+            log.error("Error while parsing Client Credentials Grant request: ", e.getMessage());
+            context.setErrorObject(OAuth2Error.INVALID_REQUEST);
         }
     }
 
     private void processClientCredentialsGrantRequest(String authorization, AccessTokenContext context,
                                              @Nullable String scopeValue, ClientCredentialsGrant request)
-            throws OAuthDAOException, ClientRegistrationDAOException {
+            throws AuthException {
         log.debug("Calling processClientCredentialsGrantRequest");
         MutableBoolean haltExecution = new MutableBoolean(false);
 
@@ -101,5 +108,6 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
             accessTokenData.setAuthUser(application.getAuthUser());
         }
         oauthDAO.addAccessTokenInfo(accessTokenData);
+        accessTokenData.setAuthUser(userNameMapper.getLoggedInUserIDFromPseudoName(accessTokenData.getAuthUser()));
     }
 }

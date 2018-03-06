@@ -27,6 +27,8 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
+import org.wso2.carbon.auth.core.api.UserNameMapper;
+import org.wso2.carbon.auth.core.impl.UserNameMapperFactory;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
@@ -34,6 +36,8 @@ import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
+import org.wso2.carbon.auth.user.mgt.UserStoreException;
+import org.wso2.carbon.auth.user.mgt.UserStoreManagerFactory;
 
 import java.util.Optional;
 
@@ -42,6 +46,7 @@ import java.util.Optional;
  */
 public class GrantHandlerFactory {
     private static final Logger log = LoggerFactory.getLogger(GrantHandlerFactory.class);
+    private static UserNameMapper userNameMapper = UserNameMapperFactory.getInstance().getUserNameMapper();
 
     /**
      * Create relevant Grant Handler
@@ -50,17 +55,18 @@ public class GrantHandlerFactory {
      * @return Grant handler implementation
      */
     static Optional<GrantHandler> createGrantHandler(String grantTypeValue, AccessTokenContext context,
-            OAuthDAO oauthDAO, ApplicationDAO applicationDAO, MutableBoolean haltExecution) {
+            OAuthDAO oauthDAO, ApplicationDAO applicationDAO, MutableBoolean haltExecution) throws UserStoreException {
         log.debug("Calling createGrantHandler");
         if (!StringUtils.isEmpty(grantTypeValue)) {
             GrantType grantType = new GrantType(grantTypeValue);
 
             if (grantType.equals(GrantType.AUTHORIZATION_CODE)) {
-                return Optional.of(new AuthCodeGrantHandlerImpl(oauthDAO));
+                return Optional.of(new AuthCodeGrantHandlerImpl(oauthDAO, userNameMapper));
             } else if (grantType.equals(GrantType.PASSWORD)) {
-                return Optional.of(new PasswordGrantHandlerImpl(oauthDAO));
+                return Optional.of(new PasswordGrantHandlerImpl(oauthDAO, userNameMapper, new ClientLookupImpl
+                        (oauthDAO), UserStoreManagerFactory.getUserStoreManager()));
             } else if (grantType.equals(GrantType.CLIENT_CREDENTIALS)) {
-                return Optional.of(new ClientCredentialsGrantHandlerImpl(oauthDAO, applicationDAO));
+                return Optional.of(new ClientCredentialsGrantHandlerImpl(oauthDAO, applicationDAO, userNameMapper));
             } else if (grantType.equals(GrantType.REFRESH_TOKEN)) {
                 TokenDAO tokenDAO = null;
                 try {
@@ -68,7 +74,7 @@ public class GrantHandlerFactory {
                 } catch (OAuthDAOException e) {
                     log.error(e.getMessage(), e);
                 }
-                return Optional.of(new RefreshGrantHandler(tokenDAO, oauthDAO, applicationDAO));
+                return Optional.of(new RefreshGrantHandler(tokenDAO, oauthDAO, applicationDAO, userNameMapper));
             } else {
                 context.setErrorObject(OAuth2Error.INVALID_REQUEST);
                 haltExecution.setTrue();

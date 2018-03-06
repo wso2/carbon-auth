@@ -22,10 +22,8 @@ package org.wso2.carbon.auth.oauth;
 
 import org.apache.commons.lang3.StringUtils;
 import org.wso2.carbon.auth.client.registration.model.Application;
+import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
-import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
-import org.wso2.carbon.auth.oauth.exception.OAuthGrantException;
-import org.wso2.carbon.auth.user.mgt.UserStoreException;
 
 import java.util.Map;
 
@@ -40,12 +38,10 @@ public interface GrantHandler {
      * @param authorization  Authorization header
      * @param context AccessTokenContext object that stores context information during request processing
      * @param queryParameters Map of query parameters sent
-     * @throws OAuthGrantException When a generic grant handler error occurred
-     * @throws OAuthDAOException When an OAuth DAO error occurred
-     * @throws UserStoreException When a User store related error occurred
+     *@throws AuthException When an grantHandler Error Occurred
      */
     void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
-            throws OAuthGrantException, OAuthDAOException, UserStoreException;
+            throws AuthException;
 
     default boolean isAuthorizedClient(Application application, String grantType) {
         if (application == null || StringUtils.isEmpty(application.getGrantTypes())) {
