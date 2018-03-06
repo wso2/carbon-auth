@@ -1,9 +1,9 @@
 # Carbon Auth
 ---
 
-|  Branch | Build Status |
-| :------------ |:-------------
-| master      | [![Build Status](https://wso2.org/jenkins/job/platform-builds/job/carbon-auth/badge/icon)](https://wso2.org/jenkins/job/platform-builds/job/carbon-auth/) |
+|  Branch | Build Status(Jenkins) | Build Status(TravisCI) |
+| :------------ |:------------- |:-------------
+| master      | [![Build Status](https://wso2.org/jenkins/job/platform-builds/job/carbon-auth/badge/icon)](https://wso2.org/jenkins/job/platform-builds/job/carbon-auth/) | [![Build Status](https://api.travis-ci.org/wso2/carbon-auth.svg?branch=master)](https://travis-ci.org/wso2/carbon-auth) |
 
 ---
 
