@@ -1,0 +1,12 @@
+---
+# Use Ubuntu Trusty with sudo instead of new default Trusty because of higher resources availability
+sudo: required
+dist: trusty
+language: java
+
+# Using -q Quiet output which only show errors, to overcome TravisCI log limit issue
+script: travis_wait 100 mvn clean install -q -B -V
+
+cache:
+  directories:
+  - $HOME/.m2
