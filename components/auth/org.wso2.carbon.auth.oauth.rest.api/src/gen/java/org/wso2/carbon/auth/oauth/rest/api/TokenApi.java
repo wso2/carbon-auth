@@ -58,12 +58,12 @@ public class TokenApi implements Microservice  {
         
         @io.swagger.annotations.ApiResponse(code = 401, message = "Unauthorized. Error response from token endpoint due to client authentication failure. ", response = TokenResponseDTO.class) })
     public Response tokenPost(@ApiParam(value = "Authentication scheme header" ,required=true)@HeaderParam("Authorization") String authorization
-,@ApiParam(value = "Required OAuth grant type",required=true) @QueryParam("grant_type") String grantType
-,@ApiParam(value = "Authorization code to be sent for authorization grant type") @QueryParam("code") String code
-,@ApiParam(value = "Clients redirection endpoint") @QueryParam("redirect_uri") String redirectUri
-,@ApiParam(value = "OAuth client identifier") @QueryParam("client_id") String clientId
-,@ApiParam(value = "Refresh token issued to the client.") @QueryParam("refresh_token") String refreshToken
-,@ApiParam(value = "OAuth scopes") @QueryParam("scope") String scope
+,@ApiParam(value = "Required OAuth grant type", required=true)  @FormParam("grant_type")  String grantType
+,@ApiParam(value = "Authorization code to be sent for authorization grant type")  @FormParam("code")  String code
+,@ApiParam(value = "Clients redirection endpoint")  @FormParam("redirect_uri")  String redirectUri
+,@ApiParam(value = "OAuth client identifier")  @FormParam("client_id")  String clientId
+,@ApiParam(value = "Refresh token issued to the client.")  @FormParam("refresh_token")  String refreshToken
+,@ApiParam(value = "OAuth scopes")  @FormParam("scope")  String scope
 ,@ApiParam(value = "username")  @FormParam("username")  String username
 ,@ApiParam(value = "password")  @FormParam("password")  String password
  ,@Context Request request)

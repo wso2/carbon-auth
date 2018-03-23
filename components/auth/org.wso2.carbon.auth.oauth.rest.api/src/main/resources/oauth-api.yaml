@@ -72,28 +72,28 @@ paths:
           description: Authentication scheme header
           required: true
           type: string
-        - in: query
+        - in: formData
           name: grant_type
           description: Required OAuth grant type
           required: true
           type: string
-        - in: query
+        - in: formData
           name: code
           description: Authorization code to be sent for authorization grant type
           type: string
-        - in: query
+        - in: formData
           name: redirect_uri
           description: Clients redirection endpoint
           type: string
-        - in: query
+        - in: formData
           name: client_id
           description: OAuth client identifier
           type: string
-        - in: query
+        - in: formData
           name: refresh_token
           description: Refresh token issued to the client.
           type: string
-        - in: query
+        - in: formData
           name: scope
           description: OAuth scopes
           type: string
@@ -138,8 +138,8 @@ paths:
             Content-Type:
               description: |
                 The content type of the body.
-              type: string  
- 
+              type: string
+
 definitions:
   TokenResponse:
     title: Successful response sent for OAuth token request.
@@ -169,7 +169,7 @@ definitions:
         type: string
         description: |
           The scope of the access token requested.
-          
+
   TokenErrorResponse:
     title: Error response sent for OAuth token request.
     required:
