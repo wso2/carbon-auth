@@ -1,8 +1,7 @@
 package org.wso2.carbon.auth.oauth.rest.api.dto;
 
 
-import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 
@@ -10,7 +9,7 @@ import java.util.Objects;
  * TokenErrorResponseDTO
  */
 public class TokenErrorResponseDTO   {
-  @SerializedName("preProcessingError")
+  @JsonProperty("preProcessingError")
   private String preProcessingError = null;
 
   public TokenErrorResponseDTO preProcessingError(String preProcessingError) {
