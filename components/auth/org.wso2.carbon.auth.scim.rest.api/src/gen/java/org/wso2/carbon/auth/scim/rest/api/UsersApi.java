@@ -23,7 +23,7 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
-
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -47,7 +47,7 @@ import javax.ws.rs.core.Response;
 public class UsersApi implements Microservice  {
    private final UsersApiService delegate = UsersApiServiceFactory.getUsersApi();
 
-    
+    @OPTIONS
     @GET
     
     @Consumes({ "application/json" })
@@ -66,7 +66,7 @@ public class UsersApi implements Microservice  {
     throws NotFoundException {
         return delegate.usersGet(startIndex,count,filter,request);
     }
-    
+    @OPTIONS
     @DELETE
     @Path("/{id}")
     @Consumes({ "application/json" })
@@ -83,7 +83,7 @@ public class UsersApi implements Microservice  {
     throws NotFoundException {
         return delegate.usersIdDelete(id,request);
     }
-    
+    @OPTIONS
     @GET
     @Path("/{id}")
     @Consumes({ "application/json" })
@@ -100,7 +100,7 @@ public class UsersApi implements Microservice  {
     throws NotFoundException {
         return delegate.usersIdGet(id,request);
     }
-    
+    @OPTIONS
     @PUT
     @Path("/{id}")
     @Consumes({ "application/json" })
@@ -118,7 +118,7 @@ public class UsersApi implements Microservice  {
     throws NotFoundException {
         return delegate.usersIdPut(id,body,request);
     }
-    
+    @OPTIONS
     @POST
     
     @Consumes({ "application/json" })
@@ -135,7 +135,7 @@ public class UsersApi implements Microservice  {
     throws NotFoundException {
         return delegate.usersPost(body,request);
     }
-    
+    @OPTIONS
     @POST
     @Path("/.search")
     @Consumes({ "application/json" })

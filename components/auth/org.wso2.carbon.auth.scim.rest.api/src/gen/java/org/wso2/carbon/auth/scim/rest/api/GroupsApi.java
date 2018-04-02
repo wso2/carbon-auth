@@ -22,7 +22,7 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
-
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -46,7 +46,7 @@ import javax.ws.rs.core.Response;
 public class GroupsApi implements Microservice  {
    private final GroupsApiService delegate = GroupsApiServiceFactory.getGroupsApi();
 
-    
+    @OPTIONS
     @GET
     
     @Consumes({ "application/json" })
@@ -65,7 +65,7 @@ public class GroupsApi implements Microservice  {
     throws NotFoundException {
         return delegate.groupsGet(startIndex,count,filter,request);
     }
-    
+    @OPTIONS
     @DELETE
     @Path("/{id}")
     @Consumes({ "application/json" })
@@ -82,7 +82,7 @@ public class GroupsApi implements Microservice  {
     throws NotFoundException {
         return delegate.groupsIdDelete(id,request);
     }
-    
+    @OPTIONS
     @GET
     @Path("/{id}")
     @Consumes({ "application/json" })
@@ -99,7 +99,7 @@ public class GroupsApi implements Microservice  {
     throws NotFoundException {
         return delegate.groupsIdGet(id,request);
     }
-    
+    @OPTIONS
     @PUT
     @Path("/{id}")
     @Consumes({ "application/json" })
@@ -117,7 +117,7 @@ public class GroupsApi implements Microservice  {
     throws NotFoundException {
         return delegate.groupsIdPut(id,body,request);
     }
-    
+    @OPTIONS
     @POST
     
     @Consumes({ "application/json" })

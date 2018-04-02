@@ -57,7 +57,7 @@ public class ServiceReferenceHolder {
                 log.error("Configuration provider is null");
             }
         } catch (ConfigurationException e) {
-            log.error("error getting config : org.wso2.carbon.apimgt.core.internal.AuthConfiguration", e);
+            log.error("error getting config : org.wso2.carbon.auth.core.internal.AuthConfiguration", e);
         }
 
         if (config == null) {
