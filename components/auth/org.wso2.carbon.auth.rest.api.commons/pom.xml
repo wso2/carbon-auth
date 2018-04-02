@@ -17,7 +17,8 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
         <artifactId>auth</artifactId>
@@ -36,6 +37,57 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>src/main/resources</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>../org.wso2.carbon.auth.client.registration.rest.api/src/main/resources
+                                    </directory>
+                                    <includes>
+                                        <include>client-registration-api.yaml</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>../org.wso2.carbon.auth.oauth.rest.api/src/main/resources</directory>
+                                    <includes>
+                                        <include>oauth-api.yaml</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>../org.wso2.carbon.auth.scim.rest.api/src/main/resources</directory>
+                                    <includes>
+                                        <include>scim-api.yaml</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>../org.wso2.carbon.auth.scope.registration.rest.api/src/main/resources
+                                    </directory>
+                                    <includes>
+                                        <include>scope-api.yaml</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>../org.wso2.carbon.auth.token.introspection.rest.api/src/main/resources
+                                    </directory>
+                                    <includes>
+                                        <include>introspection-api.yaml</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -105,6 +157,14 @@
             <groupId>org.wso2.carbon.auth</groupId>
             <artifactId>org.wso2.carbon.auth.core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.orbit.io.swagger</groupId>
+            <artifactId>swagger-parser</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-core</artifactId>
+        </dependency>
     </dependencies>
     <properties>
         <import.package>
@@ -124,6 +184,9 @@
         <export.package>
             org.wso2.carbon.auth.rest.api.commons.*; version="${carbon.auth.version}",
         </export.package>
+        <carbon.component>
+            osgi.service; objectClass="org.wso2.msf4j.interceptor.OSGiInterceptorConfig"
+        </carbon.component>
     </properties>
 
 </project>

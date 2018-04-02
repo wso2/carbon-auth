@@ -23,6 +23,9 @@ package org.wso2.carbon.auth.core.configuration.models;
 import org.wso2.carbon.config.annotation.Configuration;
 import org.wso2.carbon.config.annotation.Element;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Class to hold Auth configuration parameters and generate yaml file
  */
@@ -37,4 +40,10 @@ public class AuthConfiguration {
         return keyManagerConfigs;
     }
 
+    @Element(description = "list of web clients (eg: 127.0.0.1:9443) to allow make requests to allow any web client)")
+    private List<String> allowedHosts = Collections.singletonList("*");
+
+    public List<String> getAllowedHosts() {
+        return allowedHosts;
+    }
 }

@@ -22,7 +22,7 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
-
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -46,7 +46,7 @@ import javax.ws.rs.core.Response;
 public class ScopesApi implements Microservice  {
    private final ScopesApiService delegate = ScopesApiServiceFactory.getScopesApi();
 
-    
+    @OPTIONS
     @DELETE
     @Path("/{name}")
     @Consumes({ "application/json" })
@@ -59,10 +59,10 @@ public class ScopesApi implements Microservice  {
     public Response deleteScope(@ApiParam(value = "scope name of the scope which need to get deleted",required=true) @PathParam("name") String name
  ,@Context Request request)
     throws NotFoundException {
-        
+
         return delegate.deleteScope(name,request);
     }
-    
+    @OPTIONS
     @GET
     @Path("/{name}")
     @Consumes({ "application/json" })
@@ -77,10 +77,10 @@ public class ScopesApi implements Microservice  {
     public Response getScope(@ApiParam(value = "scope name of the scope which the details to be retrieved",required=true) @PathParam("name") String name
  ,@Context Request request)
     throws NotFoundException {
-        
+
         return delegate.getScope(name,request);
     }
-    
+    @OPTIONS
     @GET
     
     @Consumes({ "application/json" })
@@ -98,10 +98,10 @@ public class ScopesApi implements Microservice  {
     throws NotFoundException {
         offset = (offset == null ? Integer.valueOf("0"):offset);
         limit = (limit == null ? Integer.valueOf("25"):limit);
-        
+
         return delegate.getScopes(offset,limit,request);
     }
-    
+    @OPTIONS
     @HEAD
     @Path("/{name}")
     @Consumes({ "application/json" })
@@ -116,10 +116,9 @@ public class ScopesApi implements Microservice  {
     public Response isScopeExists(@ApiParam(value = "scope name of the scope which the existance should be checked",required=true) @PathParam("name") String name
  ,@Context Request request)
     throws NotFoundException {
-        
         return delegate.isScopeExists(name,request);
     }
-    
+    @OPTIONS
     @POST
     
     @Consumes({ "application/json" })
@@ -136,10 +135,10 @@ public class ScopesApi implements Microservice  {
     public Response registerScope(@ApiParam(value = "a scope with the bindings which to be registered" ,required=true) ScopeDTO scope
  ,@Context Request request)
     throws NotFoundException {
-        
+
         return delegate.registerScope(scope,request);
     }
-    
+    @OPTIONS
     @PUT
     @Path("/{name}")
     @Consumes({ "application/json" })
@@ -155,7 +154,7 @@ public class ScopesApi implements Microservice  {
 ,@ApiParam(value = "scope name of the scope which need to get updated",required=true) @PathParam("name") String name
  ,@Context Request request)
     throws NotFoundException {
-        
+
         return delegate.updateScope(scope,name,request);
     }
 }

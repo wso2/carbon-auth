@@ -22,7 +22,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
-
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -46,7 +46,7 @@ import javax.ws.rs.core.Response;
 public class RegisterApi implements Microservice  {
    private final RegisterApiService delegate = RegisterApiServiceFactory.getRegisterApi();
 
-    
+    @OPTIONS
     @DELETE
     @Path("/{client_id}")
     @Consumes({ "application/json" })
@@ -63,7 +63,7 @@ public class RegisterApi implements Microservice  {
     throws NotFoundException {
         return delegate.deleteApplication(clientId,request);
     }
-    
+    @OPTIONS
     @GET
     @Path("/{client_id}")
     @Consumes({ "application/json" })
@@ -80,7 +80,7 @@ public class RegisterApi implements Microservice  {
     throws NotFoundException {
         return delegate.getApplication(clientId,request);
     }
-    
+    @OPTIONS
     @POST
     
     @Consumes({ "application/json" })
@@ -99,7 +99,7 @@ public class RegisterApi implements Microservice  {
     throws NotFoundException {
         return delegate.registerApplication(registrationRequest,request);
     }
-    
+    @OPTIONS
     @PUT
     @Path("/{client_id}")
     @Consumes({ "application/json" })

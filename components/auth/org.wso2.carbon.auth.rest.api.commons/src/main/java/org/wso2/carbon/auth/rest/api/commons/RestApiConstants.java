@@ -21,6 +21,7 @@ package org.wso2.carbon.auth.rest.api.commons;
  * Represents constants related to REST APIs.
  */
 public class RestApiConstants {
+    public static final String HTTP_OPTIONS = "OPTIONS";
 
     public static final Integer PAGINATION_LIMIT_DEFAULT = 25;
     public static final Integer PAGINATION_OFFSET_DEFAULT = 0;
@@ -44,7 +45,7 @@ public class RestApiConstants {
     public static final String SCOPE = "scope";
     public static final String AUTH_TYPE_BASIC = "Basic";
     public static final String CHARSET_UTF_8 = "UTF-8";
-    
+
     public static final String COOKIE_HEADER = "Cookie";
     public static final String ORIGIN_HEADER = "Origin";
     public static final String ACCESS_CONTROL_ALLOW_ORIGIN_HEADER = "Access-Control-Allow-Origin";
@@ -65,4 +66,21 @@ public class RestApiConstants {
 
     public static final String SCOPES_GET_PAGINATION_URL =
             RESOURCE_PATH_SCOPES + "?limit=" + LIMIT_PARAM + "&offset=" + OFFSET_PARAM;
+
+    /**
+     * Types of Apps in KeyManager
+     */
+    public static class APPType {
+        public static final String DCRM = "client-registration";
+        public static final String INTROSPECT = "introspect";
+        public static final String OAUTH = "oauth2";
+        public static final String SCIM = "scim";
+        public static final String SCOPE = "scope";
+        public static final String DCRM_SWAGGER_DEFINITION_FILE_PATH = "/client-registration-api.yaml";
+        public static final String INTROSPECTION_SWAGGER_DEFINITION_FILE_PATH = "/introspection-api.yaml";
+        public static final String OAUTH2_SWAGGER_DEFINITION_FILE_PATH = "/oauth-api.yaml";
+        public static final String SCIM_SWAGGER_DEFINITION_FILE_PATH = "/scim-api.yaml";
+        public static final String SCOPE_SWAGGER_DEFINITION_FILE_PATH = "/scope-api.yaml";
+    }
+
 }

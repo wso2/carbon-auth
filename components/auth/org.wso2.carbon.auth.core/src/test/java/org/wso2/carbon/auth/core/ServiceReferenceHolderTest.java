@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.auth.core;
 
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -26,6 +27,7 @@ import org.wso2.carbon.auth.core.configuration.AuthConfigurationService;
 import org.wso2.carbon.auth.core.configuration.models.AuthConfiguration;
 import org.wso2.carbon.auth.core.configuration.models.ConfigModelsTest;
 import org.wso2.carbon.config.ConfigProviderFactory;
+import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
 
 import java.nio.file.Path;
@@ -82,5 +84,14 @@ public class ServiceReferenceHolderTest {
             log.error(errorMessage, e);
             Assert.fail(errorMessage);
         }
+    }
+
+    @Test(priority = 3)
+    public void testNegativeGetConfigurationObject() throws ConfigurationException {
+        ConfigProvider configProvider = Mockito.mock(ConfigProvider.class);
+        Mockito.when(configProvider.getConfigurationObject(AuthConfiguration.class)).thenThrow(ConfigurationException
+                .class);
+        ServiceReferenceHolder.getInstance().setConfigProvider(configProvider);
+        ServiceReferenceHolder.getInstance().getAuthConfiguration();
     }
 }
