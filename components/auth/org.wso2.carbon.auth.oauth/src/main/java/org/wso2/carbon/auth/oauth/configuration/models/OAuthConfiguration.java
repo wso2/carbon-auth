@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Keep the key manager oAuth related configurations
+ * Keep the key manager OAuth related configurations
  */
 @Configuration(namespace = "wso2.carbon.auth.oauth", description = "Key Management oAuth Configurations")
 public class OAuthConfiguration {
