@@ -20,7 +20,7 @@ package org.wso2.carbon.auth.oauth.configuration.models;
 import org.wso2.carbon.config.annotation.Element;
 
 /**
- *
+ * Class keep the grant type name and class configurations
  */
 public class GrantTypeModel {
     @Element(description = "Access token default validity period")
