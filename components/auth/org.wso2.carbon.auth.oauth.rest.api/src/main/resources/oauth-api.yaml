@@ -148,6 +148,60 @@ paths:
                 The content type of the body.
               type: string
 
+  /userinfo:
+     get:
+       tags:
+       - OAuth Userinfo
+       consumes:
+       - application/x-www-form-urlencoded
+       produces:
+       - application/json
+       parameters:
+       - in: header
+         name: Authorization
+         description: Authentication scheme header
+         required: true
+         type: string
+       - in: query
+         name: schema
+         description: Schema value
+         required: true
+         type: string
+       responses:
+         200:
+           description: |
+             OK.
+             Successful response from userinfo endpoint.
+           schema:
+             $ref: '#/definitions/UserinfoResponse'
+           headers:
+             Content-Type:
+               description: |
+                 The content type of the body.
+               type: string
+         400:
+           description: |
+             Bad Request.
+             Error response from userinfo endpoint due to malformed request.
+           schema:
+             $ref: '#/definitions/Error'
+           headers:
+             Content-Type:
+               description: |
+                 The content type of the body.
+               type: string
+         401:
+           description: |
+             Unauthorized.
+             Error response from userinfo endpoint due to client authentication failure.
+           schema:
+             $ref: '#/definitions/Error'
+           headers:
+             Content-Type:
+               description: |
+                 The content type of the body.
+               type: string
+
 definitions:
   TokenResponse:
     title: Successful response sent for OAuth token request.
@@ -187,3 +241,23 @@ definitions:
         type: string
         description: |
           Error code classifying the type of preProcessingError.
+
+  UserinfoResponse:
+    title: Successful response sent for Userinfo request.
+    required:
+      - sub
+    properties:
+      sub:
+        type: string
+        description: |
+          The subject value.
+
+  Error:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      description:
+        type: string

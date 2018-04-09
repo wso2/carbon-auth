@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *   Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *   WSO2 Inc. licenses this file to you under the Apache License,
  *   Version 2.0 (the "License"); you may not use this file except
@@ -18,26 +18,23 @@
  *
  */
 
-package org.wso2.carbon.auth.oauth;
+package org.wso2.carbon.auth.user.info;
 
-import org.wso2.carbon.auth.core.exception.AuthException;
-import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
+import org.wso2.carbon.auth.user.info.exception.UserInfoException;
 
-import java.util.Map;
 
 /**
  * Handles OAuth2 token related functionality
  */
-public interface TokenRequestHandler {
+public interface UserinfoRequestHandler {
 
     /**
-     * Generate OAuth2 Access token
+     * Retrieve user information for the user based on the OAuth2 Access token.
      *
-     * @param authorization   Authorization header
-     * @param queryParameters Query Parameters sent in request
+     * @param authorization Authorization header
      * @return Access token
-     * @throws AuthException if failed to generate a token
+     * @throws UserInfoException if validation failed to retrieve token
      */
-    AccessTokenContext generateToken(String authorization, Map<String, String> queryParameters)
-            throws AuthException;
+    String retrieveUserInfo(String authorization, String schema) throws UserInfoException;
+
 }

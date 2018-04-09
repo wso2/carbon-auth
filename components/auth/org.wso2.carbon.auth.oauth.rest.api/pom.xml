@@ -114,6 +114,18 @@
             <artifactId>powermock-module-junit4-rule-agent</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.auth</groupId>
+            <artifactId>org.wso2.carbon.auth.rest.api.commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.auth</groupId>
+            <artifactId>org.wso2.carbon.auth.token.introspection</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.auth</groupId>
+            <artifactId>org.wso2.carbon.auth.user.info</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -212,6 +224,9 @@
             org.wso2.carbon.auth.oauth.*; version="${carbon.auth.version}",
             org.wso2.carbon.auth.client.registration.*; version="${carbon.auth.version}",
             org.wso2.carbon.auth.user.mgt.*; version="${carbon.auth.version}",
+            org.wso2.carbon.auth.rest.api.commons.*; version="${carbon.auth.version}",
+            org.wso2.carbon.auth.token.introspection.*; version="${carbon.auth.version}",
+            org.wso2.carbon.auth.user.info.*; version="${carbon.auth.version}",
             com.google.gson.*;version="${gson.version.range}"
         </import.package>
         <export.package>

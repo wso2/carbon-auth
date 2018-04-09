@@ -286,6 +286,11 @@
                 <artifactId>org.wso2.carbon.auth.scim.rest.api</artifactId>
                 <version>${carbon.auth.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.auth</groupId>
+                <artifactId>org.wso2.carbon.auth.user.info</artifactId>
+                <version>${carbon.auth.version}</version>
+            </dependency>
 	        <dependency>
                 <groupId>org.wso2.charon</groupId>
                 <artifactId>org.wso2.charon3.core</artifactId>

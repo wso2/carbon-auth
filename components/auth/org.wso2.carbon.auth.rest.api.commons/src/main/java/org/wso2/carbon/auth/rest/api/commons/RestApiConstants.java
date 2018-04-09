@@ -67,6 +67,9 @@ public class RestApiConstants {
     public static final String SCOPES_GET_PAGINATION_URL =
             RESOURCE_PATH_SCOPES + "?limit=" + LIMIT_PARAM + "&offset=" + OFFSET_PARAM;
 
+    public static final String APPLICATION_FORM_URL_ENCODED = "application/x-www-form-urlencoded";
+    public static final String US_ASCII = "US-ASCII";
+
     /**
      * Types of Apps in KeyManager
      */
@@ -82,5 +85,7 @@ public class RestApiConstants {
         public static final String SCIM_SWAGGER_DEFINITION_FILE_PATH = "/scim-api.yaml";
         public static final String SCOPE_SWAGGER_DEFINITION_FILE_PATH = "/scope-api.yaml";
     }
+
+
 
 }

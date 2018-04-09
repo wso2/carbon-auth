@@ -33,9 +33,9 @@ public interface ClientLookup {
      * Get Client Id based on authorization header
      *
      * @param authorization Authorization header
-     * @param context  AccessTokenContext object that stores context information during request processing
+     * @param context       AccessTokenContext object that stores context information during request processing
      * @param haltExecution State variable indicating if an error has occurred which should halt further execution
-     * @return
+     * @return Client id
      */
     String getClientId(String authorization, AccessTokenContext context, Map<String, String> queryParameters,
             MutableBoolean haltExecution);
