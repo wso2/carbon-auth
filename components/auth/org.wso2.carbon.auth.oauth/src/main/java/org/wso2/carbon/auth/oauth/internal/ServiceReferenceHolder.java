@@ -19,7 +19,7 @@ package org.wso2.carbon.auth.oauth.internal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.auth.core.configuration.models.AuthConfiguration;
+import org.wso2.carbon.auth.oauth.configuration.models.OAuthConfiguration;
 import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.secvault.SecureVault;
@@ -33,7 +33,7 @@ public class ServiceReferenceHolder {
     private static final Logger log = LoggerFactory.getLogger(ServiceReferenceHolder.class);
     private static ServiceReferenceHolder instance = new ServiceReferenceHolder();
     private ConfigProvider configProvider;
-    private AuthConfiguration config;
+    private OAuthConfiguration config;
     private SecureVault secureVault;
 
     private ServiceReferenceHolder() {}
@@ -56,10 +56,10 @@ public class ServiceReferenceHolder {
      *
      * @return AuthConfigurations
      */
-    public AuthConfiguration getAuthConfigurations() {
+    public OAuthConfiguration getAuthConfigurations() {
         try {
             if (configProvider != null) {
-                config = configProvider.getConfigurationObject(AuthConfiguration.class);
+                config = configProvider.getConfigurationObject(OAuthConfiguration.class);
             } else {
                 log.error("Configuration provider is null");
             }
@@ -68,7 +68,7 @@ public class ServiceReferenceHolder {
         }
 
         if (config == null) {
-            config = new AuthConfiguration();
+            config = new OAuthConfiguration();
             log.info("Setting default configurations...");
         }
 

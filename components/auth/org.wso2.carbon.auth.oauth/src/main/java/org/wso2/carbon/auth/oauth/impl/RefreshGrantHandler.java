@@ -21,7 +21,6 @@ import com.nimbusds.oauth2.sdk.OAuth2Error;
 import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.token.BearerTokenError;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
@@ -36,6 +35,7 @@ import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
+import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 
 import java.sql.SQLException;
 import java.util.Map;
@@ -54,13 +54,17 @@ public class RefreshGrantHandler implements GrantHandler {
     private ClientLookup clientLookup;
     private UserNameMapper userNameMapper;
 
-    public RefreshGrantHandler(TokenDAO tokenDAO, OAuthDAO oauthDAO, ApplicationDAO applicationDAO, UserNameMapper
-            userNameMapper) {
-        this.tokenDAO = tokenDAO;
-        this.oauthDAO = oauthDAO;
-        this.applicationDAO = applicationDAO;
-        this.clientLookup = new ClientLookupImpl(oauthDAO);
+    public RefreshGrantHandler() {
+    }
+
+    @Override
+    public void init(UserNameMapper userNameMapper, OAuthDAO oauthDAO, UserStoreManager userStoreManager,
+            ApplicationDAO applicationDAO, TokenDAO tokenDAO) {
         this.userNameMapper = userNameMapper;
+        this.oauthDAO = oauthDAO;
+        this.tokenDAO = tokenDAO;
+        this.applicationDAO = applicationDAO;
+        clientLookup = new ClientLookupImpl(oauthDAO);
     }
 
     /**
@@ -75,19 +79,11 @@ public class RefreshGrantHandler implements GrantHandler {
     public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
             throws AuthException {
 
-        MutableBoolean haltExecution = new MutableBoolean(false);
-
-        String clientId = clientLookup.getClientId(authorization, context, haltExecution);
-
-        if (haltExecution.isTrue()) {
-            context.setErrorObject(context.getErrorObject());
-            log.error(context.getErrorObject().getDescription());
-            return;
-        }
-
+        String clientId = (String) context.getParams().get(OAuthConstants.CLIENT_ID);
         AccessTokenDTO accessTokenDTO;
         boolean isExpired;
         String refreshToken = queryParameters.get(OAuthConstants.REFRESH_TOKEN_QUERY_PARAM);
+
         if (StringUtils.isEmpty(refreshToken)) {
             log.error("valid refresh token is not found");
             context.setErrorObject(OAuth2Error.INVALID_REQUEST);
@@ -129,7 +125,7 @@ public class RefreshGrantHandler implements GrantHandler {
 
         TokenGenerator.generateAccessToken(scope, context);
         AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
-        String user = (String) context.getParams().get("AUTH_USER");
+        String user = (String) context.getParams().get(OAuthConstants.AUTH_USER);
         accessTokenData.setAuthUser(userNameMapper.getLoggedInPseudoNameFromUserID(user));
         accessTokenData.setClientId(clientId);
         oauthDAO.addAccessTokenInfo(accessTokenData);

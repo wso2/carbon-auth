@@ -28,13 +28,17 @@ import com.nimbusds.oauth2.sdk.Scope;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
 import org.wso2.carbon.auth.core.api.UserNameMapper;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.GrantHandler;
+import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
+import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
+import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 
 import java.net.URI;
 import java.util.Map;
@@ -48,10 +52,15 @@ public class AuthCodeGrantHandlerImpl implements GrantHandler {
     private ClientLookup clientLookup;
     private UserNameMapper userNameMapper;
 
-    AuthCodeGrantHandlerImpl(OAuthDAO oauthDAO, UserNameMapper userNameMapper) {
+    AuthCodeGrantHandlerImpl() {
+    }
+
+    @Override
+    public void init(UserNameMapper userNameMapper, OAuthDAO oauthDAO, UserStoreManager userStoreManager,
+            ApplicationDAO applicationDAO, TokenDAO tokenDAO) {
+        this.userNameMapper = userNameMapper;
         this.oauthDAO = oauthDAO;
         clientLookup = new ClientLookupImpl(oauthDAO);
-        this.userNameMapper = userNameMapper;
     }
 
     @Override
@@ -72,7 +81,7 @@ public class AuthCodeGrantHandlerImpl implements GrantHandler {
         log.debug("Calling processAuthCodeGrantRequest");
         MutableBoolean haltExecution = new MutableBoolean(false);
 
-        String clientId = clientLookup.getClientId(authorization, context, haltExecution);
+        String clientId = (String) context.getParams().get(OAuthConstants.CLIENT_ID);
 
         if (haltExecution.isTrue()) {
             return;

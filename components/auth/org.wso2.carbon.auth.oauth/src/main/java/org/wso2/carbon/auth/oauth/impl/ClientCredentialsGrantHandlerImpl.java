@@ -24,21 +24,21 @@ import com.nimbusds.oauth2.sdk.ClientCredentialsGrant;
 import com.nimbusds.oauth2.sdk.OAuth2Error;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.Scope;
-import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
 import org.wso2.carbon.auth.client.registration.exception.ClientRegistrationDAOException;
-import org.wso2.carbon.auth.client.registration.model.Application;
 import org.wso2.carbon.auth.core.api.UserNameMapper;
 import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
+import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
+import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -53,11 +53,16 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
     private ClientLookup clientLookup;
     private UserNameMapper userNameMapper;
 
-    ClientCredentialsGrantHandlerImpl(OAuthDAO oauthDAO, ApplicationDAO applicationDAO, UserNameMapper userNameMapper) {
+    ClientCredentialsGrantHandlerImpl() {
+    }
+
+    @Override
+    public void init(UserNameMapper userNameMapper, OAuthDAO oauthDAO, UserStoreManager userStoreManager,
+            ApplicationDAO applicationDAO, TokenDAO tokenDAO) {
+        this.userNameMapper = userNameMapper;
         this.oauthDAO = oauthDAO;
         this.applicationDAO = applicationDAO;
         clientLookup = new ClientLookupImpl(oauthDAO);
-        this.userNameMapper = userNameMapper;
     }
 
     @Override
@@ -81,19 +86,13 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
     }
 
     private void processClientCredentialsGrantRequest(String authorization, AccessTokenContext context,
-                                             @Nullable String scopeValue, ClientCredentialsGrant request)
-            throws AuthException {
+            @Nullable String scopeValue, ClientCredentialsGrant request) throws AuthException {
         log.debug("Calling processClientCredentialsGrantRequest");
-        MutableBoolean haltExecution = new MutableBoolean(false);
 
-        String clientId = clientLookup.getClientId(authorization, context, haltExecution);
+        String clientId = (String) context.getParams().get(OAuthConstants.CLIENT_ID);
+        String appOwner = (String) context.getParams().get(OAuthConstants.APPLICATION_OWNER);
 
-        if (haltExecution.isTrue()) {
-            return;
-        }
-        Application application = applicationDAO.getApplication(clientId);
         Scope scope;
-
         if (scopeValue != null) {
             scope = new Scope(scopeValue);
         } else {
@@ -101,12 +100,9 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
         }
 
         TokenGenerator.generateAccessToken(scope, context);
-
         AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
         accessTokenData.setClientId(clientId);
-        if (application != null) {
-            accessTokenData.setAuthUser(application.getAuthUser());
-        }
+        accessTokenData.setAuthUser(appOwner);
         oauthDAO.addAccessTokenInfo(accessTokenData);
         accessTokenData.setAuthUser(userNameMapper.getLoggedInUserIDFromPseudoName(accessTokenData.getAuthUser()));
     }

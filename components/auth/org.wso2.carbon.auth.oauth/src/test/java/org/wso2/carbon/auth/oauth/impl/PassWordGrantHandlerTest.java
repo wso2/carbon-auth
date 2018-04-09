@@ -22,12 +22,14 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
 import org.wso2.carbon.auth.client.registration.model.Application;
 import org.wso2.carbon.auth.core.api.UserNameMapper;
 import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
+import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
@@ -39,6 +41,8 @@ import java.util.Map;
 public class PassWordGrantHandlerTest {
     private PasswordGrantHandlerImpl passwordGrantHandler;
     private OAuthDAO oauthDAO;
+    private TokenDAO tokenDAO;
+    private ApplicationDAO applicationDAO;
     private UserNameMapper userNameMapper;
     String clientId = "JgUsk2mQ_WL0ffmpRSpHDJWFjvEa";
     String clientSecret = "KQd8QXgV3bG1nFOGRDf7ib6HJu4a";
@@ -52,13 +56,15 @@ public class PassWordGrantHandlerTest {
     @BeforeTest
     public void init() throws UserStoreException {
         oauthDAO = Mockito.mock(OAuthDAO.class);
+        tokenDAO = Mockito.mock(TokenDAO.class);
         clientLookup = Mockito.mock(ClientLookup.class);
         userNameMapper = Mockito.mock(UserNameMapper.class);
         authorization = "Basic " + Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
         context = new AccessTokenContext();
         queryParameters = new HashMap<>();
         userStoreManager = Mockito.mock(UserStoreManager.class);
-        passwordGrantHandler = new PasswordGrantHandlerImpl(oauthDAO, userNameMapper, clientLookup, userStoreManager);
+        passwordGrantHandler = new PasswordGrantHandlerImpl();
+        passwordGrantHandler.init(userNameMapper, oauthDAO, userStoreManager, applicationDAO, tokenDAO);
     }
 
     @Test
