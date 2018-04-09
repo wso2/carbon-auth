@@ -16,7 +16,10 @@ class TokenDataUtil {
 
         AccessTokenData accessTokenData = new AccessTokenData();
         accessTokenData.setAccessToken(tokens.getAccessToken().getValue());
-        accessTokenData.setRefreshToken(tokens.getRefreshToken().getValue());
+        //refresh token can be null in client credentials grant
+        if (tokens.getRefreshToken() != null) {
+            accessTokenData.setRefreshToken(tokens.getRefreshToken().getValue());
+        }
         accessTokenData.setScopes(tokens.getAccessToken().getScope().toString());
 
         Instant timestamp = Instant.now();

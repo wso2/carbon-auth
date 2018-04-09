@@ -27,12 +27,14 @@ import com.nimbusds.oauth2.sdk.auth.Secret;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
 import org.wso2.carbon.auth.core.api.UserNameMapper;
 import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
+import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
@@ -51,12 +53,16 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
     private UserNameMapper userNameMapper;
     private UserStoreManager userStoreManager;
 
-    PasswordGrantHandlerImpl(OAuthDAO oauthDAO, UserNameMapper userNameMapper, ClientLookup clientLookup,
-                             UserStoreManager userStoreManager) {
-        this.oauthDAO = oauthDAO;
-        this.clientLookup = clientLookup;
+    PasswordGrantHandlerImpl() {
+    }
+
+    @Override
+    public void init(UserNameMapper userNameMapper, OAuthDAO oauthDAO, UserStoreManager userStoreManager,
+            ApplicationDAO applicationDAO, TokenDAO tokenDAO) {
         this.userNameMapper = userNameMapper;
+        this.oauthDAO = oauthDAO;
         this.userStoreManager = userStoreManager;
+        clientLookup = new ClientLookupImpl(oauthDAO);
     }
 
     @Override
@@ -81,11 +87,9 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
         log.debug("calling processPasswordGrantRequest");
         MutableBoolean haltExecution = new MutableBoolean(false);
 
-        String clientId = clientLookup.getClientId(authorization, context, haltExecution);
-
         boolean authenticated = validateGrant(request);
         if (authenticated) {
-            context.getParams().put("AUTH_USER", request.getUsername());
+            context.getParams().put(OAuthConstants.AUTH_USER, request.getUsername());
         } else {
             return;
         }
@@ -106,7 +110,8 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
 
         TokenGenerator.generateAccessToken(scope, context);
         AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
-        String user = (String) context.getParams().get("AUTH_USER");
+        String user = (String) context.getParams().get(OAuthConstants.AUTH_USER);
+        String clientId = (String) context.getParams().get(OAuthConstants.CLIENT_ID);
         accessTokenData.setAuthUser(userNameMapper.getLoggedInPseudoNameFromUserID(user));
         accessTokenData.setClientId(clientId);
         oauthDAO.addAccessTokenInfo(accessTokenData);

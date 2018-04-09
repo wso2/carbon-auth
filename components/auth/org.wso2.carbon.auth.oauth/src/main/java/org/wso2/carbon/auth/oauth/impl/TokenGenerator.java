@@ -21,11 +21,13 @@
 package org.wso2.carbon.auth.oauth.impl;
 
 import com.nimbusds.oauth2.sdk.AccessTokenResponse;
+import com.nimbusds.oauth2.sdk.GrantType;
 import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import com.nimbusds.oauth2.sdk.token.Tokens;
-import org.wso2.carbon.auth.core.configuration.models.AuthConfiguration;
+import org.wso2.carbon.auth.oauth.OAuthConstants;
+import org.wso2.carbon.auth.oauth.configuration.models.OAuthConfiguration;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.internal.ServiceReferenceHolder;
 
@@ -34,14 +36,17 @@ import org.wso2.carbon.auth.oauth.internal.ServiceReferenceHolder;
  */
 public class TokenGenerator {
     static void generateAccessToken(Scope scope, AccessTokenContext context) {
-        AuthConfiguration authConfigs = ServiceReferenceHolder.getInstance().getAuthConfigurations();
-        long defaultValidityPeriod = authConfigs.getKeyManagerConfigs().getDefaultTokenValidityPeriod();
+        OAuthConfiguration authConfigs = ServiceReferenceHolder.getInstance().getAuthConfigurations();
+        long defaultValidityPeriod = authConfigs.getDefaultTokenValidityPeriod();
         BearerAccessToken accessToken = new BearerAccessToken(defaultValidityPeriod, scope);
 
-        RefreshToken refreshToken = new RefreshToken();
+        String grantTypeValue = (String) context.getParams().get(OAuthConstants.GRANT_TYPE);
+        RefreshToken refreshToken = null;
+        if (!GrantType.CLIENT_CREDENTIALS.getValue().equals(grantTypeValue)) {
+            refreshToken = new RefreshToken();
+        }
 
         Tokens tokens = new Tokens(accessToken, refreshToken);
-
         context.setAccessTokenResponse(new AccessTokenResponse(tokens));
         context.setSuccessful(true);
     }

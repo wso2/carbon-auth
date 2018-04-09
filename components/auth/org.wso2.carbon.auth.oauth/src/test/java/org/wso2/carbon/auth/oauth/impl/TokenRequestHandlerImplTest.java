@@ -37,6 +37,7 @@ import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.TokenRequestHandler;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
+import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.user.mgt.impl.JDBCUserStoreManager;
@@ -98,10 +99,11 @@ public class TokenRequestHandlerImplTest extends AuthDAOIntegrationTestBase {
         info.put(UserStoreConstants.ITERATION_COUNT, 1);
         info.put(UserStoreConstants.KEY_LENGTH, 1);
 
-        OAuthDAO clientDAO = DAOFactory.getClientDAO();
+        OAuthDAO oauthDAO = DAOFactory.getClientDAO();
         ApplicationDAO applicationDAO = org.wso2.carbon.auth.client.registration.dao.impl.DAOFactory
                 .getApplicationDAO();
-        TokenRequestHandler tokenRequestHandler = new TokenRequestHandlerImpl(clientDAO, applicationDAO);
+        TokenDAO tokenDAO = DAOFactory.getTokenDAO();
+        TokenRequestHandler tokenRequestHandler = new TokenRequestHandlerImpl(oauthDAO, applicationDAO, tokenDAO);
         Map<String, String> queryParameters = new HashMap<>();
         queryParameters.put(OAuthConstants.USERNAME, username);
         queryParameters.put(OAuthConstants.PASSWORD, password);
@@ -130,7 +132,7 @@ public class TokenRequestHandlerImplTest extends AuthDAOIntegrationTestBase {
         //check no such grant
         queryParameters.put(OAuthConstants.GRANT_TYPE_QUERY_PARAM, "noSuch");
         AccessTokenContext accessTokenContext = tokenRequestHandler.generateToken(authorization, queryParameters);
-        Assert.assertEquals(OAuth2Error.INVALID_REQUEST, accessTokenContext.getErrorObject());
+        Assert.assertEquals(OAuth2Error.UNSUPPORTED_GRANT_TYPE, accessTokenContext.getErrorObject());
 
         //check empty grant
         queryParameters.put(OAuthConstants.GRANT_TYPE_QUERY_PARAM, "");
@@ -178,7 +180,7 @@ public class TokenRequestHandlerImplTest extends AuthDAOIntegrationTestBase {
         tokens = accessTokenContext.getAccessTokenResponse().getTokens();
         Assert.assertNotNull(tokens);
         Assert.assertNotNull(tokens.getAccessToken());
-        Assert.assertNotNull(tokens.getRefreshToken());
+        Assert.assertNull(tokens.getRefreshToken());
 
         // scope not null
         queryParameters.put(OAuthConstants.SCOPE_QUERY_PARAM, scopes);
@@ -186,7 +188,6 @@ public class TokenRequestHandlerImplTest extends AuthDAOIntegrationTestBase {
         tokens = accessTokenContext.getAccessTokenResponse().getTokens();
         Assert.assertNotNull(tokens);
         Assert.assertNotNull(tokens.getAccessToken());
-        Assert.assertNotNull(tokens.getRefreshToken());
 
         // check for auth code
         queryParameters.put(OAuthConstants.GRANT_TYPE_QUERY_PARAM, GrantType.AUTHORIZATION_CODE.getValue());

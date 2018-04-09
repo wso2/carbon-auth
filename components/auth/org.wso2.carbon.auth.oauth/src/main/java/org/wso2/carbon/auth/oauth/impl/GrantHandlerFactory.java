@@ -20,7 +20,6 @@
 
 package org.wso2.carbon.auth.oauth.impl;
 
-import com.nimbusds.oauth2.sdk.GrantType;
 import com.nimbusds.oauth2.sdk.OAuth2Error;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableBoolean;
@@ -33,12 +32,13 @@ import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dao.TokenDAO;
-import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
-import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
+import org.wso2.carbon.auth.oauth.internal.ServiceReferenceHolder;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
+import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 import org.wso2.carbon.auth.user.mgt.UserStoreManagerFactory;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -55,32 +55,38 @@ public class GrantHandlerFactory {
      * @return Grant handler implementation
      */
     static Optional<GrantHandler> createGrantHandler(String grantTypeValue, AccessTokenContext context,
-            OAuthDAO oauthDAO, ApplicationDAO applicationDAO, MutableBoolean haltExecution) throws UserStoreException {
+            OAuthDAO oauthDAO, ApplicationDAO applicationDAO, TokenDAO tokenDAO, MutableBoolean haltExecution)
+            throws UserStoreException {
         log.debug("Calling createGrantHandler");
         if (!StringUtils.isEmpty(grantTypeValue)) {
-            GrantType grantType = new GrantType(grantTypeValue);
-
-            if (grantType.equals(GrantType.AUTHORIZATION_CODE)) {
-                return Optional.of(new AuthCodeGrantHandlerImpl(oauthDAO, userNameMapper));
-            } else if (grantType.equals(GrantType.PASSWORD)) {
-                return Optional.of(new PasswordGrantHandlerImpl(oauthDAO, userNameMapper, new ClientLookupImpl
-                        (oauthDAO), UserStoreManagerFactory.getUserStoreManager()));
-            } else if (grantType.equals(GrantType.CLIENT_CREDENTIALS)) {
-                return Optional.of(new ClientCredentialsGrantHandlerImpl(oauthDAO, applicationDAO, userNameMapper));
-            } else if (grantType.equals(GrantType.REFRESH_TOKEN)) {
-                TokenDAO tokenDAO = null;
-                try {
-                    tokenDAO = DAOFactory.getTokenDAO();
-                } catch (OAuthDAOException e) {
-                    log.error(e.getMessage(), e);
-                }
-                return Optional.of(new RefreshGrantHandler(tokenDAO, oauthDAO, applicationDAO, userNameMapper));
-            } else {
-                context.setErrorObject(OAuth2Error.INVALID_REQUEST);
+            Map<String, String> grantTypes = ServiceReferenceHolder.getInstance().getAuthConfigurations()
+                    .getGrantTypes();
+            String grantTypeImplClassName = grantTypes.get(grantTypeValue);
+            if (grantTypeImplClassName == null) {
+                log.debug("Requested grant type not found");
+                context.setErrorObject(OAuth2Error.UNSUPPORTED_GRANT_TYPE);
                 haltExecution.setTrue();
-                log.info("Unhandled " + OAuthConstants.GRANT_TYPE_QUERY_PARAM + ": " + grantTypeValue +
-                        "has not been sent in request");
+                return Optional.empty();
             }
+            Class<?> grantTypeImplClass = null;
+            GrantHandler grantHandlerImpl = null;
+            try {
+                grantTypeImplClass = Class.forName(grantTypeImplClassName);
+                grantHandlerImpl = (GrantHandler) grantTypeImplClass.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                log.error("Error instantiation class " + grantTypeImplClass, e);
+                context.setErrorObject(OAuth2Error.UNSUPPORTED_GRANT_TYPE);
+                haltExecution.setTrue();
+                return Optional.empty();
+            } catch (ClassNotFoundException e) {
+                log.error("Requested grant type implementation not found", e);
+                context.setErrorObject(OAuth2Error.UNSUPPORTED_GRANT_TYPE);
+                haltExecution.setTrue();
+                return Optional.empty();
+            }
+            UserStoreManager userStoreManager = UserStoreManagerFactory.getUserStoreManager();
+            grantHandlerImpl.init(userNameMapper, oauthDAO, userStoreManager, applicationDAO, tokenDAO);
+            return Optional.of(grantHandlerImpl);
         } else {
             context.setErrorObject(OAuth2Error.INVALID_REQUEST);
             haltExecution.setTrue();

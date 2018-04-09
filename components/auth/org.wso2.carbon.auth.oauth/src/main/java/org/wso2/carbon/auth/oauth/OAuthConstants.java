@@ -53,4 +53,10 @@ public class OAuthConstants {
 
     public static final String UNAUTHORIZED_ERROR_CODE = "UNAUTHORIZED";
     public static final String BAD_REQUEST = "BAD_REQUEST";
+
+    //internal constants
+    public static final String CLIENT_ID = "clientId";
+    public static final String AUTH_USER = "AUTH_USER";
+    public static final String APPLICATION_OWNER = "APPLICATION_OWNER";
+    public static final String GRANT_TYPE = "GRANT_TYPE";
 }

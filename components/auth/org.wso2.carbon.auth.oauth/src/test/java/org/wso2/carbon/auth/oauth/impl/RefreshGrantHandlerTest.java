@@ -32,6 +32,7 @@ import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
+import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 
 import java.sql.SQLException;
 import java.util.Base64;
@@ -51,6 +52,7 @@ public class RefreshGrantHandlerTest {
     String authorization;
     AccessTokenContext context;
     Map<String, String> queryParameters;
+    UserStoreManager userStoreManager;
 
     @Before
     public void init() throws Exception {
@@ -61,7 +63,9 @@ public class RefreshGrantHandlerTest {
         authorization = "Basic " + Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
         context = new AccessTokenContext();
         queryParameters = new HashMap<>();
-        refreshGrantHandler = new RefreshGrantHandler(tokenDAO, oauthDAO, applicationDAO, userNameMapper);
+        userStoreManager = Mockito.mock(UserStoreManager.class);
+        refreshGrantHandler = new RefreshGrantHandler();
+        refreshGrantHandler.init(userNameMapper, oauthDAO, userStoreManager, applicationDAO, tokenDAO);
     }
 
     @Test
@@ -80,6 +84,7 @@ public class RefreshGrantHandlerTest {
 
         //no access token data for a given refresh token and client id
         queryParameters.put(OAuthConstants.REFRESH_TOKEN_QUERY_PARAM, refreshToken);
+        context.getParams().put(OAuthConstants.CLIENT_ID, clientId);
         Mockito.when(tokenDAO.getTokenInfo(refreshToken, clientId)).thenReturn(null);
         refreshGrantHandler.process(authorization, context, queryParameters);
         Assert.assertEquals(context.getErrorObject().getCode(), RefreshGrantHandler.INVALID_GRANT_ERROR_CODE);
@@ -101,6 +106,8 @@ public class RefreshGrantHandlerTest {
         Application application = new Application();
         application
                 .setGrantTypes(GrantType.PASSWORD + " " + GrantType.REFRESH_TOKEN + " " + GrantType.CLIENT_CREDENTIALS);
+        context.getParams().put(OAuthConstants.CLIENT_ID, clientId);
+
         Mockito.when(applicationDAO.getApplication(clientId)).thenReturn(application);
         Mockito.when(oauthDAO.isClientCredentialsValid(clientId, clientSecret)).thenReturn(true);
         queryParameters.put(OAuthConstants.REFRESH_TOKEN_QUERY_PARAM, refreshToken);

@@ -34,6 +34,7 @@ import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.TokenRequestHandler;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
+import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
@@ -48,11 +49,12 @@ public class TokenRequestHandlerImpl implements TokenRequestHandler {
     private OAuthDAO oauthDAO;
     private ApplicationDAO applicationDAO;
     private ClientLookup clientLookup;
+    private TokenDAO tokenDAO;
 
-
-    public TokenRequestHandlerImpl(OAuthDAO oauthDAO, ApplicationDAO applicationDAO) {
+    public TokenRequestHandlerImpl(OAuthDAO oauthDAO, ApplicationDAO applicationDAO, TokenDAO tokenDAO) {
         this.oauthDAO = oauthDAO;
         this.applicationDAO = applicationDAO;
+        this.tokenDAO = tokenDAO;
     }
 
     @Override
@@ -73,7 +75,7 @@ public class TokenRequestHandlerImpl implements TokenRequestHandler {
         MutableBoolean haltExecution = new MutableBoolean(false);
 
         Optional<GrantHandler> grantHandler = GrantHandlerFactory
-                .createGrantHandler(grantTypeValue, context, oauthDAO, applicationDAO, haltExecution);
+                .createGrantHandler(grantTypeValue, context, oauthDAO, applicationDAO, tokenDAO, haltExecution);
 
         if (haltExecution.isFalse()) {
             if (grantHandler.isPresent()) {
@@ -92,12 +94,15 @@ public class TokenRequestHandlerImpl implements TokenRequestHandler {
                     context.setErrorObject(OAuth2Error.INVALID_CLIENT);
                     return context;
                 }
-                
+
+                context.getParams().put(OAuthConstants.CLIENT_ID, clientId);
+                context.getParams().put(OAuthConstants.APPLICATION_OWNER, application.getAuthUser());
+                context.getParams().put(OAuthConstants.GRANT_TYPE, grantTypeValue);
                 isAuthorized = grantHandler.get().isAuthorizedClient(application, grantTypeValue);
                 if (!isAuthorized) {
                     String error = "Grant type is not allowed for the application";
                     log.debug(error);
-                    context.setErrorObject(OAuth2Error.INVALID_GRANT);
+                    context.setErrorObject(OAuth2Error.UNSUPPORTED_GRANT_TYPE);
                     return context;
                 }
                 grantHandler.get().process(authorization, context, queryParameters);
