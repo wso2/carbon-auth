@@ -1,5 +1,4 @@
 /*
- *
  *   Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *   WSO2 Inc. licenses this file to you under the Apache License,
@@ -33,6 +32,11 @@ public class UserInfoConfigurationService {
         this.userInfoConfiguration = userInfoConfiguration;
     }
 
+    /**
+     * Retrieve UserInfoConfiguration
+     *
+     * @return UserInfoConfiguration instance
+     */
     public UserInfoConfiguration getUserInfoConfiguration() {
         return userInfoConfiguration;
     }

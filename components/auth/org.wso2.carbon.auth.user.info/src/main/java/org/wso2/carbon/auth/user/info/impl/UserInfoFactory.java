@@ -24,8 +24,17 @@ import org.wso2.carbon.auth.user.info.configuration.UserInfoConfigurationService
 import org.wso2.carbon.auth.user.info.exception.UserInfoException;
 import org.wso2.carbon.auth.user.info.util.UserInfoUtil;
 
+/**
+ * Factory class for user info
+ */
 public class UserInfoFactory {
 
+    /**
+     * Retrieve UserInfoResponseBuilder
+     *
+     * @return UserInfoResponseBuilder instance
+     * @throws UserInfoException if failed to retrieve UserInfoResponseBuilder instance
+     */
     public static UserInfoResponseBuilder getUserInfoResponseBuilder() throws UserInfoException {
 
         UserInfoConfigurationService userInfoConfigurationService = UserInfoUtil.getUserInfoConfigurationService();

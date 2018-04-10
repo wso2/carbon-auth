@@ -1,5 +1,4 @@
 /*
- *
  *   Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *   WSO2 Inc. licenses this file to you under the Apache License,
@@ -190,6 +189,12 @@ public class UserInfoUtil {
         return filteredUserAttributes;
     }
 
+    /**
+     * Extract user attributes values and return a map with values.
+     *
+     * @param userAttributes Map of user attributes
+     * @return Map of user attribute values
+     */
     private static Map<String, String> extractUserAttributes(Map<String, Attribute> userAttributes) {
 
         Map<String, String> extractedUserAttributes = new HashMap<>();
@@ -231,6 +236,14 @@ public class UserInfoUtil {
         return extractedUserAttributes;
     }
 
+    /**
+     * Handle email attribute by going through multi valued attributes.
+     *
+     * @param requiredUserAttributes List of required user attributes
+     * @param userAttributes         Map of user attributes
+     * @param filteredUserAttributes Filtered user attributes
+     * @throws UserInfoException if failed to handle email attributes
+     */
     private static void handleEmailAttributes(List<String> requiredUserAttributes, Map<String, Attribute>
             userAttributes, Map<String, Object> filteredUserAttributes) throws UserInfoException {
 
@@ -257,6 +270,12 @@ public class UserInfoUtil {
         }
     }
 
+    /**
+     * Get email values from multi valued attributes.
+     *
+     * @param multiValuedAttributes List of multi valued attributes
+     * @throws UserInfoException if failed to get email values
+     */
     private static Map<String, String> getEmailValues(List<Attribute> multiValuedAttributes) throws UserInfoException {
 
         Map<String, String> emailValues = new HashMap<>();
@@ -276,6 +295,12 @@ public class UserInfoUtil {
         return emailValues;
     }
 
+    /**
+     * Build Json and return as a String value.
+     *
+     * @param params Map of values
+     * @throws UserInfoException if failed to build the json
+     */
     public static String buildJSON(Map<String, Object> params) throws UserInfoException {
 
         JSONStringer stringer = new JSONStringer();

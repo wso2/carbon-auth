@@ -18,6 +18,7 @@
 package org.wso2.carbon.auth.user.info.internal;
 
 import org.wso2.carbon.auth.user.info.configuration.UserInfoConfigurationService;
+import org.wso2.carbon.auth.user.info.exception.UserInfoException;
 import org.wso2.carbon.config.provider.ConfigProvider;
 
 /**
@@ -32,22 +33,43 @@ public class ServiceReferenceHolder {
     private ServiceReferenceHolder() {
     }
 
+    /**
+     * Retrieve ServiceReferenceHolder instance
+     *
+     * @return ServiceReferenceHolder instance
+     */
     public static ServiceReferenceHolder getInstance() {
         return instance;
     }
 
+    /**
+     * Retrieve UserInfoConfigurationService instance
+     *
+     * @return UserInfoConfigurationService instance
+     */
     public UserInfoConfigurationService getUserInfoConfigurationService() {
         return userInfoConfigurationService;
     }
 
+    /**
+     * Set UserInfoConfigurationService
+     */
     void setUserInfoConfigurationService(UserInfoConfigurationService userInfoConfigurationService) {
         this.userInfoConfigurationService = userInfoConfigurationService;
     }
 
+    /**
+     * Set ConfigProvider
+     */
     public void setConfigProvider(ConfigProvider configProvider) {
         this.configProvider = configProvider;
     }
 
+    /**
+     * Retrieve ConfigProvider instance
+     *
+     * @return ConfigProvider instance
+     */
     ConfigProvider getConfigProvider() {
         return configProvider;
     }

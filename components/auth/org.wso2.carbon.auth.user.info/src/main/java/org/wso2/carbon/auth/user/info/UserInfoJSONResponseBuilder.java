@@ -1,5 +1,4 @@
 /*
- *
  *   Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *   WSO2 Inc. licenses this file to you under the Apache License,
@@ -31,12 +30,18 @@ import java.util.Map;
  */
 public class UserInfoJSONResponseBuilder extends AbstractUserInfoResponseBuilder {
 
+    /**
+     * @see AbstractUserInfoResponseBuilder#retrieveUserAttributes(IntrospectionResponse)
+     */
     @Override
     protected Map<String, Attribute> retrieveUserAttributes(IntrospectionResponse introspectionResponse)
             throws UserInfoException {
         return UserInfoUtil.getUserAttributes(introspectionResponse);
     }
 
+    /**
+     * @see AbstractUserInfoResponseBuilder#buildResponse(IntrospectionResponse, Map)
+     */
     @Override
     protected String buildResponse(IntrospectionResponse introspectionResponse, Map<String, Object>
             filteredUserAttributes) throws UserInfoException {

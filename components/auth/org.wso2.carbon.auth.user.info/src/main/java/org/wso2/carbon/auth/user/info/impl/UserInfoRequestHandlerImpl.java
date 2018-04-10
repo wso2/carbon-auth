@@ -43,6 +43,9 @@ public class UserInfoRequestHandlerImpl implements UserinfoRequestHandler {
         this.userInfoResponseBuilder = userInfoResponseBuilder;
     }
 
+    /**
+     * @see UserinfoRequestHandler#retrieveUserInfo(String, String)
+     */
     @Override
     public String retrieveUserInfo(String authorization, String schema) throws UserInfoException {
 
@@ -59,6 +62,14 @@ public class UserInfoRequestHandlerImpl implements UserinfoRequestHandler {
 
     }
 
+    /**
+     * Retrieve token
+     *
+     * @param authorization Authorization header value
+     * @param schema        Schema value
+     * @return access token
+     * @throws UserInfoException if failed to retrieve access token
+     */
     private String retrieveToken(String authorization, String schema) throws UserInfoException {
 
         if (authorization == null) {
@@ -76,6 +87,12 @@ public class UserInfoRequestHandlerImpl implements UserinfoRequestHandler {
         return authzHeaderInfo[1];
     }
 
+    /**
+     * Validate scopes
+     *
+     * @param scopes Scope values
+     * @throws UserInfoException if failed to validate scopes
+     */
     private void validateScopes(String scopes) throws UserInfoException {
 
         boolean validToken = false;
@@ -93,6 +110,5 @@ public class UserInfoRequestHandlerImpl implements UserinfoRequestHandler {
             throw new UserInfoException("Unsupported scope", ExceptionCodes.UNSUPPORTED_SCOPE);
         }
     }
-
 
 }
