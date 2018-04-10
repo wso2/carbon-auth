@@ -247,6 +247,10 @@ definitions:
           type: string
       client_name:
         type: string
+      grant_types:
+        type: array
+        items:
+          type: string
 #-----------------------------------------------------
 # The Error Response object
 #-----------------------------------------------------

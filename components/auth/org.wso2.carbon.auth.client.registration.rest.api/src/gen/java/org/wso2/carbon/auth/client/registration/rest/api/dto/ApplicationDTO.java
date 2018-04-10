@@ -27,6 +27,9 @@ public class ApplicationDTO   {
   @SerializedName("client_name")
   private String clientName = null;
 
+  @SerializedName("grant_types")
+  private List<String> grantTypes = new ArrayList<String>();
+
   public ApplicationDTO clientId(String clientId) {
     this.clientId = clientId;
     return this;
@@ -122,6 +125,29 @@ public class ApplicationDTO   {
     this.clientName = clientName;
   }
 
+  public ApplicationDTO grantTypes(List<String> grantTypes) {
+    this.grantTypes = grantTypes;
+    return this;
+  }
+
+  public ApplicationDTO addGrantTypesItem(String grantTypesItem) {
+    this.grantTypes.add(grantTypesItem);
+    return this;
+  }
+
+   /**
+   * Get grantTypes
+   * @return grantTypes
+  **/
+  @ApiModelProperty(value = "")
+  public List<String> getGrantTypes() {
+    return grantTypes;
+  }
+
+  public void setGrantTypes(List<String> grantTypes) {
+    this.grantTypes = grantTypes;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -136,12 +162,13 @@ public class ApplicationDTO   {
         Objects.equals(this.clientSecret, application.clientSecret) &&
         Objects.equals(this.clientSecretExpiresAt, application.clientSecretExpiresAt) &&
         Objects.equals(this.redirectUris, application.redirectUris) &&
-        Objects.equals(this.clientName, application.clientName);
+        Objects.equals(this.clientName, application.clientName) &&
+        Objects.equals(this.grantTypes, application.grantTypes);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(clientId, clientSecret, clientSecretExpiresAt, redirectUris, clientName);
+    return Objects.hash(clientId, clientSecret, clientSecretExpiresAt, redirectUris, clientName, grantTypes);
   }
 
   @Override
@@ -154,6 +181,7 @@ public class ApplicationDTO   {
     sb.append("    clientSecretExpiresAt: ").append(toIndentedString(clientSecretExpiresAt)).append("\n");
     sb.append("    redirectUris: ").append(toIndentedString(redirectUris)).append("\n");
     sb.append("    clientName: ").append(toIndentedString(clientName)).append("\n");
+    sb.append("    grantTypes: ").append(toIndentedString(grantTypes)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -25,6 +25,7 @@ import org.wso2.carbon.auth.client.registration.rest.api.dto.ApplicationDTO;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.RegistrationRequestDTO;
 import org.wso2.carbon.auth.client.registration.rest.api.dto.UpdateRequestDTO;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -41,11 +42,12 @@ public class MappingUtil {
      */
     public static ApplicationDTO applicationModelToApplicationDTO(Application application) {
         ApplicationDTO applicationDTO = new ApplicationDTO();
+        List<String> grantTypes = new ArrayList<>(Arrays.asList(application.getGrantTypes().split(" ")));
         applicationDTO.setClientName(application.getClientName());
         applicationDTO.setClientSecret(application.getClientSecret());
         applicationDTO.setClientId(application.getClientId());
+        applicationDTO.setGrantTypes(grantTypes);
         applicationDTO.setRedirectUris(extractCallBackUrlFromRegex(application.getCallBackUrl()));
-
         return applicationDTO;
     }
 
