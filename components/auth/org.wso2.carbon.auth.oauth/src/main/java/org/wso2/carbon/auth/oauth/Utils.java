@@ -27,7 +27,7 @@ import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
 public class Utils {
     private static final Logger log = LoggerFactory.getLogger(Utils.class);
 
-    public static boolean hasAccessTokenExpired(AccessTokenDTO accessTokenDTO) {
+    public static boolean isAccessTokenExpired(AccessTokenDTO accessTokenDTO) {
         // check whether the grant is expired
         if (accessTokenDTO.getValidityPeriod() < 0) {
             if (log.isDebugEnabled()) {
@@ -56,6 +56,7 @@ public class Utils {
     }
 
     public static long calculateValidityInMillis(long issuedTimeInMillis, long validityPeriodMillis) {
+        //todo: need to timestampSkew configurable
         long timestampSkew = 5 * 1000;
         return issuedTimeInMillis + validityPeriodMillis - (System.currentTimeMillis() - timestampSkew);
     }

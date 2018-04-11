@@ -98,7 +98,7 @@ public interface GrantHandler {
         if (accessTokenDTO == null) {
             return Optional.empty();
         }
-        boolean isExpired = Utils.hasAccessTokenExpired(accessTokenDTO);
+        boolean isExpired = Utils.isAccessTokenExpired(accessTokenDTO);
         if (isExpired) {
             return Optional.empty();
         } else {
