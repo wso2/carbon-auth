@@ -29,6 +29,7 @@ import org.wso2.carbon.auth.user.info.UserInfoResponseBuilder;
 import org.wso2.carbon.auth.user.info.UserinfoRequestHandler;
 import org.wso2.carbon.auth.user.info.constants.UserInfoConstants;
 import org.wso2.carbon.auth.user.info.exception.UserInfoException;
+import org.wso2.carbon.auth.user.info.util.UserInfoUtil;
 
 /**
  * Implementation of TokenRequestHandler interface
@@ -37,12 +38,9 @@ public class UserInfoRequestHandlerImpl implements UserinfoRequestHandler {
 
     private static final Log log = LogFactory.getLog(UserInfoRequestHandlerImpl.class);
     private IntrospectionManager introspectionManager;
-    private UserInfoResponseBuilder userInfoResponseBuilder;
 
-    public UserInfoRequestHandlerImpl(IntrospectionManager introspectionManager, UserInfoResponseBuilder
-            userInfoResponseBuilder) {
+    public UserInfoRequestHandlerImpl(IntrospectionManager introspectionManager) {
         this.introspectionManager = introspectionManager;
-        this.userInfoResponseBuilder = userInfoResponseBuilder;
     }
 
     /**
@@ -60,8 +58,8 @@ public class UserInfoRequestHandlerImpl implements UserinfoRequestHandler {
 
         validateScopes(introspectionResponse.getScope());
 
+        UserInfoResponseBuilder userInfoResponseBuilder = UserInfoUtil.getUserInfoResponseBuilder();
         return userInfoResponseBuilder.getResponseString(introspectionResponse);
-
     }
 
     /**

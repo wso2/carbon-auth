@@ -18,39 +18,18 @@
 
 package org.wso2.carbon.auth.oauth.rest.api.factories;
 
-import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.auth.oauth.rest.api.UserinfoApiService;
-import org.wso2.carbon.auth.user.info.configuration.UserInfoConfigurationService;
-import org.wso2.carbon.auth.user.info.configuration.models.UserInfoConfiguration;
-import org.wso2.carbon.auth.user.info.constants.UserInfoConstants;
-import org.wso2.carbon.auth.user.info.exception.UserInfoException;
-import org.wso2.carbon.auth.user.info.util.UserInfoUtil;
 
 public class UserinfoApiServiceFactoryTest {
 
     @Test
     public void testGetUserinfoApi() {
 
-        UserInfoConfigurationService userInfoConfigurationService = Mockito.mock(UserInfoConfigurationService.class);
-        UserInfoUtil.initializeUserInfoConfigurationService(userInfoConfigurationService);
-
-        UserInfoConfiguration userInfoConfiguration = new UserInfoConfiguration();
-        userInfoConfiguration.setResponseBuilderClassName(UserInfoConstants.RESPONSE_BUILDER_CLASS_NAME);
-
-        Mockito.when(userInfoConfigurationService.getUserInfoConfiguration()).thenReturn(userInfoConfiguration)
-                .thenThrow(UserInfoException.class);
         UserinfoApiServiceFactory userinfoApiServiceFactory = new UserinfoApiServiceFactory();
         UserinfoApiService userinfoApiService = userinfoApiServiceFactory.getUserinfoApi();
         Assert.assertNotNull(userinfoApiService);
-
-        try {
-            userinfoApiServiceFactory.getUserinfoApi();
-            Assert.fail("Exception is not thrown");
-        } catch (IllegalStateException e) {
-            Assert.assertEquals(e.getLocalizedMessage(), "Could not create UserInfoService");
-        }
     }
 
 

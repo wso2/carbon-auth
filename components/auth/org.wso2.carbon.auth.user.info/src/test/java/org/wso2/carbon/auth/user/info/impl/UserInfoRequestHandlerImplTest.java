@@ -45,8 +45,7 @@ public class UserInfoRequestHandlerImplTest {
 
         Mockito.when(introspectionManager.introspect(token)).thenReturn(introspectionResponse);
         Mockito.when(userInfoResponseBuilder.getResponseString(introspectionResponse)).thenReturn("user-info");
-        UserInfoRequestHandlerImpl userInfoRequestHandler = new UserInfoRequestHandlerImpl
-                (introspectionManager, userInfoResponseBuilder);
+        UserInfoRequestHandlerImpl userInfoRequestHandler = new UserInfoRequestHandlerImpl(introspectionManager);
         String authHeaderValue = OAuthConstants.AUTH_TYPE_BEARER + " " + token;
         String userInfo = userInfoRequestHandler.retrieveUserInfo(authHeaderValue, UserInfoConstants.OPENID);
 
@@ -57,14 +56,12 @@ public class UserInfoRequestHandlerImplTest {
     public void testRetrieveUserInfoForInactiveToken() {
 
         IntrospectionManager introspectionManager = Mockito.mock(IntrospectionManager.class);
-        UserInfoResponseBuilder userInfoResponseBuilder = Mockito.mock(UserInfoResponseBuilder.class);
         String token = "123-test-789";
         IntrospectionResponse introspectionResponse = new IntrospectionResponse();
         introspectionResponse.setActive(false);
 
         Mockito.when(introspectionManager.introspect(token)).thenReturn(introspectionResponse);
-        UserInfoRequestHandlerImpl userInfoRequestHandler = new UserInfoRequestHandlerImpl
-                (introspectionManager, userInfoResponseBuilder);
+        UserInfoRequestHandlerImpl userInfoRequestHandler = new UserInfoRequestHandlerImpl(introspectionManager);
         String authHeaderValue = OAuthConstants.AUTH_TYPE_BEARER + " " + token;
 
         try {
@@ -79,9 +76,7 @@ public class UserInfoRequestHandlerImplTest {
     public void testRetrieveTokenWhenAuthHeaderIsNull() {
 
         IntrospectionManager introspectionManager = Mockito.mock(IntrospectionManager.class);
-        UserInfoResponseBuilder userInfoResponseBuilder = Mockito.mock(UserInfoResponseBuilder.class);
-        UserInfoRequestHandlerImpl userInfoRequestHandler = new UserInfoRequestHandlerImpl
-                (introspectionManager, userInfoResponseBuilder);
+        UserInfoRequestHandlerImpl userInfoRequestHandler = new UserInfoRequestHandlerImpl(introspectionManager);
 
         try {
             userInfoRequestHandler.retrieveUserInfo(null, UserInfoConstants.OPENID);
@@ -95,9 +90,7 @@ public class UserInfoRequestHandlerImplTest {
     public void testRetrieveTokenWhenBearerIsMissing() {
 
         IntrospectionManager introspectionManager = Mockito.mock(IntrospectionManager.class);
-        UserInfoResponseBuilder userInfoResponseBuilder = Mockito.mock(UserInfoResponseBuilder.class);
-        UserInfoRequestHandlerImpl userInfoRequestHandler = new UserInfoRequestHandlerImpl
-                (introspectionManager, userInfoResponseBuilder);
+        UserInfoRequestHandlerImpl userInfoRequestHandler = new UserInfoRequestHandlerImpl(introspectionManager);
         String token = "123-test-789";
 
         try {
@@ -113,9 +106,7 @@ public class UserInfoRequestHandlerImplTest {
     public void testRetrieveTokenWhenTokenValueIsMissing() {
 
         IntrospectionManager introspectionManager = Mockito.mock(IntrospectionManager.class);
-        UserInfoResponseBuilder userInfoResponseBuilder = Mockito.mock(UserInfoResponseBuilder.class);
-        UserInfoRequestHandlerImpl userInfoRequestHandler = new UserInfoRequestHandlerImpl
-                (introspectionManager, userInfoResponseBuilder);
+        UserInfoRequestHandlerImpl userInfoRequestHandler = new UserInfoRequestHandlerImpl(introspectionManager);
 
         try {
             userInfoRequestHandler.retrieveUserInfo(OAuthConstants.AUTH_TYPE_BEARER, UserInfoConstants.OPENID);
@@ -129,15 +120,13 @@ public class UserInfoRequestHandlerImplTest {
     public void testValidateScopesForNullScopes() {
 
         IntrospectionManager introspectionManager = Mockito.mock(IntrospectionManager.class);
-        UserInfoResponseBuilder userInfoResponseBuilder = Mockito.mock(UserInfoResponseBuilder.class);
         String token = "123-test-789";
         IntrospectionResponse introspectionResponse = new IntrospectionResponse();
         introspectionResponse.setActive(true);
         introspectionResponse.setScope(null);
 
         Mockito.when(introspectionManager.introspect(token)).thenReturn(introspectionResponse);
-        UserInfoRequestHandlerImpl userInfoRequestHandler = new UserInfoRequestHandlerImpl
-                (introspectionManager, userInfoResponseBuilder);
+        UserInfoRequestHandlerImpl userInfoRequestHandler = new UserInfoRequestHandlerImpl(introspectionManager);
         String authHeaderValue = OAuthConstants.AUTH_TYPE_BEARER + " " + token;
 
         try {
@@ -152,15 +141,13 @@ public class UserInfoRequestHandlerImplTest {
     public void testValidateScopesForInvalidScope() {
 
         IntrospectionManager introspectionManager = Mockito.mock(IntrospectionManager.class);
-        UserInfoResponseBuilder userInfoResponseBuilder = Mockito.mock(UserInfoResponseBuilder.class);
         String token = "123-test-789";
         IntrospectionResponse introspectionResponse = new IntrospectionResponse();
         introspectionResponse.setActive(true);
         introspectionResponse.setScope("test");
 
         Mockito.when(introspectionManager.introspect(token)).thenReturn(introspectionResponse);
-        UserInfoRequestHandlerImpl userInfoRequestHandler = new UserInfoRequestHandlerImpl
-                (introspectionManager, userInfoResponseBuilder);
+        UserInfoRequestHandlerImpl userInfoRequestHandler = new UserInfoRequestHandlerImpl(introspectionManager);
         String authHeaderValue = OAuthConstants.AUTH_TYPE_BEARER + " " + token;
 
         try {

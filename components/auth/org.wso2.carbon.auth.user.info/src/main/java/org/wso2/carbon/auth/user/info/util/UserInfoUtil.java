@@ -27,6 +27,7 @@ import org.wso2.carbon.auth.core.exception.ExceptionCodes;
 import org.wso2.carbon.auth.scim.SCIMManager;
 import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
 import org.wso2.carbon.auth.token.introspection.dto.IntrospectionResponse;
+import org.wso2.carbon.auth.user.info.UserInfoResponseBuilder;
 import org.wso2.carbon.auth.user.info.configuration.UserInfoConfigurationService;
 import org.wso2.carbon.auth.user.info.exception.UserInfoException;
 import org.wso2.carbon.auth.user.info.internal.ServiceReferenceHolder;
@@ -143,6 +144,27 @@ public class UserInfoUtil {
                     .getUserInfoConfigurationService();
         }
         return userInfoConfigurationService;
+    }
+
+    /**
+     * Retrieve UserInfoResponseBuilder
+     *
+     * @return UserInfoResponseBuilder instance
+     * @throws UserInfoException if failed to retrieve UserInfoResponseBuilder instance
+     */
+    public static UserInfoResponseBuilder getUserInfoResponseBuilder() throws UserInfoException {
+
+        UserInfoConfigurationService userInfoConfigurationService = UserInfoUtil.getUserInfoConfigurationService();
+        String responseBuilderClassName = userInfoConfigurationService.getUserInfoConfiguration()
+                .getResponseBuilderClassName();
+
+        try {
+            UserInfoResponseBuilder userInfoResponseBuilder = (UserInfoResponseBuilder) Class
+                    .forName(responseBuilderClassName).newInstance();
+            return userInfoResponseBuilder;
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+            throw new UserInfoException("Error while initializing UserInfoResponseBuilder", e);
+        }
     }
 
     /**

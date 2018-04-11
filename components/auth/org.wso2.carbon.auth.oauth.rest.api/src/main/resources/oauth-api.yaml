@@ -172,8 +172,7 @@ paths:
            description: |
              OK.
              Successful response from userinfo endpoint.
-           schema:
-             $ref: '#/definitions/UserInfoResponse'
+           type: string
            headers:
              Content-Type:
                description: |
@@ -241,16 +240,6 @@ definitions:
         type: string
         description: |
           Error code classifying the type of preProcessingError.
-
-  UserInfoResponse:
-    title: Successful response sent for Userinfo request.
-    required:
-      - userInfo
-    properties:
-      userInfo:
-        type: string
-        description: |
-          User info response value.
 
   Error:
     type: object

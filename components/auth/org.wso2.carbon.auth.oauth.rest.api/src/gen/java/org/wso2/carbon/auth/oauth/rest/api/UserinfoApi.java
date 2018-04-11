@@ -4,7 +4,6 @@ package org.wso2.carbon.auth.oauth.rest.api;
 import io.swagger.annotations.ApiParam;
 
 import org.wso2.carbon.auth.oauth.rest.api.dto.ErrorDTO;
-import org.wso2.carbon.auth.oauth.rest.api.dto.UserInfoResponseDTO;
 import org.wso2.carbon.auth.oauth.rest.api.factories.UserinfoApiServiceFactory;
 
 import org.wso2.msf4j.Microservice;
@@ -50,13 +49,13 @@ public class UserinfoApi implements Microservice  {
     
     @Consumes({ "application/x-www-form-urlencoded" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "", notes = "", response = UserInfoResponseDTO.class, tags={ "OAuth Userinfo", })
+    @io.swagger.annotations.ApiOperation(value = "", notes = "", response = void.class, tags={ "OAuth Userinfo", })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 200, message = "OK. Successful response from userinfo endpoint. ", response = UserInfoResponseDTO.class),
+        @io.swagger.annotations.ApiResponse(code = 200, message = "OK. Successful response from userinfo endpoint. ", response = void.class),
         
-        @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request. Error response from userinfo endpoint due to malformed request. ", response = UserInfoResponseDTO.class),
+        @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request. Error response from userinfo endpoint due to malformed request. ", response = void.class),
         
-        @io.swagger.annotations.ApiResponse(code = 401, message = "Unauthorized. Error response from userinfo endpoint due to client authentication failure. ", response = UserInfoResponseDTO.class) })
+        @io.swagger.annotations.ApiResponse(code = 401, message = "Unauthorized. Error response from userinfo endpoint due to client authentication failure. ", response = void.class) })
     public Response userinfoGet(@ApiParam(value = "Authentication scheme header" ,required=true)@HeaderParam("Authorization") String authorization
 ,@ApiParam(value = "Schema value",required=true) @QueryParam("schema") String schema
  ,@Context Request request)

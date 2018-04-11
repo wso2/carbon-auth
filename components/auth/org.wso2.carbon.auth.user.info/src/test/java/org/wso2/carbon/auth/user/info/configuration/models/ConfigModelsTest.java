@@ -40,7 +40,7 @@ public class ConfigModelsTest {
     private static final Logger log = LoggerFactory.getLogger(ConfigModelsTest.class);
 
     @Test
-    public void testConfigBuildFromYamlTest() throws Exception {
+    public void testConfigBuildFromYamlTest() {
         Path deploymentConfigPath = Paths.get(TEST_FOLDER_RELATIVE, TEST_FOLDER_RESOURCES, CONFIG_FILE_NAME);
 
         // Get configuration

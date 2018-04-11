@@ -70,7 +70,7 @@ public class TokenApi implements Microservice  {
 ,@ApiParam(value = "Validity period of token")  @FormParam("validity_period")  Long validityPeriod
  ,@Context Request request)
     throws NotFoundException {
-        
+
         return delegate.tokenPost(grantType,authorization,code,redirectUri,clientId,clientSecret,refreshToken,scope,username,password,validityPeriod,request);
     }
 }
