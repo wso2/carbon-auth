@@ -70,7 +70,6 @@ paths:
         - in: header
           name: Authorization
           description: Authentication scheme header
-          required: true
           type: string
         - in: formData
           name: grant_type
@@ -90,6 +89,10 @@ paths:
           description: OAuth client identifier
           type: string
         - in: formData
+          name: client_secret
+          description: OAuth client secret
+          type: string
+        - in: formData
           name: refresh_token
           description: Refresh token issued to the client.
           type: string
@@ -105,6 +108,11 @@ paths:
           name: password
           description: password
           type: string
+        - in: formData
+          name: validity_period
+          description: Validity period of token
+          type: integer
+          format: int64
       responses:
         200:
           description: |

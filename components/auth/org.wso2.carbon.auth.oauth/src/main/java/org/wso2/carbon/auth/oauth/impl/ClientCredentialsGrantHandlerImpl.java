@@ -20,6 +20,7 @@
 
 package org.wso2.carbon.auth.oauth.impl;
 
+import com.nimbusds.oauth2.sdk.AccessTokenResponse;
 import com.nimbusds.oauth2.sdk.ClientCredentialsGrant;
 import com.nimbusds.oauth2.sdk.OAuth2Error;
 import com.nimbusds.oauth2.sdk.ParseException;
@@ -41,6 +42,7 @@ import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 
 import java.util.Map;
+import java.util.Optional;
 import javax.annotation.Nullable;
 
 /**
@@ -91,12 +93,21 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
 
         String clientId = (String) context.getParams().get(OAuthConstants.CLIENT_ID);
         String appOwner = (String) context.getParams().get(OAuthConstants.APPLICATION_OWNER);
-
+        String grantType = (String) context.getParams().get(OAuthConstants.GRANT_TYPE);
         Scope scope;
         if (scopeValue != null) {
             scope = new Scope(scopeValue);
         } else {
             scope = new Scope(OAuthConstants.SCOPE_DEFAULT);
+        }
+
+        Optional<AccessTokenResponse> tokenResponse = checkTokens(oauthDAO, appOwner, grantType, clientId,
+                scope.toString());
+        if (tokenResponse.isPresent()) {
+            AccessTokenResponse accessTokenResponse = tokenResponse.get();
+            context.setAccessTokenResponse(accessTokenResponse);
+            context.setSuccessful(true);
+            return;
         }
 
         TokenGenerator.generateAccessToken(scope, context);

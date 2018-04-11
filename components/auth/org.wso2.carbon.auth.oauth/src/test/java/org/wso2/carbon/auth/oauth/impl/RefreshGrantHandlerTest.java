@@ -115,11 +115,12 @@ public class RefreshGrantHandlerTest {
 
         //check expired refresh token
         accessTokenDTO.setRefreshTokenCreatedTime(System.currentTimeMillis() - 3600000);
-        accessTokenDTO.setRefreshTokenValidityPeriod(3600000);
+        accessTokenDTO.setRefreshTokenValidityPeriod(3600);
         refreshGrantHandler.process(authorization, context, queryParameters);
         Assert.assertEquals(context.getErrorObject().getCode(), RefreshGrantHandler.INVALID_GRANT_ERROR_CODE);
 
         // null scopes
+        context.getParams().put(OAuthConstants.VALIDITY_PERIOD, 3600L);
         accessTokenDTO.setRefreshTokenCreatedTime(System.currentTimeMillis());
         refreshGrantHandler.process(authorization, context, queryParameters);
         Assert.assertTrue(context.isSuccessful());

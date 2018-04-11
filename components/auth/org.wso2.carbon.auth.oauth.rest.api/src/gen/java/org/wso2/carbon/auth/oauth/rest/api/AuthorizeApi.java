@@ -19,7 +19,7 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
-import javax.ws.rs.OPTIONS;
+
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -43,7 +43,7 @@ import javax.ws.rs.core.Response;
 public class AuthorizeApi implements Microservice  {
    private final AuthorizeApiService delegate = AuthorizeApiServiceFactory.getAuthorizeApi();
 
-    @OPTIONS
+    
     @GET
     
     @Consumes({ "application/x-www-form-urlencoded" })
@@ -58,6 +58,7 @@ public class AuthorizeApi implements Microservice  {
 ,@ApiParam(value = "Opaque value used by the client to maintain state between the request and callback") @QueryParam("state") String state
  ,@Context Request request)
     throws NotFoundException {
+        
         return delegate.authorizeGet(responseType,clientId,redirectUri,scope,state,request);
     }
 }

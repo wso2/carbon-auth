@@ -43,6 +43,8 @@ public class TokenApiServiceImplTest {
         String scope = "default";
         String username = "admin";
         String password = "admin";
+        String clientSecret = "GDKDKFYSLSALDFKSPODM";
+        long validityPeriod = 3600;
         String tokenResponse = "{'AccessToken':''a1s2d3f4g5g6}";
         Request request = PowerMockito.mock(Request.class);
         TokenRequestHandler tokenRequestHandler = PowerMockito.mock(TokenRequestHandler.class);
@@ -69,8 +71,8 @@ public class TokenApiServiceImplTest {
         ErrorObject errorObject = OAuth2Error.SERVER_ERROR;
         PowerMockito.when(context.getErrorObject()).thenReturn(errorObject);
         Response response = tokenApiService
-                .tokenPost(authorization, grantType, code, redirectUri, clientId, refreshToken, scope, username,
-                        password, request);
+                .tokenPost(authorization, grantType, code, redirectUri, clientId, clientSecret, refreshToken, scope,
+                        username, password, validityPeriod, request);
         Assert.assertEquals(response.getStatus(), OAuth2Error.SERVER_ERROR.getHTTPStatusCode());
 
     }

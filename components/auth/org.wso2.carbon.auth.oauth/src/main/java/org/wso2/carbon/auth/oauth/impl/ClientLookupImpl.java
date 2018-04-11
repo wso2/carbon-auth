@@ -31,9 +31,12 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.oauth.ClientLookup;
+import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
+
+import java.util.Map;
 
 /**
  * Client lookup implementation
@@ -47,41 +50,52 @@ public class ClientLookupImpl implements ClientLookup {
     }
 
     @Override
-    public String getClientId(String authorization, AccessTokenContext context, MutableBoolean haltExecution) {
+    public String getClientId(String authorization, AccessTokenContext context, Map<String, String> queryParameters,
+            MutableBoolean haltExecution) {
         log.debug("Calling getClientId");
+        ClientID clientId;
+        Secret clientSecret;
         if (!StringUtils.isEmpty(authorization)) {
+            ClientSecretBasic clientCredentials = null;
             try {
-                ClientSecretBasic clientCredentials = ClientSecretBasic.parse(authorization);
-
-                ClientID clientId = clientCredentials.getClientID();
-                Secret clientSecret = clientCredentials.getClientSecret();
-                boolean isValid = oauthDAO.isClientCredentialsValid(clientId.getValue(), clientSecret.getValue());
-
-                if (!isValid) {
-                    ErrorObject error = new ErrorObject(OAuth2Error.INVALID_CLIENT.getCode());
-                    context.setErrorObject(error);
-                    haltExecution.setTrue();
-                }
-
-                return clientId.getValue();
+                clientCredentials = ClientSecretBasic.parse(authorization);
             } catch (ParseException e) {
                 log.info("Error while parsing client credentials: ", e.getMessage());
                 ErrorObject error = new ErrorObject(OAuth2Error.INVALID_REQUEST.getCode());
                 context.setErrorObject(error);
                 haltExecution.setTrue();
-            } catch (OAuthDAOException e) {
-                log.error("Error while validating client credentials", e);
-                ErrorObject error = new ErrorObject(OAuth2Error.SERVER_ERROR.getCode());
+                return null;
+            }
+            clientId = clientCredentials.getClientID();
+            clientSecret = clientCredentials.getClientSecret();
+        } else if (queryParameters.get(OAuthConstants.CLIENT_ID_QUERY_PARAM) != null
+                && queryParameters.get(OAuthConstants.CLIENT_SECRET_QUERY_PARAM) != null) {
+            log.debug("Authorization header is missing");
+            clientId = new ClientID(queryParameters.get(OAuthConstants.CLIENT_ID_QUERY_PARAM));
+            clientSecret = new Secret(queryParameters.get(OAuthConstants.CLIENT_SECRET_QUERY_PARAM));
+        } else {
+            log.debug("clientId or clientSecret is missing in request");
+            ErrorObject error = new ErrorObject(OAuth2Error.INVALID_REQUEST.getCode());
+            context.setErrorObject(error);
+            haltExecution.setTrue();
+            return null;
+        }
+
+        try {
+            boolean isValid = oauthDAO.isClientCredentialsValid(clientId.getValue(), clientSecret.getValue());
+            if (!isValid) {
+                ErrorObject error = new ErrorObject(OAuth2Error.INVALID_CLIENT.getCode());
                 context.setErrorObject(error);
                 haltExecution.setTrue();
             }
-        } else {
-            log.info("Authorization header is missing");
-            ErrorObject error = new ErrorObject(OAuth2Error.INVALID_REQUEST.getCode());
+            return clientId.getValue();
+        } catch (OAuthDAOException e) {
+            log.error("Error while validating client credentials", e);
+            ErrorObject error = new ErrorObject(OAuth2Error.SERVER_ERROR.getCode());
             context.setErrorObject(error);
             haltExecution.setTrue();
         }
 
-        return "";
+        return null;
     }
 }

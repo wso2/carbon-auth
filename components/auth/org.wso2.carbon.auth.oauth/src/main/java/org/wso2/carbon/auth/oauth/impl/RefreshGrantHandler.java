@@ -134,7 +134,7 @@ public class RefreshGrantHandler implements GrantHandler {
 
     private boolean isRefreshTokenExpired(AccessTokenDTO accessTokenDTO) {
         long issuedTime = accessTokenDTO.getRefreshTokenCreatedTime();
-        long refreshValidity = accessTokenDTO.getRefreshTokenValidityPeriod();
+        long refreshValidity = accessTokenDTO.getRefreshTokenValidityPeriod() * 1000L;
         return calculateValidityInMillis(issuedTime, refreshValidity) < ALLOWED_MINIMUM_VALIDITY_PERIOD_IN_MILI;
     }
 

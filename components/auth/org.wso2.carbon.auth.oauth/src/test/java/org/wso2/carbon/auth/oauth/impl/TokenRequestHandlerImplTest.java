@@ -40,6 +40,7 @@ import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
+import org.wso2.carbon.auth.oauth.internal.ServiceReferenceHolder;
 import org.wso2.carbon.auth.user.mgt.impl.JDBCUserStoreManager;
 import org.wso2.carbon.auth.user.store.configuration.UserStoreConfigurationService;
 import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
@@ -204,9 +205,46 @@ public class TokenRequestHandlerImplTest extends AuthDAOIntegrationTestBase {
         Assert.assertNotNull(tokens.getAccessToken());
         Assert.assertNotNull(tokens.getRefreshToken());
 
-        // check missing Authorization header
+        // check missing Authorization header and CS/CK in payload
         accessTokenContext = tokenRequestHandler.generateToken("", queryParameters);
         Assert.assertEquals(OAuth2Error.INVALID_CLIENT, accessTokenContext.getErrorObject());
+
+        // check missing Authorization header but CS in payload
+        queryParameters.put(OAuthConstants.CLIENT_ID_QUERY_PARAM, "some-clientId");
+        accessTokenContext = tokenRequestHandler.generateToken("", queryParameters);
+        Assert.assertEquals(OAuth2Error.INVALID_CLIENT, accessTokenContext.getErrorObject());
+
+        // check missing Authorization header but CK in payload
+        queryParameters.remove(OAuthConstants.CLIENT_ID_QUERY_PARAM);
+        queryParameters.put(OAuthConstants.CLIENT_SECRET_QUERY_PARAM, "some-clientSecret");
+        accessTokenContext = tokenRequestHandler.generateToken("", queryParameters);
+        Assert.assertEquals(OAuth2Error.INVALID_CLIENT, accessTokenContext.getErrorObject());
+
+        // check missing Authorization header but CK/CS in payload
+        queryParameters.put(OAuthConstants.CLIENT_ID_QUERY_PARAM, ck);
+        queryParameters.put(OAuthConstants.CLIENT_SECRET_QUERY_PARAM, cs);
+        accessTokenContext = tokenRequestHandler.generateToken("", queryParameters);
+        Assert.assertTrue(accessTokenContext.isSuccessful());
+
+        //check default token expire type
+        long tokenExpireTime = 3999;
+        ServiceReferenceHolder.getInstance().getAuthConfigurations().setDefaultTokenValidityPeriod(tokenExpireTime);
+        accessTokenContext = tokenRequestHandler.generateToken("", queryParameters);
+        Assert.assertTrue(accessTokenContext.isSuccessful());
+        Tokens tokens1 = accessTokenContext.getAccessTokenResponse().getTokens();
+        Assert.assertEquals(tokens1.getAccessToken().getLifetime(), tokenExpireTime);
+
+        //check user request request time
+        tokenExpireTime = 4999;
+        queryParameters.put(OAuthConstants.VALIDITY_PERIOD_QUERY_PARAM, String.valueOf(tokenExpireTime));
+        accessTokenContext = tokenRequestHandler.generateToken("", queryParameters);
+        Assert.assertTrue(accessTokenContext.isSuccessful());
+        tokens1 = accessTokenContext.getAccessTokenResponse().getTokens();
+        Assert.assertEquals(tokens1.getAccessToken().getLifetime(), tokenExpireTime);
+
+        queryParameters.remove(OAuthConstants.CLIENT_ID_QUERY_PARAM);
+        queryParameters.remove(OAuthConstants.CLIENT_SECRET_QUERY_PARAM);
+        queryParameters.remove(OAuthConstants.VALIDITY_PERIOD_QUERY_PARAM);
 
         // check wrong Authorization header
         accessTokenContext = tokenRequestHandler.generateToken("Bearer", queryParameters);
