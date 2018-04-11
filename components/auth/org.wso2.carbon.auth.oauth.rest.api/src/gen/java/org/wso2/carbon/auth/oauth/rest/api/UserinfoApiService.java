@@ -8,7 +8,7 @@ import org.wso2.msf4j.formparam.FileInfo;
 import org.wso2.msf4j.Request;
 
 import org.wso2.carbon.auth.oauth.rest.api.dto.ErrorDTO;
-import org.wso2.carbon.auth.oauth.rest.api.dto.UserinfoResponseDTO;
+import org.wso2.carbon.auth.oauth.rest.api.dto.UserInfoResponseDTO;
 
 import java.util.List;
 import org.wso2.carbon.auth.oauth.rest.api.NotFoundException;

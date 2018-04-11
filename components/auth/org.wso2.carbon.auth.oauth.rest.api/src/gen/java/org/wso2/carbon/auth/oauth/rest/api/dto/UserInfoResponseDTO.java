@@ -7,28 +7,28 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 
 /**
- * UserinfoResponseDTO
+ * UserInfoResponseDTO
  */
-public class UserinfoResponseDTO   {
-  @SerializedName("sub")
-  private String sub = null;
+public class UserInfoResponseDTO   {
+  @SerializedName("userInfo")
+  private String userInfo = null;
 
-  public UserinfoResponseDTO sub(String sub) {
-    this.sub = sub;
+  public UserInfoResponseDTO userInfo(String userInfo) {
+    this.userInfo = userInfo;
     return this;
   }
 
    /**
-   * The subject value. 
-   * @return sub
+   * User info response value. 
+   * @return userInfo
   **/
-  @ApiModelProperty(required = true, value = "The subject value. ")
-  public String getSub() {
-    return sub;
+  @ApiModelProperty(required = true, value = "User info response value. ")
+  public String getUserInfo() {
+    return userInfo;
   }
 
-  public void setSub(String sub) {
-    this.sub = sub;
+  public void setUserInfo(String userInfo) {
+    this.userInfo = userInfo;
   }
 
 
@@ -40,21 +40,21 @@ public class UserinfoResponseDTO   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    UserinfoResponseDTO userinfoResponse = (UserinfoResponseDTO) o;
-    return Objects.equals(this.sub, userinfoResponse.sub);
+    UserInfoResponseDTO userInfoResponse = (UserInfoResponseDTO) o;
+    return Objects.equals(this.userInfo, userInfoResponse.userInfo);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(sub);
+    return Objects.hash(userInfo);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class UserinfoResponseDTO {\n");
+    sb.append("class UserInfoResponseDTO {\n");
     
-    sb.append("    sub: ").append(toIndentedString(sub)).append("\n");
+    sb.append("    userInfo: ").append(toIndentedString(userInfo)).append("\n");
     sb.append("}");
     return sb.toString();
   }
