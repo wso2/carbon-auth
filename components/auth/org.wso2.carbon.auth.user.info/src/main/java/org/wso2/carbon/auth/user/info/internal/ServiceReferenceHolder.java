@@ -18,7 +18,6 @@
 package org.wso2.carbon.auth.user.info.internal;
 
 import org.wso2.carbon.auth.user.info.configuration.UserInfoConfigurationService;
-import org.wso2.carbon.auth.user.info.exception.UserInfoException;
 import org.wso2.carbon.config.provider.ConfigProvider;
 
 /**

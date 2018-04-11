@@ -22,10 +22,12 @@ package org.wso2.carbon.auth.user.info.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.auth.core.exception.ExceptionCodes;
+import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.token.introspection.IntrospectionManager;
 import org.wso2.carbon.auth.token.introspection.dto.IntrospectionResponse;
 import org.wso2.carbon.auth.user.info.UserInfoResponseBuilder;
 import org.wso2.carbon.auth.user.info.UserinfoRequestHandler;
+import org.wso2.carbon.auth.user.info.constants.UserInfoConstants;
 import org.wso2.carbon.auth.user.info.exception.UserInfoException;
 
 /**
@@ -73,15 +75,15 @@ public class UserInfoRequestHandlerImpl implements UserinfoRequestHandler {
     private String retrieveToken(String authorization, String schema) throws UserInfoException {
 
         if (authorization == null) {
-            throw new UserInfoException("Access token is missing");
+            throw new UserInfoException("Access token is missing", ExceptionCodes.INVALID_REQUEST);
         }
 
         String[] authzHeaderInfo = authorization.trim().split(" ");
-        if (!"Bearer".equals(authzHeaderInfo[0])) {
-            throw new UserInfoException("Bearer token is missing");
+        if (!OAuthConstants.AUTH_TYPE_BEARER.equals(authzHeaderInfo[0])) {
+            throw new UserInfoException("Bearer token is missing", ExceptionCodes.INVALID_REQUEST);
         }
         if (authzHeaderInfo.length == 1) {
-            throw new UserInfoException("Access token is missing");
+            throw new UserInfoException("Access token is missing", ExceptionCodes.INVALID_REQUEST);
         }
 
         return authzHeaderInfo[1];
@@ -100,7 +102,7 @@ public class UserInfoRequestHandlerImpl implements UserinfoRequestHandler {
         if (scopes != null) {
             String scopeValues[] = scopes.split(" ");
             for (String scope : scopeValues) {
-                if ("openid".equals(scope)) {
+                if (UserInfoConstants.OPENID.equals(scope)) {
                     validToken = true;
                 }
             }

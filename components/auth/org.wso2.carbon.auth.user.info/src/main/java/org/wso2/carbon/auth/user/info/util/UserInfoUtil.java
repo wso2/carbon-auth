@@ -67,7 +67,7 @@ public class UserInfoUtil {
      */
     public static synchronized void initializeUserManager(UserManager userManager) throws UserInfoException {
 
-        if (UserInfoUtil.getUserManager() != null) {
+        if (UserInfoUtil.userManager != null) {
             log.debug("User Manager is already initialized");
             return;
         }
@@ -124,7 +124,7 @@ public class UserInfoUtil {
      */
     public static synchronized void initializeUserInfoConfigurationService(UserInfoConfigurationService
                                                                                    userInfoConfigurationService) {
-        if (UserInfoUtil.getUserInfoConfigurationService() != null) {
+        if (UserInfoUtil.userInfoConfigurationService != null) {
             log.debug("User Info Configuration Service is already initialized");
             return;
         }
@@ -180,11 +180,12 @@ public class UserInfoUtil {
                 }
 
             }
+
+            handleEmailAttributes(requiredUserAttributes, userAttributes, filteredUserAttributes);
+
         } else {
             log.debug("Required user attributes are empty. Returning an empty map of filtered user attributes.");
         }
-
-        handleEmailAttributes(requiredUserAttributes, userAttributes, filteredUserAttributes);
 
         return filteredUserAttributes;
     }

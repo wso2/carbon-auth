@@ -21,6 +21,7 @@
 package org.wso2.carbon.auth.user.info.configuration.models;
 
 import org.wso2.carbon.auth.oauth.OAuthConstants;
+import org.wso2.carbon.auth.user.info.constants.UserInfoConstants;
 import org.wso2.carbon.auth.user.store.configuration.DefaultAttributes;
 import org.wso2.carbon.config.annotation.Configuration;
 import org.wso2.carbon.config.annotation.Element;
@@ -37,7 +38,7 @@ import java.util.List;
 public class UserInfoConfiguration {
 
     @Element(description = "Response Builder Class Name")
-    private String responseBuilderClassName = "org.wso2.carbon.auth.user.info.UserInfoJSONResponseBuilder";
+    private String responseBuilderClassName = UserInfoConstants.RESPONSE_BUILDER_CLASS_NAME;
 
     @Element(description = "Required user attributes")
     private List<String> requiredUserAttributes = new ArrayList<>();

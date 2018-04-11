@@ -39,7 +39,7 @@ public class UserInfoException extends AuthException {
     }
 
     public UserInfoException(String msg, Throwable e) {
-        super(msg, e, ExceptionCodes.DAO_EXCEPTION);
+        super(msg, e, ExceptionCodes.INVALID_REQUEST);
     }
 
 }
