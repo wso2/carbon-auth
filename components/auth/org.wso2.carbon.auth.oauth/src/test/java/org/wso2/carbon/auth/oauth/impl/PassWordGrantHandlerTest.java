@@ -18,8 +18,11 @@
 package org.wso2.carbon.auth.oauth.impl;
 
 import com.nimbusds.oauth2.sdk.GrantType;
+import com.nimbusds.oauth2.sdk.OAuth2Error;
+import com.nimbusds.oauth2.sdk.token.Tokens;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.mockito.Mockito;
+import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
@@ -31,12 +34,15 @@ import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
+import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
+import org.wso2.carbon.auth.oauth.dto.TokenState;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class PassWordGrantHandlerTest {
     private PasswordGrantHandlerImpl passwordGrantHandler;
@@ -46,6 +52,8 @@ public class PassWordGrantHandlerTest {
     private UserNameMapper userNameMapper;
     String clientId = "JgUsk2mQ_WL0ffmpRSpHDJWFjvEa";
     String clientSecret = "KQd8QXgV3bG1nFOGRDf7ib6HJu4a";
+    String username = "admin";
+    String password = "admin";
     String scope = "scope1";
     String authorization;
     ClientLookup clientLookup;
@@ -74,12 +82,68 @@ public class PassWordGrantHandlerTest {
         application.setGrantTypes(GrantType.PASSWORD + " " + GrantType.REFRESH_TOKEN + " " + GrantType
                 .CLIENT_CREDENTIALS);
         queryParameters.put(OAuthConstants.GRANT_TYPE_QUERY_PARAM, GrantType.PASSWORD.getValue());
-        queryParameters.put(OAuthConstants.USERNAME, "admin");
-        queryParameters.put(OAuthConstants.PASSWORD, "admin");
-        Mockito.when(clientLookup.getClientId(Mockito.anyString(), Mockito.any(AccessTokenContext.class), Mockito.any
-                (MutableBoolean.class))).thenReturn(clientId);
-        Mockito.when(userStoreManager.doAuthenticate("admin", "admin")).thenReturn(true);
+        queryParameters.put(OAuthConstants.USERNAME, username);
+        queryParameters.put(OAuthConstants.PASSWORD, password);
+        queryParameters.put(OAuthConstants.SCOPE_QUERY_PARAM, scope);
+        Mockito.when(clientLookup
+                .getClientId(Mockito.anyString(), Mockito.any(AccessTokenContext.class), Mockito.any(Map.class),
+                        Mockito.any(MutableBoolean.class))).thenReturn(clientId);
+        Mockito.when(userStoreManager.doAuthenticate(username, username)).thenReturn(true);
+        context.getParams().put(OAuthConstants.VALIDITY_PERIOD, 3600L);
         passwordGrantHandler.process(authorization, context, queryParameters);
+        Assert.assertTrue(context.isSuccessful());
+
+        AccessTokenDTO accessTokenData = new AccessTokenDTO();
+        accessTokenData.setAccessToken(UUID.randomUUID().toString());
+        accessTokenData.setRefreshToken(UUID.randomUUID().toString());
+        accessTokenData.setScopes("default");
+        accessTokenData.setTimeCreated(System.currentTimeMillis());
+        accessTokenData.setRefreshTokenCreatedTime(System.currentTimeMillis());
+        accessTokenData.setValidityPeriod(9900);
+        accessTokenData.setRefreshTokenValidityPeriod(9900);
+        accessTokenData.setTokenState(TokenState.ACTIVE.toString());
+
+        //token generate when previous token is not expired
+        Mockito.when(oauthDAO.getTokenInfo(username, GrantType.PASSWORD.getValue(), clientId, scope))
+                .thenReturn(accessTokenData);
+        context.getParams().put(OAuthConstants.GRANT_TYPE, GrantType.PASSWORD.getValue());
+        context.getParams().put(OAuthConstants.CLIENT_ID, clientId);
         passwordGrantHandler.process(authorization, context, queryParameters);
+        Assert.assertTrue(context.isSuccessful());
+        Tokens tokens = context.getAccessTokenResponse().getTokens();
+        Assert.assertEquals(tokens.getAccessToken().getValue(), accessTokenData.getAccessToken());
+        Assert.assertEquals(tokens.getAccessToken().getLifetime(), accessTokenData.getValidityPeriod());
+
+        //token generate when previous token is not expired and different scope
+        String newScope = "newScope";
+        queryParameters.put(OAuthConstants.SCOPE_QUERY_PARAM, newScope);
+        Mockito.when(oauthDAO.getTokenInfo(username, GrantType.PASSWORD.getValue(), clientId, newScope))
+                .thenReturn(null);
+        context.getParams().put(OAuthConstants.GRANT_TYPE, GrantType.PASSWORD.getValue());
+        context.getParams().put(OAuthConstants.CLIENT_ID, clientId);
+        passwordGrantHandler.process(authorization, context, queryParameters);
+        Assert.assertTrue(context.isSuccessful());
+        tokens = context.getAccessTokenResponse().getTokens();
+        Assert.assertNotEquals(tokens.getAccessToken().getValue(), accessTokenData.getAccessToken());
+        Assert.assertNotEquals(tokens.getRefreshToken().getValue(), accessTokenData.getRefreshToken());
+
+        //token generate when previous token is expired
+        queryParameters.put(OAuthConstants.SCOPE_QUERY_PARAM, scope);
+        long currentTime = System.currentTimeMillis();
+        accessTokenData.setTimeCreated(currentTime - 5000000);
+        accessTokenData.setValidityPeriod(3600);
+        Mockito.when(oauthDAO.getTokenInfo(username, GrantType.PASSWORD.getValue(), clientId, scope))
+                .thenReturn(accessTokenData);
+        passwordGrantHandler.process(authorization, context, queryParameters);
+        Assert.assertTrue(context.isSuccessful());
+        tokens = context.getAccessTokenResponse().getTokens();
+        Assert.assertNotNull(tokens.getAccessToken().getValue());
+        Assert.assertNotEquals(tokens.getAccessToken().getValue(), accessTokenData.getAccessToken());
+        Assert.assertNotEquals(tokens.getAccessToken().getLifetime(), accessTokenData.getValidityPeriod());
+
+        //check parse exception path
+        queryParameters.remove(OAuthConstants.USERNAME);
+        passwordGrantHandler.process(authorization, context, queryParameters);
+        Assert.assertEquals(context.getErrorObject(), OAuth2Error.INVALID_REQUEST);
     }
 }

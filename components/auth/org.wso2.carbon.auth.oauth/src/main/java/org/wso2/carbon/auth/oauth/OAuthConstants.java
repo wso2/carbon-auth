@@ -32,6 +32,7 @@ public class OAuthConstants {
     // Query parameters
     public static final String ERROR_QUERY_PARAM = "error";
     public static final String CLIENT_ID_QUERY_PARAM = "client_id";
+    public static final String CLIENT_SECRET_QUERY_PARAM = "client_secret";
     public static final String REDIRECT_URI_QUERY_PARAM = "redirect_uri";
     public static final String RESPONSE_TYPE_QUERY_PARAM = "response_type";
     public static final String SCOPE_QUERY_PARAM = "scope";
@@ -41,6 +42,7 @@ public class OAuthConstants {
     public static final String REFRESH_TOKEN_QUERY_PARAM = "refresh_token";
     public static final String ACCESS_TOKEN_QUERY_PARAM = "access_token";
     public static final String EXPERIES_IN_QUERY_PARAM = "expires_in";
+    public static final String VALIDITY_PERIOD_QUERY_PARAM = "validity_period";
     public static final String TOKEN_TYPE_QUERY_PARAM = "token_type";
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
@@ -59,4 +61,5 @@ public class OAuthConstants {
     public static final String AUTH_USER = "AUTH_USER";
     public static final String APPLICATION_OWNER = "APPLICATION_OWNER";
     public static final String GRANT_TYPE = "GRANT_TYPE";
+    public static final String VALIDITY_PERIOD = "validity_period";
 }

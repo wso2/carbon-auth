@@ -33,10 +33,12 @@ import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.TokenRequestHandler;
+import org.wso2.carbon.auth.oauth.configuration.models.OAuthConfiguration;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
+import org.wso2.carbon.auth.oauth.internal.ServiceReferenceHolder;
 
 import java.util.Map;
 import java.util.Optional;
@@ -81,23 +83,41 @@ public class TokenRequestHandlerImpl implements TokenRequestHandler {
             if (grantHandler.isPresent()) {
                 Application application;
                 this.clientLookup = new ClientLookupImpl(oauthDAO);
-                String clientId = clientLookup.getClientId(authorization, context, haltExecution);
+                String clientId = clientLookup.getClientId(authorization, context, queryParameters, haltExecution);
+                //client id can be null if it not present in header or payload
+                if (clientId == null) {
+                    log.debug("Provided client id not valid.");
+                    context.setErrorObject(OAuth2Error.INVALID_CLIENT);
+                    return context;
+                }
+
                 try {
                     application = applicationDAO.getApplication(clientId);
                 } catch (ClientRegistrationDAOException e) {
                     throw new OAuthDAOException("Error getting client information from the DB", e);
                 }
-
+                //application can be null if non exist client id is used
                 if (application == null) {
-                    String error = "Provided client is not valid";
-                    log.debug(error);
+                    log.debug("Application for the provided client id not exist.");
                     context.setErrorObject(OAuth2Error.INVALID_CLIENT);
                     return context;
+                }
+
+                OAuthConfiguration authConfigs;
+                long defaultValidityPeriod;
+                if (queryParameters.get(OAuthConstants.VALIDITY_PERIOD_QUERY_PARAM) != null) {
+                    defaultValidityPeriod = Long
+                            .parseLong(queryParameters.get(OAuthConstants.VALIDITY_PERIOD_QUERY_PARAM));
+                } else {
+                    authConfigs = ServiceReferenceHolder.getInstance().getAuthConfigurations();
+                    defaultValidityPeriod = authConfigs.getDefaultTokenValidityPeriod();
                 }
 
                 context.getParams().put(OAuthConstants.CLIENT_ID, clientId);
                 context.getParams().put(OAuthConstants.APPLICATION_OWNER, application.getAuthUser());
                 context.getParams().put(OAuthConstants.GRANT_TYPE, grantTypeValue);
+                context.getParams().put(OAuthConstants.VALIDITY_PERIOD, defaultValidityPeriod);
+
                 isAuthorized = grantHandler.get().isAuthorizedClient(application, grantTypeValue);
                 if (!isAuthorized) {
                     String error = "Grant type is not allowed for the application";

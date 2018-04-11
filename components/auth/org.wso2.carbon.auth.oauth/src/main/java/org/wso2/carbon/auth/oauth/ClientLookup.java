@@ -23,6 +23,8 @@ package org.wso2.carbon.auth.oauth;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 
+import java.util.Map;
+
 /**
  * Interface for looking up client information
  */
@@ -35,5 +37,6 @@ public interface ClientLookup {
      * @param haltExecution State variable indicating if an error has occurred which should halt further execution
      * @return
      */
-    String getClientId(String authorization, AccessTokenContext context, MutableBoolean haltExecution);
+    String getClientId(String authorization, AccessTokenContext context, Map<String, String> queryParameters,
+            MutableBoolean haltExecution);
 }

@@ -23,7 +23,9 @@ package org.wso2.carbon.auth.oauth.dao.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.datasource.DAOUtil;
+import org.wso2.carbon.auth.oauth.constants.JDBCAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
+import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
@@ -153,6 +155,48 @@ public class OAuthDAOImpl implements OAuthDAO {
 
     }
 
+    @Override
+    public AccessTokenDTO getTokenInfo(String authUser, String grantType, String clientId, String scopes)
+            throws OAuthDAOException {
+        log.debug("Calling addAccessTokenInfoInDB for clientId: {}", clientId);
+        final String query =
+                "SELECT ACCESS_TOKEN, REFRESH_TOKEN, CONSUMER_KEY_ID, AUTHZ_USER, GRANT_TYPE, TIME_CREATED, "
+                        + "REFRESH_TOKEN_TIME_CREATED, VALIDITY_PERIOD, REFRESH_TOKEN_VALIDITY_PERIOD, TOKEN_STATE , "
+                        + "TOKEN_SCOPE FROM AUTH_OAUTH2_ACCESS_TOKEN INNER JOIN AUTH_OAUTH2_ACCESS_TOKEN_SCOPE ON "
+                        + "AUTH_OAUTH2_ACCESS_TOKEN.ID = AUTH_OAUTH2_ACCESS_TOKEN_SCOPE.TOKEN_ID WHERE AUTHZ_USER = ? "
+                        + "AND GRANT_TYPE = ? AND CONSUMER_KEY_ID = (SELECT ID FROM AUTH_OAUTH2_APPLICATION WHERE "
+                        + "CLIENT_ID  = ? ) AND TOKEN_STATE = 'ACTIVE' AND TOKEN_SCOPE = ?";
+        AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
+        try (Connection connection = DAOUtil.getAuthConnection();
+                PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, authUser);
+            statement.setString(2, grantType);
+            statement.setString(3, clientId);
+            statement.setString(4, scopes);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    accessTokenDTO.setAccessToken(rs.getString(JDBCAuthConstants.ACCESS_TOKEN));
+                    accessTokenDTO.setRefreshToken(rs.getString(JDBCAuthConstants.REFRESH_TOKEN));
+                    accessTokenDTO.setAuthUser(rs.getString(JDBCAuthConstants.AUTHZ_USER));
+                    accessTokenDTO.setTimeCreated(rs.getTimestamp(JDBCAuthConstants.TIME_CREATED).getTime());
+                    accessTokenDTO.setRefreshTokenCreatedTime(
+                            rs.getTimestamp(JDBCAuthConstants.REFRESH_TOKEN_TIME_CREATED).getTime());
+                    accessTokenDTO.setValidityPeriod(rs.getInt(JDBCAuthConstants.VALIDITY_PERIOD));
+                    accessTokenDTO
+                            .setRefreshTokenValidityPeriod(rs.getInt(JDBCAuthConstants.REFRESH_TOKEN_VALIDITY_PERIOD));
+                    accessTokenDTO.setTokenState(rs.getString(JDBCAuthConstants.TOKEN_STATE));
+                    accessTokenDTO.setGrantType(rs.getString(JDBCAuthConstants.GRANT_TYPE));
+                    accessTokenDTO.setScopes(rs.getString(JDBCAuthConstants.TOKEN_SCOPE));
+                    return accessTokenDTO;
+                }
+            }
+        } catch (SQLException e) {
+            throw new OAuthDAOException(
+                    "Error occurred while checking if auth code info is valid(clientId: " + clientId, e);
+        }
+        return null;
+    }
 
     private void addAccessTokenInfoInDB(AccessTokenData accessTokenData) throws SQLException {
         log.debug("Calling addAccessTokenInfoInDB for clientId: {}", accessTokenData.getClientId());

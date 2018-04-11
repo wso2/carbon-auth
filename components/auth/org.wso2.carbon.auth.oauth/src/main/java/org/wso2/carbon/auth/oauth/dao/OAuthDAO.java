@@ -20,6 +20,7 @@
 
 package org.wso2.carbon.auth.oauth.dao;
 
+import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
@@ -81,4 +82,17 @@ public interface OAuthDAO {
      * @throws OAuthDAOException if a DAO Error is encountered
      */
     void addAccessTokenInfo(AccessTokenData accessTokenData) throws OAuthDAOException;
+
+    /**
+     * Get access token related information
+     *
+     * @param authUser  authenticated user
+     * @param grantType requested grant type
+     * @param clientId  requested consumer key
+     * @param scopes  requested scopes
+     * @return return AccessTokenDTO
+     * @throws OAuthDAOException throws if a error occurred
+     */
+    AccessTokenDTO getTokenInfo(String authUser, String grantType, String clientId, String scopes)
+            throws OAuthDAOException;
 }

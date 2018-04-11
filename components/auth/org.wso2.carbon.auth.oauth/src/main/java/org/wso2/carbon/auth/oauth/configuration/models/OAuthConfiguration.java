@@ -35,6 +35,8 @@ import java.util.Map;
 public class OAuthConfiguration {
     @Element(description = "Access token default validity period")
     private long defaultTokenValidityPeriod = 3600L;
+    @Element(description = "Access token default validity period")
+    private long defaultRefreshTokenValidityPeriod = 3600L;
     @Element(description = "Default grant types")
     private Map<String, String> grantTypes = populateDefaultGrantTypes();
 
@@ -44,6 +46,14 @@ public class OAuthConfiguration {
 
     public void setDefaultTokenValidityPeriod(long defaultTokenValidityPeriod) {
         this.defaultTokenValidityPeriod = defaultTokenValidityPeriod;
+    }
+
+    public long getDefaultRefreshTokenValidityPeriod() {
+        return defaultRefreshTokenValidityPeriod;
+    }
+
+    public void setDefaultRefreshTokenValidityPeriod(long defaultRefreshTokenValidityPeriod) {
+        this.defaultRefreshTokenValidityPeriod = defaultRefreshTokenValidityPeriod;
     }
 
     public Map<String, String> getGrantTypes() {

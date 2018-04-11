@@ -20,6 +20,7 @@
 
 package org.wso2.carbon.auth.oauth.impl;
 
+import com.nimbusds.oauth2.sdk.AccessTokenResponse;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.ResourceOwnerPasswordCredentialsGrant;
 import com.nimbusds.oauth2.sdk.Scope;
@@ -41,6 +42,7 @@ import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 
 import java.util.Map;
+import java.util.Optional;
 import javax.annotation.Nullable;
 
 /**
@@ -108,10 +110,21 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
             scope = new Scope(OAuthConstants.SCOPE_DEFAULT);
         }
 
-        TokenGenerator.generateAccessToken(scope, context);
-        AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
         String user = (String) context.getParams().get(OAuthConstants.AUTH_USER);
         String clientId = (String) context.getParams().get(OAuthConstants.CLIENT_ID);
+        String grantType = (String) context.getParams().get(OAuthConstants.GRANT_TYPE);
+
+        Optional<AccessTokenResponse> tokenResponse = checkTokens(oauthDAO, user, grantType, clientId,
+                scope.toString());
+        if (tokenResponse.isPresent()) {
+            AccessTokenResponse accessTokenResponse = tokenResponse.get();
+            context.setAccessTokenResponse(accessTokenResponse);
+            context.setSuccessful(true);
+            return;
+        }
+
+        TokenGenerator.generateAccessToken(scope, context);
+        AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
         accessTokenData.setAuthUser(userNameMapper.getLoggedInPseudoNameFromUserID(user));
         accessTokenData.setClientId(clientId);
         oauthDAO.addAccessTokenInfo(accessTokenData);
@@ -122,5 +135,5 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
         String username = request.getUsername();
         Secret password = request.getPassword();
         return userStoreManager.doAuthenticate(username, password.getValue());
-    }
+}
 }

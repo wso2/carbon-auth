@@ -29,18 +29,21 @@ public class TokenApiServiceImpl extends TokenApiService {
     }
 
     @Override
-    public Response tokenPost(String authorization, String grantType, String code, String redirectUri, String clientId,
-            String refreshToken, String scope, String username, String password, Request request)
-            throws NotFoundException {
+    public Response tokenPost(String grantType, String authorization, String code, String redirectUri, String clientId,
+            String clientSecret, String refreshToken, String scope, String username, String password,
+            Long validityPeriod, Request request) throws NotFoundException {
         Map<String, String> queryParameters = new HashMap<>();
         queryParameters.put(OAuthConstants.GRANT_TYPE_QUERY_PARAM, grantType);
         queryParameters.put(OAuthConstants.CLIENT_ID_QUERY_PARAM, clientId);
+        queryParameters.put(OAuthConstants.CLIENT_SECRET_QUERY_PARAM, clientSecret);
         queryParameters.put(OAuthConstants.REDIRECT_URI_QUERY_PARAM, redirectUri);
         queryParameters.put(OAuthConstants.SCOPE_QUERY_PARAM, scope);
         queryParameters.put(OAuthConstants.CODE_QUERY_PARAM, code);
         queryParameters.put(OAuthConstants.REFRESH_TOKEN_QUERY_PARAM, refreshToken);
         queryParameters.put(OAuthConstants.USERNAME, username);
         queryParameters.put(OAuthConstants.PASSWORD, password);
+        queryParameters.put(OAuthConstants.VALIDITY_PERIOD_QUERY_PARAM,
+                validityPeriod == null ? null : String.valueOf(validityPeriod));
 
         try {
             AccessTokenContext context = tokenRequestHandler.generateToken(authorization, queryParameters);
