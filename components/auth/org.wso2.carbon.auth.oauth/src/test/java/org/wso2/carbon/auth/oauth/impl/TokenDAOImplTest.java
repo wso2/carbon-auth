@@ -27,15 +27,19 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.testng.Assert;
 import org.wso2.carbon.auth.core.datasource.DAOUtil;
-import org.wso2.carbon.auth.oauth.dao.TokenDAO;
+import org.wso2.carbon.auth.oauth.constants.JDBCAuthConstants;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
+import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
+import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Calendar;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.UUID;
 
 @RunWith(PowerMockRunner.class)
@@ -48,60 +52,13 @@ public class TokenDAOImplTest {
     @Mock
     ResultSet resultSet;
     URI redirectUri;
-    TokenDAO dao;
+    OAuthDAO dao;
 
     @Before
     public void init() throws Exception {
         redirectUri = new URI("http://host");
-        dao = DAOFactory.getTokenDAO();
+        dao = DAOFactory.getClientDAO();
         PowerMockito.mockStatic(DAOUtil.class);
-    }
-
-    @Test
-    public void testPersistToken() throws Exception {
-        String accessToken = UUID.randomUUID().toString();
-        String refreshToken = UUID.randomUUID().toString();
-        String clientID = "sample";
-        String authUser = "admin";
-        String userDomain = "default";
-        long timeCreated = Calendar.getInstance().getTimeInMillis();
-        long refreshTokenCreatedTime = Calendar.getInstance().getTimeInMillis();
-        int validityPeriod = 3600;
-        int refreshTokenValidityPeriod = 3600;
-        String tokenScopeHash = "hash";
-        String tokenState = "active";
-        String userType = "application user";
-        String grantType = "password";
-
-        PowerMockito.when(DAOUtil.getAuthConnection()).thenReturn(connection);
-        PowerMockito.when(connection.prepareStatement(Mockito.anyString())).thenReturn(statement);
-
-        PowerMockito.when(statement, "execute").thenThrow(SQLException.class);
-        try {
-            dao.persistToken(accessToken, refreshToken, clientID, authUser, userDomain, timeCreated,
-                    refreshTokenCreatedTime, validityPeriod, refreshTokenValidityPeriod, tokenScopeHash, tokenState,
-                    userType, grantType);
-            Assert.fail("exception expected");
-        } catch (SQLException e) {
-        }
-
-        PowerMockito.when(connection.prepareStatement(Mockito.anyString())).thenThrow(SQLException.class);
-        try {
-            dao.persistToken(accessToken, refreshToken, clientID, authUser, userDomain, timeCreated,
-                    refreshTokenCreatedTime, validityPeriod, refreshTokenValidityPeriod, tokenScopeHash, tokenState,
-                    userType, grantType);
-            Assert.fail("exception expected");
-        } catch (SQLException e) {
-        }
-
-        PowerMockito.when(DAOUtil.getAuthConnection()).thenThrow(SQLException.class);
-        try {
-            dao.persistToken(accessToken, refreshToken, clientID, authUser, userDomain, timeCreated,
-                    refreshTokenCreatedTime, validityPeriod, refreshTokenValidityPeriod, tokenScopeHash, tokenState,
-                    userType, grantType);
-            Assert.fail("exception expected");
-        } catch (SQLException e) {
-        }
     }
 
     @Test
@@ -114,7 +71,7 @@ public class TokenDAOImplTest {
         PowerMockito.when(resultSet.next()).thenReturn(false);
         try {
             dao.getTokenInfo(accessToken);
-        } catch (SQLException e) {
+        } catch (OAuthDAOException e) {
             Assert.fail("exception not expected");
         }
 
@@ -122,14 +79,57 @@ public class TokenDAOImplTest {
         try {
             dao.getTokenInfo(accessToken);
             Assert.fail("exception expected");
-        } catch (SQLException e) {
+        } catch (OAuthDAOException e) {
         }
 
         PowerMockito.when(DAOUtil.getAuthConnection()).thenThrow(SQLException.class);
         try {
             dao.getTokenInfo(accessToken);
             Assert.fail("exception expected");
-        } catch (SQLException e) {
+        } catch (OAuthDAOException e) {
+        }
+    }
+
+    @Test
+    public void testGetTokenInfoFromTokenAndCK() throws Exception {
+        String accessToken = UUID.randomUUID().toString();
+        String consumerKey = UUID.randomUUID().toString();
+
+        PowerMockito.when(DAOUtil.getAuthConnection()).thenReturn(connection);
+        PowerMockito.when(connection.prepareStatement(Mockito.anyString())).thenReturn(statement);
+        PowerMockito.when(statement.executeQuery()).thenReturn(resultSet);
+        PowerMockito.when(resultSet.next()).thenReturn(false);
+        try {
+            dao.getTokenInfo(accessToken, consumerKey);
+        } catch (OAuthDAOException e) {
+            Assert.fail("exception not expected");
+        }
+
+        PowerMockito.when(resultSet.next()).thenReturn(true);
+        PowerMockito.when(resultSet.getTimestamp(JDBCAuthConstants.TIME_CREATED))
+                .thenReturn(Timestamp.from(Instant.now()));
+        PowerMockito.when(resultSet.getTimestamp(JDBCAuthConstants.REFRESH_TOKEN_TIME_CREATED))
+                .thenReturn(Timestamp.from(Instant.now()));
+
+        try {
+            AccessTokenDTO accessTokenDTO = dao.getTokenInfo(accessToken, consumerKey);
+            Assert.assertNotNull(accessTokenDTO);
+        } catch (OAuthDAOException e) {
+            Assert.fail("exception not expected");
+        }
+
+        PowerMockito.when(statement.executeQuery()).thenThrow(SQLException.class);
+        try {
+            dao.getTokenInfo(accessToken, consumerKey);
+            Assert.fail("exception expected");
+        } catch (OAuthDAOException e) {
+        }
+
+        PowerMockito.when(DAOUtil.getAuthConnection()).thenThrow(SQLException.class);
+        try {
+            dao.getTokenInfo(accessToken, consumerKey);
+            Assert.fail("exception expected");
+        } catch (OAuthDAOException e) {
         }
     }
 }

@@ -20,9 +20,10 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
-import javax.ws.rs.OPTIONS;
+
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -46,7 +47,7 @@ import javax.ws.rs.core.Response;
 public class RegisterApi implements Microservice  {
    private final RegisterApiService delegate = RegisterApiServiceFactory.getRegisterApi();
 
-    @OPTIONS
+    
     @DELETE
     @Path("/{client_id}")
     @Consumes({ "application/json" })
@@ -61,9 +62,10 @@ public class RegisterApi implements Microservice  {
     public Response deleteApplication(@ApiParam(value = "Unique identifier of the OAuth2 client application.",required=true) @PathParam("client_id") String clientId
  ,@Context Request request)
     throws NotFoundException {
+        
         return delegate.deleteApplication(clientId,request);
     }
-    @OPTIONS
+    
     @GET
     @Path("/{client_id}")
     @Consumes({ "application/json" })
@@ -78,9 +80,10 @@ public class RegisterApi implements Microservice  {
     public Response getApplication(@ApiParam(value = "Unique identifier of the OAuth2 client application.",required=true) @PathParam("client_id") String clientId
  ,@Context Request request)
     throws NotFoundException {
+        
         return delegate.getApplication(clientId,request);
     }
-    @OPTIONS
+    
     @POST
     
     @Consumes({ "application/json" })
@@ -97,9 +100,10 @@ public class RegisterApi implements Microservice  {
     public Response registerApplication(@ApiParam(value = "Application information to register." ,required=true) RegistrationRequestDTO registrationRequest
  ,@Context Request request)
     throws NotFoundException {
+        
         return delegate.registerApplication(registrationRequest,request);
     }
-    @OPTIONS
+    
     @PUT
     @Path("/{client_id}")
     @Consumes({ "application/json" })
@@ -117,6 +121,7 @@ public class RegisterApi implements Microservice  {
 ,@ApiParam(value = "Unique identifier for the OAuth2 client application.",required=true) @PathParam("client_id") String clientId
  ,@Context Request request)
     throws NotFoundException {
+        
         return delegate.updateApplication(updateRequest,clientId,request);
     }
 }

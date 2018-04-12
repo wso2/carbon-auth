@@ -27,10 +27,14 @@ import org.wso2.carbon.auth.client.registration.ClientRegistrationHandler;
 import org.wso2.carbon.auth.client.registration.impl.ClientRegistrationFactory;
 import org.wso2.carbon.auth.client.registration.model.Application;
 import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
-//import org.wso2.carbon.auth.oauth.IntegrationTestBase;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
+import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
+import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
+import org.wso2.carbon.auth.oauth.dto.TokenState;
+import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
-import java.util.Calendar;
+import java.time.Instant;
 import java.util.UUID;
 
 public class TokenManagerImplTest extends AuthDAOIntegrationTestBase {
@@ -63,30 +67,45 @@ public class TokenManagerImplTest extends AuthDAOIntegrationTestBase {
         String clientID = application.getClientId();
         String authUser = "admin";
         String userDomain = "default";
-        long timeCreated = Calendar.getInstance().getTimeInMillis();
-        long refreshTokenCreatedTime = Calendar.getInstance().getTimeInMillis();
+        Instant timeCreated = Instant.now();
+        Instant refreshTokenCreatedTime = Instant.now();
         int validityPeriod = 3600;
         int refreshTokenValidityPeriod = 3600;
         String tokenScopeHash = "hash";
-        String tokenState = "active";
+        TokenState tokenState = TokenState.ACTIVE;
         String userType = "application user";
         String grantType = application.getGrantTypes();
 
-        tokenManager.storeToken(accessToken, refreshToken, clientID, authUser, userDomain, timeCreated,
-                refreshTokenCreatedTime, validityPeriod, refreshTokenValidityPeriod, tokenScopeHash, tokenState,
-                userType, grantType);
+        OAuthDAO oAuthDAO;
+        try {
+            oAuthDAO = DAOFactory.getClientDAO();
+        } catch (OAuthDAOException e) {
+            throw new IllegalStateException("Could not create TokenManagerImpl", e);
+        }
+
+        AccessTokenData accessTokenData = new AccessTokenData();
+        accessTokenData.setAccessToken(accessToken);
+        accessTokenData.setRefreshToken(refreshToken);
+        accessTokenData.setClientId(clientID);
+        accessTokenData.setAuthUser(authUser);
+        accessTokenData.setAccessTokenCreatedTime(timeCreated);
+        accessTokenData.setRefreshTokenCreatedTime(refreshTokenCreatedTime);
+        accessTokenData.setAccessTokenValidityPeriod(validityPeriod);
+        accessTokenData.setRefreshTokenValidityPeriod(refreshTokenValidityPeriod);
+        accessTokenData.setTokenState(tokenState);
+        accessTokenData.setGrantType(grantType);
+        oAuthDAO.addAccessTokenInfo(accessTokenData);
+
 
         AccessTokenDTO accessTokenDTO = tokenManager.getTokenInfo(accessToken);
         Assert.assertEquals(accessToken, accessTokenDTO.getAccessToken());
         Assert.assertEquals(refreshToken, accessTokenDTO.getRefreshToken());
         Assert.assertEquals(authUser, accessTokenDTO.getAuthUser());
-        Assert.assertEquals(timeCreated, accessTokenDTO.getTimeCreated());
-        Assert.assertEquals(refreshTokenCreatedTime, accessTokenDTO.getRefreshTokenCreatedTime());
+        Assert.assertEquals(timeCreated.toEpochMilli(), accessTokenDTO.getTimeCreated());
+        Assert.assertEquals(refreshTokenCreatedTime.toEpochMilli(), accessTokenDTO.getRefreshTokenCreatedTime());
         Assert.assertEquals(validityPeriod, accessTokenDTO.getValidityPeriod());
         Assert.assertEquals(refreshTokenValidityPeriod, accessTokenDTO.getRefreshTokenValidityPeriod());
-        Assert.assertEquals(tokenScopeHash, accessTokenDTO.getTokenScopeHash());
-        Assert.assertEquals(tokenState, accessTokenDTO.getTokenState());
-        Assert.assertEquals(userType, accessTokenDTO.getUserType());
+        Assert.assertEquals(tokenState.toString(), accessTokenDTO.getTokenState());
         Assert.assertEquals(grantType, accessTokenDTO.getGrantType());
     }
 

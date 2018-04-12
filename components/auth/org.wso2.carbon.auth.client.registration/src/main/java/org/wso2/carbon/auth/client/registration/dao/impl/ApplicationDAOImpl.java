@@ -63,7 +63,7 @@ public class ApplicationDAOImpl implements ApplicationDAO {
                     data.setClientName(rs.getString("APP_NAME"));
                     data.setCallBackUrl(rs.getString("REDIRECT_URI"));
                     data.setGrantTypes(rs.getString("GRANT_TYPES"));
-                    data.setApplicationAccessTokenExpiryTime(rs.getString("APP_ACCESS_TOKEN_EXPIRE_TIME"));
+                    data.setApplicationAccessTokenExpiryTime(rs.getLong("APP_ACCESS_TOKEN_EXPIRE_TIME"));
                     data.setRefreshTokenExpiryTime(rs.getString("REFRESH_TOKEN_EXPIRE_TIME"));
                     data.setUserAccessTokenExpiryTime(rs.getString("USER_ACCESS_TOKEN_EXPIRE_TIME"));
 
@@ -136,7 +136,7 @@ public class ApplicationDAOImpl implements ApplicationDAO {
     private void addClientInfoInDB(Application application) throws SQLException, ClientRegistrationDAOException {
         final String query = "INSERT INTO AUTH_OAUTH2_APPLICATION " +
                 "(CLIENT_ID, CLIENT_SECRET, AUTHZ_USER, APP_NAME, OAUTH_VERSION," +
-                " REDIRECT_URI, GRANT_TYPES) VALUES (?,?,?,?,?,?,?) ";
+                " REDIRECT_URI, GRANT_TYPES, APP_ACCESS_TOKEN_EXPIRE_TIME) VALUES (?,?,?,?,?,?,?,?) ";
 
         try (Connection connection = DAOUtil.getAuthConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
@@ -162,6 +162,11 @@ public class ApplicationDAOImpl implements ApplicationDAO {
                     statement.setString(7, application.getGrantTypes());
                 } else {
                     statement.setNull(7, Types.VARCHAR);
+                }
+                if (application.getApplicationAccessTokenExpiryTime() != null) {
+                    statement.setLong(8, application.getApplicationAccessTokenExpiryTime());
+                } else {
+                    statement.setNull(8, Types.INTEGER);
                 }
 
                 statement.execute();
@@ -193,7 +198,11 @@ public class ApplicationDAOImpl implements ApplicationDAO {
                 statement.setString(2, application.getCallBackUrl());
                 statement.setString(3, application.getGrantTypes());
                 statement.setString(4, application.getUserAccessTokenExpiryTime());
-                statement.setString(5, application.getApplicationAccessTokenExpiryTime());
+                if (application.getApplicationAccessTokenExpiryTime() != null) {
+                    statement.setLong(5, application.getApplicationAccessTokenExpiryTime());
+                } else {
+                    statement.setNull(5, Types.INTEGER);
+                }
                 statement.setString(6, application.getRefreshTokenExpiryTime());
                 statement.setString(7, clientId);
 

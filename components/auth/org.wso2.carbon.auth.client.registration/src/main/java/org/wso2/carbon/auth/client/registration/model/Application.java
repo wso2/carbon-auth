@@ -33,7 +33,7 @@ public class Application {
     private String oauthVersion;
     private String appState;
     private String userAccessTokenExpiryTime;
-    private String applicationAccessTokenExpiryTime;
+    private Long applicationAccessTokenExpiryTime;
     private String refreshTokenExpiryTime;
 
     public String getClientName() {
@@ -100,11 +100,11 @@ public class Application {
         this.userAccessTokenExpiryTime = userAccessTokenExpiryTime;
     }
 
-    public String getApplicationAccessTokenExpiryTime() {
+    public Long getApplicationAccessTokenExpiryTime() {
         return applicationAccessTokenExpiryTime;
     }
 
-    public void setApplicationAccessTokenExpiryTime(String applicationAccessTokenExpiryTime) {
+    public void setApplicationAccessTokenExpiryTime(Long applicationAccessTokenExpiryTime) {
         this.applicationAccessTokenExpiryTime = applicationAccessTokenExpiryTime;
     }
 

@@ -23,26 +23,6 @@ import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
  * Manage token related functions
  */
 public interface TokenManager {
-    /**
-     * Persist token information
-     *
-     * @param accessToken
-     * @param refreshToken
-     * @param clientID
-     * @param authUser
-     * @param userDomain
-     * @param timeCreated
-     * @param refreshTokenCreatedTime
-     * @param validityPeriod
-     * @param refreshTokenValidityPeriod
-     * @param tokenScopeHash
-     * @param tokenState
-     * @param userType
-     * @param grantType
-     */
-    void storeToken(String accessToken, String refreshToken, String clientID, String authUser, String userDomain,
-            long timeCreated, long refreshTokenCreatedTime, int validityPeriod, int refreshTokenValidityPeriod,
-            String tokenScopeHash, String tokenState, String userType, String grantType);
 
     /**
      * Retrieve token information

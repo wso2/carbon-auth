@@ -23,26 +23,38 @@ package org.wso2.carbon.auth.oauth.impl;
 import com.nimbusds.oauth2.sdk.AccessTokenResponse;
 import com.nimbusds.oauth2.sdk.GrantType;
 import com.nimbusds.oauth2.sdk.Scope;
+import com.nimbusds.oauth2.sdk.id.Identifier;
 import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import com.nimbusds.oauth2.sdk.token.Tokens;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
+import org.wso2.carbon.auth.oauth.configuration.models.OAuthConfiguration;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
+import org.wso2.carbon.auth.oauth.internal.ServiceReferenceHolder;
 
 /**
  * Contains token generation logic
  */
 public class TokenGenerator {
     static void generateAccessToken(Scope scope, AccessTokenContext context) {
-        long defaultValidityPeriod = (long) context.getParams().get(OAuthConstants.VALIDITY_PERIOD);
-        BearerAccessToken accessToken = new BearerAccessToken(defaultValidityPeriod, scope);
+        OAuthConfiguration configuration = ServiceReferenceHolder.getInstance().getAuthConfigurations();
 
+        long defaultValidityPeriod = (long) context.getParams().get(OAuthConstants.VALIDITY_PERIOD);
+        int accessTokenLength = configuration.getAccessTokenLength();
+        int refreshTokenLength = configuration.getRefreshTokenLength();
+        Identifier accessTokenIdentifier = new Identifier(accessTokenLength);
+        Identifier refreshTokenIdentifier = new Identifier(refreshTokenLength);
+        String accessTokenPrefix = configuration.getAccessTokenPrefix();
+        String refreshTokenPrefix = configuration.getRefreshTokenPrefix();
+        String accessTokenValue = accessTokenPrefix + accessTokenIdentifier.getValue();
+        String refreshTokenValue = refreshTokenPrefix + refreshTokenIdentifier.getValue();
+
+        BearerAccessToken accessToken = new BearerAccessToken(accessTokenValue, defaultValidityPeriod, scope);
         String grantTypeValue = (String) context.getParams().get(OAuthConstants.GRANT_TYPE);
         RefreshToken refreshToken = null;
         if (!GrantType.CLIENT_CREDENTIALS.getValue().equals(grantTypeValue)) {
-            refreshToken = new RefreshToken();
+            refreshToken = new RefreshToken(refreshTokenValue);
         }
-
         Tokens tokens = new Tokens(accessToken, refreshToken);
         context.setAccessTokenResponse(new AccessTokenResponse(tokens));
         context.setSuccessful(true);

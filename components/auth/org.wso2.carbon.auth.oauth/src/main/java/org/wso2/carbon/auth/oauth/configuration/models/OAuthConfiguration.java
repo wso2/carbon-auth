@@ -37,6 +37,14 @@ public class OAuthConfiguration {
     private long defaultTokenValidityPeriod = 3600L;
     @Element(description = "Access token default validity period")
     private long defaultRefreshTokenValidityPeriod = 3600L;
+    @Element(description = "Access token prefix")
+    private String accessTokenPrefix = "";
+    @Element(description = "Refresh token prefix")
+    private String refreshTokenPrefix = "";
+    @Element(description = "Access token length without prefix")
+    private int accessTokenLength = 32;
+    @Element(description = "Refresh token length without prefix")
+    private int refreshTokenLength = 32;
     @Element(description = "Default grant types")
     private Map<String, String> grantTypes = populateDefaultGrantTypes();
 
@@ -62,6 +70,38 @@ public class OAuthConfiguration {
 
     public void setGrantTypes(Map<String, String> grantTypes) {
         this.grantTypes = grantTypes;
+    }
+
+    public String getAccessTokenPrefix() {
+        return accessTokenPrefix;
+    }
+
+    public void setAccessTokenPrefix(String accessTokenPrefix) {
+        this.accessTokenPrefix = accessTokenPrefix;
+    }
+
+    public String getRefreshTokenPrefix() {
+        return refreshTokenPrefix;
+    }
+
+    public void setRefreshTokenPrefix(String refreshTokenPrefix) {
+        this.refreshTokenPrefix = refreshTokenPrefix;
+    }
+
+    public int getAccessTokenLength() {
+        return accessTokenLength;
+    }
+
+    public void setAccessTokenLength(int accessTokenLength) {
+        this.accessTokenLength = accessTokenLength;
+    }
+
+    public int getRefreshTokenLength() {
+        return refreshTokenLength;
+    }
+
+    public void setRefreshTokenLength(int refreshTokenLength) {
+        this.refreshTokenLength = refreshTokenLength;
     }
 
     private Map<String, String> populateDefaultGrantTypes() {

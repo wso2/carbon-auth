@@ -32,7 +32,6 @@ import org.wso2.carbon.auth.client.registration.model.Application;
 import org.wso2.carbon.auth.core.api.UserNameMapper;
 import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
-import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
@@ -64,10 +63,9 @@ public interface GrantHandler {
      * @param oauthDAO         OAuthDAO instance
      * @param userStoreManager user store manager instance
      * @param applicationDAO   ApplicationDAO instance
-     * @param tokenDAO         TokenDAO instance
      */
     void init(UserNameMapper userNameMapper, OAuthDAO oauthDAO, UserStoreManager userStoreManager,
-            ApplicationDAO applicationDAO, TokenDAO tokenDAO);
+            ApplicationDAO applicationDAO);
 
     default boolean isAuthorizedClient(Application application, String grantType) {
         if (application == null || StringUtils.isEmpty(application.getGrantTypes())) {

@@ -20,48 +20,33 @@ package org.wso2.carbon.auth.oauth.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.oauth.TokenManager;
-import org.wso2.carbon.auth.oauth.dao.TokenDAO;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 
-import java.sql.SQLException;
 
 /**
  *
  */
 public class TokenManagerImpl implements TokenManager {
     private static final Logger log = LoggerFactory.getLogger(TokenManagerImpl.class);
-    private TokenDAO tokenDAO;
+    private OAuthDAO oAuthDAO;
 
     public TokenManagerImpl() {
 
         try {
-            tokenDAO = DAOFactory.getTokenDAO();
+            oAuthDAO = DAOFactory.getClientDAO();
         } catch (OAuthDAOException e) {
             throw new IllegalStateException("Could not create TokenManagerImpl", e);
         }
     }
 
     @Override
-    public void storeToken(String accessToken, String refreshToken, String clientID, String authUser, String userDomain,
-            long timeCreated, long refreshTokenCreatedTime, int validityPeriod, int refreshTokenValidityPeriod,
-            String tokenScopeHash, String tokenState, String userType, String grantType) {
-        try {
-            tokenDAO.persistToken(accessToken, refreshToken, clientID, authUser, userDomain, timeCreated,
-                    refreshTokenCreatedTime, validityPeriod, refreshTokenValidityPeriod, tokenScopeHash, tokenState,
-                    userType, grantType);
-        } catch (SQLException e) {
-            log.error(e.getMessage(), e);
-        }
-
-    }
-
-    @Override
     public AccessTokenDTO getTokenInfo(String accessToken) {
         try {
-            return tokenDAO.getTokenInfo(accessToken);
-        } catch (SQLException e) {
+            return oAuthDAO.getTokenInfo(accessToken);
+        } catch (OAuthDAOException e) {
             log.error(e.getMessage(), e);
         }
         return null;

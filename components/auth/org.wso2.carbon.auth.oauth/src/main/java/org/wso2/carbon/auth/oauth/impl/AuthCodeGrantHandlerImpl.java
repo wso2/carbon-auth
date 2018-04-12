@@ -34,7 +34,6 @@ import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
-import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
@@ -57,7 +56,7 @@ public class AuthCodeGrantHandlerImpl implements GrantHandler {
 
     @Override
     public void init(UserNameMapper userNameMapper, OAuthDAO oauthDAO, UserStoreManager userStoreManager,
-            ApplicationDAO applicationDAO, TokenDAO tokenDAO) {
+            ApplicationDAO applicationDAO) {
         this.userNameMapper = userNameMapper;
         this.oauthDAO = oauthDAO;
         clientLookup = new ClientLookupImpl(oauthDAO);
