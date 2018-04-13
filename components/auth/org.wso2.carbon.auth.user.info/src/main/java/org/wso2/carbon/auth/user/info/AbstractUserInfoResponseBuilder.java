@@ -19,8 +19,8 @@
 
 package org.wso2.carbon.auth.user.info;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.token.introspection.dto.IntrospectionResponse;
 import org.wso2.carbon.auth.user.info.exception.UserInfoException;
@@ -35,7 +35,7 @@ import java.util.Map;
  */
 public abstract class AbstractUserInfoResponseBuilder implements UserInfoResponseBuilder {
 
-    private static final Log log = LogFactory.getLog(AbstractUserInfoResponseBuilder.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractUserInfoResponseBuilder.class);
 
     /**
      * Get response string based on the introspection response

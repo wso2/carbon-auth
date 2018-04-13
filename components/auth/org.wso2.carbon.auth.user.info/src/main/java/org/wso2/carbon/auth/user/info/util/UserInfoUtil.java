@@ -157,7 +157,7 @@ public class UserInfoUtil {
         UserInfoConfigurationService userInfoConfigurationService = UserInfoUtil.getUserInfoConfigurationService();
         String responseBuilderClassName = userInfoConfigurationService.getUserInfoConfiguration()
                 .getResponseBuilderClassName();
-
+        log.debug("Creating user info response builder for {}.", responseBuilderClassName);
         try {
             UserInfoResponseBuilder userInfoResponseBuilder = (UserInfoResponseBuilder) Class
                     .forName(responseBuilderClassName).newInstance();
@@ -231,8 +231,7 @@ public class UserInfoUtil {
 
                     String userAttributeValue = ((SimpleAttribute) userAttribute).getValue().toString();
                     extractedUserAttributes.put(userAttributeKey, userAttributeValue);
-                    log.debug("Extracted user attribute: {} and attribute value: {} from simple attribute.",
-                            userAttributeKey, userAttributeValue);
+                    log.debug("Extracted user attribute: {} from simple attribute.", userAttributeKey);
 
                 } else if (userAttribute instanceof ComplexAttribute) {
 
@@ -246,12 +245,9 @@ public class UserInfoUtil {
                         if (subAttribute instanceof SimpleAttribute) {
                             String subAttributeValue = ((SimpleAttribute) subAttribute).getValue().toString();
                             extractedUserAttributes.put(subAttributeKey, subAttributeValue);
-                            log.debug("Extracted user attribute: {} and attribute value: {} from complex attribute.",
-                                    subAttributeKey, subAttributeValue);
+                            log.debug("Extracted user attribute: {} from complex attribute.", subAttributeKey);
                         }
-
                     }
-
                 }
             }
         }

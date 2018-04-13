@@ -19,8 +19,8 @@
 
 package org.wso2.carbon.auth.user.info.impl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.exception.ExceptionCodes;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.token.introspection.IntrospectionManager;
@@ -36,7 +36,7 @@ import org.wso2.carbon.auth.user.info.util.UserInfoUtil;
  */
 public class UserInfoRequestHandlerImpl implements UserinfoRequestHandler {
 
-    private static final Log log = LogFactory.getLog(UserInfoRequestHandlerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(UserInfoRequestHandlerImpl.class);
     private IntrospectionManager introspectionManager;
 
     public UserInfoRequestHandlerImpl(IntrospectionManager introspectionManager) {
@@ -49,7 +49,7 @@ public class UserInfoRequestHandlerImpl implements UserinfoRequestHandler {
     @Override
     public String retrieveUserInfo(String authorization, String schema) throws UserInfoException {
 
-        String token = retrieveToken(authorization, schema);
+        String token = retrieveToken(authorization);
         IntrospectionResponse introspectionResponse = introspectionManager.introspect(token);
 
         if (!introspectionResponse.isActive()) {
@@ -66,12 +66,12 @@ public class UserInfoRequestHandlerImpl implements UserinfoRequestHandler {
      * Retrieve token
      *
      * @param authorization Authorization header value
-     * @param schema        Schema value
      * @return access token
      * @throws UserInfoException if failed to retrieve access token
      */
-    private String retrieveToken(String authorization, String schema) throws UserInfoException {
+    private String retrieveToken(String authorization) throws UserInfoException {
 
+        log.debug("Retrieving token from Authorization header value: {}", authorization);
         if (authorization == null) {
             throw new UserInfoException("Access token is missing", ExceptionCodes.INVALID_REQUEST);
         }
@@ -97,6 +97,7 @@ public class UserInfoRequestHandlerImpl implements UserinfoRequestHandler {
 
         boolean validToken = false;
 
+        log.debug("Validating scopes values: {}", scopes);
         if (scopes != null) {
             String scopeValues[] = scopes.split(" ");
             for (String scope : scopeValues) {
