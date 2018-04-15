@@ -62,7 +62,7 @@ public class TokenApiServiceImplTest {
         /*
         Response response = tokenApiService
                 .tokenPost(authorization, grantType, code, redirectUri, clientId, refreshToken, scope, username,
-                        password, request)thenReturn;
+                        password, request);
         String content = (String) response.getEntity();
         Assert.assertEquals(tokenResponse, content);
         */

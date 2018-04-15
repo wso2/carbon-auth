@@ -32,5 +32,4 @@ public class UserinfoApiServiceFactoryTest {
         Assert.assertNotNull(userinfoApiService);
     }
 
-
 }
