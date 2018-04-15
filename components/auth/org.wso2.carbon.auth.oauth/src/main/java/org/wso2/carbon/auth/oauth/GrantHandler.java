@@ -103,7 +103,7 @@ public interface GrantHandler {
             return Optional.empty();
         } else {
             BearerAccessToken accessToken = new BearerAccessToken(accessTokenDTO.getAccessToken(),
-                    accessTokenDTO.getRefreshTokenValidityPeriod(), new Scope());
+                    accessTokenDTO.getRefreshTokenValidityPeriod(), new Scope(accessTokenDTO.getScopes()));
             RefreshToken refreshToken = null;
             if (!GrantType.CLIENT_CREDENTIALS.getValue().equals(grantType)) {
                 refreshToken = new RefreshToken(accessTokenDTO.getRefreshToken());
