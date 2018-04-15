@@ -20,7 +20,7 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
-
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -44,7 +44,7 @@ import javax.ws.rs.core.Response;
 public class UserinfoApi implements Microservice  {
    private final UserinfoApiService delegate = UserinfoApiServiceFactory.getUserinfoApi();
 
-    
+    @OPTIONS
     @GET
     
     @Consumes({ "application/x-www-form-urlencoded" })
