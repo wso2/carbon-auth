@@ -22,9 +22,10 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.api.UserNameMapper;
 import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.core.impl.UserNameMapperFactory;
-import org.wso2.carbon.auth.oauth.TokenManager;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
+import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
-import org.wso2.carbon.auth.oauth.impl.TokenManagerImpl;
+import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 import org.wso2.carbon.auth.token.introspection.IntrospectionException;
 import org.wso2.carbon.auth.token.introspection.TokenValidator;
 import org.wso2.carbon.auth.token.introspection.TokenValidatorHandler;
@@ -118,8 +119,13 @@ public class TokenValidatorHandlerImpl implements TokenValidatorHandler {
     }
 
     private AccessTokenDTO findAccessToken(String tokenIdentifier) throws IntrospectionException {
-        TokenManager tokenManager = new TokenManagerImpl();
-        return tokenManager.getTokenInfo(tokenIdentifier);
+        OAuthDAO oAuthDAO;
+        try {
+            oAuthDAO = DAOFactory.getClientDAO();
+            return oAuthDAO.getTokenInfo(tokenIdentifier);
+        } catch (OAuthDAOException e) {
+            throw new IntrospectionException("Error occurred while getting token information", e);
+        }
     }
 
     private boolean hasAccessTokenExpired(AccessTokenDTO accessTokenDTO) {
