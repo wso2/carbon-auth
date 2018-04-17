@@ -35,7 +35,6 @@ import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.TokenRequestHandler;
 import org.wso2.carbon.auth.oauth.configuration.models.OAuthConfiguration;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
-import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 import org.wso2.carbon.auth.oauth.internal.ServiceReferenceHolder;
@@ -51,12 +50,10 @@ public class TokenRequestHandlerImpl implements TokenRequestHandler {
     private OAuthDAO oauthDAO;
     private ApplicationDAO applicationDAO;
     private ClientLookup clientLookup;
-    private TokenDAO tokenDAO;
 
-    public TokenRequestHandlerImpl(OAuthDAO oauthDAO, ApplicationDAO applicationDAO, TokenDAO tokenDAO) {
+    public TokenRequestHandlerImpl(OAuthDAO oauthDAO, ApplicationDAO applicationDAO) {
         this.oauthDAO = oauthDAO;
         this.applicationDAO = applicationDAO;
-        this.tokenDAO = tokenDAO;
     }
 
     @Override
@@ -77,7 +74,7 @@ public class TokenRequestHandlerImpl implements TokenRequestHandler {
         MutableBoolean haltExecution = new MutableBoolean(false);
 
         Optional<GrantHandler> grantHandler = GrantHandlerFactory
-                .createGrantHandler(grantTypeValue, context, oauthDAO, applicationDAO, tokenDAO, haltExecution);
+                .createGrantHandler(grantTypeValue, context, oauthDAO, applicationDAO, haltExecution);
 
         if (haltExecution.isFalse()) {
             if (grantHandler.isPresent()) {
@@ -105,7 +102,9 @@ public class TokenRequestHandlerImpl implements TokenRequestHandler {
 
                 OAuthConfiguration authConfigs;
                 long defaultValidityPeriod;
-                if (queryParameters.get(OAuthConstants.VALIDITY_PERIOD_QUERY_PARAM) != null) {
+                if (application.getApplicationAccessTokenExpiryTime() > 0) {
+                    defaultValidityPeriod = application.getApplicationAccessTokenExpiryTime();
+                } else if (queryParameters.get(OAuthConstants.VALIDITY_PERIOD_QUERY_PARAM) != null) {
                     defaultValidityPeriod = Long
                             .parseLong(queryParameters.get(OAuthConstants.VALIDITY_PERIOD_QUERY_PARAM));
                 } else {

@@ -30,6 +30,9 @@ public class ApplicationDTO   {
   @SerializedName("grant_types")
   private List<String> grantTypes = new ArrayList<String>();
 
+  @SerializedName("token_expire_time")
+  private Long tokenExpireTime = null;
+
   public ApplicationDTO clientId(String clientId) {
     this.clientId = clientId;
     return this;
@@ -148,6 +151,24 @@ public class ApplicationDTO   {
     this.grantTypes = grantTypes;
   }
 
+  public ApplicationDTO tokenExpireTime(Long tokenExpireTime) {
+    this.tokenExpireTime = tokenExpireTime;
+    return this;
+  }
+
+   /**
+   * Get tokenExpireTime
+   * @return tokenExpireTime
+  **/
+  @ApiModelProperty(value = "")
+  public Long getTokenExpireTime() {
+    return tokenExpireTime;
+  }
+
+  public void setTokenExpireTime(Long tokenExpireTime) {
+    this.tokenExpireTime = tokenExpireTime;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -163,12 +184,13 @@ public class ApplicationDTO   {
         Objects.equals(this.clientSecretExpiresAt, application.clientSecretExpiresAt) &&
         Objects.equals(this.redirectUris, application.redirectUris) &&
         Objects.equals(this.clientName, application.clientName) &&
-        Objects.equals(this.grantTypes, application.grantTypes);
+        Objects.equals(this.grantTypes, application.grantTypes) &&
+        Objects.equals(this.tokenExpireTime, application.tokenExpireTime);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(clientId, clientSecret, clientSecretExpiresAt, redirectUris, clientName, grantTypes);
+    return Objects.hash(clientId, clientSecret, clientSecretExpiresAt, redirectUris, clientName, grantTypes, tokenExpireTime);
   }
 
   @Override
@@ -182,6 +204,7 @@ public class ApplicationDTO   {
     sb.append("    redirectUris: ").append(toIndentedString(redirectUris)).append("\n");
     sb.append("    clientName: ").append(toIndentedString(clientName)).append("\n");
     sb.append("    grantTypes: ").append(toIndentedString(grantTypes)).append("\n");
+    sb.append("    tokenExpireTime: ").append(toIndentedString(tokenExpireTime)).append("\n");
     sb.append("}");
     return sb.toString();
   }

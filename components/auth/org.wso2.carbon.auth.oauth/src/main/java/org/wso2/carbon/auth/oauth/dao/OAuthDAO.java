@@ -95,4 +95,23 @@ public interface OAuthDAO {
      */
     AccessTokenDTO getTokenInfo(String authUser, String grantType, String clientId, String scopes)
             throws OAuthDAOException;
+
+    /**
+     * Get access token related information
+     *
+     * @param accessToken accessToken
+     * @return return AccessTokenDTO
+     * @throws OAuthDAOException throws if a error occurred
+     */
+    AccessTokenDTO getTokenInfo(String accessToken) throws OAuthDAOException;
+
+    /**
+     * Get access token related information from both accessToken and consumer key
+     *
+     * @param refreshToken refreshToken
+     * @param consumerKey  consumer key
+     * @return return AccessTokenDTO
+     * @throws OAuthDAOException throws if a error occurred
+     */
+    AccessTokenDTO getTokenInfo(String refreshToken, String consumerKey) throws OAuthDAOException;
 }

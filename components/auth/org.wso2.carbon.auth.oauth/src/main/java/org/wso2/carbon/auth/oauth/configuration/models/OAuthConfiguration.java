@@ -20,6 +20,7 @@ package org.wso2.carbon.auth.oauth.configuration.models;
 import com.nimbusds.oauth2.sdk.GrantType;
 import org.wso2.carbon.auth.oauth.impl.AuthCodeGrantHandlerImpl;
 import org.wso2.carbon.auth.oauth.impl.ClientCredentialsGrantHandlerImpl;
+import org.wso2.carbon.auth.oauth.impl.DefaultTokenGenerator;
 import org.wso2.carbon.auth.oauth.impl.PasswordGrantHandlerImpl;
 import org.wso2.carbon.auth.oauth.impl.RefreshGrantHandler;
 import org.wso2.carbon.config.annotation.Configuration;
@@ -37,6 +38,8 @@ public class OAuthConfiguration {
     private long defaultTokenValidityPeriod = 3600L;
     @Element(description = "Access token default validity period")
     private long defaultRefreshTokenValidityPeriod = 3600L;
+    @Element(description = "Token generator class implementation")
+    private String tokenGenerator = DefaultTokenGenerator.class.getName();
     @Element(description = "Default grant types")
     private Map<String, String> grantTypes = populateDefaultGrantTypes();
 
@@ -62,6 +65,14 @@ public class OAuthConfiguration {
 
     public void setGrantTypes(Map<String, String> grantTypes) {
         this.grantTypes = grantTypes;
+    }
+
+    public String getTokenGenerator() {
+        return tokenGenerator;
+    }
+
+    public void setTokenGenerator(String tokenGenerator) {
+        this.tokenGenerator = tokenGenerator;
     }
 
     private Map<String, String> populateDefaultGrantTypes() {

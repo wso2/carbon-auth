@@ -20,6 +20,7 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.OPTIONS;
@@ -61,6 +62,7 @@ public class RegisterApi implements Microservice  {
     public Response deleteApplication(@ApiParam(value = "Unique identifier of the OAuth2 client application.",required=true) @PathParam("client_id") String clientId
  ,@Context Request request)
     throws NotFoundException {
+        
         return delegate.deleteApplication(clientId,request);
     }
     @OPTIONS
@@ -78,6 +80,7 @@ public class RegisterApi implements Microservice  {
     public Response getApplication(@ApiParam(value = "Unique identifier of the OAuth2 client application.",required=true) @PathParam("client_id") String clientId
  ,@Context Request request)
     throws NotFoundException {
+        
         return delegate.getApplication(clientId,request);
     }
     @OPTIONS
@@ -97,6 +100,7 @@ public class RegisterApi implements Microservice  {
     public Response registerApplication(@ApiParam(value = "Application information to register." ,required=true) RegistrationRequestDTO registrationRequest
  ,@Context Request request)
     throws NotFoundException {
+        
         return delegate.registerApplication(registrationRequest,request);
     }
     @OPTIONS
@@ -117,6 +121,7 @@ public class RegisterApi implements Microservice  {
 ,@ApiParam(value = "Unique identifier for the OAuth2 client application.",required=true) @PathParam("client_id") String clientId
  ,@Context Request request)
     throws NotFoundException {
+        
         return delegate.updateApplication(updateRequest,clientId,request);
     }
 }

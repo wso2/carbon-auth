@@ -31,7 +31,6 @@ import org.wso2.carbon.auth.core.impl.UserNameMapperFactory;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
-import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.internal.ServiceReferenceHolder;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
@@ -55,7 +54,7 @@ public class GrantHandlerFactory {
      * @return Grant handler implementation
      */
     static Optional<GrantHandler> createGrantHandler(String grantTypeValue, AccessTokenContext context,
-            OAuthDAO oauthDAO, ApplicationDAO applicationDAO, TokenDAO tokenDAO, MutableBoolean haltExecution)
+            OAuthDAO oauthDAO, ApplicationDAO applicationDAO, MutableBoolean haltExecution)
             throws UserStoreException {
         log.debug("Calling createGrantHandler");
         if (!StringUtils.isEmpty(grantTypeValue)) {
@@ -85,7 +84,7 @@ public class GrantHandlerFactory {
                 return Optional.empty();
             }
             UserStoreManager userStoreManager = UserStoreManagerFactory.getUserStoreManager();
-            grantHandlerImpl.init(userNameMapper, oauthDAO, userStoreManager, applicationDAO, tokenDAO);
+            grantHandlerImpl.init(userNameMapper, oauthDAO, userStoreManager, applicationDAO);
             return Optional.of(grantHandlerImpl);
         } else {
             context.setErrorObject(OAuth2Error.INVALID_REQUEST);

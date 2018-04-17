@@ -25,7 +25,7 @@ import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.wso2.carbon.auth.oauth.dao.TokenDAO;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
 import org.wso2.carbon.auth.token.introspection.IntrospectionManager;
@@ -36,14 +36,14 @@ import org.wso2.carbon.auth.token.introspection.dto.IntrospectionResponse;
 public class IntrospectionManagerImplTest {
 
     @Mock
-    TokenDAO tokenDAO;
+    OAuthDAO oAuthDAO;
     AccessTokenDTO accessTokenDTO;
     IntrospectionManager introspectionManager;
 
     @Before
     public void setup() throws Exception {
         PowerMockito.mockStatic(DAOFactory.class);
-        PowerMockito.when(DAOFactory.getTokenDAO()).thenReturn(tokenDAO);
+        PowerMockito.when(DAOFactory.getClientDAO()).thenReturn(oAuthDAO);
 
         accessTokenDTO = new AccessTokenDTO();
         int tokenID = 1;
@@ -87,7 +87,7 @@ public class IntrospectionManagerImplTest {
 
     @Test
     public void testIntrospectExpiredToken() throws Exception {
-        PowerMockito.when(tokenDAO.getTokenInfo(accessTokenDTO.getAccessToken())).thenReturn(accessTokenDTO);
+        PowerMockito.when(oAuthDAO.getTokenInfo(accessTokenDTO.getAccessToken())).thenReturn(accessTokenDTO);
         accessTokenDTO.setTimeCreated(System.currentTimeMillis() - (4000 * 1000));
         IntrospectionResponse response = introspectionManager.introspect(accessTokenDTO.getAccessToken());
         Assert.assertFalse(response.isActive());
@@ -96,14 +96,14 @@ public class IntrospectionManagerImplTest {
     @Test
     public void testIntrospectInfiniteToken() throws Exception {
         accessTokenDTO.setValidityPeriod(-1);
-        PowerMockito.when(tokenDAO.getTokenInfo(accessTokenDTO.getAccessToken())).thenReturn(accessTokenDTO);
+        PowerMockito.when(oAuthDAO.getTokenInfo(accessTokenDTO.getAccessToken())).thenReturn(accessTokenDTO);
         IntrospectionResponse response = introspectionManager.introspect(accessTokenDTO.getAccessToken());
         Assert.assertTrue(response.isActive());
     }
 
     @Test
     public void testIntrospectNullFromDao() throws Exception {
-        PowerMockito.when(tokenDAO.getTokenInfo(accessTokenDTO.getAccessToken())).thenReturn(null);
+        PowerMockito.when(oAuthDAO.getTokenInfo(accessTokenDTO.getAccessToken())).thenReturn(null);
 
         IntrospectionResponse response = introspectionManager.introspect(accessTokenDTO.getAccessToken());
         Assert.assertFalse(response.isActive());
@@ -111,7 +111,7 @@ public class IntrospectionManagerImplTest {
 
     @Test
     public void testIntrospect() throws Exception {
-        PowerMockito.when(tokenDAO.getTokenInfo(accessTokenDTO.getAccessToken())).thenReturn(accessTokenDTO);
+        PowerMockito.when(oAuthDAO.getTokenInfo(accessTokenDTO.getAccessToken())).thenReturn(accessTokenDTO);
 
         IntrospectionResponse response = introspectionManager.introspect(accessTokenDTO.getAccessToken());
         Assert.assertTrue(response.isActive());

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -15,18 +15,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.carbon.auth.token.introspection;
+package org.wso2.carbon.auth.oauth;
+
+import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 
 /**
- * Exception class for introspection component
+ * Token generator interface
  */
-public class IntrospectionException extends Exception {
-
-    public IntrospectionException(String message) {
-        super(message);
-    }
-
-    public IntrospectionException(String message, Throwable cause) {
-        super(message, cause);
-    }
+public interface TokenGenerator {
+    void generateAccessToken(AccessTokenContext context);
 }

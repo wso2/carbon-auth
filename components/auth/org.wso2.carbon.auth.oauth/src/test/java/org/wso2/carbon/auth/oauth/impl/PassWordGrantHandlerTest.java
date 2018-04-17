@@ -32,7 +32,6 @@ import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
-import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
 import org.wso2.carbon.auth.oauth.dto.TokenState;
@@ -47,7 +46,6 @@ import java.util.UUID;
 public class PassWordGrantHandlerTest {
     private PasswordGrantHandlerImpl passwordGrantHandler;
     private OAuthDAO oauthDAO;
-    private TokenDAO tokenDAO;
     private ApplicationDAO applicationDAO;
     private UserNameMapper userNameMapper;
     String clientId = "JgUsk2mQ_WL0ffmpRSpHDJWFjvEa";
@@ -64,7 +62,6 @@ public class PassWordGrantHandlerTest {
     @BeforeTest
     public void init() throws UserStoreException {
         oauthDAO = Mockito.mock(OAuthDAO.class);
-        tokenDAO = Mockito.mock(TokenDAO.class);
         clientLookup = Mockito.mock(ClientLookup.class);
         userNameMapper = Mockito.mock(UserNameMapper.class);
         authorization = "Basic " + Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
@@ -72,7 +69,7 @@ public class PassWordGrantHandlerTest {
         queryParameters = new HashMap<>();
         userStoreManager = Mockito.mock(UserStoreManager.class);
         passwordGrantHandler = new PasswordGrantHandlerImpl();
-        passwordGrantHandler.init(userNameMapper, oauthDAO, userStoreManager, applicationDAO, tokenDAO);
+        passwordGrantHandler.init(userNameMapper, oauthDAO, userStoreManager, applicationDAO);
     }
 
     @Test

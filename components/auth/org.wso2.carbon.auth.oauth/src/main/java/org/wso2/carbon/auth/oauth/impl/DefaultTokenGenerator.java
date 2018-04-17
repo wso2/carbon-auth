@@ -27,22 +27,25 @@ import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import com.nimbusds.oauth2.sdk.token.Tokens;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
+import org.wso2.carbon.auth.oauth.TokenGenerator;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 
 /**
  * Contains token generation logic
  */
-public class TokenGenerator {
-    static void generateAccessToken(Scope scope, AccessTokenContext context) {
-        long defaultValidityPeriod = (long) context.getParams().get(OAuthConstants.VALIDITY_PERIOD);
-        BearerAccessToken accessToken = new BearerAccessToken(defaultValidityPeriod, scope);
+public class DefaultTokenGenerator implements TokenGenerator {
 
+    @Override
+    public void generateAccessToken(AccessTokenContext context) {
+        Scope scope = (Scope) context.getParams().get(OAuthConstants.SCOPES);
+        long defaultValidityPeriod = (long) context.getParams().get(OAuthConstants.VALIDITY_PERIOD);
+
+        BearerAccessToken accessToken = new BearerAccessToken(defaultValidityPeriod, scope);
         String grantTypeValue = (String) context.getParams().get(OAuthConstants.GRANT_TYPE);
         RefreshToken refreshToken = null;
         if (!GrantType.CLIENT_CREDENTIALS.getValue().equals(grantTypeValue)) {
             refreshToken = new RefreshToken();
         }
-
         Tokens tokens = new Tokens(accessToken, refreshToken);
         context.setAccessTokenResponse(new AccessTokenResponse(tokens));
         context.setSuccessful(true);

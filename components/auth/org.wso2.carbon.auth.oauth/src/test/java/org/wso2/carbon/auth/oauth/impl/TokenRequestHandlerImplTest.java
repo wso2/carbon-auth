@@ -33,11 +33,11 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
+import org.wso2.carbon.auth.client.registration.model.Application;
 import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.TokenRequestHandler;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
-import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.internal.ServiceReferenceHolder;
@@ -49,6 +49,7 @@ import org.wso2.carbon.auth.user.store.connector.UserStoreConnectorFactory;
 import org.wso2.carbon.auth.user.store.connector.jdbc.DefaultPasswordHandler;
 import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
 
+import java.net.URI;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -103,8 +104,7 @@ public class TokenRequestHandlerImplTest extends AuthDAOIntegrationTestBase {
         OAuthDAO oauthDAO = DAOFactory.getClientDAO();
         ApplicationDAO applicationDAO = org.wso2.carbon.auth.client.registration.dao.impl.DAOFactory
                 .getApplicationDAO();
-        TokenDAO tokenDAO = DAOFactory.getTokenDAO();
-        TokenRequestHandler tokenRequestHandler = new TokenRequestHandlerImpl(oauthDAO, applicationDAO, tokenDAO);
+        TokenRequestHandler tokenRequestHandler = new TokenRequestHandlerImpl(oauthDAO, applicationDAO);
         Map<String, String> queryParameters = new HashMap<>();
         queryParameters.put(OAuthConstants.USERNAME, username);
         queryParameters.put(OAuthConstants.PASSWORD, password);
@@ -125,10 +125,14 @@ public class TokenRequestHandlerImplTest extends AuthDAOIntegrationTestBase {
         PowerMockito.whenNew(DefaultPasswordHandler.class).withNoArguments().thenReturn(defaultPasswordHandler);
 
         // adding auth app details to the DB
-        String query = "INSERT INTO AUTH_OAUTH2_APPLICATION " + "(CLIENT_ID, CLIENT_SECRET, APP_NAME, OAUTH_VERSION,"
-                + " REDIRECT_URI, GRANT_TYPES) VALUES ('" + ck + "'," + "'" + cs
-                + "','sampleApp','2.0','url','password refresh_token client_credentials authorization_code') ";
-        super.executeOnAuthDb(query);
+        Application application = new Application();
+        application.setClientId(ck);
+        application.setClientSecret(cs);
+        application.setClientName("sampleApp");
+        application.setOauthVersion("2.0");
+        application.setCallBackUrl("url");
+        application.setGrantTypes("password refresh_token client_credentials authorization_code");
+        applicationDAO.createApplication(application);
 
         //check no such grant
         queryParameters.put(OAuthConstants.GRANT_TYPE_QUERY_PARAM, "noSuch");
@@ -195,10 +199,9 @@ public class TokenRequestHandlerImplTest extends AuthDAOIntegrationTestBase {
         queryParameters.put(OAuthConstants.CODE_QUERY_PARAM, authCode);
         queryParameters.put(OAuthConstants.REDIRECT_URI_QUERY_PARAM, redirectUri);
 
-        query = "INSERT INTO AUTH_OAUTH2_AUTHORIZATION_CODE"
-                + "(CLIENT_ID, AUTHORIZATION_CODE, REDIRECT_URI, SCOPE) VALUES('" + ck + "','" + authCode + "','"
-                + redirectUri + "','" + scopes + "')";
-        super.executeOnAuthDb(query);
+        //adding auth code scopes
+        oauthDAO.addAuthCodeInfo(authCode, ck, scopes, new URI(redirectUri));
+
         accessTokenContext = tokenRequestHandler.generateToken(authorization, queryParameters);
         tokens = accessTokenContext.getAccessTokenResponse().getTokens();
         Assert.assertNotNull(tokens);
@@ -241,6 +244,31 @@ public class TokenRequestHandlerImplTest extends AuthDAOIntegrationTestBase {
         Assert.assertTrue(accessTokenContext.isSuccessful());
         tokens1 = accessTokenContext.getAccessTokenResponse().getTokens();
         Assert.assertEquals(tokens1.getAccessToken().getLifetime(), tokenExpireTime);
+
+        //check application expired time
+        Application expireApp = new Application();
+        expireApp.setClientId(ck + "123");
+        expireApp.setClientSecret(cs + "123");
+        expireApp.setClientName("sampleApp2");
+        expireApp.setOauthVersion("2.0");
+        expireApp.setCallBackUrl("url");
+        expireApp.setApplicationAccessTokenExpiryTime(5999L);
+        expireApp.setGrantTypes("password refresh_token client_credentials authorization_code");
+        Application resultApp = applicationDAO.createApplication(expireApp);
+        Assert.assertNotNull(resultApp);
+        Assert.assertEquals(expireApp.getClientId(), resultApp.getClientId());
+
+        //add scope for expireApp
+        oauthDAO.addAuthCodeInfo(authCode, expireApp.getClientId(), scopes, new URI(redirectUri));
+
+        queryParameters.put(OAuthConstants.CLIENT_ID_QUERY_PARAM, expireApp.getClientId());
+        queryParameters.put(OAuthConstants.CLIENT_SECRET_QUERY_PARAM, expireApp.getClientSecret());
+
+        accessTokenContext = tokenRequestHandler.generateToken("", queryParameters);
+        Assert.assertTrue(accessTokenContext.isSuccessful());
+        tokens1 = accessTokenContext.getAccessTokenResponse().getTokens();
+        Assert.assertEquals(expireApp.getApplicationAccessTokenExpiryTime().longValue(),
+                tokens1.getAccessToken().getLifetime());
 
         queryParameters.remove(OAuthConstants.CLIENT_ID_QUERY_PARAM);
         queryParameters.remove(OAuthConstants.CLIENT_SECRET_QUERY_PARAM);

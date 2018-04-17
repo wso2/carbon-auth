@@ -212,6 +212,9 @@ definitions:
         type: array
         items:
           type: string
+      token_expire_time:
+        type: integer
+        format: int64
 
 #-----------------------------------------------------
 # The Application Update Request Object
@@ -229,6 +232,9 @@ definitions:
         type: array
         items:
           type: string
+      token_expire_time:
+        type: integer
+        format: int64
 #-----------------------------------------------------
 # The OAuth2 Application Object
 #-----------------------------------------------------
@@ -251,6 +257,9 @@ definitions:
         type: array
         items:
           type: string
+      token_expire_time:
+        type: integer
+        format: int64
 #-----------------------------------------------------
 # The Error Response object
 #-----------------------------------------------------

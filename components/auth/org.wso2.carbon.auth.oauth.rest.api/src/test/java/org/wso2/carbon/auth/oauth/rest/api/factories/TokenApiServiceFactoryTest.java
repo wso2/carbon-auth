@@ -26,7 +26,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.wso2.carbon.auth.core.datasource.DAOUtil;
 import org.wso2.carbon.auth.core.datasource.DataSource;
-import org.wso2.carbon.auth.oauth.dao.TokenDAO;
+import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 import org.wso2.carbon.auth.oauth.rest.api.TokenApiService;
@@ -43,12 +43,12 @@ public class TokenApiServiceFactoryTest {
         Assert.assertNotNull(tokenApiServiceFactory);
 
         PowerMockito.mockStatic(DAOFactory.class);
-        TokenDAO tokenDAO = PowerMockito.mock(TokenDAO.class);
+        OAuthDAO oAuthDAO = PowerMockito.mock(OAuthDAO.class);
         DataSource dataSource = Mockito.mock(DataSource.class);
         Connection connection = Mockito.mock(Connection.class);
         DatabaseMetaData metaData = Mockito.mock(DatabaseMetaData.class);
 
-        PowerMockito.when(DAOFactory.getTokenDAO()).thenReturn(tokenDAO);
+        PowerMockito.when(DAOFactory.getClientDAO()).thenReturn(oAuthDAO);
         Mockito.when(dataSource.getConnection()).thenReturn(connection);
         Mockito.when(connection.getMetaData()).thenReturn(metaData);
         Mockito.when(metaData.getDriverName()).thenReturn("H2");

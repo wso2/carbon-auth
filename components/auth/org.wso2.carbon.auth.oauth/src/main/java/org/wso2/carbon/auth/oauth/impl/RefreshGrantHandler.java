@@ -30,14 +30,12 @@ import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
-import org.wso2.carbon.auth.oauth.dao.TokenDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 
-import java.sql.SQLException;
 import java.util.Map;
 
 /**
@@ -48,7 +46,6 @@ public class RefreshGrantHandler implements GrantHandler {
     public static final BearerTokenError MISSING_TOKEN = new BearerTokenError((String) null, (String) null, 401);
     public static final int ALLOWED_MINIMUM_VALIDITY_PERIOD_IN_MILI = 1000000;
     public static final String INVALID_GRANT_ERROR_CODE = "INVALID_GRANT";
-    private TokenDAO tokenDAO;
     private OAuthDAO oauthDAO;
     private ApplicationDAO applicationDAO;
     private ClientLookup clientLookup;
@@ -59,10 +56,9 @@ public class RefreshGrantHandler implements GrantHandler {
 
     @Override
     public void init(UserNameMapper userNameMapper, OAuthDAO oauthDAO, UserStoreManager userStoreManager,
-            ApplicationDAO applicationDAO, TokenDAO tokenDAO) {
+            ApplicationDAO applicationDAO) {
         this.userNameMapper = userNameMapper;
         this.oauthDAO = oauthDAO;
-        this.tokenDAO = tokenDAO;
         this.applicationDAO = applicationDAO;
         clientLookup = new ClientLookupImpl(oauthDAO);
     }
@@ -91,8 +87,8 @@ public class RefreshGrantHandler implements GrantHandler {
         }
 
         try {
-            accessTokenDTO = tokenDAO.getTokenInfo(refreshToken, clientId);
-        } catch (SQLException e) {
+            accessTokenDTO = oauthDAO.getTokenInfo(refreshToken, clientId);
+        } catch (OAuthDAOException e) {
             log.error("Error getting token information from the DB", e);
             throw new OAuthDAOException("Error getting token information from the DB", e);
         }
@@ -123,7 +119,7 @@ public class RefreshGrantHandler implements GrantHandler {
             scope = new Scope(OAuthConstants.SCOPE_DEFAULT);
         }
 
-        TokenGenerator.generateAccessToken(scope, context);
+        TokenIssuer.generateAccessToken(scope, context);
         AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
         String user = (String) context.getParams().get(OAuthConstants.AUTH_USER);
         accessTokenData.setAuthUser(userNameMapper.getLoggedInPseudoNameFromUserID(user));
