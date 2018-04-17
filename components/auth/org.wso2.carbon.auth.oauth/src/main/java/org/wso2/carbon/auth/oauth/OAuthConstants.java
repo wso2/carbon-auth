@@ -62,4 +62,5 @@ public class OAuthConstants {
     public static final String APPLICATION_OWNER = "APPLICATION_OWNER";
     public static final String GRANT_TYPE = "GRANT_TYPE";
     public static final String VALIDITY_PERIOD = "validity_period";
+    public static final String SCOPES = "scopes";
 }

@@ -109,7 +109,7 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
             return;
         }
 
-        TokenGenerator.generateAccessToken(scope, context);
+        TokenIssuer.generateAccessToken(scope, context);
         AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
         accessTokenData.setClientId(clientId);
         accessTokenData.setAuthUser(appOwner);

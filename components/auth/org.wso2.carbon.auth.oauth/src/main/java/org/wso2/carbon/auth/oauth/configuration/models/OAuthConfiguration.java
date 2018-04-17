@@ -20,6 +20,7 @@ package org.wso2.carbon.auth.oauth.configuration.models;
 import com.nimbusds.oauth2.sdk.GrantType;
 import org.wso2.carbon.auth.oauth.impl.AuthCodeGrantHandlerImpl;
 import org.wso2.carbon.auth.oauth.impl.ClientCredentialsGrantHandlerImpl;
+import org.wso2.carbon.auth.oauth.impl.DefaultTokenGenerator;
 import org.wso2.carbon.auth.oauth.impl.PasswordGrantHandlerImpl;
 import org.wso2.carbon.auth.oauth.impl.RefreshGrantHandler;
 import org.wso2.carbon.config.annotation.Configuration;
@@ -37,14 +38,8 @@ public class OAuthConfiguration {
     private long defaultTokenValidityPeriod = 3600L;
     @Element(description = "Access token default validity period")
     private long defaultRefreshTokenValidityPeriod = 3600L;
-    @Element(description = "Access token prefix")
-    private String accessTokenPrefix = "";
-    @Element(description = "Refresh token prefix")
-    private String refreshTokenPrefix = "";
-    @Element(description = "Access token length without prefix")
-    private int accessTokenLength = 32;
-    @Element(description = "Refresh token length without prefix")
-    private int refreshTokenLength = 32;
+    @Element(description = "Token generator class implementation")
+    private String tokenGenerator = DefaultTokenGenerator.class.getName();
     @Element(description = "Default grant types")
     private Map<String, String> grantTypes = populateDefaultGrantTypes();
 
@@ -72,36 +67,12 @@ public class OAuthConfiguration {
         this.grantTypes = grantTypes;
     }
 
-    public String getAccessTokenPrefix() {
-        return accessTokenPrefix;
+    public String getTokenGenerator() {
+        return tokenGenerator;
     }
 
-    public void setAccessTokenPrefix(String accessTokenPrefix) {
-        this.accessTokenPrefix = accessTokenPrefix;
-    }
-
-    public String getRefreshTokenPrefix() {
-        return refreshTokenPrefix;
-    }
-
-    public void setRefreshTokenPrefix(String refreshTokenPrefix) {
-        this.refreshTokenPrefix = refreshTokenPrefix;
-    }
-
-    public int getAccessTokenLength() {
-        return accessTokenLength;
-    }
-
-    public void setAccessTokenLength(int accessTokenLength) {
-        this.accessTokenLength = accessTokenLength;
-    }
-
-    public int getRefreshTokenLength() {
-        return refreshTokenLength;
-    }
-
-    public void setRefreshTokenLength(int refreshTokenLength) {
-        this.refreshTokenLength = refreshTokenLength;
+    public void setTokenGenerator(String tokenGenerator) {
+        this.tokenGenerator = tokenGenerator;
     }
 
     private Map<String, String> populateDefaultGrantTypes() {

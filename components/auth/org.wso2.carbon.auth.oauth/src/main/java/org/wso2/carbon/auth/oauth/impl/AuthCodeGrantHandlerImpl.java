@@ -92,7 +92,7 @@ public class AuthCodeGrantHandlerImpl implements GrantHandler {
             return;
         }
 
-        TokenGenerator.generateAccessToken(scope, context);
+        TokenIssuer.generateAccessToken(scope, context);
 
         AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
 

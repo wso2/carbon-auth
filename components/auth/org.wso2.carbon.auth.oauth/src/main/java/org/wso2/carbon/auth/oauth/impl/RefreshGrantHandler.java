@@ -119,7 +119,7 @@ public class RefreshGrantHandler implements GrantHandler {
             scope = new Scope(OAuthConstants.SCOPE_DEFAULT);
         }
 
-        TokenGenerator.generateAccessToken(scope, context);
+        TokenIssuer.generateAccessToken(scope, context);
         AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
         String user = (String) context.getParams().get(OAuthConstants.AUTH_USER);
         accessTokenData.setAuthUser(userNameMapper.getLoggedInPseudoNameFromUserID(user));
