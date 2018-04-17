@@ -1,4 +1,3 @@
-package org.wso2.carbon.auth.user.info.internal;
 /*
  * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
@@ -16,6 +15,7 @@ package org.wso2.carbon.auth.user.info.internal;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.wso2.carbon.auth.user.info.internal;
 
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
