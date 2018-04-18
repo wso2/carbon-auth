@@ -56,7 +56,7 @@ public class RefreshGrantHandler implements GrantHandler {
 
     @Override
     public void init(UserNameMapper userNameMapper, OAuthDAO oauthDAO, UserStoreManager userStoreManager,
-            ApplicationDAO applicationDAO) {
+                     ApplicationDAO applicationDAO) {
         this.userNameMapper = userNameMapper;
         this.oauthDAO = oauthDAO;
         this.applicationDAO = applicationDAO;
@@ -121,11 +121,10 @@ public class RefreshGrantHandler implements GrantHandler {
 
         TokenIssuer.generateAccessToken(scope, context);
         AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
-        String user = (String) context.getParams().get(OAuthConstants.AUTH_USER);
-        accessTokenData.setAuthUser(userNameMapper.getLoggedInPseudoNameFromUserID(user));
+        accessTokenData.setAuthUser(accessTokenDTO.getAuthUser());
         accessTokenData.setClientId(clientId);
         oauthDAO.addAccessTokenInfo(accessTokenData);
-        accessTokenData.setAuthUser(user);
+        accessTokenData.setAuthUser(userNameMapper.getLoggedInUserIDFromPseudoName(accessTokenDTO.getAuthUser()));
     }
 
     private boolean isRefreshTokenExpired(AccessTokenDTO accessTokenDTO) {
