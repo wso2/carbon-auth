@@ -34,6 +34,6 @@ public interface UserInfoResponseBuilder {
      * @return User information based on the introspect response
      * @throws UserInfoException if failed to get user information based on the introspect response
      */
-    public String getResponseString(IntrospectionResponse introspectionResponse) throws UserInfoException;
+    String getResponseString(IntrospectionResponse introspectionResponse) throws UserInfoException;
 
 }

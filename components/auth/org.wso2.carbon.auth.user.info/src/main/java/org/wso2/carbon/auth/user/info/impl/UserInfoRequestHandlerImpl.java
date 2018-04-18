@@ -56,7 +56,9 @@ public class UserInfoRequestHandlerImpl implements UserinfoRequestHandler {
             throw new UserInfoException("Invalid token", ExceptionCodes.INVALID_TOKEN);
         }
 
-        validateScopes(introspectionResponse.getScope());
+        if (!areScopesValid(introspectionResponse.getScope())) {
+            throw new UserInfoException("Unsupported scope", ExceptionCodes.UNSUPPORTED_SCOPE);
+        }
 
         UserInfoResponseBuilder userInfoResponseBuilder = UserInfoUtil.getUserInfoResponseBuilder();
         return userInfoResponseBuilder.getResponseString(introspectionResponse);
@@ -88,28 +90,25 @@ public class UserInfoRequestHandlerImpl implements UserinfoRequestHandler {
     }
 
     /**
-     * Validate scopes
+     * Validate openid scope. Token's scopes should have openid scope.
      *
      * @param scopes Scope values
+     * @return true if openid scope is present in given scopes
      * @throws UserInfoException if failed to validate scopes
      */
-    private void validateScopes(String scopes) throws UserInfoException {
-
-        boolean validToken = false;
+    private boolean areScopesValid(String scopes) throws UserInfoException {
 
         log.debug("Validating scopes values: {}", scopes);
         if (scopes != null) {
             String scopeValues[] = scopes.split(" ");
             for (String scope : scopeValues) {
                 if (UserInfoConstants.OPENID.equals(scope)) {
-                    validToken = true;
+                    return true;
                 }
             }
         }
 
-        if (!validToken) {
-            throw new UserInfoException("Unsupported scope", ExceptionCodes.UNSUPPORTED_SCOPE);
-        }
+        return false;
     }
 
 }
