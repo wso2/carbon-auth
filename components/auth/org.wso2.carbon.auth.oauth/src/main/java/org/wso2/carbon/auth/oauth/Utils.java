@@ -17,9 +17,14 @@
  */
 package org.wso2.carbon.auth.oauth;
 
+import com.nimbusds.oauth2.sdk.Scope;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * utils function related to oauth component
@@ -59,5 +64,12 @@ public class Utils {
         //todo: need to timestampSkew configurable
         long timestampSkew = 5 * 1000;
         return issuedTimeInMillis + validityPeriodMillis - (System.currentTimeMillis() - timestampSkew);
+    }
+
+    public static String hashScopes(Scope scope) {
+        List<String> scopes = scope.toStringList();
+        Collections.sort(scopes);
+        String scopeString = String.join(" ", scopes);
+        return DigestUtils.md5Hex(scopeString);
     }
 }

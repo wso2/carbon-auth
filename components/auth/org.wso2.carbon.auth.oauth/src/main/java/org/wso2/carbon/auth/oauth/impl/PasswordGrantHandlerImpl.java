@@ -104,7 +104,7 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
         Scope scope;
 
         if (scopeValue != null) {
-            scope = new Scope(scopeValue);
+            scope = new Scope(scopeValue.split(" "));
         } else {
             scope = new Scope(OAuthConstants.SCOPE_DEFAULT);
         }
@@ -113,8 +113,9 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
         String clientId = (String) context.getParams().get(OAuthConstants.CLIENT_ID);
         String grantType = (String) context.getParams().get(OAuthConstants.GRANT_TYPE);
 
-        Optional<AccessTokenResponse> tokenResponse = checkTokens(oauthDAO, user, grantType, clientId,
-                scope.toString());
+        Optional<AccessTokenResponse> tokenResponse = checkTokens(oauthDAO,
+                userNameMapper.getLoggedInPseudoNameFromUserID(user), grantType, clientId,
+                scope);
         if (tokenResponse.isPresent()) {
             AccessTokenResponse accessTokenResponse = tokenResponse.get();
             context.setAccessTokenResponse(accessTokenResponse);

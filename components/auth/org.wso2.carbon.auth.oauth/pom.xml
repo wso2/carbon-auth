@@ -82,6 +82,10 @@
             <artifactId>json-smart</artifactId>
             <version>1.0.6.3</version>
         </dependency>
+        <dependency>
+            <groupId>commons-codec.wso2</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

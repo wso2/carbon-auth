@@ -346,6 +346,11 @@
                 <artifactId>swagger-core</artifactId>
                 <version>${io.swagger.version}</version>
             </dependency>
+            <dependency>
+                <groupId>commons-codec.wso2</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons.codec.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -605,6 +610,8 @@
 
         <apache.commons.lang3.version>3.5</apache.commons.lang3.version>
         <apache.commons.lang3.import.version.range>[3.5,4)</apache.commons.lang3.import.version.range>
+        <commons.codec.version>1.4.0.wso2v1</commons.codec.version>
+        <commons.codec.version.range>[1.4.0.wso2v1, 1.5)</commons.codec.version.range>
 
         <javax.ws.rs.import.version.range>[2.0.0,3.0.0)</javax.ws.rs.import.version.range>
 

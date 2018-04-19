@@ -45,7 +45,7 @@ public class TokenMappingUtil {
 
 
         if (accessToken.getScope() != null) {
-            tokenResponseDTO.scope(accessToken.getScope().toString());
+            tokenResponseDTO.scope(String.join(" ", accessToken.getScope().toStringList()));
         }
 
         if (refreshToken != null) {

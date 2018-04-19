@@ -6,6 +6,7 @@ import com.nimbusds.oauth2.sdk.token.Tokens;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
+import org.wso2.carbon.auth.oauth.Utils;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
 import org.wso2.carbon.auth.oauth.dto.TokenState;
@@ -25,13 +26,12 @@ class TokenDataUtil {
         if (tokens.getRefreshToken() != null) {
             accessTokenData.setRefreshToken(tokens.getRefreshToken().getValue());
         }
-        accessTokenData.setScopes(tokens.getAccessToken().getScope().toString());
+        accessTokenData.setScopes(tokens.getAccessToken().getScope().toStringList());
+        accessTokenData.setHashedScopes(Utils.hashScopes(tokens.getAccessToken().getScope()));
 
         Instant timestamp = Instant.now();
-        log.info(timestamp.toString());
         long defaultRefreshTokenValidityPeriod = ServiceReferenceHolder.getInstance().getAuthConfigurations()
                 .getDefaultRefreshTokenValidityPeriod();
-
         accessTokenData.setAccessTokenCreatedTime(timestamp);
         accessTokenData.setAccessTokenValidityPeriod(tokens.getAccessToken().getLifetime());
         String grantTypeValue = (String) context.getParams().get(OAuthConstants.GRANT_TYPE);
