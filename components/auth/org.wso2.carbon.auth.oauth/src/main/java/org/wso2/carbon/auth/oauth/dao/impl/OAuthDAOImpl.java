@@ -36,7 +36,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
 import javax.annotation.CheckForNull;
@@ -48,7 +50,6 @@ import javax.annotation.Nullable;
 public class OAuthDAOImpl implements OAuthDAO {
     private static final Logger log = LoggerFactory.getLogger(OAuthDAOImpl.class);
     private static final String UTC = "UTC";
-
 
     /**
      * Constructor is package private, use factory class to create an instance of this class
@@ -62,7 +63,7 @@ public class OAuthDAOImpl implements OAuthDAO {
         final String query = "SELECT REDIRECT_URI FROM AUTH_OAUTH2_APPLICATION WHERE CLIENT_ID = ?";
 
         try (Connection connection = DAOUtil.getAuthConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, clientId);
 
             try (ResultSet rs = statement.executeQuery()) {
@@ -97,11 +98,11 @@ public class OAuthDAOImpl implements OAuthDAO {
             throws OAuthDAOException {
         log.debug("Calling getScopeForAuthCode for clientId: {}", clientId);
 
-        final String query = "SELECT SCOPE FROM AUTH_OAUTH2_AUTHORIZATION_CODE " +
-                "WHERE CLIENT_ID = ? AND AUTHORIZATION_CODE = ? AND REDIRECT_URI = ?";
+        final String query = "SELECT SCOPE FROM AUTH_OAUTH2_AUTHORIZATION_CODE "
+                + "WHERE CLIENT_ID = ? AND AUTHORIZATION_CODE = ? AND REDIRECT_URI = ?";
 
         try (Connection connection = DAOUtil.getAuthConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, clientId);
             statement.setString(2, authCode);
 
@@ -117,8 +118,8 @@ public class OAuthDAOImpl implements OAuthDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new OAuthDAOException("Error occurred while checking if auth code info is valid(clientId: "
-                    + clientId, e);
+            throw new OAuthDAOException(
+                    "Error occurred while checking if auth code info is valid(clientId: " + clientId, e);
         }
 
         return null;
@@ -131,7 +132,7 @@ public class OAuthDAOImpl implements OAuthDAO {
         final String query = "SELECT 1 FROM AUTH_OAUTH2_APPLICATION WHERE CLIENT_ID = ? AND CLIENT_SECRET = ?";
 
         try (Connection connection = DAOUtil.getAuthConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, clientId);
             statement.setString(2, clientSecret);
 
@@ -140,8 +141,8 @@ public class OAuthDAOImpl implements OAuthDAO {
             }
 
         } catch (SQLException e) {
-            throw new OAuthDAOException("Error occurred while checking if client credentials valid(clientId: "
-                    + clientId, e);
+            throw new OAuthDAOException(
+                    "Error occurred while checking if client credentials valid(clientId: " + clientId, e);
         }
     }
 
@@ -162,46 +163,55 @@ public class OAuthDAOImpl implements OAuthDAO {
                 connection.setAutoCommit(DAOUtil.isAutoCommitAuth());
             }
         } catch (SQLException e) {
-            throw new OAuthDAOException("Error occurred while adding access token info(clientId: "
-                    + accessTokenData.getClientId(), e);
+            throw new OAuthDAOException(
+                    "Error occurred while adding access token info(clientId: " + accessTokenData.getClientId(), e);
         }
 
     }
 
     @Override
-    public AccessTokenDTO getTokenInfo(String authUser, String grantType, String clientId, String scopes)
+    public AccessTokenDTO getTokenInfo(String authUser, String grantType, String clientId, String hashedscopes)
             throws OAuthDAOException {
         log.debug("Calling getTokenInfo for clientId: {}", clientId);
+        AccessTokenDTO tokenDTO = getTokenInfoWithoutScopes(authUser, grantType, clientId, hashedscopes);
+        if (tokenDTO != null) {
+            return getTokenInfoScopes(tokenDTO);
+        }
+        return null;
+    }
+
+    private AccessTokenDTO getTokenInfoWithoutScopes(String authUser, String grantType, String clientId,
+            String hashedscopes) throws OAuthDAOException {
+        log.debug("Calling getTokenInfoWithoutScopes for clientId: {}", clientId);
         final String query =
                 "SELECT ACCESS_TOKEN, REFRESH_TOKEN, CONSUMER_KEY_ID, AUTHZ_USER, GRANT_TYPE, TIME_CREATED, "
-                        + "REFRESH_TOKEN_TIME_CREATED, VALIDITY_PERIOD, REFRESH_TOKEN_VALIDITY_PERIOD, TOKEN_STATE , "
-                        + "TOKEN_SCOPE FROM AUTH_OAUTH2_ACCESS_TOKEN INNER JOIN AUTH_OAUTH2_ACCESS_TOKEN_SCOPE ON "
-                        + "AUTH_OAUTH2_ACCESS_TOKEN.ID = AUTH_OAUTH2_ACCESS_TOKEN_SCOPE.TOKEN_ID WHERE AUTHZ_USER = ? "
-                        + "AND GRANT_TYPE = ? AND CONSUMER_KEY_ID = (SELECT ID FROM AUTH_OAUTH2_APPLICATION WHERE "
-                        + "CLIENT_ID  = ? ) AND TOKEN_STATE = 'ACTIVE' AND TOKEN_SCOPE = ?";
+                        + "REFRESH_TOKEN_TIME_CREATED, VALIDITY_PERIOD, REFRESH_TOKEN_VALIDITY_PERIOD, TOKEN_STATE "
+                        + "FROM AUTH_OAUTH2_ACCESS_TOKEN WHERE AUTHZ_USER = ? AND GRANT_TYPE = ? AND "
+                        + "CONSUMER_KEY_ID = (SELECT ID FROM AUTH_OAUTH2_APPLICATION WHERE "
+                        + "CLIENT_ID  = ? ) AND TOKEN_STATE = 'ACTIVE' AND TOKEN_SCOPE_HASH = ?";
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
         try (Connection connection = DAOUtil.getAuthConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(query)) {
 
             statement.setString(1, authUser);
             statement.setString(2, grantType);
             statement.setString(3, clientId);
-            statement.setString(4, scopes);
+            statement.setString(4, hashedscopes);
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
                     accessTokenDTO.setAccessToken(rs.getString(JDBCAuthConstants.ACCESS_TOKEN));
                     accessTokenDTO.setRefreshToken(rs.getString(JDBCAuthConstants.REFRESH_TOKEN));
                     accessTokenDTO.setAuthUser(rs.getString(JDBCAuthConstants.AUTHZ_USER));
-                    accessTokenDTO.setTimeCreated(rs.getTimestamp(JDBCAuthConstants.TIME_CREATED, Calendar
-                            .getInstance(TimeZone.getTimeZone(UTC))).getTime());
-                    accessTokenDTO.setRefreshTokenCreatedTime(rs.getTimestamp(JDBCAuthConstants
-                            .REFRESH_TOKEN_TIME_CREATED, Calendar.getInstance(TimeZone.getTimeZone(UTC))).getTime());
+                    accessTokenDTO.setTimeCreated(rs.getTimestamp(JDBCAuthConstants.TIME_CREATED,
+                            Calendar.getInstance(TimeZone.getTimeZone(UTC))).getTime());
+                    Timestamp timestamp = rs.getTimestamp(JDBCAuthConstants.REFRESH_TOKEN_TIME_CREATED,
+                            Calendar.getInstance(TimeZone.getTimeZone(UTC)));
+                    accessTokenDTO.setRefreshTokenCreatedTime(timestamp == null ? 0 : timestamp.getTime());
                     accessTokenDTO.setValidityPeriod(rs.getInt(JDBCAuthConstants.VALIDITY_PERIOD));
                     accessTokenDTO
                             .setRefreshTokenValidityPeriod(rs.getInt(JDBCAuthConstants.REFRESH_TOKEN_VALIDITY_PERIOD));
                     accessTokenDTO.setTokenState(rs.getString(JDBCAuthConstants.TOKEN_STATE));
                     accessTokenDTO.setGrantType(rs.getString(JDBCAuthConstants.GRANT_TYPE));
-                    accessTokenDTO.setScopes(rs.getString(JDBCAuthConstants.TOKEN_SCOPE));
                     return accessTokenDTO;
                 }
             }
@@ -214,31 +224,38 @@ public class OAuthDAOImpl implements OAuthDAO {
 
     @Override
     public AccessTokenDTO getTokenInfo(String accessToken) throws OAuthDAOException {
-        log.debug("Calling getTokenInfo for accessToken");
+        AccessTokenDTO tokenDTO = getTokenInfoWithoutScopes(accessToken);
+        if (tokenDTO != null) {
+            return getTokenInfoScopes(tokenDTO);
+        }
+        return null;
+    }
+
+    private AccessTokenDTO getTokenInfoWithoutScopes(String accessToken) throws OAuthDAOException {
+        log.debug("Calling getTokenInfo without scopes for accessToken");
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
-        final String query = "SELECT AUTH_OAUTH2_ACCESS_TOKEN_SCOPE.TOKEN_ID, ACCESS_TOKEN, REFRESH_TOKEN, CLIENT_ID, "
+        final String query = "SELECT AUTH_OAUTH2_ACCESS_TOKEN.ID, ACCESS_TOKEN, REFRESH_TOKEN, CLIENT_ID, "
                 + "AUTH_OAUTH2_ACCESS_TOKEN.AUTHZ_USER, TIME_CREATED, REFRESH_TOKEN_TIME_CREATED, VALIDITY_PERIOD, "
-                + "REFRESH_TOKEN_VALIDITY_PERIOD, TOKEN_SCOPE_HASH, TOKEN_STATE, USER_TYPE, GRANT_TYPE, TOKEN_SCOPE "
+                + "REFRESH_TOKEN_VALIDITY_PERIOD, TOKEN_SCOPE_HASH, TOKEN_STATE, USER_TYPE, GRANT_TYPE "
                 + "FROM AUTH_OAUTH2_ACCESS_TOKEN INNER JOIN  AUTH_OAUTH2_APPLICATION  ON ACCESS_TOKEN = ? AND "
-                + "AUTH_OAUTH2_ACCESS_TOKEN.CONSUMER_KEY_ID = AUTH_OAUTH2_APPLICATION.ID LEFT OUTER JOIN "
-                + "AUTH_OAUTH2_ACCESS_TOKEN_SCOPE ON AUTH_OAUTH2_ACCESS_TOKEN_SCOPE.TOKEN_ID = "
-                + "AUTH_OAUTH2_ACCESS_TOKEN.ID";
+                + "AUTH_OAUTH2_ACCESS_TOKEN.CONSUMER_KEY_ID = AUTH_OAUTH2_APPLICATION.ID";
 
         try (Connection connection = DAOUtil.getAuthConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, accessToken);
 
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
-                    accessTokenDTO.setTokenID(rs.getInt(JDBCAuthConstants.TOKEN_ID));
+                    accessTokenDTO.setTokenID(rs.getInt(JDBCAuthConstants.ID));
                     accessTokenDTO.setAccessToken(rs.getString(JDBCAuthConstants.ACCESS_TOKEN));
                     accessTokenDTO.setRefreshToken(rs.getString(JDBCAuthConstants.REFRESH_TOKEN));
                     accessTokenDTO.setConsumerKey(rs.getString(JDBCAuthConstants.CLIENT_ID));
                     accessTokenDTO.setAuthUser(rs.getString(JDBCAuthConstants.AUTHZ_USER));
-                    accessTokenDTO.setTimeCreated(rs.getTimestamp(JDBCAuthConstants.TIME_CREATED, Calendar
-                            .getInstance(TimeZone.getTimeZone(UTC))).getTime());
-                    accessTokenDTO.setRefreshTokenCreatedTime(rs.getTimestamp(JDBCAuthConstants
-                            .REFRESH_TOKEN_TIME_CREATED, Calendar.getInstance(TimeZone.getTimeZone(UTC))).getTime());
+                    accessTokenDTO.setTimeCreated(rs.getTimestamp(JDBCAuthConstants.TIME_CREATED,
+                            Calendar.getInstance(TimeZone.getTimeZone(UTC))).getTime());
+                    Timestamp timestamp = rs.getTimestamp(JDBCAuthConstants.REFRESH_TOKEN_TIME_CREATED,
+                            Calendar.getInstance(TimeZone.getTimeZone(UTC)));
+                    accessTokenDTO.setRefreshTokenCreatedTime(timestamp == null ? 0 : timestamp.getTime());
                     accessTokenDTO.setValidityPeriod(rs.getLong(JDBCAuthConstants.VALIDITY_PERIOD));
                     accessTokenDTO
                             .setRefreshTokenValidityPeriod(rs.getLong(JDBCAuthConstants.REFRESH_TOKEN_VALIDITY_PERIOD));
@@ -246,7 +263,6 @@ public class OAuthDAOImpl implements OAuthDAO {
                     accessTokenDTO.setTokenState(rs.getString(JDBCAuthConstants.TOKEN_STATE));
                     accessTokenDTO.setUserType(rs.getString(JDBCAuthConstants.USER_TYPE));
                     accessTokenDTO.setGrantType(rs.getString(JDBCAuthConstants.GRANT_TYPE));
-                    accessTokenDTO.setScopes(rs.getString(JDBCAuthConstants.TOKEN_SCOPE));
                     return accessTokenDTO;
                 }
             }
@@ -256,8 +272,38 @@ public class OAuthDAOImpl implements OAuthDAO {
         return null;
     }
 
+    private AccessTokenDTO getTokenInfoScopes(AccessTokenDTO accessTokenDTO) throws OAuthDAOException {
+        log.debug("Calling getTokenInfo with scopes for accessToken");
+        final String query = "SELECT TOKEN_SCOPE FROM AUTH_OAUTH2_ACCESS_TOKEN_SCOPE INNER JOIN "
+                + "AUTH_OAUTH2_ACCESS_TOKEN ON AUTH_OAUTH2_ACCESS_TOKEN_SCOPE.TOKEN_ID=AUTH_OAUTH2_ACCESS_TOKEN.ID "
+                + "AND ACCESS_TOKEN = ?";
+        List<String> scopes = new ArrayList<>();
+        try (Connection connection = DAOUtil.getAuthConnection();
+                PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, accessTokenDTO.getAccessToken());
+
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    scopes.add(rs.getString(JDBCAuthConstants.TOKEN_SCOPE));
+                }
+            }
+        } catch (SQLException e) {
+            throw new OAuthDAOException("Error occurred while getting token information", e);
+        }
+        accessTokenDTO.setScopes(String.join(" ", scopes));
+        return accessTokenDTO;
+    }
+
     @Override
     public AccessTokenDTO getTokenInfo(String refreshToken, String consumerkey) throws OAuthDAOException {
+        AccessTokenDTO tokenDTO = getTokenInfoWithoutScopes(refreshToken, consumerkey);
+        if (tokenDTO != null) {
+            return getTokenInfoScopes(tokenDTO);
+        }
+        return null;
+    }
+
+    private AccessTokenDTO getTokenInfoWithoutScopes(String refreshToken, String consumerkey) throws OAuthDAOException {
         log.debug("Calling getTokenInfo from refreshToken, consumerkey");
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
         final String query = "SELECT AUTH_OAUTH2_ACCESS_TOKEN_SCOPE.TOKEN_ID, ACCESS_TOKEN, REFRESH_TOKEN, CLIENT_ID, "
@@ -269,7 +315,7 @@ public class OAuthDAOImpl implements OAuthDAO {
                 + "AUTH_OAUTH2_ACCESS_TOKEN.ID";
 
         try (Connection connection = DAOUtil.getAuthConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, refreshToken);
             statement.setString(2, consumerkey);
 
@@ -280,10 +326,11 @@ public class OAuthDAOImpl implements OAuthDAO {
                     accessTokenDTO.setRefreshToken(rs.getString(JDBCAuthConstants.REFRESH_TOKEN));
                     accessTokenDTO.setConsumerKey(rs.getString(JDBCAuthConstants.CLIENT_ID));
                     accessTokenDTO.setAuthUser(rs.getString(JDBCAuthConstants.AUTHZ_USER));
-                    accessTokenDTO.setTimeCreated(rs.getTimestamp(JDBCAuthConstants.TIME_CREATED, Calendar
-                            .getInstance(TimeZone.getTimeZone(UTC))).getTime());
-                    accessTokenDTO.setRefreshTokenCreatedTime(rs.getTimestamp(JDBCAuthConstants
-                            .REFRESH_TOKEN_TIME_CREATED, Calendar.getInstance(TimeZone.getTimeZone(UTC))).getTime());
+                    accessTokenDTO.setTimeCreated(rs.getTimestamp(JDBCAuthConstants.TIME_CREATED,
+                            Calendar.getInstance(TimeZone.getTimeZone(UTC))).getTime());
+                    accessTokenDTO.setRefreshTokenCreatedTime(
+                            rs.getTimestamp(JDBCAuthConstants.REFRESH_TOKEN_TIME_CREATED,
+                                    Calendar.getInstance(TimeZone.getTimeZone(UTC))).getTime());
                     accessTokenDTO.setValidityPeriod(rs.getLong(JDBCAuthConstants.VALIDITY_PERIOD));
                     accessTokenDTO
                             .setRefreshTokenValidityPeriod(rs.getLong(JDBCAuthConstants.REFRESH_TOKEN_VALIDITY_PERIOD));
@@ -291,7 +338,6 @@ public class OAuthDAOImpl implements OAuthDAO {
                     accessTokenDTO.setTokenState(rs.getString(JDBCAuthConstants.TOKEN_STATE));
                     accessTokenDTO.setUserType(rs.getString(JDBCAuthConstants.USER_TYPE));
                     accessTokenDTO.setGrantType(rs.getString(JDBCAuthConstants.GRANT_TYPE));
-                    accessTokenDTO.setScopes(rs.getString(JDBCAuthConstants.TOKEN_SCOPE));
                     return accessTokenDTO;
                 }
             }
@@ -304,29 +350,31 @@ public class OAuthDAOImpl implements OAuthDAO {
     private void addAccessTokenInfoInDB(Connection connection, AccessTokenData accessTokenData) throws SQLException {
         log.debug("Calling addAccessTokenInfoInDB for clientId: {}", accessTokenData.getClientId());
 
-        final String query = "INSERT INTO AUTH_OAUTH2_ACCESS_TOKEN" +
-                "(ACCESS_TOKEN, REFRESH_TOKEN, CONSUMER_KEY_ID, AUTHZ_USER, GRANT_TYPE, TIME_CREATED, " +
-                "REFRESH_TOKEN_TIME_CREATED, VALIDITY_PERIOD, REFRESH_TOKEN_VALIDITY_PERIOD, " +
-                "TOKEN_STATE) SELECT ?,?, AUTH_OAUTH2_APPLICATION.ID ,?,?,?,?,?,?,? " +
-                "FROM AUTH_OAUTH2_APPLICATION WHERE CLIENT_ID = ?";
+        final String query = "INSERT INTO AUTH_OAUTH2_ACCESS_TOKEN"
+                + "(ACCESS_TOKEN, REFRESH_TOKEN, CONSUMER_KEY_ID, AUTHZ_USER, GRANT_TYPE, TIME_CREATED, "
+                + "REFRESH_TOKEN_TIME_CREATED, VALIDITY_PERIOD, REFRESH_TOKEN_VALIDITY_PERIOD, TOKEN_SCOPE_HASH, "
+                + "TOKEN_STATE) SELECT ?,?, (SELECT ID FROM AUTH_OAUTH2_APPLICATION WHERE CLIENT_ID = ?) ,? ,? ,? ,? ,"
+                + "? ,? ,? ,? FROM AUTH_OAUTH2_APPLICATION WHERE CLIENT_ID = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, accessTokenData.getAccessToken());
             statement.setString(2, accessTokenData.getRefreshToken());
-            statement.setString(3, accessTokenData.getAuthUser());
-            statement.setString(4, accessTokenData.getGrantType());
-            statement.setTimestamp(5, Timestamp.from(accessTokenData.getAccessTokenCreatedTime()), Calendar
-                    .getInstance(TimeZone.getTimeZone(UTC)));
+            statement.setString(3, accessTokenData.getClientId());
+            statement.setString(4, accessTokenData.getAuthUser());
+            statement.setString(5, accessTokenData.getGrantType());
+            statement.setTimestamp(6, Timestamp.from(accessTokenData.getAccessTokenCreatedTime()),
+                    Calendar.getInstance(TimeZone.getTimeZone(UTC)));
             if (accessTokenData.getRefreshTokenCreatedTime() != null) {
-                statement.setTimestamp(6, Timestamp.from(accessTokenData.getRefreshTokenCreatedTime()), Calendar
-                        .getInstance(TimeZone.getTimeZone(UTC)));
+                statement.setTimestamp(7, Timestamp.from(accessTokenData.getRefreshTokenCreatedTime()),
+                        Calendar.getInstance(TimeZone.getTimeZone(UTC)));
             } else {
-                statement.setNull(6, Types.TIMESTAMP);
+                statement.setNull(7, Types.TIMESTAMP);
             }
-            statement.setLong(7, accessTokenData.getAccessTokenValidityPeriod());
-            statement.setLong(8, accessTokenData.getRefreshTokenValidityPeriod());
-            statement.setString(9, accessTokenData.getTokenState().toString());
-            statement.setString(10, accessTokenData.getClientId());
+            statement.setLong(8, accessTokenData.getAccessTokenValidityPeriod());
+            statement.setLong(9, accessTokenData.getRefreshTokenValidityPeriod());
+            statement.setString(10, accessTokenData.getHashedScopes());
+            statement.setString(11, accessTokenData.getTokenState().toString());
+            statement.setString(12, accessTokenData.getClientId());
 
             statement.execute();
         }
@@ -335,13 +383,16 @@ public class OAuthDAOImpl implements OAuthDAO {
     private void persistingTokenScopes(Connection connection, AccessTokenData accessTokenData) throws SQLException {
         log.debug("Calling persistingTokenScopes for clientId: {}", accessTokenData.getClientId());
 
-        final String query = "INSERT INTO AUTH_OAUTH2_ACCESS_TOKEN_SCOPE (TOKEN_ID, " +
-                "TOKEN_SCOPE) VALUES ((SELECT ID FROM AUTH_OAUTH2_ACCESS_TOKEN WHERE ACCESS_TOKEN = ?),?)";
+        final String query = "INSERT INTO AUTH_OAUTH2_ACCESS_TOKEN_SCOPE (TOKEN_ID, "
+                + "TOKEN_SCOPE) VALUES ((SELECT ID FROM AUTH_OAUTH2_ACCESS_TOKEN WHERE ACCESS_TOKEN = ?),?)";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, accessTokenData.getAccessToken());
-            statement.setString(2, accessTokenData.getScopes());
-            statement.execute();
+            for (String scope : accessTokenData.getScopes()) {
+                statement.setString(1, accessTokenData.getAccessToken());
+                statement.setString(2, scope);
+                statement.addBatch();
+            }
+            statement.executeBatch();
         }
     }
 
@@ -349,11 +400,11 @@ public class OAuthDAOImpl implements OAuthDAO {
             throws SQLException {
         log.debug("Calling addAuthCodeInfoInDB for clientId: {}", clientId);
 
-        final String query = "INSERT INTO AUTH_OAUTH2_AUTHORIZATION_CODE" +
-                "(CLIENT_ID, AUTHORIZATION_CODE, REDIRECT_URI, SCOPE) VALUES(?, ?, ?, ?)";
+        final String query = "INSERT INTO AUTH_OAUTH2_AUTHORIZATION_CODE"
+                + "(CLIENT_ID, AUTHORIZATION_CODE, REDIRECT_URI, SCOPE) VALUES(?, ?, ?, ?)";
 
         try (Connection connection = DAOUtil.getAuthConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+                PreparedStatement statement = connection.prepareStatement(query)) {
             try {
                 connection.setAutoCommit(false);
 

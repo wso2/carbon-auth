@@ -105,7 +105,7 @@ public class TokenDAOImplTest {
             Assert.fail("exception not expected");
         }
 
-        PowerMockito.when(resultSet.next()).thenReturn(true);
+        PowerMockito.when(resultSet.next()).thenReturn(true).thenReturn(false);
         PowerMockito.when(resultSet.getTimestamp(Mockito.anyString(), Mockito.any(Calendar.class)))
                 .thenReturn(Timestamp.from(Instant.now()));
         PowerMockito.when(resultSet.getTimestamp(Mockito.anyString(), Mockito.any(Calendar

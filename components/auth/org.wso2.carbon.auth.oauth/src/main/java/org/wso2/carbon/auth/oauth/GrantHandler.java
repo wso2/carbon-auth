@@ -27,6 +27,8 @@ import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import com.nimbusds.oauth2.sdk.token.Tokens;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
 import org.wso2.carbon.auth.client.registration.model.Application;
 import org.wso2.carbon.auth.core.api.UserNameMapper;
@@ -44,7 +46,7 @@ import java.util.Optional;
  * Grant Type Handler interface
  */
 public interface GrantHandler {
-
+    Logger LOG = LoggerFactory.getLogger(GrantHandler.class);
     /**
      * Process grant type request to generate access token
      * 
@@ -81,15 +83,18 @@ public interface GrantHandler {
      * @param authUser  authenticated user
      * @param grantType requested grant type
      * @param clientId  requested consumer key
-     * @param scopes  requested scopes
+     * @param scope  requested scopes
      * @return return access token information if present
      */
     default Optional<AccessTokenResponse> checkTokens(OAuthDAO oauthDAO, String authUser, String grantType,
-            String clientId, String scopes) {
+            String clientId, Scope scope) {
+
         AccessTokenDTO accessTokenDTO;
+        String hashedscopes = Utils.hashScopes(scope);
         try {
-            accessTokenDTO = oauthDAO.getTokenInfo(authUser, grantType, clientId, scopes);
+            accessTokenDTO = oauthDAO.getTokenInfo(authUser, grantType, clientId, hashedscopes);
         } catch (OAuthDAOException e) {
+            LOG.info("Error occurred while getting token information");
             return Optional.empty();
         }
 
@@ -98,6 +103,7 @@ public interface GrantHandler {
         }
         boolean isExpired = Utils.isAccessTokenExpired(accessTokenDTO);
         if (isExpired) {
+            LOG.info("Existing token is already expired");
             return Optional.empty();
         } else {
             BearerAccessToken accessToken = new BearerAccessToken(accessTokenDTO.getAccessToken(),

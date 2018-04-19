@@ -101,7 +101,7 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
         }
 
         Optional<AccessTokenResponse> tokenResponse = checkTokens(oauthDAO, appOwner, grantType, clientId,
-                scope.toString());
+                scope);
         if (tokenResponse.isPresent()) {
             AccessTokenResponse accessTokenResponse = tokenResponse.get();
             context.setAccessTokenResponse(accessTokenResponse);

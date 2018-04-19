@@ -76,6 +76,10 @@
                                     <symbolicName>org.wso2.carbon.auth.oauth.rest.api</symbolicName>
                                     <version>${carbon.auth.version}</version>
                                 </bundle>
+                                <bundle>
+                                    <symbolicName>commons-codec</symbolicName>
+                                    <version>${commons.codec.version}</version>
+                                </bundle>
                             </bundles>
                             <importFeatures>
                                 <feature>

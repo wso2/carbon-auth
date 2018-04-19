@@ -19,6 +19,7 @@ package org.wso2.carbon.auth.oauth.impl;
 
 import com.nimbusds.oauth2.sdk.GrantType;
 import com.nimbusds.oauth2.sdk.OAuth2Error;
+import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.token.Tokens;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.mockito.Mockito;
@@ -31,6 +32,7 @@ import org.wso2.carbon.auth.core.api.UserNameMapper;
 import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
+import org.wso2.carbon.auth.oauth.Utils;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
@@ -101,7 +103,10 @@ public class PassWordGrantHandlerTest {
         accessTokenData.setTokenState(TokenState.ACTIVE.toString());
 
         //token generate when previous token is not expired
-        Mockito.when(oauthDAO.getTokenInfo(username, GrantType.PASSWORD.getValue(), clientId, scope))
+        String hashedscopes = Utils.hashScopes(new Scope(scope));
+        String uid = UUID.randomUUID().toString();
+        Mockito.when(userNameMapper.getLoggedInPseudoNameFromUserID(username)).thenReturn(uid);
+        Mockito.when(oauthDAO.getTokenInfo(uid, GrantType.PASSWORD.getValue(), clientId, hashedscopes))
                 .thenReturn(accessTokenData);
         context.getParams().put(OAuthConstants.GRANT_TYPE, GrantType.PASSWORD.getValue());
         context.getParams().put(OAuthConstants.CLIENT_ID, clientId);

@@ -21,6 +21,7 @@
 package org.wso2.carbon.auth.oauth.dto;
 
 import java.time.Instant;
+import java.util.List;
 
 /**
  * DTO for Access token related data
@@ -28,7 +29,8 @@ import java.time.Instant;
 public class AccessTokenData {
     private String accessToken;
     private String authUser;
-    private String scopes;
+    private List<String> scopes;
+    private String hashedScopes;
     private String refreshToken;
     private String clientId;
     private String grantType;
@@ -110,11 +112,11 @@ public class AccessTokenData {
         this.tokenState = tokenState;
     }
 
-    public String getScopes() {
+    public List<String> getScopes() {
         return scopes;
     }
 
-    public void setScopes(String scopes) {
+    public void setScopes(List<String> scopes) {
         this.scopes = scopes;
     }
 
@@ -124,5 +126,13 @@ public class AccessTokenData {
 
     public void setAuthUser(String authUser) {
         this.authUser = authUser;
+    }
+
+    public String getHashedScopes() {
+        return hashedScopes;
+    }
+
+    public void setHashedScopes(String hashedScopes) {
+        this.hashedScopes = hashedScopes;
     }
 }

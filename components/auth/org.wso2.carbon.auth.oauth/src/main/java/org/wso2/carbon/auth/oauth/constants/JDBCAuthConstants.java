@@ -22,6 +22,7 @@ package org.wso2.carbon.auth.oauth.constants;
  */
 public class JDBCAuthConstants {
     public static final String TOKEN_ID = "TOKEN_ID";
+    public static final String ID = "ID";
     public static final String CLIENT_ID = "CLIENT_ID";
     public static final String ACCESS_TOKEN = "ACCESS_TOKEN";
     public static final String REFRESH_TOKEN = "REFRESH_TOKEN";
