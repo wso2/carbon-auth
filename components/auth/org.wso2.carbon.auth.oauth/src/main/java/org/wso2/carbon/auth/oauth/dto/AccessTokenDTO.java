@@ -30,8 +30,8 @@ public class AccessTokenDTO {
     private String userDomain;
     private long timeCreated;
     private long refreshTokenCreatedTime;
-    private int validityPeriod;
-    private int refreshTokenValidityPeriod;
+    private long validityPeriod;
+    private long refreshTokenValidityPeriod;
     private String tokenScopeHash;
     private String tokenState;
     private String userType;
@@ -101,19 +101,19 @@ public class AccessTokenDTO {
         this.refreshTokenCreatedTime = refreshTokenCreatedTime;
     }
 
-    public int getValidityPeriod() {
+    public long getValidityPeriod() {
         return validityPeriod;
     }
 
-    public void setValidityPeriod(int validityPeriod) {
+    public void setValidityPeriod(long validityPeriod) {
         this.validityPeriod = validityPeriod;
     }
 
-    public int getRefreshTokenValidityPeriod() {
+    public long getRefreshTokenValidityPeriod() {
         return refreshTokenValidityPeriod;
     }
 
-    public void setRefreshTokenValidityPeriod(int refreshTokenValidityPeriod) {
+    public void setRefreshTokenValidityPeriod(long refreshTokenValidityPeriod) {
         this.refreshTokenValidityPeriod = refreshTokenValidityPeriod;
     }
 

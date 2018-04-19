@@ -41,9 +41,8 @@ public class TokenMappingUtil {
         tokenResponseDTO.accessToken(accessToken.getValue());
         tokenResponseDTO.tokenType(accessToken.getType().toString());
 
-        if (accessToken.getLifetime() > 0L) {
             tokenResponseDTO.expiresIn(accessToken.getLifetime());
-        }
+
 
         if (accessToken.getScope() != null) {
             tokenResponseDTO.scope(accessToken.getScope().toString());

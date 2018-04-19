@@ -136,7 +136,7 @@ public class PassWordGrantHandlerTest {
         tokens = context.getAccessTokenResponse().getTokens();
         Assert.assertNotNull(tokens.getAccessToken().getValue());
         Assert.assertNotEquals(tokens.getAccessToken().getValue(), accessTokenData.getAccessToken());
-        Assert.assertNotEquals(tokens.getAccessToken().getLifetime(), accessTokenData.getValidityPeriod());
+        Assert.assertEquals(tokens.getAccessToken().getLifetime(), accessTokenData.getValidityPeriod());
 
         //check parse exception path
         queryParameters.remove(OAuthConstants.USERNAME);
