@@ -27,7 +27,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.testng.Assert;
 import org.wso2.carbon.auth.core.datasource.DAOUtil;
-import org.wso2.carbon.auth.oauth.constants.JDBCAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dao.impl.DAOFactory;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
@@ -40,10 +39,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Calendar;
 import java.util.UUID;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ DAOUtil.class })
+@PrepareForTest({DAOUtil.class})
 public class TokenDAOImplTest {
     @Mock
     Connection connection;
@@ -106,10 +106,10 @@ public class TokenDAOImplTest {
         }
 
         PowerMockito.when(resultSet.next()).thenReturn(true);
-        PowerMockito.when(resultSet.getTimestamp(JDBCAuthConstants.TIME_CREATED))
+        PowerMockito.when(resultSet.getTimestamp(Mockito.anyString(), Mockito.any(Calendar.class)))
                 .thenReturn(Timestamp.from(Instant.now()));
-        PowerMockito.when(resultSet.getTimestamp(JDBCAuthConstants.REFRESH_TOKEN_TIME_CREATED))
-                .thenReturn(Timestamp.from(Instant.now()));
+        PowerMockito.when(resultSet.getTimestamp(Mockito.anyString(), Mockito.any(Calendar
+                .class))).thenReturn(Timestamp.from(Instant.now()));
 
         try {
             AccessTokenDTO accessTokenDTO = dao.getTokenInfo(accessToken, consumerKey);
