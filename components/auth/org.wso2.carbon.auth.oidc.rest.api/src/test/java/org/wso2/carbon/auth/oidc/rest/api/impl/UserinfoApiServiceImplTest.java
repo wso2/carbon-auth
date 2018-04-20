@@ -16,14 +16,13 @@
  * under the License.
  */
 
-package org.wso2.carbon.auth.oauth.rest.api.impl;
+package org.wso2.carbon.auth.oidc.rest.api.impl;
 
 import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.auth.core.exception.ExceptionCodes;
 import org.wso2.carbon.auth.user.info.UserinfoRequestHandler;
-import org.wso2.carbon.auth.user.info.constants.UserInfoConstants;
 import org.wso2.carbon.auth.user.info.exception.UserInfoException;
 import org.wso2.msf4j.Request;
 
@@ -37,11 +36,10 @@ public class UserinfoApiServiceImplTest {
         UserinfoRequestHandler userinfoRequestHandler = Mockito.mock(UserinfoRequestHandler.class);
         Request request = Mockito.mock(Request.class);
         String authorization = "token";
-        String schema = UserInfoConstants.OPENID;
 
-        Mockito.when(userinfoRequestHandler.retrieveUserInfo(authorization, schema)).thenReturn("userInfo");
+        Mockito.when(userinfoRequestHandler.retrieveUserInfo(authorization)).thenReturn("userInfo");
         UserinfoApiServiceImpl userinfoApiService = new UserinfoApiServiceImpl(userinfoRequestHandler);
-        Response response = userinfoApiService.userinfoGet(authorization, schema, request);
+        Response response = userinfoApiService.userinfoGet(authorization, request);
         Assert.assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
     }
 
@@ -51,12 +49,11 @@ public class UserinfoApiServiceImplTest {
         UserinfoRequestHandler userinfoRequestHandler = Mockito.mock(UserinfoRequestHandler.class);
         Request request = Mockito.mock(Request.class);
         String authorization = "token";
-        String schema = UserInfoConstants.OPENID;
 
         UserInfoException userInfoException = new UserInfoException("ts", ExceptionCodes.INVALID_REQUEST);
-        Mockito.when(userinfoRequestHandler.retrieveUserInfo(authorization, schema)).thenThrow(userInfoException);
+        Mockito.when(userinfoRequestHandler.retrieveUserInfo(authorization)).thenThrow(userInfoException);
         UserinfoApiServiceImpl userinfoApiService = new UserinfoApiServiceImpl(userinfoRequestHandler);
-        Response response = userinfoApiService.userinfoGet(authorization, schema, request);
+        Response response = userinfoApiService.userinfoGet(authorization, request);
         Assert.assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
     }
 

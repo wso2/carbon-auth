@@ -1,4 +1,4 @@
-package org.wso2.carbon.auth.oauth.rest.api.dto;
+package org.wso2.carbon.auth.oidc.rest.api.dto;
 
 
 import com.google.gson.annotations.SerializedName;

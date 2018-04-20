@@ -34,6 +34,6 @@ public interface UserinfoRequestHandler {
      * @return Access token
      * @throws UserInfoException if validation failed to retrieve token
      */
-    String retrieveUserInfo(String authorization, String schema) throws UserInfoException;
+    String retrieveUserInfo(String authorization) throws UserInfoException;
 
 }

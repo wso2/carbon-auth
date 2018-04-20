@@ -16,11 +16,11 @@
  * under the License.
  */
 
-package org.wso2.carbon.auth.oauth.rest.api.factories;
+package org.wso2.carbon.auth.oidc.rest.api.factories;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.auth.oauth.rest.api.UserinfoApiService;
+import org.wso2.carbon.auth.oidc.rest.api.UserinfoApiService;
 
 public class UserinfoApiServiceFactoryTest {
 

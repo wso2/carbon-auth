@@ -47,7 +47,7 @@ public class UserInfoRequestHandlerImplTest {
         Mockito.when(userInfoResponseBuilder.getResponseString(introspectionResponse)).thenReturn("user-info");
         UserInfoRequestHandlerImpl userInfoRequestHandler = new UserInfoRequestHandlerImpl(introspectionManager);
         String authHeaderValue = OAuthConstants.AUTH_TYPE_BEARER + " " + token;
-        String userInfo = userInfoRequestHandler.retrieveUserInfo(authHeaderValue, UserInfoConstants.OPENID);
+        String userInfo = userInfoRequestHandler.retrieveUserInfo(authHeaderValue);
 
         Assert.assertNotNull(userInfo);
     }
@@ -65,7 +65,7 @@ public class UserInfoRequestHandlerImplTest {
         String authHeaderValue = OAuthConstants.AUTH_TYPE_BEARER + " " + token;
 
         try {
-            userInfoRequestHandler.retrieveUserInfo(authHeaderValue, UserInfoConstants.OPENID);
+            userInfoRequestHandler.retrieveUserInfo(authHeaderValue);
             Assert.fail("For inactive token, UserInfoException is not thrown.");
         } catch (UserInfoException e) {
             Assert.assertEquals(e.getErrorHandler(), ExceptionCodes.INVALID_TOKEN);
@@ -79,7 +79,7 @@ public class UserInfoRequestHandlerImplTest {
         UserInfoRequestHandlerImpl userInfoRequestHandler = new UserInfoRequestHandlerImpl(introspectionManager);
 
         try {
-            userInfoRequestHandler.retrieveUserInfo(null, UserInfoConstants.OPENID);
+            userInfoRequestHandler.retrieveUserInfo(null);
             Assert.fail("When Authorization header is not present, UserInfoException is not thrown.");
         } catch (UserInfoException e) {
             Assert.assertEquals(e.getErrorHandler(), ExceptionCodes.INVALID_REQUEST);
@@ -94,7 +94,7 @@ public class UserInfoRequestHandlerImplTest {
         String token = "123-test-789";
 
         try {
-            userInfoRequestHandler.retrieveUserInfo(token, UserInfoConstants.OPENID);
+            userInfoRequestHandler.retrieveUserInfo(token);
             Assert.fail("When Bearer is not present, UserInfoException is not thrown.");
         } catch (UserInfoException e) {
             Assert.assertEquals(e.getErrorHandler(), ExceptionCodes.INVALID_REQUEST);
@@ -109,7 +109,7 @@ public class UserInfoRequestHandlerImplTest {
         UserInfoRequestHandlerImpl userInfoRequestHandler = new UserInfoRequestHandlerImpl(introspectionManager);
 
         try {
-            userInfoRequestHandler.retrieveUserInfo(OAuthConstants.AUTH_TYPE_BEARER, UserInfoConstants.OPENID);
+            userInfoRequestHandler.retrieveUserInfo(OAuthConstants.AUTH_TYPE_BEARER);
             Assert.fail("When token value is not present, UserInfoException is not thrown.");
         } catch (UserInfoException e) {
             Assert.assertEquals(e.getErrorHandler(), ExceptionCodes.INVALID_REQUEST);
@@ -130,7 +130,7 @@ public class UserInfoRequestHandlerImplTest {
         String authHeaderValue = OAuthConstants.AUTH_TYPE_BEARER + " " + token;
 
         try {
-            userInfoRequestHandler.retrieveUserInfo(authHeaderValue, UserInfoConstants.OPENID);
+            userInfoRequestHandler.retrieveUserInfo(authHeaderValue);
             Assert.fail("For invalid scope, UserInfoException is not thrown.");
         } catch (UserInfoException e) {
             Assert.assertEquals(e.getErrorHandler(), ExceptionCodes.UNSUPPORTED_SCOPE);
@@ -151,7 +151,7 @@ public class UserInfoRequestHandlerImplTest {
         String authHeaderValue = OAuthConstants.AUTH_TYPE_BEARER + " " + token;
 
         try {
-            userInfoRequestHandler.retrieveUserInfo(authHeaderValue, UserInfoConstants.OPENID);
+            userInfoRequestHandler.retrieveUserInfo(authHeaderValue);
             Assert.fail("For invalid scope, UserInfoException is not thrown.");
         } catch (UserInfoException e) {
             Assert.assertEquals(e.getErrorHandler(), ExceptionCodes.UNSUPPORTED_SCOPE);

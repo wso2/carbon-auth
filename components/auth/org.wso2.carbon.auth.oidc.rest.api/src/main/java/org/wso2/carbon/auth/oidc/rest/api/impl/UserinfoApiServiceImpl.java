@@ -1,9 +1,9 @@
-package org.wso2.carbon.auth.oauth.rest.api.impl;
+package org.wso2.carbon.auth.oidc.rest.api.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.auth.oauth.rest.api.NotFoundException;
-import org.wso2.carbon.auth.oauth.rest.api.UserinfoApiService;
+import org.wso2.carbon.auth.oidc.rest.api.NotFoundException;
+import org.wso2.carbon.auth.oidc.rest.api.UserinfoApiService;
 import org.wso2.carbon.auth.rest.api.commons.dto.ErrorDTO;
 import org.wso2.carbon.auth.rest.api.commons.util.RestApiUtil;
 import org.wso2.carbon.auth.user.info.UserinfoRequestHandler;
@@ -25,11 +25,11 @@ public class UserinfoApiServiceImpl extends UserinfoApiService {
     }
 
     @Override
-    public Response userinfoGet(String authorization, String schema, Request request) throws NotFoundException {
+    public Response userinfoGet(String authorization, Request request) throws NotFoundException {
 
         String userInfo;
         try {
-            userInfo = userinfoRequestHandler.retrieveUserInfo(authorization, schema);
+            userInfo = userinfoRequestHandler.retrieveUserInfo(authorization);
         } catch (UserInfoException e) {
             String errorMessage = "Error while retrieving user information";
             ErrorDTO errorDTO = RestApiUtil.getErrorDTO(e.getErrorHandler());
@@ -39,6 +39,4 @@ public class UserinfoApiServiceImpl extends UserinfoApiService {
 
         return Response.ok().entity(userInfo).build();
     }
-
-
 }

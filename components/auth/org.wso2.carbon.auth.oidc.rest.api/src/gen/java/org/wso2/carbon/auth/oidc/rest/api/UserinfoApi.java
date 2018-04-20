@@ -1,10 +1,10 @@
-package org.wso2.carbon.auth.oauth.rest.api;
+package org.wso2.carbon.auth.oidc.rest.api;
 
 
 import io.swagger.annotations.ApiParam;
 
-import org.wso2.carbon.auth.oauth.rest.api.dto.ErrorDTO;
-import org.wso2.carbon.auth.oauth.rest.api.factories.UserinfoApiServiceFactory;
+import org.wso2.carbon.auth.oidc.rest.api.dto.ErrorDTO;
+import org.wso2.carbon.auth.oidc.rest.api.factories.UserinfoApiServiceFactory;
 
 import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.Request;
@@ -32,11 +32,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 @Component(
-    name = "org.wso2.carbon.auth.oauth.rest.api.UserinfoApi",
+    name = "org.wso2.carbon.auth.oidc.rest.api.UserinfoApi",
     service = Microservice.class,
     immediate = true
 )
-@Path("/api/auth/oauth2/v1.[\\d]+/userinfo")
+@Path("/api/auth/oidc/v1.[\\d]+/userinfo")
 
 
 @ApplicationPath("/userinfo")
@@ -53,14 +53,11 @@ public class UserinfoApi implements Microservice  {
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "OK. Successful response from userinfo endpoint. ", response = void.class),
         
-        @io.swagger.annotations.ApiResponse(code = 400, message = "Bad Request. Error response from userinfo endpoint due to malformed request. ", response = void.class),
-        
         @io.swagger.annotations.ApiResponse(code = 401, message = "Unauthorized. Error response from userinfo endpoint due to client authentication failure. ", response = void.class) })
     public Response userinfoGet(@ApiParam(value = "Authentication scheme header" ,required=true)@HeaderParam("Authorization") String authorization
-,@ApiParam(value = "Schema value",required=true) @QueryParam("schema") String schema
  ,@Context Request request)
     throws NotFoundException {
         
-        return delegate.userinfoGet(authorization,schema,request);
+        return delegate.userinfoGet(authorization,request);
     }
 }

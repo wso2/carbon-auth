@@ -83,6 +83,13 @@
                                         <include>introspection-api.yaml</include>
                                     </includes>
                                 </resource>
+                                <resource>
+                                    <directory>../org.wso2.carbon.auth.oidc.rest.api/src/main/resources
+                                    </directory>
+                                    <includes>
+                                        <include>oidc-api.yaml</include>
+                                    </includes>
+                                </resource>
                             </resources>
                         </configuration>
                     </execution>

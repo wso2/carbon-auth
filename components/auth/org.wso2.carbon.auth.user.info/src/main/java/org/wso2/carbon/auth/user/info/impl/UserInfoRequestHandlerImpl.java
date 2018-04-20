@@ -44,10 +44,10 @@ public class UserInfoRequestHandlerImpl implements UserinfoRequestHandler {
     }
 
     /**
-     * @see UserinfoRequestHandler#retrieveUserInfo(String, String)
+     * @see UserinfoRequestHandler#retrieveUserInfo(String)
      */
     @Override
-    public String retrieveUserInfo(String authorization, String schema) throws UserInfoException {
+    public String retrieveUserInfo(String authorization) throws UserInfoException {
 
         String token = retrieveToken(authorization);
         IntrospectionResponse introspectionResponse = introspectionManager.introspect(token);
