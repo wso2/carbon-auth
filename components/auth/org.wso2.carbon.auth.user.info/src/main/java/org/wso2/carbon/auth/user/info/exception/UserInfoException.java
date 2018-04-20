@@ -35,11 +35,11 @@ public class UserInfoException extends AuthException {
     }
 
     public UserInfoException(String msg) {
-        super(msg, ExceptionCodes.INVALID_REQUEST);
+        super(msg, ExceptionCodes.INVALID_TOKEN);
     }
 
     public UserInfoException(String msg, Throwable e) {
-        super(msg, e, ExceptionCodes.INVALID_REQUEST);
+        super(msg, e, ExceptionCodes.INVALID_TOKEN);
     }
 
 }

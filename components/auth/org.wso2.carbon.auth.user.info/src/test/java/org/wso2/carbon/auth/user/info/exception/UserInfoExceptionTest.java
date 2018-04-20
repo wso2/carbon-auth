@@ -29,11 +29,11 @@ public class UserInfoExceptionTest {
 
         UserInfoException userInfoException1 = new UserInfoException("message");
         Assert.assertNotNull(userInfoException1.getErrorHandler());
-        Assert.assertEquals(userInfoException1.getErrorHandler(), ExceptionCodes.INVALID_REQUEST);
+        Assert.assertEquals(userInfoException1.getErrorHandler(), ExceptionCodes.INVALID_TOKEN);
 
         UserInfoException userInfoException2 = new UserInfoException("message", new Exception());
         Assert.assertNotNull(userInfoException2.getErrorHandler());
-        Assert.assertEquals(userInfoException2.getErrorHandler(), ExceptionCodes.INVALID_REQUEST);
+        Assert.assertEquals(userInfoException2.getErrorHandler(), ExceptionCodes.INVALID_TOKEN);
 
         UserInfoException userInfoException3 = new UserInfoException("message", new Exception(),
                 ExceptionCodes.DATA_NOT_FOUND);

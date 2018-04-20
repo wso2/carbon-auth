@@ -37,9 +37,7 @@ public enum ExceptionCodes implements ExceptionCodeHandler {
     //oauth2 grants related exception codes
     OAUTH2_GRANT_PROCESS_EXCEPTION(900500, "Internal OAuth2 grant processing error", 500,
             "Error while processing OAuth2 grant request"),
-    INVALID_REQUEST(900600, "Invalid request", 400, "Invalid request"),
-    UNSUPPORTED_SCOPE(900601, "Unsupported scope", 400, "Unsupported scope"),
-    INVALID_TOKEN(900602, "Invalid token", 401, "The Access Token expired");
+    INVALID_TOKEN(900600, "invalid_token", 401, "Invalid token provided");
 
     private final long errorCode;
     private final String errorMessage;

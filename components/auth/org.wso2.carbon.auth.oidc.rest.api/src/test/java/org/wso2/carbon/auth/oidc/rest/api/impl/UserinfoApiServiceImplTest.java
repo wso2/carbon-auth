@@ -50,11 +50,11 @@ public class UserinfoApiServiceImplTest {
         Request request = Mockito.mock(Request.class);
         String authorization = "token";
 
-        UserInfoException userInfoException = new UserInfoException("ts", ExceptionCodes.INVALID_REQUEST);
+        UserInfoException userInfoException = new UserInfoException("ts", ExceptionCodes.INVALID_TOKEN);
         Mockito.when(userinfoRequestHandler.retrieveUserInfo(authorization)).thenThrow(userInfoException);
         UserinfoApiServiceImpl userinfoApiService = new UserinfoApiServiceImpl(userinfoRequestHandler);
         Response response = userinfoApiService.userinfoGet(authorization, request);
-        Assert.assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
+        Assert.assertEquals(response.getStatus(), Response.Status.UNAUTHORIZED.getStatusCode());
     }
 
 }

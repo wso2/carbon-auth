@@ -82,7 +82,7 @@ public class UserInfoRequestHandlerImplTest {
             userInfoRequestHandler.retrieveUserInfo(null);
             Assert.fail("When Authorization header is not present, UserInfoException is not thrown.");
         } catch (UserInfoException e) {
-            Assert.assertEquals(e.getErrorHandler(), ExceptionCodes.INVALID_REQUEST);
+            Assert.assertEquals(e.getErrorHandler(), ExceptionCodes.INVALID_TOKEN);
         }
     }
 
@@ -97,7 +97,7 @@ public class UserInfoRequestHandlerImplTest {
             userInfoRequestHandler.retrieveUserInfo(token);
             Assert.fail("When Bearer is not present, UserInfoException is not thrown.");
         } catch (UserInfoException e) {
-            Assert.assertEquals(e.getErrorHandler(), ExceptionCodes.INVALID_REQUEST);
+            Assert.assertEquals(e.getErrorHandler(), ExceptionCodes.INVALID_TOKEN);
         }
     }
 
@@ -112,7 +112,7 @@ public class UserInfoRequestHandlerImplTest {
             userInfoRequestHandler.retrieveUserInfo(OAuthConstants.AUTH_TYPE_BEARER);
             Assert.fail("When token value is not present, UserInfoException is not thrown.");
         } catch (UserInfoException e) {
-            Assert.assertEquals(e.getErrorHandler(), ExceptionCodes.INVALID_REQUEST);
+            Assert.assertEquals(e.getErrorHandler(), ExceptionCodes.INVALID_TOKEN);
         }
     }
 
@@ -133,7 +133,7 @@ public class UserInfoRequestHandlerImplTest {
             userInfoRequestHandler.retrieveUserInfo(authHeaderValue);
             Assert.fail("For invalid scope, UserInfoException is not thrown.");
         } catch (UserInfoException e) {
-            Assert.assertEquals(e.getErrorHandler(), ExceptionCodes.UNSUPPORTED_SCOPE);
+            Assert.assertEquals(e.getErrorHandler(), ExceptionCodes.INVALID_TOKEN);
         }
     }
 
@@ -154,7 +154,7 @@ public class UserInfoRequestHandlerImplTest {
             userInfoRequestHandler.retrieveUserInfo(authHeaderValue);
             Assert.fail("For invalid scope, UserInfoException is not thrown.");
         } catch (UserInfoException e) {
-            Assert.assertEquals(e.getErrorHandler(), ExceptionCodes.UNSUPPORTED_SCOPE);
+            Assert.assertEquals(e.getErrorHandler(), ExceptionCodes.INVALID_TOKEN);
         }
     }
 

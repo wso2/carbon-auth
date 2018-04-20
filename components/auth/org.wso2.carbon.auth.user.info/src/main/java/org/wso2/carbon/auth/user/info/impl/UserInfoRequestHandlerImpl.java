@@ -53,11 +53,11 @@ public class UserInfoRequestHandlerImpl implements UserinfoRequestHandler {
         IntrospectionResponse introspectionResponse = introspectionManager.introspect(token);
 
         if (!introspectionResponse.isActive()) {
-            throw new UserInfoException("Invalid token", ExceptionCodes.INVALID_TOKEN);
+            throw new UserInfoException("The access token is not active.", ExceptionCodes.INVALID_TOKEN);
         }
 
         if (!areScopesValid(introspectionResponse.getScope())) {
-            throw new UserInfoException("Unsupported scope", ExceptionCodes.UNSUPPORTED_SCOPE);
+            throw new UserInfoException("Openid scope is missing.", ExceptionCodes.INVALID_TOKEN);
         }
 
         UserInfoResponseBuilder userInfoResponseBuilder = UserInfoUtil.getUserInfoResponseBuilder();
@@ -75,15 +75,15 @@ public class UserInfoRequestHandlerImpl implements UserinfoRequestHandler {
 
         log.debug("Retrieving token from Authorization header value: {}", authorization);
         if (authorization == null) {
-            throw new UserInfoException("Access token is missing", ExceptionCodes.INVALID_REQUEST);
+            throw new UserInfoException("Authorization header value is missing", ExceptionCodes.INVALID_TOKEN);
         }
 
         String[] authzHeaderInfo = authorization.trim().split(" ");
         if (!OAuthConstants.AUTH_TYPE_BEARER.equals(authzHeaderInfo[0])) {
-            throw new UserInfoException("Bearer token is missing", ExceptionCodes.INVALID_REQUEST);
+            throw new UserInfoException("Bearer token is missing", ExceptionCodes.INVALID_TOKEN);
         }
         if (authzHeaderInfo.length == 1) {
-            throw new UserInfoException("Access token is missing", ExceptionCodes.INVALID_REQUEST);
+            throw new UserInfoException("Access token is missing", ExceptionCodes.INVALID_TOKEN);
         }
 
         return authzHeaderInfo[1];

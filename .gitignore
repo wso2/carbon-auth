@@ -3,6 +3,8 @@ target
 *.iws
 *.ipr
 .idea
+*.swagger-codegen-ignore
+*.swagger-codegen
 
 # Compiled class file
 *.class
