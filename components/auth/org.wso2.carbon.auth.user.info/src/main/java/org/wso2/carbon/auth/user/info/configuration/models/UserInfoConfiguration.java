@@ -1,5 +1,4 @@
 /*
- *
  *   Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *   WSO2 Inc. licenses this file to you under the Apache License,
@@ -28,7 +27,9 @@ import org.wso2.carbon.config.annotation.Element;
 import org.wso2.charon3.core.schema.SCIMConstants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Class to hold user info configuration
@@ -40,16 +41,18 @@ public class UserInfoConfiguration {
     @Element(description = "Response Builder Class Name")
     private String responseBuilderClassName = UserInfoConstants.RESPONSE_BUILDER_CLASS_NAME;
 
-    @Element(description = "Required user attributes")
-    private List<String> requiredUserAttributes = new ArrayList<>();
+    @Element(description = "Scope to claim dialects mapping")
+    private Map<String, List<String>> scopeToClaimDialectsMapping = new HashMap<>();
 
     public UserInfoConfiguration() {
+        List<String> requiredUserAttributes = new ArrayList<>();
         requiredUserAttributes.add(OAuthConstants.SUB);
         requiredUserAttributes.add(DefaultAttributes.USER_FAMILY_NAME.getAttributeName());
         requiredUserAttributes.add(DefaultAttributes.USER_GIVEN_NAME.getAttributeName());
         requiredUserAttributes.add(DefaultAttributes.USER_EMAIL_WORK.getAttributeName());
         requiredUserAttributes.add(DefaultAttributes.USER_EMAIL_HOME.getAttributeName());
         requiredUserAttributes.add(SCIMConstants.UserSchemaConstants.EMAILS);
+        scopeToClaimDialectsMapping.put(UserInfoConstants.OPENID, requiredUserAttributes);
     }
 
     public String getResponseBuilderClassName() {
@@ -60,11 +63,12 @@ public class UserInfoConfiguration {
         this.responseBuilderClassName = responseBuilderClassName;
     }
 
-    public List<String> getRequiredUserAttributes() {
-        return requiredUserAttributes;
+    public Map<String, List<String>> getScopeToClaimDialectsMapping() {
+        return scopeToClaimDialectsMapping;
     }
 
-    public void setRequiredUserAttributes(List<String> requiredUserAttributes) {
-        this.requiredUserAttributes = requiredUserAttributes;
+    public void setScopeToClaimDialectsMapping(Map<String, List<String>> scopeToClaimDialectsMapping) {
+        this.scopeToClaimDialectsMapping = scopeToClaimDialectsMapping;
     }
+
 }

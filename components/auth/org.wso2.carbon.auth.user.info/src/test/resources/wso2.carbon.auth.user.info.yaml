@@ -16,14 +16,15 @@
 wso2.carbon.auth.user.info:
     # Response Builder Class Name
   responseBuilderClassName: org.wso2.carbon.auth.user.info.UserInfoJSONResponseBuilder
-    # Required user attributes
-  requiredUserAttributes:
-  - sub
-  - familyName
-  - givenName
-  - workEmail
-  - homeEmail
-  - emails
+    # Scope to claim dialects mapping
+  scopeToClaimDialectsMapping:
+    openid:
+    - sub
+    - familyName
+    - givenName
+    - workEmail
+    - homeEmail
+    - emails
 
 wso2.securevault:
   secretRepository:

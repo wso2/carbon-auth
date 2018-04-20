@@ -27,11 +27,11 @@ import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.token.introspection.IntrospectionManager;
 import org.wso2.carbon.auth.token.introspection.dto.IntrospectionResponse;
 import org.wso2.carbon.auth.user.info.UserInfoResponseBuilder;
+import org.wso2.carbon.auth.user.info.UserInfoTestBase;
 import org.wso2.carbon.auth.user.info.constants.UserInfoConstants;
 import org.wso2.carbon.auth.user.info.exception.UserInfoException;
 
-public class UserInfoRequestHandlerImplTest {
-
+public class UserInfoRequestHandlerImplTest extends UserInfoTestBase {
 
     @Test
     public void testRetrieveUserInfo() throws Exception {

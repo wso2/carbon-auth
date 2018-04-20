@@ -20,67 +20,30 @@ package org.wso2.carbon.auth.user.info;
 
 import org.mockito.Mockito;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.wso2.carbon.auth.core.exception.ExceptionCodes;
-import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.token.introspection.dto.IntrospectionResponse;
-import org.wso2.carbon.auth.user.info.configuration.UserInfoConfigurationService;
-import org.wso2.carbon.auth.user.info.configuration.models.UserInfoConfiguration;
 import org.wso2.carbon.auth.user.info.constants.UserInfoConstants;
 import org.wso2.carbon.auth.user.info.exception.UserInfoException;
-import org.wso2.carbon.auth.user.info.util.UserInfoUtil;
-import org.wso2.carbon.auth.user.store.configuration.DefaultAttributes;
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.ComplexAttribute;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.exceptions.CharonException;
-import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.User;
-import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class AbstractUserInfoResponseBuilderTest {
-
-    private UserManager userManager;
-    private UserInfoConfigurationService userInfoConfigurationService;
-    private UserInfoConfiguration userInfoConfiguration;
-
-    @BeforeClass
-    public void init() throws Exception {
-
-        userManager = Mockito.mock(UserManager.class);
-        UserInfoUtil.initializeUserManager(userManager);
-
-        userInfoConfigurationService = Mockito.mock(UserInfoConfigurationService.class);
-        UserInfoUtil.initializeUserInfoConfigurationService(userInfoConfigurationService);
-
-        userInfoConfiguration = new UserInfoConfiguration();
-        Mockito.when(userInfoConfigurationService.getUserInfoConfiguration()).thenReturn(userInfoConfiguration);
-
-        List<String> requiredUserAttributes = new ArrayList<>();
-        requiredUserAttributes.add(OAuthConstants.SUB);
-        requiredUserAttributes.add(DefaultAttributes.USER_FAMILY_NAME.getAttributeName());
-        requiredUserAttributes.add(DefaultAttributes.USER_GIVEN_NAME.getAttributeName());
-        requiredUserAttributes.add(DefaultAttributes.USER_EMAIL_WORK.getAttributeName());
-        requiredUserAttributes.add(DefaultAttributes.USER_EMAIL_HOME.getAttributeName());
-        requiredUserAttributes.add(SCIMConstants.UserSchemaConstants.EMAILS);
-        requiredUserAttributes.add(DefaultAttributes.USER_EMAIL_HOME.getAttributeName());
-        userInfoConfiguration.setRequiredUserAttributes(requiredUserAttributes);
-    }
+public class AbstractUserInfoResponseBuilderTest extends UserInfoTestBase {
 
     @Test(priority = 1)
     public void testGetResponseString() throws Exception {
 
         IntrospectionResponse introspectionResponse = new IntrospectionResponse();
         introspectionResponse.setUsername("user1");
-        introspectionResponse.setScope(UserInfoConstants.OPENID);
+        introspectionResponse.setScope(UserInfoConstants.OPENID + " email");
 
         User user = new User();
         String attributeName = "id";
@@ -156,7 +119,7 @@ public class AbstractUserInfoResponseBuilderTest {
     @Test(priority = 4)
     public void testGetResponseStringWhenRequiredAttributesAreEmpty() throws Exception {
 
-        userInfoConfiguration.setRequiredUserAttributes(new ArrayList<>());
+        userInfoConfiguration.setScopeToClaimDialectsMapping(new HashMap<>());
         IntrospectionResponse introspectionResponse = new IntrospectionResponse();
         introspectionResponse.setUsername("user4");
         introspectionResponse.setScope(UserInfoConstants.OPENID);

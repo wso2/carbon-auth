@@ -44,9 +44,11 @@ import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.schema.SCIMConstants;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Util class implementation for user info
@@ -184,8 +186,7 @@ public class UserInfoUtil {
             return new HashMap<>();
         }
 
-        List<String> requiredUserAttributes = getUserInfoConfigurationService().getUserInfoConfiguration()
-                .getRequiredUserAttributes();
+        Set<String> requiredUserAttributes = filterUserAttributesBasedOnScopes(requestedScopes);
 
         Map<String, Object> filteredUserAttributes = new HashMap<>();
 
@@ -211,6 +212,27 @@ public class UserInfoUtil {
 
         return filteredUserAttributes;
     }
+
+    /**
+     * Filter user attributes based on the scopes.
+     *
+     * @param requestedScopes Requested scope values
+     * @return Set of user attribute values
+     */
+    private static Set<String> filterUserAttributesBasedOnScopes(String[] requestedScopes) {
+
+        Set<String> userAttributes = new HashSet<>();
+        Map<String, List<String>> scopeToClaimDialectsMappings = getUserInfoConfigurationService()
+                .getUserInfoConfiguration().getScopeToClaimDialectsMapping();
+
+        for (String scope : requestedScopes) {
+            if (scopeToClaimDialectsMappings.get(scope) != null) {
+                userAttributes.addAll(scopeToClaimDialectsMappings.get(scope));
+            }
+        }
+        return userAttributes;
+    }
+
 
     /**
      * Extract user attributes values and return a map with values.
@@ -263,7 +285,7 @@ public class UserInfoUtil {
      * @param filteredUserAttributes Filtered user attributes
      * @throws UserInfoException if failed to handle email attributes
      */
-    private static void handleEmailAttributes(List<String> requiredUserAttributes, Map<String, Attribute>
+    private static void handleEmailAttributes(Set<String> requiredUserAttributes, Map<String, Attribute>
             userAttributes, Map<String, Object> filteredUserAttributes) throws UserInfoException {
 
         Attribute emailsAttribute = userAttributes.get(SCIMConstants.UserSchemaConstants.EMAILS);

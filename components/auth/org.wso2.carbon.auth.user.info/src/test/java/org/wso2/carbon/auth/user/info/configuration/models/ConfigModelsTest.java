@@ -53,7 +53,7 @@ public class ConfigModelsTest {
             Assert.assertNotNull(userInfoConfiguration);
             Assert.assertEquals(userInfoConfiguration.getResponseBuilderClassName(), UserInfoConstants
                     .RESPONSE_BUILDER_CLASS_NAME);
-            Assert.assertNotNull(userInfoConfiguration.getRequiredUserAttributes());
+            Assert.assertNotNull(userInfoConfiguration.getScopeToClaimDialectsMapping());
         } catch (Exception e) {
             String errorMessage = "Error in building model from configuration - " + CONFIG_FILE_NAME;
             log.error(errorMessage, e);
