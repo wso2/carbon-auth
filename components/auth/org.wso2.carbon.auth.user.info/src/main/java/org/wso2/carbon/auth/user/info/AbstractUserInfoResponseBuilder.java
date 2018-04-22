@@ -77,6 +77,7 @@ public abstract class AbstractUserInfoResponseBuilder implements UserInfoRespons
      * @param userAttributes  Map of user attributes
      * @param requestedScopes Requested scopes
      * @return Map of filtered user attribute values
+     * @throws UserInfoException If failed to get user attributes filterd by scope
      */
     protected Map<String, Object> getUserAttributesFilteredByScope(Map<String, Attribute> userAttributes,
                                                                    String[] requestedScopes) throws UserInfoException {

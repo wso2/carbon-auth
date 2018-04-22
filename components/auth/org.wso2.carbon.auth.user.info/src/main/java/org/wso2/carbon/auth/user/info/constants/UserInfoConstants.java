@@ -27,4 +27,15 @@ public class UserInfoConstants {
             "Builder";
     public static final String OPENID = "openid";
 
+    // UserStoreConfiguration values
+    public static final String USER_STORE_CONFIGURATION_NAMESPACE = "wso2.carbon.auth.user.store";
+    public static final String ATTRIBUTES = "attributes";
+    public static final String ATTRIBUTE_NAME = "attributeName";
+    public static final String ATTRIBUTE_URI = "attributeUri";
+    public static final String DISPLAY_NAME = "displayName";
+    public static final String REQUIRED = "required";
+    public static final String REGEX = "regex";
+    public static final String UNIQUENESS = "uniqueness";
+
+
 }

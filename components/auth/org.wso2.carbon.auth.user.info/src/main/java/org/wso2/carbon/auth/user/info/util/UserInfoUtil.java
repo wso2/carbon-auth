@@ -19,6 +19,7 @@
 
 package org.wso2.carbon.auth.user.info.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONStringer;
 import org.slf4j.Logger;
@@ -31,7 +32,7 @@ import org.wso2.carbon.auth.user.info.UserInfoResponseBuilder;
 import org.wso2.carbon.auth.user.info.configuration.UserInfoConfigurationService;
 import org.wso2.carbon.auth.user.info.exception.UserInfoException;
 import org.wso2.carbon.auth.user.info.internal.ServiceReferenceHolder;
-import org.wso2.carbon.auth.user.store.configuration.DefaultAttributes;
+import org.wso2.carbon.auth.user.store.configuration.models.AttributeConfiguration;
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.ComplexAttribute;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
@@ -58,6 +59,7 @@ public class UserInfoUtil {
     private static UserManager userManager;
     private static UserInfoConfigurationService userInfoConfigurationService;
     private static final Logger log = LoggerFactory.getLogger(UserInfoUtil.class);
+    private static List<AttributeConfiguration> attributeConfiguration;
 
     private UserInfoUtil() {
     }
@@ -66,9 +68,8 @@ public class UserInfoUtil {
      * Initialize user manager
      *
      * @param userManager UserManager instance
-     * @throws UserInfoException If failed to initialize
      */
-    public static synchronized void initializeUserManager(UserManager userManager) throws UserInfoException {
+    public static synchronized void initializeUserManager(UserManager userManager) {
 
         if (UserInfoUtil.userManager != null) {
             log.debug("User Manager is already initialized");
@@ -94,6 +95,20 @@ public class UserInfoUtil {
             }
         }
         return userManager;
+    }
+
+    /**
+     * Retrieve list of attribute configuration
+     *
+     * @return List of attribute configuration
+     */
+    public static synchronized List<AttributeConfiguration> getAttributeConfiguration() {
+
+        if (attributeConfiguration == null) {
+            UserInfoUtil.attributeConfiguration = ServiceReferenceHolder.getInstance()
+                    .getUserAttributeConfiguration();
+        }
+        return attributeConfiguration;
     }
 
     /**
@@ -201,10 +216,7 @@ public class UserInfoUtil {
                     filteredUserAttributes.put(requiredUserAttribute, userAttribute);
                     log.debug("Required user attribute: {} is found.", requiredUserAttribute);
                 }
-
             }
-
-            handleEmailAttributes(requiredUserAttributes, userAttributes, filteredUserAttributes);
 
         } else {
             log.debug("Required user attributes are empty. Returning an empty map of filtered user attributes.");
@@ -240,7 +252,8 @@ public class UserInfoUtil {
      * @param userAttributes Map of user attributes
      * @return Map of user attribute values
      */
-    private static Map<String, String> extractUserAttributes(Map<String, Attribute> userAttributes) {
+    private static Map<String, String> extractUserAttributes(Map<String, Attribute> userAttributes)
+            throws UserInfoException {
 
         Map<String, String> extractedUserAttributes = new HashMap<>();
 
@@ -270,6 +283,20 @@ public class UserInfoUtil {
                             log.debug("Extracted user attribute: {} from complex attribute.", subAttributeKey);
                         }
                     }
+                } else if (userAttribute instanceof MultiValuedAttribute) {
+
+                    List<Attribute> multiValuedAttributes = ((MultiValuedAttribute) userAttribute).getAttributeValues();
+                    Map<String, String> typeAndValueResults = extractTypeAndValueInMultiValuedAttributes
+                            (multiValuedAttributes);
+                    String userAttributeURI = userAttribute.getURI();
+
+                    for (Map.Entry<String, String> typeAndValueResult : typeAndValueResults.entrySet()) {
+                        String claimDialectValue = getClaimDialectValue(userAttributeURI, typeAndValueResult.getKey());
+                        if (!StringUtils.isEmpty(claimDialectValue)) {
+                            extractedUserAttributes.put(claimDialectValue, typeAndValueResult.getValue());
+                            log.debug("Extracted user attribute: {} from multi valued attribute.", claimDialectValue);
+                        }
+                    }
                 }
             }
         }
@@ -278,62 +305,53 @@ public class UserInfoUtil {
     }
 
     /**
-     * Handle email attribute by going through multi valued attributes.
+     * Get claim dialect value for given parent uri value and sub value.
      *
-     * @param requiredUserAttributes List of required user attributes
-     * @param userAttributes         Map of user attributes
-     * @param filteredUserAttributes Filtered user attributes
-     * @throws UserInfoException if failed to handle email attributes
+     * @param uriValue Parent user attribute uri value
+     * @param subValue Sub value
+     * @return claim dialect value
      */
-    private static void handleEmailAttributes(Set<String> requiredUserAttributes, Map<String, Attribute>
-            userAttributes, Map<String, Object> filteredUserAttributes) throws UserInfoException {
+    private static String getClaimDialectValue(String uriValue, String subValue) {
 
-        Attribute emailsAttribute = userAttributes.get(SCIMConstants.UserSchemaConstants.EMAILS);
+        List<AttributeConfiguration> attributeConfig = getAttributeConfiguration();
 
-        if (emailsAttribute != null && emailsAttribute instanceof MultiValuedAttribute) {
+        if (attributeConfig != null) {
+            String attributeUriValue = uriValue + "." + subValue;
 
-            List<Attribute> multiValuedAttributes = ((MultiValuedAttribute) emailsAttribute).getAttributeValues();
-            Map<String, String> emailValues = getEmailValues(multiValuedAttributes);
-
-            if (requiredUserAttributes.contains(DefaultAttributes.USER_EMAIL_HOME.getAttributeName())) {
-                String homeEmail = emailValues.get(SCIMConstants.UserSchemaConstants.HOME);
-                if (homeEmail != null) {
-                    filteredUserAttributes.put(DefaultAttributes.USER_EMAIL_HOME.getAttributeName(), homeEmail);
-                }
-            }
-
-            if (requiredUserAttributes.contains(DefaultAttributes.USER_EMAIL_WORK.getAttributeName())) {
-                String workEmail = emailValues.get(SCIMConstants.UserSchemaConstants.WORK);
-                if (workEmail != null) {
-                    filteredUserAttributes.put(DefaultAttributes.USER_EMAIL_WORK.getAttributeName(), workEmail);
+            for (AttributeConfiguration attributeConfiguration : attributeConfig) {
+                if (attributeConfiguration.getAttributeUri().equals(attributeUriValue)) {
+                    return attributeConfiguration.getAttributeName();
                 }
             }
         }
+
+        return null;
     }
 
     /**
-     * Get email values from multi valued attributes.
+     * Extract type and value in multi valued attributes.
      *
      * @param multiValuedAttributes List of multi valued attributes
-     * @throws UserInfoException if failed to get email values
+     * @throws UserInfoException if failed to extract type and value in multi valued attributes
      */
-    private static Map<String, String> getEmailValues(List<Attribute> multiValuedAttributes) throws UserInfoException {
+    private static Map<String, String> extractTypeAndValueInMultiValuedAttributes(List<Attribute> multiValuedAttributes)
+            throws UserInfoException {
 
-        Map<String, String> emailValues = new HashMap<>();
+        Map<String, String> typeAndValueMap = new HashMap<>();
         try {
             for (Attribute attribute : multiValuedAttributes) {
                 SimpleAttribute type = (SimpleAttribute) (attribute).getSubAttribute(SCIMConstants
                         .CommonSchemaConstants.TYPE);
                 SimpleAttribute value = (SimpleAttribute) (attribute).getSubAttribute(SCIMConstants
                         .CommonSchemaConstants.VALUE);
-                emailValues.put(type.getStringValue(), value.getStringValue());
+                typeAndValueMap.put(type.getStringValue(), value.getStringValue());
             }
         } catch (CharonException e) {
-            String errorMsg = "Error while retrieving email attributes";
+            String errorMsg = "Error while extracting type and value in multi valued attributes";
             throw new UserInfoException(errorMsg, e);
         }
 
-        return emailValues;
+        return typeAndValueMap;
     }
 
     /**

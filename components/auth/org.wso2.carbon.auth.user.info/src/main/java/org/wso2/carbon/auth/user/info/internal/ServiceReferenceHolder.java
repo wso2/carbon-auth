@@ -17,8 +17,19 @@
  */
 package org.wso2.carbon.auth.user.info.internal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.user.info.configuration.UserInfoConfigurationService;
+import org.wso2.carbon.auth.user.info.constants.UserInfoConstants;
+import org.wso2.carbon.auth.user.store.configuration.models.AttributeConfiguration;
+import org.wso2.carbon.auth.user.store.configuration.models.Uniqueness;
+import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
+import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class used to hold the OAuth configuration
@@ -28,6 +39,8 @@ public class ServiceReferenceHolder {
     private static ServiceReferenceHolder instance = new ServiceReferenceHolder();
     private UserInfoConfigurationService userInfoConfigurationService = null;
     private ConfigProvider configProvider;
+    private static final Logger log = LoggerFactory.getLogger(ServiceReferenceHolder.class);
+
 
     private ServiceReferenceHolder() {
     }
@@ -71,6 +84,55 @@ public class ServiceReferenceHolder {
      */
     ConfigProvider getConfigProvider() {
         return configProvider;
+    }
+
+    /**
+     * Retrieve list of attribute configurations
+     *
+     * @return List of attribute configuration
+     */
+    public List<AttributeConfiguration> getUserAttributeConfiguration() {
+
+        Map configs = null;
+        try {
+            if (configProvider != null) {
+                configs = (Map) configProvider.getConfigurationObject(UserInfoConstants
+                        .USER_STORE_CONFIGURATION_NAMESPACE);
+            } else {
+                log.error("Configuration provider is null");
+            }
+        } catch (ConfigurationException e) {
+            log.error("Error getting configuration for namespace " + UserInfoConstants
+                    .USER_STORE_CONFIGURATION_NAMESPACE, e);
+        }
+
+        if (configs == null) {
+            UserStoreConfiguration userStoreConfiguration = new UserStoreConfiguration();
+            log.info("UserStoreConfiguration: Setting default configurations...");
+            return userStoreConfiguration.getAttributes();
+        }
+
+        ArrayList<Object> attributes = (ArrayList) configs.get("attributes");
+        List<AttributeConfiguration> mappedAttributes = new ArrayList<>();
+
+        if (attributes != null) {
+            for (int i = 0; i < attributes.size(); i++) {
+                Map attribute = (Map) attributes.get(i);
+                String attributeName = (String) attribute.get(UserInfoConstants.ATTRIBUTE_NAME);
+                String attributeUri = (String) attribute.get(UserInfoConstants.ATTRIBUTE_URI);
+                String displayName = (String) attribute.get(UserInfoConstants.DISPLAY_NAME);
+                Boolean required = (Boolean) attribute.get(UserInfoConstants.REQUIRED);
+                String regex = (String) attribute.get(UserInfoConstants.REGEX);
+                String uniqueness = (String) attribute.get(UserInfoConstants.UNIQUENESS);
+
+                AttributeConfiguration attributeConfiguration = new AttributeConfiguration(attributeName, attributeUri,
+                        displayName, required, regex, Uniqueness.valueOf(uniqueness));
+                attributeConfiguration.setAttributeName(attributeName);
+                mappedAttributes.add(attributeConfiguration);
+            }
+        }
+
+        return mappedAttributes;
     }
 
 }
