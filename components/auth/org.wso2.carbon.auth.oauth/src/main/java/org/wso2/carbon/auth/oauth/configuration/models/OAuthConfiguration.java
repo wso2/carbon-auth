@@ -23,6 +23,7 @@ import org.wso2.carbon.auth.oauth.impl.ClientCredentialsGrantHandlerImpl;
 import org.wso2.carbon.auth.oauth.impl.DefaultTokenGenerator;
 import org.wso2.carbon.auth.oauth.impl.PasswordGrantHandlerImpl;
 import org.wso2.carbon.auth.oauth.impl.RefreshGrantHandler;
+import org.wso2.carbon.auth.oauth.impl.RoleBasedScopeValidator;
 import org.wso2.carbon.config.annotation.Configuration;
 import org.wso2.carbon.config.annotation.Element;
 
@@ -40,6 +41,8 @@ public class OAuthConfiguration {
     private long defaultRefreshTokenValidityPeriod = 3600L;
     @Element(description = "Token generator class implementation")
     private String tokenGenerator = DefaultTokenGenerator.class.getName();
+    @Element(description = "Scope validator class implementation")
+    private String scopeValidator = RoleBasedScopeValidator.class.getName();
     @Element(description = "Default grant types")
     private Map<String, String> grantTypes = populateDefaultGrantTypes();
 
@@ -73,6 +76,14 @@ public class OAuthConfiguration {
 
     public void setTokenGenerator(String tokenGenerator) {
         this.tokenGenerator = tokenGenerator;
+    }
+
+    public String getScopeValidator() {
+        return scopeValidator;
+    }
+
+    public void setScopeValidator(String scopeValidator) {
+        this.scopeValidator = scopeValidator;
     }
 
     private Map<String, String> populateDefaultGrantTypes() {

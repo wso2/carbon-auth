@@ -19,6 +19,7 @@ package org.wso2.carbon.auth.oauth.internal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.oauth.ScopeValidator;
 import org.wso2.carbon.auth.oauth.configuration.models.OAuthConfiguration;
 import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
@@ -35,6 +36,7 @@ public class ServiceReferenceHolder {
     private ConfigProvider configProvider;
     private OAuthConfiguration config;
     private SecureVault secureVault;
+    private ScopeValidator scopeValidator;
 
     private ServiceReferenceHolder() {}
 
@@ -111,5 +113,26 @@ public class ServiceReferenceHolder {
      */
     public void setSecureVault(SecureVault secureVault) {
         this.secureVault = secureVault;
+    }
+
+    /**
+     * Get scope validator
+     *
+     * @return ScopeValidator
+     */
+    public ScopeValidator getScopeValidator() {
+        if (scopeValidator == null) {
+            String scopeValidatorClassName = getAuthConfigurations().getScopeValidator();
+            Class<?> scopeValidatorClass = null;
+            try {
+                scopeValidatorClass = Class.forName(scopeValidatorClassName);
+                scopeValidator = (ScopeValidator) scopeValidatorClass.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                log.error("Error instantiation class " + scopeValidatorClass, e);
+            } catch (ClassNotFoundException e) {
+                log.error("Requested grant type implementation not found", e);
+            }
+        }
+        return scopeValidator;
     }
 }

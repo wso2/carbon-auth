@@ -33,6 +33,7 @@ import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
 import org.wso2.carbon.auth.client.registration.model.Application;
 import org.wso2.carbon.auth.core.api.UserNameMapper;
 import org.wso2.carbon.auth.core.exception.AuthException;
+import org.wso2.carbon.auth.oauth.callback.ScopeValidatorCallback;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
@@ -69,11 +70,41 @@ public interface GrantHandler {
     void init(UserNameMapper userNameMapper, OAuthDAO oauthDAO, UserStoreManager userStoreManager,
             ApplicationDAO applicationDAO);
 
+    /**
+     * Check is application is authorised
+     *
+     * @param application Application object
+     * @param grantType   requested grant type
+     * @return isAuthorized
+     */
     default boolean isAuthorizedClient(Application application, String grantType) {
         if (application == null || StringUtils.isEmpty(application.getGrantTypes())) {
             return false;
         }
         return application.getGrantTypes().contains(grantType);
+    }
+
+    /**
+     * Validate requested scope and return allowed scopes
+     *
+     * @param context AccessTokenContext
+     * @return allowed scopes
+     */
+    default Scope filterScopes(AccessTokenContext context) {
+        ScopeValidatorCallback scopeValidatorCallback = new ScopeValidatorCallback();
+        String user = (String) context.getParams().get(OAuthConstants.AUTH_USER);
+        String scopeValue = (String) context.getParams().get(OAuthConstants.SCOPE_QUERY_PARAM);
+        Scope scope = new Scope(scopeValue.split(" "));
+        scopeValidatorCallback.setAuthUser(user);
+        scopeValidatorCallback.setRequestedScopes(scope);
+        ScopeValidateHandler.validate(scopeValidatorCallback);
+        if (!scopeValidatorCallback.isSuccessful()) {
+            context.setSuccessful(false);
+            context.setErrorObject(scopeValidatorCallback.getErrorObject());
+            return null;
+        }
+        context.setSuccessful(true);
+        return scopeValidatorCallback.getApprovedScope();
     }
 
     /**

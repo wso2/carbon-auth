@@ -51,7 +51,8 @@ public class TokenValidatorHandlerImpl implements TokenValidatorHandler {
 
         AccessTokenDTO accessTokenDTO = findAccessToken(context.getAccessToken());
         if (accessTokenDTO == null) {
-            throw new IntrospectionException("accessTokenDO is " + "\'NULL\'");
+            buildIntrospectionError(context, "Access token is not valid");
+            return;
         }
 
         if (hasAccessTokenExpired(accessTokenDTO)) {
