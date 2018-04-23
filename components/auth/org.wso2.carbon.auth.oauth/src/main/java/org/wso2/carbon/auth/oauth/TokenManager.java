@@ -27,8 +27,8 @@ public interface TokenManager {
     /**
      * Retrieve token information
      *
-     * @param accessToken
-     * @return
+     * @param accessToken Access token value
+     * @return AccessTokenDTO
      */
     AccessTokenDTO getTokenInfo(String accessToken);
 }

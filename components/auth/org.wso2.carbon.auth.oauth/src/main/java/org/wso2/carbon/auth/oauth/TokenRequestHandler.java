@@ -33,9 +33,10 @@ public interface TokenRequestHandler {
     /**
      * Generate OAuth2 Access token
      *
-     * @param authorization Authorization header
+     * @param authorization   Authorization header
      * @param queryParameters Query Parameters sent in request
      * @return Access token
+     * @throws AuthException if failed to generate a token
      */
     AccessTokenContext generateToken(String authorization, Map<String, String> queryParameters)
             throws AuthException;

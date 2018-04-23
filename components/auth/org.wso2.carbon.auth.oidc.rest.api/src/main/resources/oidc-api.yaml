@@ -1,0 +1,68 @@
+swagger: '2.0'
+info:
+  description: OIDC API
+  version: 1.0
+  title: OIDC API
+  # put the contact info for your development or API team
+  contact:
+    name: "WSO2"
+    url: "http://wso2.com/products/api-manager/"
+    email: "architecture@wso2.com"
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+schemes:
+  - https
+host: localhost
+basePath: /api/auth/oidc/v1.0
+
+paths:
+  /userinfo:
+     get:
+       tags:
+       - OAuth Userinfo
+       consumes:
+       - application/x-www-form-urlencoded
+       produces:
+       - application/json
+       parameters:
+       - in: header
+         name: Authorization
+         description: Authentication scheme header
+         required: true
+         type: string
+       responses:
+         200:
+           description: |
+             OK.
+             Successful response from userinfo endpoint.
+           type: string
+           headers:
+             Content-Type:
+               description: |
+                 The content type of the body.
+               type: string
+         401:
+           description: |
+             Unauthorized.
+             Error response from userinfo endpoint due to client authentication failure.
+           schema:
+             $ref: '#/definitions/Error'
+           headers:
+             Content-Type:
+               description: |
+                 The content type of the body.
+               type: string
+
+definitions:
+  Error:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      description:
+        type: string

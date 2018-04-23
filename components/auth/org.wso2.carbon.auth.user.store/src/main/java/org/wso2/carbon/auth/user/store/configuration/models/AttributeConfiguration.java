@@ -20,12 +20,14 @@
 
 package org.wso2.carbon.auth.user.store.configuration.models;
 
+import org.wso2.carbon.config.annotation.Configuration;
 import org.wso2.carbon.config.annotation.Element;
 
 /**
  * Class to hold user store attribute mappings
  *
  */
+@Configuration(description = "Attribute Configurations")
 public class AttributeConfiguration {
     
     @Element(description = "Attribute name")

@@ -19,10 +19,10 @@ public class TokenErrorResponseDTO   {
   }
 
    /**
-   * Error code classifying the type of preProcessingError.
+   * Error code classifying the type of preProcessingError. 
    * @return preProcessingError
   **/
-  @ApiModelProperty(required = true, value = "Error code classifying the type of preProcessingError.")
+  @ApiModelProperty(required = true, value = "Error code classifying the type of preProcessingError. ")
   public String getPreProcessingError() {
     return preProcessingError;
   }
