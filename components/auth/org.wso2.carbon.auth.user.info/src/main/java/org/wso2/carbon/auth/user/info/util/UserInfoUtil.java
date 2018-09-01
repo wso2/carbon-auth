@@ -25,8 +25,6 @@ import org.json.JSONStringer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.exception.ExceptionCodes;
-import org.wso2.carbon.auth.scim.SCIMManager;
-import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
 import org.wso2.carbon.auth.token.introspection.dto.IntrospectionResponse;
 import org.wso2.carbon.auth.user.info.UserInfoResponseBuilder;
 import org.wso2.carbon.auth.user.info.configuration.UserInfoConfigurationService;
@@ -62,38 +60,16 @@ public class UserInfoUtil {
     private static List<AttributeConfiguration> attributeConfiguration;
 
     private UserInfoUtil() {
-    }
 
-    /**
-     * Initialize user manager
-     *
-     * @param userManager UserManager instance
-     */
-    public static synchronized void initializeUserManager(UserManager userManager) {
-
-        if (UserInfoUtil.userManager != null) {
-            log.debug("User Manager is already initialized");
-            return;
-        }
-        UserInfoUtil.userManager = userManager;
     }
 
     /**
      * Retrieve user manager instance
      *
      * @return UserManager instance of UserManager
-     * @throws UserInfoException If failed to retrieve userManager instance
      */
-    public static synchronized UserManager getUserManager() throws UserInfoException {
+    public static synchronized UserManager getUserManager() {
 
-        if (userManager == null) {
-            try {
-                UserInfoUtil.userManager = SCIMManager.getInstance().getCarbonAuthSCIMUserManager();
-            } catch (AuthUserManagementException e) {
-                String errorMsg = "Error while retrieving SCIM Manager instance.";
-                throw new UserInfoException(errorMsg, e, ExceptionCodes.INTERNAL_ERROR);
-            }
-        }
         return userManager;
     }
 
@@ -142,6 +118,7 @@ public class UserInfoUtil {
      */
     public static synchronized void initializeUserInfoConfigurationService(UserInfoConfigurationService
                                                                                    userInfoConfigurationService) {
+
         if (UserInfoUtil.userInfoConfigurationService != null) {
             log.debug("User Info Configuration Service is already initialized");
             return;
@@ -244,7 +221,6 @@ public class UserInfoUtil {
         }
         return userAttributes;
     }
-
 
     /**
      * Extract user attributes values and return a map with values.
@@ -380,5 +356,10 @@ public class UserInfoUtil {
             throw new UserInfoException(errorMsg, e);
         }
         return stringer.toString();
+    }
+
+    public static void setUserManager(UserManager userManager) {
+
+        UserInfoUtil.userManager = userManager;
     }
 }

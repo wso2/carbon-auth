@@ -17,6 +17,9 @@ schemes:
   - https
 host: localhost
 basePath: /api/identity/oauth2/dcr/v1.0
+securityDefinitions:
+  basicAuth:
+    type: basic
 consumes:
   - application/json
 produces:

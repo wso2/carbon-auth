@@ -104,7 +104,7 @@ public class AbstractUserInfoResponseBuilderTest extends UserInfoTestBase {
         IntrospectionResponse introspectionResponse = new IntrospectionResponse();
         introspectionResponse.setUsername("user3");
         introspectionResponse.setScope(UserInfoConstants.OPENID);
-        Mockito.when(userManager.getMe(introspectionResponse.getUsername(), null)).thenThrow(CharonException.class);
+        Mockito.when(userManager.getMe("user3", null)).thenThrow(CharonException.class);
 
         UserInfoJSONResponseBuilder userInfoJSONResponseBuilder = new UserInfoJSONResponseBuilder();
         try {

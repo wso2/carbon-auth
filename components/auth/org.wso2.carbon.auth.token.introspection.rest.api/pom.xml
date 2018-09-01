@@ -99,6 +99,10 @@
             <artifactId>powermock-api-mockito</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.auth</groupId>
+            <artifactId>org.wso2.carbon.auth.rest.api.authenticators</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
