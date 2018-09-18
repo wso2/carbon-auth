@@ -82,10 +82,8 @@ public class BasicAuthenticator implements RESTAPIAuthenticator {
                         request.setProperty(RestAPIConstants.LOGGED_IN_PSEUDO_USER, userNameMapper
                                 .getLoggedInPseudoNameFromUserID(username));
                         return true;
-                    } else {
-                        return false;
                     }
-
+                    return false;
                 } catch (UserStoreException e) {
                     log.error("Error while authenticating user ", e);
                     throw new RestAPIAuthSecurityException("Error while authenticating user");

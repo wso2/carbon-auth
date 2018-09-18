@@ -179,6 +179,10 @@
             <groupId>org.wso2.carbon.auth</groupId>
             <artifactId>org.wso2.carbon.auth.rest.api.authenticators</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.auth</groupId>
+            <artifactId>org.wso2.carbon.auth.token.introspection</artifactId>
+        </dependency>
     </dependencies>
     <properties>
         <import.package>
@@ -195,6 +199,7 @@
             io.swagger.util.*;version="${io.swagger.import.version.range}",
             org.wso2.carbon.auth.core.*; version="${carbon.auth.version}",
             org.wso2.carbon.auth.user.mgt.*; version="${carbon.auth.version}",
+            org.wso2.carbon.auth.token.introspection.*; version="${carbon.auth.version}";
             org.wso2.carbon.auth.rest.api.authenticators.*;version="${carbon.auth.version}"
         </import.package>
         <export.package>

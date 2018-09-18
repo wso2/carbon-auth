@@ -20,6 +20,11 @@ basePath: /api/identity/oauth2/dcr/v1.0
 securityDefinitions:
   basicAuth:
     type: basic
+  OAuth2Security:
+    type: oauth2
+    flow: password
+    tokenUrl: https://localhost:9443/token
+
 consumes:
   - application/json
 produces:

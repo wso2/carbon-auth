@@ -20,6 +20,7 @@ package org.wso2.carbon.auth.rest.api.commons.internal;
 
 import io.swagger.models.Swagger;
 import io.swagger.models.auth.BasicAuthDefinition;
+import io.swagger.models.auth.OAuth2Definition;
 import io.swagger.models.auth.SecuritySchemeDefinition;
 import io.swagger.parser.SwaggerParser;
 import org.apache.commons.io.IOUtils;
@@ -35,6 +36,7 @@ import org.wso2.carbon.auth.rest.api.authenticators.RestAPIConstants;
 import org.wso2.carbon.auth.rest.api.authenticators.SecurityConfigurationService;
 import org.wso2.carbon.auth.rest.api.authenticators.dto.RestAPIInfo;
 import org.wso2.carbon.auth.rest.api.commons.authenticators.BasicAuthenticator;
+import org.wso2.carbon.auth.rest.api.commons.authenticators.Oauth2Authenticator;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 
 import java.io.IOException;
@@ -85,6 +87,9 @@ public class BundleActivator {
                             securitySchemeDefinitionEntrySet) {
                         if (securitySchemeDefinitionEntry.getValue() instanceof BasicAuthDefinition) {
                             restapiAuthenticatorMap.put(RestAPIConstants.AUTH_TYPE_BASIC, BasicAuthenticator.class
+                                    .getName());
+                        } else if (securitySchemeDefinitionEntry.getValue() instanceof OAuth2Definition) {
+                            restapiAuthenticatorMap.put(RestAPIConstants.AUTH_TYPE_OAUTH2, Oauth2Authenticator.class
                                     .getName());
                         }
                     }

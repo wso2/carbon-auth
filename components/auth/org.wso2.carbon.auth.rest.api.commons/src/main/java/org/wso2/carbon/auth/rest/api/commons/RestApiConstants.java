@@ -34,6 +34,7 @@ public class RestApiConstants {
     public static final String AUTHORIZATION_HTTP_HEADER = "Authorization";
     public static final String SCOPE = "scope";
     public static final String AUTH_TYPE_BASIC = "Basic";
+    public static final String AUTH_TYPE_BEARER = "Bearer";
     public static final String CHARSET_UTF_8 = "UTF-8";
     public static final String RESOURCE_PATH_SCOPES = "/scopes";
     public static final String SCOPENAME_PARAM = "{scopeName}";
