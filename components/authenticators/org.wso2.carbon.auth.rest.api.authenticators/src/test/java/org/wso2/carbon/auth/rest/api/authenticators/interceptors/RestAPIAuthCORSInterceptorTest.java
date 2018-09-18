@@ -28,6 +28,7 @@ import org.wso2.carbon.auth.rest.api.authenticators.RestAPIConstants;
 import org.wso2.carbon.auth.rest.api.authenticators.dto.RestAPIInfo;
 import org.wso2.carbon.auth.rest.api.authenticators.internal.ServiceReferenceHolder;
 import org.wso2.carbon.auth.rest.api.authenticators.services.MockRestApi;
+import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.msf4j.Request;
 import org.wso2.msf4j.Response;
 import org.wso2.msf4j.internal.MSF4JConstants;
@@ -45,7 +46,8 @@ public class RestAPIAuthCORSInterceptorTest {
         Swagger swaggerModel = new Swagger20Parser().parse(swagger);
         RestAPIInfo restAPIInfo = new RestAPIInfo(swaggerModel.getBasePath(), swaggerModel, swagger);
         ServiceReferenceHolder.getInstance().getSwaggerDefinitionMap().put(restAPIInfo.getBasePath(), restAPIInfo);
-
+        ConfigProvider configProvider = Mockito.mock(ConfigProvider.class);
+        ServiceReferenceHolder.getInstance().setConfigProvider(configProvider);
     }
 
     @Test
