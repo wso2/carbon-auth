@@ -18,34 +18,19 @@
 
 package org.wso2.carbon.auth.rest.api.commons.util;
 
-import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.core.exception.ExceptionCodes;
 import org.wso2.carbon.auth.rest.api.commons.RestApiConstants;
 import org.wso2.carbon.auth.rest.api.commons.dto.ErrorDTO;
-import org.wso2.carbon.auth.rest.api.commons.services.TestDCRMService;
-import org.wso2.carbon.auth.rest.api.commons.services.TestIntrospectService;
-import org.wso2.carbon.auth.rest.api.commons.services.TestScimUsersApiService;
-import org.wso2.carbon.auth.rest.api.commons.services.TestScopeRegistrationApiService;
-import org.wso2.carbon.auth.rest.api.commons.services.TestTokenApiService;
-import org.wso2.msf4j.Request;
 
-import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
  * Test class for RestApiUtil
  */
 public class RestApiUtilTest {
-    @Test
-    public void testGetLoggedInUsername() throws Exception {
-        Request request = Mockito.mock(Request.class);
-        Mockito.when(request.getProperty("LOGGED_IN_USER")).thenReturn("admin");
-        String loggedInUser = RestApiUtil.getLoggedInUsername(request);
-        Assert.assertEquals(loggedInUser, "admin");
-    }
+
 
     @Test
     public void testGetInternalServerErrorDTO() throws Exception {
@@ -112,67 +97,6 @@ public class RestApiUtilTest {
         //previous page
         Assert.assertTrue(resultMap.get(RestApiConstants.PAGINATION_PREVIOUS_OFFSET) == 0L);
         Assert.assertTrue(resultMap.get(RestApiConstants.PAGINATION_PREVIOUS_LIMIT) == 10L);
-    }
-
-    @Test
-    public void testGetAllowedOrigin() {
-        Assert.assertEquals(RestApiUtil.getAllowedOrigin("http://localhost:9443"), "http://localhost:9443");
-    }
-
-    @Test
-    public void testGetDefinedMethodHeadersInSwaggerContentForDCRM() throws AuthException, NoSuchMethodException {
-        Method method = TestDCRMService.class.getMethod("getApplication", null);
-        Request request = Mockito.mock(Request.class);
-        Mockito.when(request.getUri()).thenReturn("/api/identity/oauth2/dcr/v1.0/register/abcde-ddd");
-        Assert.assertEquals(RestApiUtil.getDefinedMethodHeadersInSwaggerContent(request, method), "GET, PUT, DELETE");
-    }
-
-    @Test
-    public void testGetDefinedMethodHeadersInSwaggerContentForIntrospect() throws AuthException, NoSuchMethodException {
-        Method method = TestIntrospectService.class.getMethod("introspect");
-        Request request = Mockito.mock(Request.class);
-        Mockito.when(request.getUri()).thenReturn("/api/identity/oauth2/introspect/v1.0/introspect");
-        Assert.assertEquals(RestApiUtil.getDefinedMethodHeadersInSwaggerContent(request, method), "POST");
-    }
-
-    @Test
-    public void testGetDefinedMethodHeadersInSwaggerContentForTokenApi() throws AuthException, NoSuchMethodException {
-        Method method = TestTokenApiService.class.getMethod("tokenPost");
-        Request request = Mockito.mock(Request.class);
-        Mockito.when(request.getUri()).thenReturn("/api/auth/oauth2/v1.0/token");
-        Assert.assertEquals(RestApiUtil.getDefinedMethodHeadersInSwaggerContent(request, method), "POST");
-    }
-
-    @Test
-    public void testGetDefnedHeadersInSwaggerContentForScimApi() throws AuthException, NoSuchMethodException {
-        Method method = TestScimUsersApiService.class.getMethod("usersIdDelete");
-        Request request = Mockito.mock(Request.class);
-        Mockito.when(request.getUri()).thenReturn("/api/identity/scim2/v1.0/Users/abceeee");
-        Assert.assertEquals(RestApiUtil.getDefinedMethodHeadersInSwaggerContent(request, method), "GET, PUT, DELETE");
-    }
-
-    @Test
-    public void testGetDefnedHeadersInSwaggerContentForScopeApi() throws AuthException, NoSuchMethodException {
-        Method method = TestScopeRegistrationApiService.class.getMethod("deleteScope");
-        Request request = Mockito.mock(Request.class);
-        Mockito.when(request.getUri()).thenReturn("/api/auth/scope-registration/v1.0/scopes/1234-122");
-        Assert.assertEquals(RestApiUtil.getDefinedMethodHeadersInSwaggerContent(request, method), "GET, PUT, "
-                + "DELETE, " + "HEAD");
-    }
-
-    @Test
-    public void testGetDefnedHeadersInSwaggerContentForInvalidContext() throws NoSuchMethodException {
-        Method method = TestScopeRegistrationApiService.class.getMethod("deleteScope");
-        Request request = Mockito.mock(Request.class);
-        Mockito.when(request.getUri()).thenReturn("/api/auth/token/intro");
-
-        try {
-            RestApiUtil.getDefinedMethodHeadersInSwaggerContent(request, method);
-            Assert.fail("Fail due to didn't throw Exception");
-        } catch (AuthException e) {
-            Assert.assertTrue(e.getMessage().contains("Error while parsing the swagger definition"));
-
-        }
     }
 
 }

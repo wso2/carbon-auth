@@ -26,8 +26,6 @@ import org.wso2.carbon.auth.scim.rest.api.MeApiService;
 import org.wso2.carbon.auth.scim.rest.api.NotFoundException;
 import org.wso2.carbon.auth.scim.rest.api.util.SCIMCharonInitializer;
 import org.wso2.carbon.auth.scim.rest.api.util.SCIMRESTAPIUtils;
-import org.wso2.charon3.core.exceptions.CharonException;
-import org.wso2.charon3.core.exceptions.UnauthorizedException;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.protocol.endpoints.MeResourceManager;
@@ -41,28 +39,20 @@ import static org.wso2.carbon.auth.scim.rest.api.SCIMRESTAPIConstants.ERROR_SCIM
  * REST API implementation class for logged in user
  */
 public class MeApiServiceImpl extends MeApiService {
+
     private static final Logger log = LoggerFactory.getLogger(GroupsApiServiceImpl.class);
 
     public MeApiServiceImpl() {
+
         SCIMCharonInitializer.initializeOnceSCIMConfigs();
     }
 
     @Override
     public Response meGet(Request request) throws NotFoundException {
+
         String userName;
         UserManager userManager;
-        //authenticate the user
-        try {
-            userName = SCIMRESTAPIUtils.getAuthenticatedUserName(request);
-        } catch (CharonException e) {
-            log.error(e.getMessage(), e);
-            return SCIMRESTAPIUtils.getResponseFromCharonException(e);
-        } catch (UnauthorizedException e) {
-            log.error("User not authenticated", e);
-            return SCIMRESTAPIUtils.getResponseFromCharonException(e);
-        }
-
-        //retrieve the user
+        userName = SCIMRESTAPIUtils.getAuthenticatedUserName(request);
         try {
             userManager = SCIMManager.getInstance().getCarbonAuthSCIMUserManager();
             MeResourceManager meResourceManager = new MeResourceManager();

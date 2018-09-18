@@ -27,8 +27,11 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.scim.SCIMManager;
+import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
 import org.wso2.carbon.auth.user.info.configuration.UserInfoConfigurationService;
 import org.wso2.carbon.auth.user.info.configuration.models.UserInfoConfiguration;
+import org.wso2.carbon.auth.user.info.util.UserInfoUtil;
 import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
 
@@ -80,6 +83,12 @@ public class ConfigurationActivator {
         registration = componentContext.getBundleContext().registerService(
                 UserInfoConfigurationService.class.getName(),
                 userInfoConfigurationService, null);
+        try {
+            UserInfoUtil.setUserManager(SCIMManager.getInstance().getCarbonAuthSCIMUserManager());
+        } catch (AuthUserManagementException e) {
+            String errorMsg = "Error while retrieving SCIM Manager instance.";
+            log.error(errorMsg, e);
+        }
     }
 
     @Deactivate

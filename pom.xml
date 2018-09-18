@@ -25,6 +25,8 @@
     <modules>
         <module>components/auth</module>
         <module>features/auth-features</module>
+        <module>components/authenticators</module>
+        <module>features/authenticator-features</module>
     </modules>
 
     <pluginRepositories>
@@ -235,6 +237,11 @@
                 <artifactId>testng</artifactId>
                 <scope>test</scope>
                 <version>${testng.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.auth</groupId>
+                <artifactId>org.wso2.carbon.auth.rest.api.authenticators</artifactId>
+                <version>${carbon.auth.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.auth</groupId>
@@ -506,7 +513,7 @@
                                             <limit>
                                                 <counter>INSTRUCTION</counter>
                                                 <value>COVEREDRATIO</value>
-                                                <minimum>0.70</minimum>
+                                                <minimum>0.67</minimum>
                                             </limit>
                                         </limits>
                                     </rule>
@@ -655,6 +662,9 @@
         <io.swagger.import.version.range>[1.5.0, 1.6.0)</io.swagger.import.version.range>
         <!-- Jacoco for code coverage -->
         <jacoco.version>0.8.0</jacoco.version>
+        <carbon.messaging.package.import.version.range>[0.0.0, 4.0.0)</carbon.messaging.package.import.version.range>
+        <carbon.transport.package.import.version.range>[6.0.0, 7.0.0)</carbon.transport.package.import.version.range>
+        <snakeyaml.version.range>[1.19, 2.0.0)</snakeyaml.version.range>
     </properties>
 
 </project>

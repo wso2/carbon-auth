@@ -44,7 +44,7 @@ public class UserInfoTestBase {
     public void init() throws Exception {
 
         userManager = Mockito.mock(UserManager.class);
-        UserInfoUtil.initializeUserManager(userManager);
+        UserInfoUtil.setUserManager(userManager);
 
         userInfoConfigurationService = Mockito.mock(UserInfoConfigurationService.class);
         UserInfoUtil.initializeUserInfoConfigurationService(userInfoConfigurationService);

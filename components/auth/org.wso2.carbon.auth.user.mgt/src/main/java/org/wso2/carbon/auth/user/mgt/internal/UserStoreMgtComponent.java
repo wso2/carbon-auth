@@ -18,12 +18,17 @@
 
 package org.wso2.carbon.auth.user.mgt.internal;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.user.mgt.UserStoreException;
+import org.wso2.carbon.auth.user.mgt.UserStoreManager;
+import org.wso2.carbon.auth.user.mgt.UserStoreManagerFactory;
 import org.wso2.carbon.auth.user.store.configuration.UserStoreConfigurationService;
 
 /**
@@ -47,6 +52,7 @@ public class UserStoreMgtComponent {
             unbind = "unregisterUserStoreConfigurationService"
     )
     protected void registerUserStoreConfigurationService(UserStoreConfigurationService service) {
+
         ServiceReferenceHolder.getInstance().setUserStoreConfigurationService(service);
 
         if (log.isDebugEnabled()) {
@@ -55,10 +61,21 @@ public class UserStoreMgtComponent {
     }
 
     protected void unregisterUserStoreConfigurationService(UserStoreConfigurationService service) {
+
         ServiceReferenceHolder.getInstance().setUserStoreConfigurationService(null);
 
         if (log.isDebugEnabled()) {
             log.debug("User store configuration service unregistered.");
+        }
+    }
+
+    @Activate
+    protected void activate(BundleContext bundleContext) {
+
+        try {
+            bundleContext.registerService(UserStoreManager.class, UserStoreManagerFactory.getUserStoreManager(), null);
+        } catch (UserStoreException e) {
+            log.error("Error while retrieving userStore", e);
         }
     }
 }
