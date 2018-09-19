@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.user.info.configuration.UserInfoConfigurationService;
 import org.wso2.carbon.auth.user.info.constants.UserInfoConstants;
+import org.wso2.carbon.auth.user.store.configuration.UserStoreConfigurationService;
 import org.wso2.carbon.auth.user.store.configuration.models.AttributeConfiguration;
 import org.wso2.carbon.auth.user.store.configuration.models.Uniqueness;
 import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
@@ -40,7 +41,7 @@ public class ServiceReferenceHolder {
     private UserInfoConfigurationService userInfoConfigurationService = null;
     private ConfigProvider configProvider;
     private static final Logger log = LoggerFactory.getLogger(ServiceReferenceHolder.class);
-
+    private UserStoreConfigurationService userStoreConfigurationService;
 
     private ServiceReferenceHolder() {
     }
@@ -135,4 +136,8 @@ public class ServiceReferenceHolder {
         return mappedAttributes;
     }
 
+    public void setUserStoreConfigurationService(UserStoreConfigurationService userStoreConfigurationService) {
+
+        this.userStoreConfigurationService = userStoreConfigurationService;
+    }
 }
