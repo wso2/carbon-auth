@@ -32,6 +32,7 @@ import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
 import org.wso2.carbon.auth.user.info.configuration.UserInfoConfigurationService;
 import org.wso2.carbon.auth.user.info.configuration.models.UserInfoConfiguration;
 import org.wso2.carbon.auth.user.info.util.UserInfoUtil;
+import org.wso2.carbon.auth.user.store.configuration.UserStoreConfigurationService;
 import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
 
@@ -60,6 +61,7 @@ public class ConfigurationActivator {
             policy = ReferencePolicy.DYNAMIC,
             unbind = "unregisterConfigProvider")
     protected void registerConfigProvider(ConfigProvider configProvider) {
+
         ServiceReferenceHolder.getInstance().setConfigProvider(configProvider);
 
     }
@@ -70,6 +72,7 @@ public class ConfigurationActivator {
      * @param configProvider the ConfigProvider service that get unregistered.
      */
     protected void unregisterConfigProvider(ConfigProvider configProvider) {
+
         ServiceReferenceHolder.getInstance().setConfigProvider(null);
     }
 
@@ -88,6 +91,31 @@ public class ConfigurationActivator {
         } catch (AuthUserManagementException e) {
             String errorMsg = "Error while retrieving SCIM Manager instance.";
             log.error(errorMsg, e);
+        }
+    }
+
+    @Reference(
+            name = "org.wso2.carbon.auth.user.store",
+            service = UserStoreConfigurationService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unregisterUserStoreConfigurationService"
+    )
+    protected void registerUserStoreConfigurationService(UserStoreConfigurationService service) {
+
+        ServiceReferenceHolder.getInstance().setUserStoreConfigurationService(service);
+
+        if (log.isDebugEnabled()) {
+            log.debug("User store configuration service registered successfully.");
+        }
+    }
+
+    protected void unregisterUserStoreConfigurationService(UserStoreConfigurationService service) {
+
+        ServiceReferenceHolder.getInstance().setUserStoreConfigurationService(null);
+
+        if (log.isDebugEnabled()) {
+            log.debug("User store configuration service unregistered.");
         }
     }
 
