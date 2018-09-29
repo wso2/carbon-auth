@@ -33,4 +33,9 @@ public class ClientRegistrationDAOException extends AuthException {
     public ClientRegistrationDAOException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public ClientRegistrationDAOException(String message) {
+
+        super(message);
+    }
 }

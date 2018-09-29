@@ -43,7 +43,6 @@ import javax.ws.rs.core.Response;
 @ApplicationPath("/token")
 @io.swagger.annotations.Api(description = "the token API")
 public class TokenApi implements Microservice  {
-   private final TokenApiService delegate = TokenApiServiceFactory.getTokenApi();
 
     @OPTIONS
     @POST
@@ -70,7 +69,9 @@ public class TokenApi implements Microservice  {
 ,@ApiParam(value = "Validity period of token")  @FormParam("validity_period")  Long validityPeriod
  ,@Context Request request)
     throws NotFoundException {
-        
+
+        TokenApiService delegate = TokenApiServiceFactory.getTokenApi();
+
         return delegate.tokenPost(grantType,authorization,code,redirectUri,clientId,clientSecret,refreshToken,scope,username,password,validityPeriod,request);
     }
 }

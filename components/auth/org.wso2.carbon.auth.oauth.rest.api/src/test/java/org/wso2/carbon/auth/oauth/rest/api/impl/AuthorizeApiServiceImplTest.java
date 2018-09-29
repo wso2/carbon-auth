@@ -21,7 +21,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
 import org.wso2.carbon.auth.oauth.AuthRequestHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dto.AuthResponseContext;
@@ -43,13 +42,13 @@ public class AuthorizeApiServiceImplTest {
         String redirectUri = "http://host";
         String scope = "default";
         String state = "active";
-        Request request = PowerMockito.mock(Request.class);
-        AuthResponseContext context = PowerMockito.mock(AuthResponseContext.class);
-        AuthRequestHandler authRequestHandler = PowerMockito.mock(AuthRequestHandler.class);
+        Request request = Mockito.mock(Request.class);
+        AuthResponseContext context = Mockito.mock(AuthResponseContext.class);
+        AuthRequestHandler authRequestHandler = Mockito.mock(AuthRequestHandler.class);
         AuthorizeApiServiceImpl authorizeApiService = new AuthorizeApiServiceImpl(authRequestHandler);
 
-        PowerMockito.when(context.getLocationHeaderValue()).thenReturn(redirectUri);
-        PowerMockito.when(authRequestHandler.generateCode(Mockito.anyMap())).thenReturn(context);
+        Mockito.when(context.getLocationHeaderValue()).thenReturn(redirectUri);
+        Mockito.when(authRequestHandler.generateCode(Mockito.anyMap())).thenReturn(context);
         Response response = authorizeApiService
                 .authorizeGet(responseType, clientId, redirectUri, scope, state, request);
         Assert.assertEquals(redirectUri, response.getStringHeaders().getFirst(OAuthConstants.LOCATION_HEADER));

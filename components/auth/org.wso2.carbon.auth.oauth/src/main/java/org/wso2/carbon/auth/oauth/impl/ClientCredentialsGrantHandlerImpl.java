@@ -21,9 +21,7 @@
 package org.wso2.carbon.auth.oauth.impl;
 
 import com.nimbusds.oauth2.sdk.AccessTokenResponse;
-import com.nimbusds.oauth2.sdk.ClientCredentialsGrant;
 import com.nimbusds.oauth2.sdk.OAuth2Error;
-import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.Scope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,12 +40,12 @@ import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 /**
  * Client Credentials grant handler
  */
 public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
+
     private static final Logger log = LoggerFactory.getLogger(ClientCredentialsGrantHandlerImpl.class);
     private OAuthDAO oauthDAO;
     private ApplicationDAO applicationDAO;
@@ -55,11 +53,13 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
     private UserNameMapper userNameMapper;
 
     ClientCredentialsGrantHandlerImpl() {
+
     }
 
     @Override
     public void init(UserNameMapper userNameMapper, OAuthDAO oauthDAO, UserStoreManager userStoreManager,
-            ApplicationDAO applicationDAO) {
+                     ApplicationDAO applicationDAO) {
+
         this.userNameMapper = userNameMapper;
         this.oauthDAO = oauthDAO;
         this.applicationDAO = applicationDAO;
@@ -67,16 +67,21 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
     }
 
     @Override
+    public boolean validateGrant(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
+            throws AuthException {
+
+        String appOwner = (String) context.getParams().get(OAuthConstants.APPLICATION_OWNER);
+        context.getParams().put(OAuthConstants.AUTH_USER, userNameMapper.getLoggedInUserIDFromPseudoName(appOwner));
+        return true;
+    }
+
+    @Override
     public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
             throws OAuthDAOException {
+
         log.debug("Calling ClientCredentialsGrantHandlerImpl:process");
         try {
-            ClientCredentialsGrant request = ClientCredentialsGrant.parse(queryParameters);
-            String scope = queryParameters.get(OAuthConstants.SCOPE_QUERY_PARAM);
-            processClientCredentialsGrantRequest(authorization, context, scope, request);
-        } catch (ParseException e) {
-            log.error("Error while parsing Client Credentials Grant request: ", e.getMessage());
-            context.setErrorObject(e.getErrorObject());
+            processClientCredentialsGrantRequest(context);
         } catch (ClientRegistrationDAOException e) {
             log.error("Error while parsing retrieving Client information: ", e.getMessage());
             context.setErrorObject(OAuth2Error.INVALID_REQUEST);
@@ -86,19 +91,14 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
         }
     }
 
-    private void processClientCredentialsGrantRequest(String authorization, AccessTokenContext context,
-            @Nullable String scopeValue, ClientCredentialsGrant request) throws AuthException {
+    private void processClientCredentialsGrantRequest(AccessTokenContext context) throws AuthException {
+
         log.debug("Calling processClientCredentialsGrantRequest");
 
         String clientId = (String) context.getParams().get(OAuthConstants.CLIENT_ID);
         String appOwner = (String) context.getParams().get(OAuthConstants.APPLICATION_OWNER);
         String grantType = (String) context.getParams().get(OAuthConstants.GRANT_TYPE);
-        Scope scope;
-        if (scopeValue != null) {
-            scope = new Scope(scopeValue);
-        } else {
-            scope = new Scope(OAuthConstants.SCOPE_DEFAULT);
-        }
+        Scope scope = (Scope) context.getParams().get(OAuthConstants.FILTERED_SCOPES);
 
         Optional<AccessTokenResponse> tokenResponse = checkTokens(oauthDAO, appOwner, grantType, clientId,
                 scope);

@@ -30,6 +30,7 @@ import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,6 +39,7 @@ import java.util.Map;
 public class JDBCUserStoreManager implements UserStoreManager {
     private static final Logger log = LoggerFactory.getLogger(JDBCUserStoreManager.class);
     private UserStoreConnector userStoreConnector;
+    private PasswordHandler passwordHandler;
 
     public JDBCUserStoreManager() throws UserStoreException {
         try {
@@ -45,24 +47,28 @@ public class JDBCUserStoreManager implements UserStoreManager {
         } catch (UserStoreConnectorException e) {
             throw new UserStoreException("Error while initializing JDBC user store connector", e);
         }
+        passwordHandler = new DefaultPasswordHandler();
+    }
+
+    protected JDBCUserStoreManager(UserStoreConnector userStoreConnector, PasswordHandler passwordHandler) {
+
+        this.userStoreConnector = userStoreConnector;
+        this.passwordHandler = passwordHandler;
     }
 
     @Override
     public boolean doAuthenticate(String userName, Object credential) throws UserStoreException {
-        //todo: check username and password
 
         try {
             String password = (String) credential;
             String userId = userStoreConnector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, userName);
             Map info = userStoreConnector.getUserPasswordInfo(userId);
 
-            PasswordHandler passwordHandler = new DefaultPasswordHandler();
 
             passwordHandler.setIterationCount((int) info.get(UserStoreConstants.ITERATION_COUNT));
             passwordHandler.setKeyLength((int) info.get(UserStoreConstants.KEY_LENGTH));
-            String hashedPassword = passwordHandler
-                    .hashPassword(password.toCharArray(), (String) info.get(UserStoreConstants.PASSWORD_SALT),
-                            (String) info.get(UserStoreConstants.HASH_ALGO));
+            String hashedPassword = passwordHandler.hashPassword(password.toCharArray(), (String) info.get
+                            (UserStoreConstants.PASSWORD_SALT), (String) info.get(UserStoreConstants.HASH_ALGO));
 
             if (hashedPassword.equals(info.get(UserStoreConstants.PASSWORD))) {
                 return true;
@@ -78,4 +84,19 @@ public class JDBCUserStoreManager implements UserStoreManager {
             throw new UserStoreException("No such algorithm exception occurred", e);
         }
     }
+
+    @Override
+    public List<String> getRoleListOfUser(String userName) throws UserStoreException {
+
+        try {
+            String userId = userStoreConnector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, userName);
+            return userStoreConnector.getGroupsOfUser(userId);
+        } catch (UserNotFoundException e) {
+            throw new UserStoreException("User not found exception occurred", e);
+        } catch (UserStoreConnectorException e) {
+            throw new UserStoreException("User Connector exception occurred", e);
+        }
+
+    }
+
 }

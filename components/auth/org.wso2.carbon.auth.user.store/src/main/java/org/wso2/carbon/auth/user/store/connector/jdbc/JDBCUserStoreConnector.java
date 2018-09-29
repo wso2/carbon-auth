@@ -644,6 +644,32 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
+    public List<String> getGroupsOfUser(String userIdentifier) throws UserStoreConnectorException {
+
+        List<String> getGroupNamesToReturn = new ArrayList<>();
+        try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
+            NamedPreparedStatement getUsersOfGroupStatement = new NamedPreparedStatement(unitOfWork.getConnection(),
+                    sqlQueries.get(JDBCConnectorConstants.QueryTypes.SQL_QUERY_GET_ROLES_FOR_USER));
+            getUsersOfGroupStatement
+                    .setString(JDBCConnectorConstants.SQLPlaceholders.USER_UNIQUE_ID, userIdentifier);
+            getUsersOfGroupStatement.setString(JDBCConnectorConstants.SQLPlaceholders.ATTRIBUTE_URI, UserStoreConstants
+                    .GROUP_DISPLAY_NAME);
+            try (ResultSet resultSet = getUsersOfGroupStatement.getPreparedStatement().executeQuery()) {
+
+                while (resultSet.next()) {
+                    String userUniqueId = resultSet.getString(DatabaseColumnNames.GroupAttributes.ATTR_VALUE);
+                    getGroupNamesToReturn.add(userUniqueId);
+                }
+
+                return getGroupNamesToReturn;
+            }
+        } catch (SQLException e) {
+            throw new UserStoreConnectorException("Error occurred while Retrieving groups of user.", e);
+        }
+
+    }
+
+    @Override
     public String addGroup(List<Attribute> attributes) throws UserStoreConnectorException {
 
         String connectorUniqueId = Optional.ofNullable(getIdFromAttributes(attributes))

@@ -3,6 +3,7 @@ package org.wso2.carbon.auth.oauth.rest.api.impl;
 import com.nimbusds.oauth2.sdk.ErrorObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.TokenRequestHandler;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
@@ -55,7 +56,7 @@ public class TokenApiServiceImpl extends TokenApiService {
                 ErrorObject error = context.getErrorObject();
                 return Response.status(error.getHTTPStatusCode()).build();
             }
-        } catch (org.wso2.carbon.auth.core.exception.AuthException e) {
+        } catch (AuthException e) {
             log.error("DAO error while generating access token", e);
             return Response.status(e.getErrorHandler().getHttpStatusCode()).build();
         }

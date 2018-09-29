@@ -1,6 +1,5 @@
 package org.wso2.carbon.auth.oauth.rest.api;
 
-
 import io.swagger.annotations.ApiParam;
 
 import org.wso2.carbon.auth.oauth.rest.api.factories.AuthorizeApiServiceFactory;
@@ -31,34 +30,37 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 @Component(
-    name = "org.wso2.carbon.auth.oauth.rest.api.AuthorizeApi",
-    service = Microservice.class,
-    immediate = true
+        name = "org.wso2.carbon.auth.oauth.rest.api.AuthorizeApi",
+        service = Microservice.class,
+        immediate = true
 )
 @Path("/api/auth/oauth2/v1.[\\d]+/authorize")
 
-
 @ApplicationPath("/authorize")
 @io.swagger.annotations.Api(description = "the authorize API")
-public class AuthorizeApi implements Microservice  {
-   private final AuthorizeApiService delegate = AuthorizeApiServiceFactory.getAuthorizeApi();
+public class AuthorizeApi implements Microservice {
 
     @OPTIONS
     @GET
-    
-    @Consumes({ "application/x-www-form-urlencoded" })
-    @Produces({ "application/x-www-form-urlencoded" })
-    @io.swagger.annotations.ApiOperation(value = "", notes = "", response = void.class, tags={ "OAuth Authorization", })
-    @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 302, message = "Response from authorization endpoint", response = void.class) })
-    public Response authorizeGet(@ApiParam(value = "Expected response type",required=true) @QueryParam("response_type") String responseType
-,@ApiParam(value = "OAuth client identifier",required=true) @QueryParam("client_id") String clientId
-,@ApiParam(value = "Clients redirection endpoint") @QueryParam("redirect_uri") String redirectUri
-,@ApiParam(value = "OAuth scopes") @QueryParam("scope") String scope
-,@ApiParam(value = "Opaque value used by the client to maintain state between the request and callback") @QueryParam("state") String state
- ,@Context Request request)
-    throws NotFoundException {
-        
-        return delegate.authorizeGet(responseType,clientId,redirectUri,scope,state,request);
+
+    @Consumes({"application/x-www-form-urlencoded"})
+    @Produces({"application/x-www-form-urlencoded"})
+    @io.swagger.annotations.ApiOperation(value = "", notes = "", response = void.class, tags = {"OAuth Authorization",})
+    @io.swagger.annotations.ApiResponses(value = {
+            @io.swagger.annotations.ApiResponse(code = 302, message = "Response from authorization endpoint",
+                    response = void.class)})
+    public Response authorizeGet(@ApiParam(value = "Expected response type", required = true) @QueryParam
+            ("response_type") String responseType
+            , @ApiParam(value = "OAuth client identifier", required = true) @QueryParam("client_id") String clientId
+            , @ApiParam(value = "Clients redirection endpoint") @QueryParam("redirect_uri") String redirectUri
+            , @ApiParam(value = "OAuth scopes") @QueryParam("scope") String scope
+            , @ApiParam(value = "Opaque value used by the client to maintain state between the request and callback")
+                                     @QueryParam("state") String state
+            , @Context Request request)
+            throws NotFoundException {
+
+        AuthorizeApiService delegate = AuthorizeApiServiceFactory.getAuthorizeApi();
+
+        return delegate.authorizeGet(responseType, clientId, redirectUri, scope, state, request);
     }
 }

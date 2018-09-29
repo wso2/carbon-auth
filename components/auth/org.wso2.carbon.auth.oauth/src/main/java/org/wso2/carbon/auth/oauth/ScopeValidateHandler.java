@@ -17,7 +17,6 @@
  */
 package org.wso2.carbon.auth.oauth;
 
-import com.nimbusds.oauth2.sdk.ErrorObject;
 import com.nimbusds.oauth2.sdk.OAuth2Error;
 import org.wso2.carbon.auth.oauth.callback.ScopeValidatorCallback;
 import org.wso2.carbon.auth.oauth.exception.OAuthScopeException;
@@ -40,8 +39,7 @@ public class ScopeValidateHandler {
             callback.setSuccessful(true);
         } catch (OAuthScopeException e) {
             callback.setSuccessful(false);
-            ErrorObject error = new ErrorObject(OAuth2Error.SERVER_ERROR.getCode());
-            callback.setErrorObject(error);
+            callback.setErrorObject(OAuth2Error.SERVER_ERROR);
         }
     }
 }

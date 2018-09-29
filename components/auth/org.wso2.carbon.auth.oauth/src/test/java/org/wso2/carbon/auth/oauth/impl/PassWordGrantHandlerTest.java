@@ -33,10 +33,12 @@ import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.Utils;
+import org.wso2.carbon.auth.oauth.configuration.models.OAuthConfiguration;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
 import org.wso2.carbon.auth.oauth.dto.TokenState;
+import org.wso2.carbon.auth.oauth.internal.ServiceReferenceHolder;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 
@@ -46,6 +48,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class PassWordGrantHandlerTest {
+
     private PasswordGrantHandlerImpl passwordGrantHandler;
     private OAuthDAO oauthDAO;
     private ApplicationDAO applicationDAO;
@@ -63,6 +66,8 @@ public class PassWordGrantHandlerTest {
 
     @BeforeTest
     public void init() throws UserStoreException {
+        ServiceReferenceHolder.getInstance().setConfig(new OAuthConfiguration());
+
         oauthDAO = Mockito.mock(OAuthDAO.class);
         clientLookup = Mockito.mock(ClientLookup.class);
         userNameMapper = Mockito.mock(UserNameMapper.class);
@@ -76,6 +81,7 @@ public class PassWordGrantHandlerTest {
 
     @Test
     public void testProcessWithValidateGrant() throws AuthException {
+
         authorization = "Basic " + Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
         Application application = new Application();
         application.setGrantTypes(GrantType.PASSWORD + " " + GrantType.REFRESH_TOKEN + " " + GrantType
@@ -88,7 +94,10 @@ public class PassWordGrantHandlerTest {
                 .getClientId(Mockito.anyString(), Mockito.any(AccessTokenContext.class), Mockito.any(Map.class),
                         Mockito.any(MutableBoolean.class))).thenReturn(clientId);
         Mockito.when(userStoreManager.doAuthenticate(username, username)).thenReturn(true);
+        Mockito.when(userNameMapper.getLoggedInPseudoNameFromUserID(username)).thenReturn("");
         context.getParams().put(OAuthConstants.VALIDITY_PERIOD, 3600L);
+        context.getParams().put(OAuthConstants.FILTERED_SCOPES, new Scope(scope));
+        passwordGrantHandler.validateGrant(authorization, context, queryParameters);
         passwordGrantHandler.process(authorization, context, queryParameters);
         Assert.assertTrue(context.isSuccessful());
 
@@ -110,6 +119,7 @@ public class PassWordGrantHandlerTest {
                 .thenReturn(accessTokenData);
         context.getParams().put(OAuthConstants.GRANT_TYPE, GrantType.PASSWORD.getValue());
         context.getParams().put(OAuthConstants.CLIENT_ID, clientId);
+        context.getParams().put(OAuthConstants.FILTERED_SCOPES, new Scope(scope));
         passwordGrantHandler.process(authorization, context, queryParameters);
         Assert.assertTrue(context.isSuccessful());
         Tokens tokens = context.getAccessTokenResponse().getTokens();
@@ -119,6 +129,7 @@ public class PassWordGrantHandlerTest {
         //token generate when previous token is not expired and different scope
         String newScope = "newScope";
         queryParameters.put(OAuthConstants.SCOPE_QUERY_PARAM, newScope);
+        context.getParams().put(OAuthConstants.FILTERED_SCOPES, new Scope(newScope));
         Mockito.when(oauthDAO.getTokenInfo(username, GrantType.PASSWORD.getValue(), clientId, newScope))
                 .thenReturn(null);
         context.getParams().put(OAuthConstants.GRANT_TYPE, GrantType.PASSWORD.getValue());
@@ -145,6 +156,7 @@ public class PassWordGrantHandlerTest {
 
         //check parse exception path
         queryParameters.remove(OAuthConstants.USERNAME);
+        passwordGrantHandler.validateGrant(authorization, context, queryParameters);
         passwordGrantHandler.process(authorization, context, queryParameters);
         Assert.assertEquals(context.getErrorObject(), OAuth2Error.INVALID_REQUEST);
     }

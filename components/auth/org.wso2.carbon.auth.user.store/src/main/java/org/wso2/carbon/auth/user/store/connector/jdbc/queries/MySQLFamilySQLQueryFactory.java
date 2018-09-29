@@ -228,6 +228,12 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
             "WHERE ID IN (SELECT GROUP_ID FROM AUTH_UM_USER_GROUP " +
             "WHERE USER_ID = (SELECT ID FROM AUTH_UM_USER WHERE USER_UNIQUE_ID = :user_unique_id;))";
 
+private static final String GET_GROUP_NAMES_OF_USER = "SELECT ATTR_VALUE from AUTH_UM_GROUP_ATTRIBUTES JOIN " +
+        "AUTH_UM_ATTRIBUTES ATTRIBUTE ON AUTH_UM_GROUP_ATTRIBUTES.ATTR_ID = ATTRIBUTE.ID AND ATTRIBUTE" +
+        ".ATTR_URI = :attr_uri; AND AUTH_UM_GROUP_ATTRIBUTES.GROUP_ID IN" +
+        " (SELECT ID FROM AUTH_UM_GROUP WHERE ID IN (SELECT GROUP_ID FROM AUTH_UM_USER_GROUP " +
+        "WHERE USER_ID = (SELECT ID FROM AUTH_UM_USER WHERE USER_UNIQUE_ID = :user_unique_id;)))";
+
     private static final String GET_USER_IDS_OF_GROUP = "SELECT USER_UNIQUE_ID FROM AUTH_UM_USER " + 
             "WHERE ID IN (SELECT USER_ID FROM AUTH_UM_USER_GROUP " +
             "WHERE GROUP_ID = (SELECT ID FROM AUTH_UM_GROUP WHERE GROUP_UNIQUE_ID = :group_unique_id;))";
@@ -315,6 +321,7 @@ public class MySQLFamilySQLQueryFactory extends SQLQueryFactory {
         sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_DELETE_CREDENTIAL, DELETE_CREDENTIAL);
         sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_GET_ATTR_BY_URI, GET_ATTRIBUTE_BY_URI);
         sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_ADD_ATTR, ADD_ATTRIBUTE);
+        sqlQueries.put(JDBCConnectorConstants.QueryTypes.SQL_QUERY_GET_ROLES_FOR_USER, GET_GROUP_NAMES_OF_USER);
     }
 
     public String getQuerryForUserIdFromMultipleAttributes(List<Attribute> attributes, int offset, int length) {

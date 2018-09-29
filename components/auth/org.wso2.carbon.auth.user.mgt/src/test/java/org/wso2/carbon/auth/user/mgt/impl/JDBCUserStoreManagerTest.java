@@ -17,92 +17,69 @@
  */
 package org.wso2.carbon.auth.user.mgt.impl;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
-import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
+import org.wso2.carbon.auth.user.store.connector.PasswordHandler;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
-import org.wso2.carbon.auth.user.store.connector.UserStoreConnectorFactory;
-import org.wso2.carbon.auth.user.store.connector.jdbc.DefaultPasswordHandler;
 import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
 import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ UserStoreConnectorFactory.class, SecretKeyFactory.class })
 public class JDBCUserStoreManagerTest {
+
     UserStoreManager userStoreManager;
-    @Mock
     UserStoreConnector connector;
-    @Mock
-    DefaultPasswordHandler defaultPasswordHandler;
-    @Mock
-    SecretKeyFactory secretKeyFactory;
+    PasswordHandler defaultPasswordHandler;
 
-    @Before
-    public void init() throws Exception {
-        PowerMockito.mockStatic(UserStoreConnectorFactory.class);
-        PowerMockito.when(UserStoreConnectorFactory.getUserStoreConnector()).thenReturn(connector);
-        userStoreManager = new JDBCUserStoreManager();
-        Assert.assertNotNull(userStoreManager);
+    @BeforeMethod
+    public void init() {
 
-        PowerMockito.when(connector, "init", Mockito.any(UserStoreConfiguration.class))
-                .thenThrow(UserStoreConnectorException.class);
-        userStoreManager = new JDBCUserStoreManager();
+        connector = Mockito.mock(UserStoreConnector.class);
+        defaultPasswordHandler = Mockito.mock(PasswordHandler.class);
+        userStoreManager = new JDBCUserStoreManager(connector, defaultPasswordHandler);
         Assert.assertNotNull(userStoreManager);
     }
 
     @Test
     public void testDoAuthenticate() throws Exception {
+
         boolean authenticated;
         String hashedPass = "a1A1s2S2";
         String username = "admin";
         String password = "admin";
         String userId = "admin@123";
-        Map info = PowerMockito.mock(HashMap.class);
-        PowerMockito.when(info.get(UserStoreConstants.PASSWORD)).thenReturn(hashedPass);
-        PowerMockito.when(info.get(UserStoreConstants.ITERATION_COUNT)).thenReturn(1);
-        PowerMockito.when(info.get(UserStoreConstants.KEY_LENGTH)).thenReturn(1);
-        PowerMockito.when(info.get(UserStoreConstants.PASSWORD_SALT)).thenReturn("PASSWORD_SALT");
-        PowerMockito.when(info.get(UserStoreConstants.HASH_ALGO)).thenReturn("HASH_ALGO");
-
-        PowerMockito.mockStatic(SecretKeyFactory.class);
-        PowerMockito.when(SecretKeyFactory.getInstance(Mockito.anyString())).thenReturn(secretKeyFactory);
-        byte[] decoded = Base64.getDecoder().decode(hashedPass);
-        SecretKey secretKey = PowerMockito.mock(SecretKey.class);
-        PowerMockito.when(secretKey.getEncoded()).thenReturn(decoded);
-        PowerMockito.when(secretKeyFactory.generateSecret(Mockito.any(java.security.spec.KeySpec.class)))
-                .thenReturn(secretKey);
-
-        PowerMockito.when(connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, username)).thenReturn(userId);
-        PowerMockito.when(connector.getUserPasswordInfo(userId)).thenReturn(info);
+        Map info = new HashMap();
+        info.put(UserStoreConstants.PASSWORD, hashedPass);
+        info.put(UserStoreConstants.ITERATION_COUNT, 1);
+        info.put(UserStoreConstants.KEY_LENGTH, 1);
+        info.put(UserStoreConstants.PASSWORD_SALT, "PASSWORD_SALT");
+        info.put(UserStoreConstants.HASH_ALGO, "HASH_ALGO");
+        Mockito.when(defaultPasswordHandler.hashPassword(password.toCharArray(), (String) info.get(UserStoreConstants
+                .PASSWORD_SALT), (String) info.get(UserStoreConstants.HASH_ALGO))).thenReturn(hashedPass);
+        Mockito.when(connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, username)).thenReturn(userId);
+        Mockito.when(connector.getUserPasswordInfo(userId)).thenReturn(info);
 
         //correct pass
         authenticated = userStoreManager.doAuthenticate(username, password);
         Assert.assertTrue(authenticated);
 
         //wrong pass
-        PowerMockito.when(info.get(UserStoreConstants.PASSWORD)).thenReturn("wrongPass");
+        Mockito.when(info.get(UserStoreConstants.PASSWORD)).thenReturn("wrongPass");
         authenticated = userStoreManager.doAuthenticate(username, password);
         Assert.assertFalse(authenticated);
 
-        //when NoSuchAlgorithmException occurred
-        PowerMockito.when(SecretKeyFactory.getInstance(Mockito.anyString())).thenThrow(NoSuchAlgorithmException.class);
+        Mockito.when(defaultPasswordHandler.hashPassword(password.toCharArray(), (String) info.get(UserStoreConstants
+                .PASSWORD_SALT), (String) info.get(UserStoreConstants.HASH_ALGO))).thenThrow(new
+                NoSuchAlgorithmException(""));
         try {
             authenticated = userStoreManager.doAuthenticate(username, password);
             Assert.fail("exception expected");
@@ -111,7 +88,7 @@ public class JDBCUserStoreManagerTest {
         }
 
         //when UserStoreConnectorException occurred
-        PowerMockito.when(connector.getUserPasswordInfo(userId)).thenThrow(UserStoreConnectorException.class);
+        Mockito.when(connector.getUserPasswordInfo(userId)).thenThrow(UserStoreConnectorException.class);
         try {
             authenticated = userStoreManager.doAuthenticate(username, password);
             Assert.fail("exception expected");
@@ -120,7 +97,7 @@ public class JDBCUserStoreManagerTest {
         }
 
         //when UserNotFoundException occurred
-        PowerMockito.when(connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, username))
+        Mockito.when(connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, username))
                 .thenThrow(UserNotFoundException.class);
         try {
             authenticated = userStoreManager.doAuthenticate(username, password);
@@ -129,4 +106,47 @@ public class JDBCUserStoreManagerTest {
             Assert.assertTrue(e.getCause() instanceof UserNotFoundException);
         }
     }
+
+    @Test
+    public void testGetRoleListOfUser() throws UserStoreConnectorException, UserNotFoundException, UserStoreException {
+
+        Mockito.when(connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "admin")).thenReturn("1234");
+        Mockito.when(connector.getGroupsOfUser("1234")).thenReturn(Arrays.asList("1"));
+        userStoreManager.getRoleListOfUser("admin");
+        Mockito.verify(connector, Mockito.times(1)).getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "admin");
+        Mockito.verify(connector, Mockito.times(1)).getGroupsOfUser("1234");
+    }
+
+    @Test
+    public void testGetRoleListOfUserUserNotfoundException() throws UserStoreConnectorException,
+            UserNotFoundException {
+
+        Mockito.when(connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "admin1")).thenThrow(new
+                UserNotFoundException(""));
+        try {
+            userStoreManager.getRoleListOfUser("admin1");
+            Assert.fail();
+        } catch (UserStoreException e) {
+            Assert.assertTrue(e.getMessage().contains("User not found exception occurred"));
+        }
+        Mockito.verify(connector, Mockito.times(1)).getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "admin1");
+        Mockito.verify(connector, Mockito.times(0)).getGroupsOfUser(Mockito.anyString());
+    }
+
+    @Test
+    public void testGetRoleListOfUserStoreException() throws UserStoreConnectorException,
+            UserNotFoundException {
+
+        Mockito.when(connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "admin1")).thenThrow(new
+                UserStoreConnectorException(""));
+        try {
+            userStoreManager.getRoleListOfUser("admin1");
+            Assert.fail();
+        } catch (UserStoreException e) {
+            Assert.assertTrue(e.getMessage().contains("User Connector exception occurred"));
+        }
+        Mockito.verify(connector, Mockito.times(1)).getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "admin1");
+        Mockito.verify(connector, Mockito.times(0)).getGroupsOfUser(Mockito.anyString());
+    }
+
 }
