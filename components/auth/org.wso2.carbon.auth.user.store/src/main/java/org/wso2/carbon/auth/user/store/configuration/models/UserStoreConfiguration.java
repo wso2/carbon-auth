@@ -46,6 +46,9 @@ public class UserStoreConfiguration {
     @Element(description = "Super user pass")
     private String superUserPass = "admin";
 
+    @Element(description = "Super user group")
+    private String superUserGroup = "admin";
+
     @Element(description = "JDBC Property Map")
     private Map<String, Object> jdbcProperties = new HashMap<>();
 
@@ -185,5 +188,15 @@ public class UserStoreConfiguration {
 
     public void setLdapProperties(Map<String, Object> ldapProperties) {
         this.ldapProperties = ldapProperties;
+    }
+
+    public String getSuperUserGroup() {
+
+        return superUserGroup;
+    }
+
+    public void setSuperUserGroup(String superUserGroup) {
+
+        this.superUserGroup = superUserGroup;
     }
 }

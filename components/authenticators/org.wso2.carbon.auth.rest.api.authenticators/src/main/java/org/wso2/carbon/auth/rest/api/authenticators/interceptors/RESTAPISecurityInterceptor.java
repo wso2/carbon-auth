@@ -88,8 +88,9 @@ public class RESTAPISecurityInterceptor implements RequestInterceptor {
                 String authenticationType = getAuthenticationType(request);
                 Map<String, String> authenticatorMap = ServiceReferenceHolder.getInstance()
                         .getSecurityConfiguration().getAuthenticator().get(restAPIInfo.getBasePath());
+                String restapiAuthenticatorName;
                 if (StringUtils.isNotEmpty(authenticationType)) {
-                    String restapiAuthenticatorName = authenticatorMap.get(authenticationType);
+                    restapiAuthenticatorName = authenticatorMap.get(authenticationType);
                     if (restapiAuthenticatorName != null) {
                         RESTAPIAuthenticator restapiAuthenticator = (RESTAPIAuthenticator) Class.forName
                                 (restapiAuthenticatorName).newInstance();
@@ -100,6 +101,18 @@ public class RESTAPISecurityInterceptor implements RequestInterceptor {
                         }
                     }
                 } else if (authenticatorMap != null && authenticatorMap.size() > 0) {
+                    if (authenticatorMap.size() == 1) {
+                        restapiAuthenticatorName = authenticatorMap.values().iterator().next();
+                        RESTAPIAuthenticator restapiAuthenticator = (RESTAPIAuthenticator) Class.forName
+                                (restapiAuthenticatorName).newInstance();
+                        isAuthenticated = restapiAuthenticator.authenticate(request, response, method);
+                        if (!isAuthenticated) {
+                            return handleSecurityError(ExceptionCodes.AUTHENTICATION_FAILURE, response,
+                                    authenticationType);
+                        } else {
+                            return true;
+                        }
+                    }
                     return handleSecurityError(ExceptionCodes.AUTHENTICATION_FAILURE, response, authenticatorMap
                             .keySet().iterator().next());
                 }
