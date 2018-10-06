@@ -17,9 +17,12 @@
  */
 package org.wso2.carbon.auth.user.mgt;
 
+import java.util.List;
+
 /**
  * User store manager interface
  */
 public interface UserStoreManager {
     boolean doAuthenticate(String userName, Object credential) throws UserStoreException;
+    List<String>  getRoleListOfUser(String userName) throws UserStoreException;
 }

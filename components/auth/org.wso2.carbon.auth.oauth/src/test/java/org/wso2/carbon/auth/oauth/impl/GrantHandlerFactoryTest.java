@@ -28,6 +28,7 @@ import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
 import org.wso2.carbon.auth.core.api.UserNameMapper;
 import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.oauth.GrantHandler;
+import org.wso2.carbon.auth.oauth.configuration.models.OAuthConfiguration;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.internal.ServiceReferenceHolder;
@@ -37,18 +38,25 @@ import java.util.Map;
 import java.util.Optional;
 
 public class GrantHandlerFactoryTest {
+
     private String grantTypeValue;
     private AccessTokenContext context;
     private OAuthDAO oauthDAO;
     private ApplicationDAO applicationDAO;
     private MutableBoolean haltExecution;
+    private UserNameMapper userNameMapper;
+    private UserStoreManager userStoreManager;
 
     @Before
     public void setup() throws Exception {
+
         context = new AccessTokenContext();
         oauthDAO = Mockito.mock(OAuthDAO.class);
         applicationDAO = Mockito.mock(ApplicationDAO.class);
         haltExecution = new MutableBoolean(false);
+        userNameMapper = Mockito.mock(UserNameMapper.class);
+        userStoreManager = Mockito.mock(UserStoreManager.class);
+        ServiceReferenceHolder.getInstance().setConfig(new OAuthConfiguration());
     }
 
     @Test
@@ -58,7 +66,7 @@ public class GrantHandlerFactoryTest {
         ServiceReferenceHolder.getInstance().getAuthConfigurations().getGrantTypes()
                 .put(GrantType.PASSWORD.getValue(), "org.wso2.carbon.apim.noSuchGrantClass");
         grantTypeValue = GrantType.PASSWORD.getValue();
-        Optional<GrantHandler> handler = GrantHandlerFactory
+        Optional<GrantHandler> handler = new GrantHandlerFactory(userStoreManager, userNameMapper)
                 .createGrantHandler(grantTypeValue, context, oauthDAO, applicationDAO, haltExecution);
         Assert.assertFalse(handler.isPresent());
         Assert.assertEquals(OAuth2Error.UNSUPPORTED_GRANT_TYPE, context.getErrorObject());
@@ -67,7 +75,7 @@ public class GrantHandlerFactoryTest {
         ServiceReferenceHolder.getInstance().getAuthConfigurations().getGrantTypes()
                 .put(GrantType.PASSWORD.getValue(), InstantiationExceptionImpl.class.getName());
         grantTypeValue = GrantType.PASSWORD.getValue();
-        handler = GrantHandlerFactory
+        handler = new GrantHandlerFactory(userStoreManager, userNameMapper)
                 .createGrantHandler(grantTypeValue, context, oauthDAO, applicationDAO, haltExecution);
         Assert.assertFalse(handler.isPresent());
         Assert.assertEquals(OAuth2Error.UNSUPPORTED_GRANT_TYPE, context.getErrorObject());
@@ -77,6 +85,13 @@ public class GrantHandlerFactoryTest {
     class InstantiationExceptionImpl implements GrantHandler {
 
         @Override
+        public boolean validateGrant(String authorization, AccessTokenContext context, Map<String, String>
+                queryParameters) throws AuthException {
+
+            return true;
+        }
+
+        @Override
         public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
                 throws AuthException {
             //test method
@@ -84,7 +99,7 @@ public class GrantHandlerFactoryTest {
 
         @Override
         public void init(UserNameMapper userNameMapper, OAuthDAO oauthDAO, UserStoreManager userStoreManager,
-                ApplicationDAO applicationDAO) {
+                         ApplicationDAO applicationDAO) {
             //test method
         }
     }

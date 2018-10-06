@@ -17,24 +17,41 @@ package org.wso2.carbon.auth.oauth.internal;
  * under the License.
  */
 
+import org.apache.commons.io.IOUtils;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.oauth.configuration.models.OAuthConfiguration;
+import org.wso2.carbon.auth.oauth.constants.JDBCAuthConstants;
+import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.secvault.SecureVault;
+import org.wso2.carbon.utils.Utils;
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class used to activate configuration loading
  */
-@Component (
+@Component(
         name = "org.wso2.carbon.auth.oauth",
         immediate = true
 )
 public class ConfigurationActivator {
+
     private static final Logger log = LoggerFactory.getLogger(ServiceReferenceHolder.class);
+    private ConfigProvider configProvider;
 
     /**
      * Get the ConfigProvider service.
@@ -49,6 +66,8 @@ public class ConfigurationActivator {
             policy = ReferencePolicy.DYNAMIC,
             unbind = "unregisterConfigProvider")
     protected void registerConfigProvider(ConfigProvider configProvider) {
+
+        this.configProvider = configProvider;
         ServiceReferenceHolder.getInstance().setConfigProvider(configProvider);
 
     }
@@ -59,6 +78,8 @@ public class ConfigurationActivator {
      * @param configProvider the ConfigProvider service that get unregistered.
      */
     protected void unregisterConfigProvider(ConfigProvider configProvider) {
+
+        this.configProvider = null;
         ServiceReferenceHolder.getInstance().setConfigProvider(null);
     }
 
@@ -76,6 +97,7 @@ public class ConfigurationActivator {
             policy = ReferencePolicy.DYNAMIC,
             unbind = "unregisterSecureVault")
     protected void registerSecureVault(SecureVault secureVault) {
+
         ServiceReferenceHolder.getInstance().setSecureVault(secureVault);
     }
 
@@ -85,6 +107,49 @@ public class ConfigurationActivator {
      * @param secureVault the SecureVault service that get unregistered.
      */
     protected void unregisterSecureVault(SecureVault secureVault) {
+
         ServiceReferenceHolder.getInstance().setSecureVault(null);
+    }
+
+    @Activate
+    protected void activate(BundleContext bundleContext) {
+
+        OAuthConfiguration config = null;
+        try {
+            if (configProvider != null) {
+                config = configProvider.getConfigurationObject(OAuthConfiguration.class);
+            } else {
+                log.error("Configuration provider is null");
+            }
+        } catch (ConfigurationException e) {
+            log.error("error getting config : org.wso2.carbon.auth.core.internal.AuthConfiguration", e);
+        }
+
+        if (config == null) {
+            config = new OAuthConfiguration();
+            log.info("Setting default configurations...");
+        }
+        for (Map.Entry<String, List<String>> scopeEntry : populateDefaultFileBaseScopes().entrySet()) {
+            if (!config.getFileBaseScopes().containsKey(scopeEntry.getKey())) {
+                config.getFileBaseScopes().put(scopeEntry.getKey(), scopeEntry.getValue());
+            }
+        }
+        config.setFileBaseScopes(populateDefaultFileBaseScopes());
+        ServiceReferenceHolder.getInstance().setConfig(config);
+
+    }
+
+    private Map<String, List<String>> populateDefaultFileBaseScopes() {
+
+        Map<String, List<String>> fileBasedScopeMap = new LinkedHashMap<>();
+        String fileBasedConfigPath = Utils.getRuntimeConfigPath().toString() + File.separator + JDBCAuthConstants
+                .FILE_BASE_SCOPE_FILE_NAME;
+        try {
+            String content = IOUtils.toString(new FileInputStream(fileBasedConfigPath));
+            fileBasedScopeMap = (Map<String, List<String>>) new Yaml().load(content);
+        } catch (IOException e) {
+            log.error("Error while Reading Configuration:" + JDBCAuthConstants.FILE_BASE_SCOPE_FILE_NAME);
+        }
+        return fileBasedScopeMap;
     }
 }

@@ -113,6 +113,9 @@ public class UserStoreComponent {
 
         //adding admin user
         UserStoreUtil.addAdminUser(config);
+
+        //adding admin group
+        UserStoreUtil.addAdminGroup(config);
     }
 
     @Deactivate

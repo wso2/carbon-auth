@@ -21,7 +21,6 @@
 package org.wso2.carbon.auth.oauth.impl;
 
 import com.nimbusds.oauth2.sdk.AuthorizationCodeGrant;
-import com.nimbusds.oauth2.sdk.ErrorObject;
 import com.nimbusds.oauth2.sdk.OAuth2Error;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.Scope;
@@ -30,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
 import org.wso2.carbon.auth.core.api.UserNameMapper;
+import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
@@ -60,6 +60,12 @@ public class AuthCodeGrantHandlerImpl implements GrantHandler {
         this.userNameMapper = userNameMapper;
         this.oauthDAO = oauthDAO;
         clientLookup = new ClientLookupImpl(oauthDAO);
+    }
+
+    @Override
+    public boolean validateGrant(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
+            throws AuthException {
+        return true;
     }
 
     @Override
@@ -110,14 +116,12 @@ public class AuthCodeGrantHandlerImpl implements GrantHandler {
             if (scope != null) {
                 return new Scope(scope);
             } else {
-                ErrorObject error = new ErrorObject(OAuth2Error.INVALID_REQUEST.getCode());
-                context.setErrorObject(error);
+                context.setErrorObject(OAuth2Error.INVALID_REQUEST);
                 haltExecution.setTrue();
             }
         } catch (OAuthDAOException e) {
             log.error("Error while validating query parameters", e);
-            ErrorObject error = new ErrorObject(OAuth2Error.SERVER_ERROR.getCode());
-            context.setErrorObject(error);
+            context.setErrorObject(OAuth2Error.SERVER_ERROR);
             haltExecution.setTrue();
         }
 

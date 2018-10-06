@@ -42,6 +42,7 @@ import java.util.Map;
  * Refresh grant handler implementation
  */
 public class RefreshGrantHandler implements GrantHandler {
+
     private static final Logger log = LoggerFactory.getLogger(RefreshGrantHandler.class);
     public static final BearerTokenError MISSING_TOKEN = new BearerTokenError((String) null, (String) null, 401);
     public static final int ALLOWED_MINIMUM_VALIDITY_PERIOD_IN_MILI = 1000000;
@@ -52,15 +53,61 @@ public class RefreshGrantHandler implements GrantHandler {
     private UserNameMapper userNameMapper;
 
     public RefreshGrantHandler() {
+
     }
 
     @Override
     public void init(UserNameMapper userNameMapper, OAuthDAO oauthDAO, UserStoreManager userStoreManager,
                      ApplicationDAO applicationDAO) {
+
         this.userNameMapper = userNameMapper;
         this.oauthDAO = oauthDAO;
         this.applicationDAO = applicationDAO;
         clientLookup = new ClientLookupImpl(oauthDAO);
+    }
+
+    @Override
+    public boolean validateGrant(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
+            throws AuthException {
+
+        String clientId = (String) context.getParams().get(OAuthConstants.CLIENT_ID);
+        AccessTokenDTO accessTokenDTO;
+        boolean isExpired;
+        String refreshToken = queryParameters.get(OAuthConstants.REFRESH_TOKEN_QUERY_PARAM);
+
+        if (StringUtils.isEmpty(refreshToken)) {
+            log.error("valid refresh token is not found");
+            context.setErrorObject(OAuth2Error.INVALID_REQUEST);
+            return false;
+        }
+
+        try {
+            accessTokenDTO = oauthDAO.getTokenInfo(refreshToken, clientId);
+            boolean isValidGrant = validateGrant(accessTokenDTO);
+            if (!isValidGrant) {
+                String error = "Invalid Grant provided by the client Id: ";
+                log.error(error);
+                BearerTokenError invalidGrant = new BearerTokenError(INVALID_GRANT_ERROR_CODE, error, 401);
+                context.setErrorObject(invalidGrant);
+                return false;
+            }
+
+            isExpired = isRefreshTokenExpired(accessTokenDTO);
+            if (isExpired) {
+                String error = "Refresh token is expired.";
+                log.error(error);
+                BearerTokenError invalidGrant = new BearerTokenError(INVALID_GRANT_ERROR_CODE, error, 401);
+                context.setErrorObject(invalidGrant);
+                return false;
+            }
+            context.getParams().put(OAuthConstants.AUTH_USER, userNameMapper.getLoggedInUserIDFromPseudoName
+                    (accessTokenDTO.getAuthUser()));
+            return true;
+        } catch (OAuthDAOException e) {
+            log.error("Error getting token information from the DB", e);
+            throw new OAuthDAOException("Error getting token information from the DB", e);
+        }
+
     }
 
     /**
@@ -76,69 +123,32 @@ public class RefreshGrantHandler implements GrantHandler {
             throws AuthException {
 
         String clientId = (String) context.getParams().get(OAuthConstants.CLIENT_ID);
-        AccessTokenDTO accessTokenDTO;
-        boolean isExpired;
-        String refreshToken = queryParameters.get(OAuthConstants.REFRESH_TOKEN_QUERY_PARAM);
-
-        if (StringUtils.isEmpty(refreshToken)) {
-            log.error("valid refresh token is not found");
-            context.setErrorObject(OAuth2Error.INVALID_REQUEST);
-            return;
-        }
-
-        try {
-            accessTokenDTO = oauthDAO.getTokenInfo(refreshToken, clientId);
-        } catch (OAuthDAOException e) {
-            log.error("Error getting token information from the DB", e);
-            throw new OAuthDAOException("Error getting token information from the DB", e);
-        }
-
-        boolean isValidGrant = validateGrant(accessTokenDTO);
-        if (!isValidGrant) {
-            String error = "Invalid Grant provided by the client Id: ";
-            log.error(error);
-            BearerTokenError invalidGrant = new BearerTokenError(INVALID_GRANT_ERROR_CODE, error, 401);
-            context.setErrorObject(invalidGrant);
-            return;
-        }
-
-        isExpired = isRefreshTokenExpired(accessTokenDTO);
-        if (isExpired) {
-            String error = "Refresh token is expired.";
-            log.error(error);
-            BearerTokenError invalidGrant = new BearerTokenError(INVALID_GRANT_ERROR_CODE, error, 401);
-            context.setErrorObject(invalidGrant);
-            return;
-        }
-
-        String scopeValue = queryParameters.get(OAuthConstants.SCOPE_QUERY_PARAM);
-        Scope scope;
-        if (scopeValue != null) {
-            scope = new Scope(scopeValue);
-        } else {
-            scope = new Scope(OAuthConstants.SCOPE_DEFAULT);
-        }
+        String user = (String) context.getParams().get(OAuthConstants.AUTH_USER);
+        Scope scope = (Scope) context.getParams().get(OAuthConstants.FILTERED_SCOPES);
 
         TokenIssuer.generateAccessToken(scope, context);
         AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
-        accessTokenData.setAuthUser(accessTokenDTO.getAuthUser());
+        accessTokenData.setAuthUser(userNameMapper.getLoggedInPseudoNameFromUserID(user));
         accessTokenData.setClientId(clientId);
         oauthDAO.addAccessTokenInfo(accessTokenData);
-        accessTokenData.setAuthUser(userNameMapper.getLoggedInUserIDFromPseudoName(accessTokenDTO.getAuthUser()));
+        accessTokenData.setAuthUser(user);
     }
 
     private boolean isRefreshTokenExpired(AccessTokenDTO accessTokenDTO) {
+
         long issuedTime = accessTokenDTO.getRefreshTokenCreatedTime();
         long refreshValidity = accessTokenDTO.getRefreshTokenValidityPeriod() * 1000L;
         return calculateValidityInMillis(issuedTime, refreshValidity) < ALLOWED_MINIMUM_VALIDITY_PERIOD_IN_MILI;
     }
 
     public static long calculateValidityInMillis(long issuedTimeInMillis, long validityPeriodMillis) {
+
         long timestampSkew = 5 * 1000;
         return issuedTimeInMillis + validityPeriodMillis - (System.currentTimeMillis() - timestampSkew);
     }
 
     private boolean validateGrant(AccessTokenDTO accessTokenDTO) {
+
         if (accessTokenDTO == null) {
             return false;
         }

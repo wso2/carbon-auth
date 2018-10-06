@@ -47,14 +47,27 @@ import java.util.Optional;
  * Grant Type Handler interface
  */
 public interface GrantHandler {
+
     Logger LOG = LoggerFactory.getLogger(GrantHandler.class);
+
+    /**
+     * Validate Grant values to process Token
+     *
+     * @param authorization   Authorization header
+     * @param context         AccessTokenContext object that stores context information during request processing
+     * @param queryParameters Map of query parameters sent
+     * @throws AuthException When an grantHandler Error Occurred
+     */
+    boolean validateGrant(String authorization, AccessTokenContext context, Map<String, String> queryParameters) throws
+            AuthException;
+
     /**
      * Process grant type request to generate access token
-     * 
-     * @param authorization  Authorization header
-     * @param context AccessTokenContext object that stores context information during request processing
+     *
+     * @param authorization   Authorization header
+     * @param context         AccessTokenContext object that stores context information during request processing
      * @param queryParameters Map of query parameters sent
-     *@throws AuthException When an grantHandler Error Occurred
+     * @throws AuthException When an grantHandler Error Occurred
      */
     void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
             throws AuthException;
@@ -68,7 +81,7 @@ public interface GrantHandler {
      * @param applicationDAO   ApplicationDAO instance
      */
     void init(UserNameMapper userNameMapper, OAuthDAO oauthDAO, UserStoreManager userStoreManager,
-            ApplicationDAO applicationDAO);
+              ApplicationDAO applicationDAO);
 
     /**
      * Check is application is authorised
@@ -78,6 +91,7 @@ public interface GrantHandler {
      * @return isAuthorized
      */
     default boolean isAuthorizedClient(Application application, String grantType) {
+
         if (application == null || StringUtils.isEmpty(application.getGrantTypes())) {
             return false;
         }
@@ -90,21 +104,28 @@ public interface GrantHandler {
      * @param context AccessTokenContext
      * @return allowed scopes
      */
-    default Scope filterScopes(AccessTokenContext context) {
+    default boolean validateScopes(AccessTokenContext context) {
+
         ScopeValidatorCallback scopeValidatorCallback = new ScopeValidatorCallback();
         String user = (String) context.getParams().get(OAuthConstants.AUTH_USER);
         String scopeValue = (String) context.getParams().get(OAuthConstants.SCOPE_QUERY_PARAM);
-        Scope scope = new Scope(scopeValue.split(" "));
-        scopeValidatorCallback.setAuthUser(user);
-        scopeValidatorCallback.setRequestedScopes(scope);
-        ScopeValidateHandler.validate(scopeValidatorCallback);
-        if (!scopeValidatorCallback.isSuccessful()) {
-            context.setSuccessful(false);
-            context.setErrorObject(scopeValidatorCallback.getErrorObject());
-            return null;
+        if (scopeValue != null) {
+            Scope scope = new Scope(scopeValue.split(" "));
+            scopeValidatorCallback.setAuthUser(user);
+            scopeValidatorCallback.setRequestedScopes(scope);
+            ScopeValidateHandler.validate(scopeValidatorCallback);
+            if (!scopeValidatorCallback.isSuccessful()) {
+                context.setSuccessful(false);
+                context.setErrorObject(scopeValidatorCallback.getErrorObject());
+                return false;
+            }
+            context.setSuccessful(true);
+            context.getParams().put(OAuthConstants.FILTERED_SCOPES, new Scope(scopeValidatorCallback.getApprovedScope
+                    ()));
+        } else {
+            context.getParams().put(OAuthConstants.FILTERED_SCOPES, new Scope(OAuthConstants.SCOPE_DEFAULT));
         }
-        context.setSuccessful(true);
-        return scopeValidatorCallback.getApprovedScope();
+        return true;
     }
 
     /**
@@ -114,11 +135,11 @@ public interface GrantHandler {
      * @param authUser  authenticated user
      * @param grantType requested grant type
      * @param clientId  requested consumer key
-     * @param scope  requested scopes
+     * @param scope     requested scopes
      * @return return access token information if present
      */
     default Optional<AccessTokenResponse> checkTokens(OAuthDAO oauthDAO, String authUser, String grantType,
-            String clientId, Scope scope) {
+                                                      String clientId, Scope scope) {
 
         AccessTokenDTO accessTokenDTO;
         String hashedscopes = Utils.hashScopes(scope);

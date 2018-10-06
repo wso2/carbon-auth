@@ -23,4 +23,14 @@ import org.wso2.carbon.auth.core.exception.AuthException;
  * Class to be used for OAuth scopes related exceptions
  */
 public class OAuthScopeException extends AuthException {
+
+    public OAuthScopeException(String message) {
+
+        super(message);
+    }
+
+    public OAuthScopeException(String message, Throwable cause) {
+
+        super(message, cause);
+    }
 }

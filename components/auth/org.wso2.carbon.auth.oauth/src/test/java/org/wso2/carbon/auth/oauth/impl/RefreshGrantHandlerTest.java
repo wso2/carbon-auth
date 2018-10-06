@@ -19,6 +19,7 @@ package org.wso2.carbon.auth.oauth.impl;
 
 import com.nimbusds.oauth2.sdk.GrantType;
 import com.nimbusds.oauth2.sdk.OAuth2Error;
+import com.nimbusds.oauth2.sdk.Scope;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,10 +29,12 @@ import org.wso2.carbon.auth.client.registration.model.Application;
 import org.wso2.carbon.auth.core.api.UserNameMapper;
 import org.wso2.carbon.auth.core.exception.ExceptionCodes;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
+import org.wso2.carbon.auth.oauth.configuration.models.OAuthConfiguration;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
 import org.wso2.carbon.auth.oauth.exception.OAuthDAOException;
+import org.wso2.carbon.auth.oauth.internal.ServiceReferenceHolder;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 
 import java.util.Base64;
@@ -39,6 +42,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RefreshGrantHandlerTest {
+
     private RefreshGrantHandler refreshGrantHandler;
     private OAuthDAO oauthDAO;
     private ApplicationDAO applicationDAO;
@@ -54,6 +58,8 @@ public class RefreshGrantHandlerTest {
 
     @Before
     public void init() throws Exception {
+        ServiceReferenceHolder.getInstance().setConfig(new OAuthConfiguration());
+
         oauthDAO = Mockito.mock(OAuthDAO.class);
         applicationDAO = Mockito.mock(ApplicationDAO.class);
         userNameMapper = Mockito.mock(UserNameMapper.class);
@@ -67,6 +73,7 @@ public class RefreshGrantHandlerTest {
 
     @Test
     public void testProcessWithInValidateGrant() throws Exception {
+
         authorization = "Basic " + Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
         Application application = new Application();
         application
@@ -76,20 +83,20 @@ public class RefreshGrantHandlerTest {
 
         // null refresh token
         queryParameters.put(OAuthConstants.REFRESH_TOKEN_QUERY_PARAM, null);
-        refreshGrantHandler.process(authorization, context, queryParameters);
+        refreshGrantHandler.validateGrant(authorization, context, queryParameters);
         Assert.assertEquals(context.getErrorObject().getCode(), OAuth2Error.INVALID_REQUEST.getCode());
 
         //no access token data for a given refresh token and client id
         queryParameters.put(OAuthConstants.REFRESH_TOKEN_QUERY_PARAM, refreshToken);
         context.getParams().put(OAuthConstants.CLIENT_ID, clientId);
         Mockito.when(oauthDAO.getTokenInfo(refreshToken, clientId)).thenReturn(null);
-        refreshGrantHandler.process(authorization, context, queryParameters);
+        refreshGrantHandler.validateGrant(authorization, context, queryParameters);
         Assert.assertEquals(context.getErrorObject().getCode(), RefreshGrantHandler.INVALID_GRANT_ERROR_CODE);
 
         //error when getting token info
         Mockito.when(oauthDAO.getTokenInfo(refreshToken, clientId)).thenThrow(OAuthDAOException.class);
         try {
-            refreshGrantHandler.process(authorization, context, queryParameters);
+            refreshGrantHandler.validateGrant(authorization, context, queryParameters);
             Assert.fail("Exception expected");
         } catch (OAuthDAOException e) {
             Assert.assertTrue(e.getCause() instanceof OAuthDAOException);
@@ -99,6 +106,7 @@ public class RefreshGrantHandlerTest {
 
     @Test
     public void testProcessWithValidateGrant() throws Exception {
+
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
         authorization = "Basic " + Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
         Application application = new Application();
@@ -114,12 +122,13 @@ public class RefreshGrantHandlerTest {
         //check expired refresh token
         accessTokenDTO.setRefreshTokenCreatedTime(System.currentTimeMillis() - 3600000);
         accessTokenDTO.setRefreshTokenValidityPeriod(3600);
-        refreshGrantHandler.process(authorization, context, queryParameters);
+        refreshGrantHandler.validateGrant(authorization, context, queryParameters);
         Assert.assertEquals(context.getErrorObject().getCode(), RefreshGrantHandler.INVALID_GRANT_ERROR_CODE);
 
         // null scopes
         context.getParams().put(OAuthConstants.VALIDITY_PERIOD, 3600L);
         accessTokenDTO.setRefreshTokenCreatedTime(System.currentTimeMillis());
+        refreshGrantHandler.validateScopes(context);
         refreshGrantHandler.process(authorization, context, queryParameters);
         Assert.assertTrue(context.isSuccessful());
         Assert.assertEquals(OAuthConstants.SCOPE_DEFAULT,
@@ -127,6 +136,7 @@ public class RefreshGrantHandlerTest {
 
         // with scopes
         queryParameters.put(OAuthConstants.SCOPE_QUERY_PARAM, scope);
+        context.getParams().put(OAuthConstants.FILTERED_SCOPES, new Scope(scope));
         refreshGrantHandler.process(authorization, context, queryParameters);
         Assert.assertTrue(context.isSuccessful());
         Assert.assertEquals(scope, context.getAccessTokenResponse().getTokens().getAccessToken().getScope().toString());

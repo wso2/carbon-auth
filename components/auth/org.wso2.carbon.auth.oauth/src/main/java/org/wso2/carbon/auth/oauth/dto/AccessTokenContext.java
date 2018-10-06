@@ -25,45 +25,77 @@ import com.nimbusds.oauth2.sdk.ErrorObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * DTO that stores context information related to the Access Token
  */
 public class AccessTokenContext {
+
     private boolean isSuccessful;
     private ErrorObject errorObject;
     private AccessTokenResponse accessTokenResponse;
     private Map<String, String> params = new HashMap<>();
 
     public boolean isSuccessful() {
+
         return isSuccessful;
     }
 
     public void setSuccessful(boolean successful) {
+
         isSuccessful = successful;
     }
 
     public ErrorObject getErrorObject() {
+
         return errorObject;
     }
 
     public void setErrorObject(ErrorObject errorObject) {
+
         this.errorObject = errorObject;
     }
 
     public AccessTokenResponse getAccessTokenResponse() {
+
         return accessTokenResponse;
     }
 
     public void setAccessTokenResponse(AccessTokenResponse accessTokenResponse) {
+
         this.accessTokenResponse = accessTokenResponse;
     }
 
     public Map getParams() {
+
         return params;
     }
 
     public void setParams(Map params) {
+
         this.params = params;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        AccessTokenContext that = (AccessTokenContext) o;
+        return isSuccessful == that.isSuccessful &&
+                Objects.equals(errorObject, that.errorObject) &&
+                Objects.equals(accessTokenResponse, that.accessTokenResponse) &&
+                Objects.equals(params, that.params);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(isSuccessful, errorObject, accessTokenResponse, params);
     }
 }

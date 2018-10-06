@@ -25,7 +25,6 @@ import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.ResourceOwnerPasswordCredentialsGrant;
 import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.auth.Secret;
-import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
@@ -42,7 +41,6 @@ import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 /**
  * Password grant handler
@@ -67,55 +65,46 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
     }
 
     @Override
-    public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
+    public boolean validateGrant(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
             throws AuthException {
-        log.debug("Calling PasswordGrantHandlerImpl:process");
+
         try {
-            ResourceOwnerPasswordCredentialsGrant request =
-                    ResourceOwnerPasswordCredentialsGrant.parse(queryParameters);
-            String scope = queryParameters.get(OAuthConstants.SCOPE_QUERY_PARAM);
-            processPasswordGrantRequest(authorization, context, scope, request);
+            ResourceOwnerPasswordCredentialsGrant request = ResourceOwnerPasswordCredentialsGrant.parse
+                    (queryParameters);
+            boolean authenticated = validateGrant(request);
+            if (authenticated) {
+                context.getParams().put(OAuthConstants.SCOPE_QUERY_PARAM, queryParameters.get(OAuthConstants
+                        .SCOPE_QUERY_PARAM));
+                context.getParams().put(OAuthConstants.GRANT_REQUEST, request);
+                context.getParams().put(OAuthConstants.AUTH_USER, request.getUsername());
+                return true;
+            } else {
+                return false;
+            }
         } catch (ParseException e) {
             log.error("Error while parsing Password Grant request: ", e);
             context.setErrorObject(e.getErrorObject());
+            return false;
         }
     }
 
-    private void processPasswordGrantRequest(String authorization, AccessTokenContext context,
-                                             @Nullable String scopeValue,
-                                             ResourceOwnerPasswordCredentialsGrant request)
+    @Override
+    public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
+            throws AuthException {
+        log.debug("Calling PasswordGrantHandlerImpl:process");
+        processPasswordGrantRequest(context);
+    }
+
+    private void processPasswordGrantRequest(AccessTokenContext context)
             throws AuthException {
         log.debug("calling processPasswordGrantRequest");
-        MutableBoolean haltExecution = new MutableBoolean(false);
-
-        boolean authenticated = validateGrant(request);
-        if (authenticated) {
-            context.getParams().put(OAuthConstants.AUTH_USER, request.getUsername());
-        } else {
-            return;
-        }
-        //check CK empty
-        //check CK state
-        if (haltExecution.isTrue()) {
-            return;
-        }
-
-        //TODO: Validate username and password sent in request
-        Scope scope;
-
-        if (scopeValue != null) {
-            scope = new Scope(scopeValue.split(" "));
-        } else {
-            scope = new Scope(OAuthConstants.SCOPE_DEFAULT);
-        }
+        Scope scope = (Scope) context.getParams().get(OAuthConstants.FILTERED_SCOPES);
 
         String user = (String) context.getParams().get(OAuthConstants.AUTH_USER);
         String clientId = (String) context.getParams().get(OAuthConstants.CLIENT_ID);
         String grantType = (String) context.getParams().get(OAuthConstants.GRANT_TYPE);
-
-        Optional<AccessTokenResponse> tokenResponse = checkTokens(oauthDAO,
-                userNameMapper.getLoggedInPseudoNameFromUserID(user), grantType, clientId,
-                scope);
+        String pseudoName = userNameMapper.getLoggedInPseudoNameFromUserID(user);
+        Optional<AccessTokenResponse> tokenResponse = checkTokens(oauthDAO, pseudoName, grantType, clientId, scope);
         if (tokenResponse.isPresent()) {
             AccessTokenResponse accessTokenResponse = tokenResponse.get();
             context.setAccessTokenResponse(accessTokenResponse);
@@ -125,7 +114,7 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
 
         TokenIssuer.generateAccessToken(scope, context);
         AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
-        accessTokenData.setAuthUser(userNameMapper.getLoggedInPseudoNameFromUserID(user));
+        accessTokenData.setAuthUser(pseudoName);
         accessTokenData.setClientId(clientId);
         oauthDAO.addAccessTokenInfo(accessTokenData);
         accessTokenData.setAuthUser(user);

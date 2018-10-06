@@ -46,19 +46,35 @@ import java.util.Optional;
  * Implementation of TokenRequestHandler interface
  */
 public class TokenRequestHandlerImpl implements TokenRequestHandler {
+
     private static final Logger log = LoggerFactory.getLogger(TokenRequestHandlerImpl.class);
     private OAuthDAO oauthDAO;
     private ApplicationDAO applicationDAO;
     private ClientLookup clientLookup;
+    private GrantHandlerFactory grantHandlerFactory;
 
-    public TokenRequestHandlerImpl(OAuthDAO oauthDAO, ApplicationDAO applicationDAO) {
+    public TokenRequestHandlerImpl(OAuthDAO oauthDAO, ApplicationDAO applicationDAO, GrantHandlerFactory
+            grantHandlerFactory) {
+
         this.oauthDAO = oauthDAO;
         this.applicationDAO = applicationDAO;
+        this.grantHandlerFactory = grantHandlerFactory;
+        this.clientLookup = new ClientLookupImpl(oauthDAO);
+    }
+
+    protected TokenRequestHandlerImpl(OAuthDAO oauthDAO, ApplicationDAO applicationDAO, ClientLookup clientLookup,
+                                      GrantHandlerFactory grantHandlerFactory) {
+
+        this.oauthDAO = oauthDAO;
+        this.applicationDAO = applicationDAO;
+        this.clientLookup = clientLookup;
+        this.grantHandlerFactory = grantHandlerFactory;
     }
 
     @Override
     public AccessTokenContext generateToken(String authorization, Map<String, String> queryParameters)
             throws AuthException {
+
         log.debug("Calling generateToken");
         AccessTokenContext context = new AccessTokenContext();
         boolean isAuthorized;
@@ -73,13 +89,12 @@ public class TokenRequestHandlerImpl implements TokenRequestHandler {
 
         MutableBoolean haltExecution = new MutableBoolean(false);
 
-        Optional<GrantHandler> grantHandler = GrantHandlerFactory
-                .createGrantHandler(grantTypeValue, context, oauthDAO, applicationDAO, haltExecution);
+        Optional<GrantHandler> grantHandler = grantHandlerFactory.createGrantHandler(grantTypeValue, context,
+                oauthDAO, applicationDAO, haltExecution);
 
         if (haltExecution.isFalse()) {
             if (grantHandler.isPresent()) {
                 Application application;
-                this.clientLookup = new ClientLookupImpl(oauthDAO);
                 String clientId = clientLookup.getClientId(authorization, context, queryParameters, haltExecution);
                 //client id can be null if it not present in header or payload
                 if (clientId == null) {
@@ -122,6 +137,12 @@ public class TokenRequestHandlerImpl implements TokenRequestHandler {
                     String error = "Grant type is not allowed for the application";
                     log.debug(error);
                     context.setErrorObject(OAuth2Error.UNSUPPORTED_GRANT_TYPE);
+                    return context;
+                }
+                if (!grantHandler.get().validateGrant(authorization, context, queryParameters)) {
+                    return context;
+                }
+                if (!grantHandler.get().validateScopes(context)) {
                     return context;
                 }
                 grantHandler.get().process(authorization, context, queryParameters);

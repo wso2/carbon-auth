@@ -20,7 +20,6 @@
 
 package org.wso2.carbon.auth.oauth.impl;
 
-import com.nimbusds.oauth2.sdk.ErrorObject;
 import com.nimbusds.oauth2.sdk.OAuth2Error;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic;
@@ -42,27 +41,29 @@ import java.util.Map;
  * Client lookup implementation
  */
 public class ClientLookupImpl implements ClientLookup {
+
     private static final Logger log = LoggerFactory.getLogger(ClientLookupImpl.class);
     private OAuthDAO oauthDAO;
 
     ClientLookupImpl(OAuthDAO oauthDAO) {
+
         this.oauthDAO = oauthDAO;
     }
 
     @Override
     public String getClientId(String authorization, AccessTokenContext context, Map<String, String> queryParameters,
-            MutableBoolean haltExecution) {
+                              MutableBoolean haltExecution) {
+
         log.debug("Calling getClientId");
         ClientID clientId;
         Secret clientSecret;
         if (!StringUtils.isEmpty(authorization)) {
-            ClientSecretBasic clientCredentials = null;
+            ClientSecretBasic clientCredentials;
             try {
                 clientCredentials = ClientSecretBasic.parse(authorization);
             } catch (ParseException e) {
                 log.info("Error while parsing client credentials: ", e.getMessage());
-                ErrorObject error = new ErrorObject(OAuth2Error.INVALID_REQUEST.getCode());
-                context.setErrorObject(error);
+                context.setErrorObject(OAuth2Error.INVALID_REQUEST);
                 haltExecution.setTrue();
                 return null;
             }
@@ -75,8 +76,7 @@ public class ClientLookupImpl implements ClientLookup {
             clientSecret = new Secret(queryParameters.get(OAuthConstants.CLIENT_SECRET_QUERY_PARAM));
         } else {
             log.debug("clientId or clientSecret is missing in request");
-            ErrorObject error = new ErrorObject(OAuth2Error.INVALID_REQUEST.getCode());
-            context.setErrorObject(error);
+            context.setErrorObject(OAuth2Error.INVALID_REQUEST);
             haltExecution.setTrue();
             return null;
         }
@@ -84,15 +84,14 @@ public class ClientLookupImpl implements ClientLookup {
         try {
             boolean isValid = oauthDAO.isClientCredentialsValid(clientId.getValue(), clientSecret.getValue());
             if (!isValid) {
-                ErrorObject error = new ErrorObject(OAuth2Error.INVALID_CLIENT.getCode());
-                context.setErrorObject(error);
+                context.setErrorObject(OAuth2Error.INVALID_CLIENT);
                 haltExecution.setTrue();
+                return null;
             }
             return clientId.getValue();
         } catch (OAuthDAOException e) {
             log.error("Error while validating client credentials", e);
-            ErrorObject error = new ErrorObject(OAuth2Error.SERVER_ERROR.getCode());
-            context.setErrorObject(error);
+            context.setErrorObject(OAuth2Error.SERVER_ERROR);
             haltExecution.setTrue();
         }
 

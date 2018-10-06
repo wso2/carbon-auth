@@ -26,10 +26,12 @@ import org.wso2.carbon.auth.user.store.connector.Attribute;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnectorFactory;
 import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
+import org.wso2.carbon.auth.user.store.exception.GroupNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import javax.security.auth.callback.PasswordCallback;
@@ -94,12 +96,51 @@ public class UserStoreUtil {
     }
 
     /**
+     * Add default admin Group
+     *
+     * @param config UserStoreConfiguration
+     * @throws UserStoreConnectorException when error occurs while adding admin Group
+     */
+    public static void addAdminGroup(UserStoreConfiguration config) throws UserStoreConnectorException {
+        //adding default admin Group
+        String user = config.getSuperUser();
+        String group = config.getSuperUserGroup();
+        UserStoreConnector connector = UserStoreConnectorFactory.getUserStoreConnector();
+        try {
+            String id = connector.getConnectorGroupId(UserStoreConstants.GROUP_DISPLAY_NAME, group);
+            if (id != null) {
+                log.debug("Admin Group already exists.");
+                return;
+            }
+        } catch (GroupNotFoundException e) {
+            log.debug("Admin Group Doesn't exist", e);
+        }
+        try {
+            String uid = connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, user);
+            if (uid != null) {
+                List<Attribute> attributes = new ArrayList<>();
+                attributes.add(new Attribute(UserStoreConstants.CLAIM_ID, UserStoreUtil.generateUUID()));
+                attributes.add(new Attribute(UserStoreConstants.GROUP_DISPLAY_NAME, group));
+                String groupId = connector.addGroup(attributes);
+                if (groupId != null) {
+                    connector.updateUsersOfGroup(groupId, Collections.singletonList(uid));
+                }
+            }
+        } catch (UserNotFoundException e) {
+            //not logging exception since, this code is to handler default user populating logic
+            //when user not exist
+            log.debug("Admin user not exist", e);
+        }
+    }
+
+    /**
      * Add default user attributes
      *
      * @param config UserStoreConfiguration
      * @throws UserStoreConnectorException when error occurs while adding default attributes
      */
     public static void addDefaultAttributes(UserStoreConfiguration config) throws UserStoreConnectorException {
+
         UserStoreConnector connector = UserStoreConnectorFactory.getUserStoreConnector();
         List<AttributeConfiguration> attributeConfigurations = config.getAttributes();
 

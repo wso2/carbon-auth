@@ -86,6 +86,14 @@
             <groupId>commons-codec.wso2</groupId>
             <artifactId>commons-codec</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.auth</groupId>
+            <artifactId>org.wso2.carbon.auth.scope.registration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.auth</groupId>
+            <artifactId>org.wso2.carbon.auth.scim</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -128,7 +136,9 @@
             org.wso2.carbon.kernel.*;version="${carbon.kernel.package.import.version.range}",
             com.nimbusds.oauth2.sdk.*;version="${com.nimbusd.oauth2-oidc-sdk.import.version.range}",
             org.wso2.carbon.auth.core.*; version="${carbon.auth.version}",
-            org.wso2.carbon.auth.client.registration.*; version="${carbon.auth.version}"
+            org.wso2.carbon.auth.client.registration.*; version="${carbon.auth.version}",
+            org.wso2.carbon.auth.scope.registration.*; version="${carbon.auth.version}",
+            org.wso2.carbon.auth.scim.*; version="${carbon.auth.version}"
         </import.package>
         <export.package>
             !org.wso2.carbon.auth.oauth.internal,

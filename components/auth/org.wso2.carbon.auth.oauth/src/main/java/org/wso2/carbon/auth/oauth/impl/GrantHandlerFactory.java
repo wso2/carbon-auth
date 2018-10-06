@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
 import org.wso2.carbon.auth.core.api.UserNameMapper;
-import org.wso2.carbon.auth.core.impl.UserNameMapperFactory;
 import org.wso2.carbon.auth.oauth.GrantHandler;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
@@ -35,7 +34,6 @@ import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.internal.ServiceReferenceHolder;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
-import org.wso2.carbon.auth.user.mgt.UserStoreManagerFactory;
 
 import java.util.Map;
 import java.util.Optional;
@@ -45,7 +43,13 @@ import java.util.Optional;
  */
 public class GrantHandlerFactory {
     private static final Logger log = LoggerFactory.getLogger(GrantHandlerFactory.class);
-    private static UserNameMapper userNameMapper = UserNameMapperFactory.getInstance().getUserNameMapper();
+    private UserNameMapper userNameMapper;
+    private UserStoreManager userStoreManager;
+
+    public GrantHandlerFactory(UserStoreManager userStoreManager, UserNameMapper userNameMapper) {
+        this.userNameMapper = userNameMapper;
+        this.userStoreManager = userStoreManager;
+    }
 
     /**
      * Create relevant Grant Handler
@@ -53,7 +57,7 @@ public class GrantHandlerFactory {
      * @param grantTypeValue grant type being served
      * @return Grant handler implementation
      */
-    static Optional<GrantHandler> createGrantHandler(String grantTypeValue, AccessTokenContext context,
+     Optional<GrantHandler> createGrantHandler(String grantTypeValue, AccessTokenContext context,
             OAuthDAO oauthDAO, ApplicationDAO applicationDAO, MutableBoolean haltExecution)
             throws UserStoreException {
         log.debug("Calling createGrantHandler");
@@ -83,7 +87,6 @@ public class GrantHandlerFactory {
                 haltExecution.setTrue();
                 return Optional.empty();
             }
-            UserStoreManager userStoreManager = UserStoreManagerFactory.getUserStoreManager();
             grantHandlerImpl.init(userNameMapper, oauthDAO, userStoreManager, applicationDAO);
             return Optional.of(grantHandlerImpl);
         } else {

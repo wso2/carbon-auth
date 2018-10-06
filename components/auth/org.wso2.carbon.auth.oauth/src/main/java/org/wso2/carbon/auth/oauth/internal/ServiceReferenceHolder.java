@@ -59,20 +59,6 @@ public class ServiceReferenceHolder {
      * @return AuthConfigurations
      */
     public OAuthConfiguration getAuthConfigurations() {
-        try {
-            if (configProvider != null) {
-                config = configProvider.getConfigurationObject(OAuthConfiguration.class);
-            } else {
-                log.error("Configuration provider is null");
-            }
-        } catch (ConfigurationException e) {
-            log.error("error getting config : org.wso2.carbon.auth.core.internal.AuthConfiguration", e);
-        }
-
-        if (config == null) {
-            config = new OAuthConfiguration();
-            log.info("Setting default configurations...");
-        }
 
         return config;
     }
@@ -134,5 +120,10 @@ public class ServiceReferenceHolder {
             }
         }
         return scopeValidator;
+    }
+
+    public void setConfig(OAuthConfiguration config) {
+
+        this.config = config;
     }
 }

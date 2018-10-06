@@ -223,6 +223,16 @@ public interface UserStoreConnector {
     List<String> getGroupIdsOfUser(String userIdentifier) throws UserStoreConnectorException;
 
     /**
+     * Retrieves current groups (roles) of a given user
+     *
+     * @param userIdentifier id of the group
+     * @return current group names (roles) of the given user
+     * @throws UserStoreConnectorException when error occurred while getting groups of user
+     */
+    List<String> getGroupsOfUser(String userIdentifier) throws UserStoreConnectorException;
+
+
+    /**
      * Adds a new group.
      *
      * @param attributes Attributes of the group.

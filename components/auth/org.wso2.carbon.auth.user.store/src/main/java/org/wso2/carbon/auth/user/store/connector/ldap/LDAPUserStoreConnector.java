@@ -392,6 +392,13 @@ public class LDAPUserStoreConnector implements UserStoreConnector {
     }
 
     @Override
+    public List<String> getGroupsOfUser(String userIdentifier) throws UserStoreConnectorException {
+        //TODO: implement getGroupIdsOfUser in LDAPUserStoreConnector
+
+        return null;
+    }
+
+    @Override
     public String addGroup(List<Attribute> attributes) throws UserStoreConnectorException {
         DirContext context;
         try {

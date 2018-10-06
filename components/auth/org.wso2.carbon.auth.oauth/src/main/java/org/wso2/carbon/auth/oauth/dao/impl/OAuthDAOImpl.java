@@ -68,7 +68,7 @@ public class OAuthDAOImpl implements OAuthDAO {
 
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
-                    return Optional.of(Optional.of(rs.getString("REDIRECT_URI")));
+                    return Optional.of(Optional.ofNullable(rs.getString("REDIRECT_URI")));
                 }
             }
         } catch (SQLException e) {

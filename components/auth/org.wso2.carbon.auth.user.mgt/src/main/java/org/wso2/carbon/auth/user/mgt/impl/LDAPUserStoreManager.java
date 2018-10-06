@@ -30,6 +30,7 @@ import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -80,5 +81,11 @@ public class LDAPUserStoreManager implements UserStoreManager {
             log.error("No such algorithm exception occurred", e);
             throw new UserStoreException("No such algorithm exception occurred", e);
         }
+    }
+
+    @Override
+    public List<String> getRoleListOfUser(String userName) throws UserStoreException {
+
+        return null;
     }
 }

@@ -151,7 +151,8 @@ public class RESTAPISecurityInterceptorTest {
     }
 
     @Test
-    public void testAuthenticationForBasicAuthAuthenticatedAPIWithBearerHeader() throws NoSuchMethodException {
+    public void testAuthenticationForBasicAuthAuthenticatedAPIWithBearerHeader() throws NoSuchMethodException,
+            RestAPIAuthSecurityException {
 
         RESTAPISecurityInterceptor restapiSecurityInterceptor = new RESTAPISecurityInterceptor();
         Request request = Mockito.mock(Request.class);
@@ -162,6 +163,7 @@ public class RESTAPISecurityInterceptorTest {
         Mockito.when(request.getHeader(RestAPIConstants.AUTHORIZATION)).thenReturn("Bearer YWRtaW46YWRtaWa4x");
         Map<String, String> restapiAuthenticatorMap = new HashMap<>();
         RESTAPIAuthenticator restapiAuthenticator = Mockito.mock(RESTAPIAuthenticator.class);
+        Mockito.when(restapiAuthenticator.authenticate(request, response, method)).thenReturn(true);
         restapiAuthenticatorMap.put(RestAPIConstants.AUTH_TYPE_BASIC, restapiAuthenticator.getClass().getName());
         ServiceReferenceHolder.getInstance().getSecurityConfiguration().getAuthenticator().put
                 ("/api/identity/scim2/v1.0", restapiAuthenticatorMap);
@@ -178,11 +180,19 @@ public class RESTAPISecurityInterceptorTest {
         Method method = MockRestApi.class.getMethod("meGet", Request.class);
         Mockito.when(request.getProperty(MSF4JConstants.METHOD_PROPERTY_NAME)).thenReturn(method);
         Map<String, String> restapiAuthenticatorMap = new HashMap<>();
-        RESTAPIAuthenticator restapiAuthenticator = Mockito.mock(RESTAPIAuthenticator.class);
-        restapiAuthenticatorMap.put(RestAPIConstants.AUTH_TYPE_BASIC, restapiAuthenticator.getClass().getName());
+        restapiAuthenticatorMap.put(RestAPIConstants.AUTH_TYPE_BASIC, MockRestApiAuthenticator.class.getName());
         ServiceReferenceHolder.getInstance().getSecurityConfiguration().getAuthenticator().put
                 ("/api/identity/scim2/v1.0", restapiAuthenticatorMap);
-        Assert.assertFalse(restapiSecurityInterceptor.interceptRequest(request, response));
-        Mockito.verify(response, Mockito.times(1)).setStatus(401);
+        Assert.assertTrue(restapiSecurityInterceptor.interceptRequest(request, response));
+    }
+
+    static class MockRestApiAuthenticator implements RESTAPIAuthenticator {
+
+        @Override
+        public boolean authenticate(Request request, Response responder, Method method) throws
+                RestAPIAuthSecurityException {
+
+            return true;
+        }
     }
 }
