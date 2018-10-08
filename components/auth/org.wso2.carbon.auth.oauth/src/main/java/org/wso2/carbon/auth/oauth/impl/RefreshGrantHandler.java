@@ -102,6 +102,12 @@ public class RefreshGrantHandler implements GrantHandler {
             }
             context.getParams().put(OAuthConstants.AUTH_USER, userNameMapper.getLoggedInUserIDFromPseudoName
                     (accessTokenDTO.getAuthUser()));
+            String scopes = queryParameters.get(OAuthConstants.SCOPE_QUERY_PARAM);
+            if (StringUtils.isNotEmpty(scopes)) {
+                context.getParams().put(OAuthConstants.SCOPE_QUERY_PARAM, scopes);
+            } else {
+                context.getParams().put(OAuthConstants.SCOPE_QUERY_PARAM, accessTokenDTO.getScopes());
+            }
             return true;
         } catch (OAuthDAOException e) {
             log.error("Error getting token information from the DB", e);

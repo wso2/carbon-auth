@@ -128,6 +128,7 @@ public class RefreshGrantHandlerTest {
         // null scopes
         context.getParams().put(OAuthConstants.VALIDITY_PERIOD, 3600L);
         accessTokenDTO.setRefreshTokenCreatedTime(System.currentTimeMillis());
+        refreshGrantHandler.validateGrant(authorization, context, queryParameters);
         refreshGrantHandler.validateScopes(context);
         refreshGrantHandler.process(authorization, context, queryParameters);
         Assert.assertTrue(context.isSuccessful());
@@ -137,6 +138,7 @@ public class RefreshGrantHandlerTest {
         // with scopes
         queryParameters.put(OAuthConstants.SCOPE_QUERY_PARAM, scope);
         context.getParams().put(OAuthConstants.FILTERED_SCOPES, new Scope(scope));
+        refreshGrantHandler.validateGrant(authorization, context, queryParameters);
         refreshGrantHandler.process(authorization, context, queryParameters);
         Assert.assertTrue(context.isSuccessful());
         Assert.assertEquals(scope, context.getAccessTokenResponse().getTokens().getAccessToken().getScope().toString());
