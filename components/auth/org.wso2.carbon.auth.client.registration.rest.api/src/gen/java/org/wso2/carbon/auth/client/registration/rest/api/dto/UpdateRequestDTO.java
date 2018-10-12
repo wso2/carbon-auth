@@ -2,8 +2,8 @@ package org.wso2.carbon.auth.client.registration.rest.api.dto;
 
 
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +23,9 @@ public class UpdateRequestDTO   {
 
   @SerializedName("token_expire_time")
   private Long tokenExpireTime = null;
+
+  @SerializedName("token_type_extension")
+  private String tokenTypeExtension = null;
 
   public UpdateRequestDTO redirectUris(List<String> redirectUris) {
     this.redirectUris = redirectUris;
@@ -106,6 +109,24 @@ public class UpdateRequestDTO   {
     this.tokenExpireTime = tokenExpireTime;
   }
 
+  public UpdateRequestDTO tokenTypeExtension(String tokenTypeExtension) {
+    this.tokenTypeExtension = tokenTypeExtension;
+    return this;
+  }
+
+   /**
+   * Get tokenTypeExtension
+   * @return tokenTypeExtension
+  **/
+  @ApiModelProperty(value = "")
+  public String getTokenTypeExtension() {
+    return tokenTypeExtension;
+  }
+
+  public void setTokenTypeExtension(String tokenTypeExtension) {
+    this.tokenTypeExtension = tokenTypeExtension;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -119,12 +140,13 @@ public class UpdateRequestDTO   {
     return Objects.equals(this.redirectUris, updateRequest.redirectUris) &&
         Objects.equals(this.clientName, updateRequest.clientName) &&
         Objects.equals(this.grantTypes, updateRequest.grantTypes) &&
-        Objects.equals(this.tokenExpireTime, updateRequest.tokenExpireTime);
+        Objects.equals(this.tokenExpireTime, updateRequest.tokenExpireTime) &&
+        Objects.equals(this.tokenTypeExtension, updateRequest.tokenTypeExtension);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(redirectUris, clientName, grantTypes, tokenExpireTime);
+    return Objects.hash(redirectUris, clientName, grantTypes, tokenExpireTime, tokenTypeExtension);
   }
 
   @Override
@@ -136,6 +158,7 @@ public class UpdateRequestDTO   {
     sb.append("    clientName: ").append(toIndentedString(clientName)).append("\n");
     sb.append("    grantTypes: ").append(toIndentedString(grantTypes)).append("\n");
     sb.append("    tokenExpireTime: ").append(toIndentedString(tokenExpireTime)).append("\n");
+    sb.append("    tokenTypeExtension: ").append(toIndentedString(tokenTypeExtension)).append("\n");
     sb.append("}");
     return sb.toString();
   }

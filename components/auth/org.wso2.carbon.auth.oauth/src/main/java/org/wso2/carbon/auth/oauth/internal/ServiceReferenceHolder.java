@@ -19,12 +19,15 @@ package org.wso2.carbon.auth.oauth.internal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.core.configuration.models.AuthConfiguration;
 import org.wso2.carbon.auth.oauth.ScopeValidator;
 import org.wso2.carbon.auth.oauth.configuration.models.OAuthConfiguration;
 import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.secvault.SecureVault;
 
+import java.security.PrivateKey;
+import java.security.cert.Certificate;
 import java.util.Map;
 
 /**
@@ -35,8 +38,11 @@ public class ServiceReferenceHolder {
     private static ServiceReferenceHolder instance = new ServiceReferenceHolder();
     private ConfigProvider configProvider;
     private OAuthConfiguration config;
+    private AuthConfiguration authConfiguration;
     private SecureVault secureVault;
     private ScopeValidator scopeValidator;
+    private PrivateKey privateKey;
+    private Certificate publicKey;
 
     private ServiceReferenceHolder() {}
 
@@ -125,5 +131,35 @@ public class ServiceReferenceHolder {
     public void setConfig(OAuthConfiguration config) {
 
         this.config = config;
+    }
+
+    public AuthConfiguration getAuthConfiguration() {
+
+        return authConfiguration;
+    }
+
+    public void setAuthConfiguration(AuthConfiguration authConfiguration) {
+
+        this.authConfiguration = authConfiguration;
+    }
+
+    public PrivateKey getPrivateKey() {
+
+        return privateKey;
+    }
+
+    public void setPrivateKey(PrivateKey privateKey) {
+
+        this.privateKey = privateKey;
+    }
+
+    public Certificate getPublicKey() {
+
+        return publicKey;
+    }
+
+    public void setPublicKey(Certificate publicKey) {
+
+        this.publicKey = publicKey;
     }
 }

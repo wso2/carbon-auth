@@ -18,6 +18,8 @@
 
 package org.wso2.carbon.auth.client.registration.dao.impl;
 
+import org.apache.commons.lang3.StringUtils;
+import org.wso2.carbon.auth.client.registration.Constants;
 import org.wso2.carbon.auth.client.registration.dao.ApplicationDAO;
 import org.wso2.carbon.auth.client.registration.exception.ClientRegistrationDAOException;
 import org.wso2.carbon.auth.client.registration.model.Application;
@@ -66,6 +68,7 @@ public class ApplicationDAOImpl implements ApplicationDAO {
                     data.setApplicationAccessTokenExpiryTime(rs.getLong("APP_ACCESS_TOKEN_EXPIRE_TIME"));
                     data.setRefreshTokenExpiryTime(rs.getString("REFRESH_TOKEN_EXPIRE_TIME"));
                     data.setUserAccessTokenExpiryTime(rs.getString("USER_ACCESS_TOKEN_EXPIRE_TIME"));
+                    data.setTokenType(rs.getString("TOKEN_TYPE"));
 
                     return data;
                 }
@@ -74,10 +77,7 @@ public class ApplicationDAOImpl implements ApplicationDAO {
             throw new ClientRegistrationDAOException(
                     String.format("Error occurred while getting client application public info(clientId : %s",
                             clientId), e);
-        } /*catch (PersistenceProcessorException e) {
-            throw new ClientRegistrationDAOException("Error occurred while processing client secret by " +
-                            "EncryptionDecryptionPersistenceProcessor", e);
-        }*/
+        }
 
         return null;
     }
@@ -136,7 +136,7 @@ public class ApplicationDAOImpl implements ApplicationDAO {
     private void addClientInfoInDB(Application application) throws SQLException, ClientRegistrationDAOException {
         final String query = "INSERT INTO AUTH_OAUTH2_APPLICATION " +
                 "(CLIENT_ID, CLIENT_SECRET, AUTHZ_USER, APP_NAME, OAUTH_VERSION," +
-                " REDIRECT_URI, GRANT_TYPES, APP_ACCESS_TOKEN_EXPIRE_TIME) VALUES (?,?,?,?,?,?,?,?) ";
+                " REDIRECT_URI, GRANT_TYPES, APP_ACCESS_TOKEN_EXPIRE_TIME,TOKEN_TYPE) VALUES (?,?,?,?,?,?,?,?,?) ";
 
         try (Connection connection = DAOUtil.getAuthConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
@@ -168,15 +168,16 @@ public class ApplicationDAOImpl implements ApplicationDAO {
                 } else {
                     statement.setNull(8, Types.INTEGER);
                 }
-
+                if (StringUtils.isNotEmpty(application.getTokenType())) {
+                    statement.setString(9, application.getTokenType());
+                } else {
+                    statement.setString(9, Constants.DEFAULT_TOKEN_TYPE);
+                }
                 statement.execute();
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
                 throw e;
-            /* }  catch (PersistenceProcessorException e) {
-                throw new ClientRegistrationDAOException("Error occurred while processing client secret by " +
-                        "EncryptionDecryptionPersistenceProcessor", e); */
             } finally {
                 connection.setAutoCommit(DAOUtil.isAutoCommitAuth());
             }
@@ -186,7 +187,7 @@ public class ApplicationDAOImpl implements ApplicationDAO {
     private void updateClientInfoInDB(Application application, String clientId) throws SQLException {
         String query = "UPDATE AUTH_OAUTH2_APPLICATION SET APP_NAME=?," +
                 " REDIRECT_URI=?, GRANT_TYPES=?, USER_ACCESS_TOKEN_EXPIRE_TIME=?, " +
-                "APP_ACCESS_TOKEN_EXPIRE_TIME=?, REFRESH_TOKEN_EXPIRE_TIME=? " +
+                "APP_ACCESS_TOKEN_EXPIRE_TIME=?, REFRESH_TOKEN_EXPIRE_TIME=?, TOKEN_TYPE=?" +
                 "WHERE CLIENT_ID=?";
 
         try (Connection connection = DAOUtil.getAuthConnection();
@@ -204,7 +205,8 @@ public class ApplicationDAOImpl implements ApplicationDAO {
                     statement.setNull(5, Types.INTEGER);
                 }
                 statement.setString(6, application.getRefreshTokenExpiryTime());
-                statement.setString(7, clientId);
+                statement.setString(7, application.getTokenType());
+                statement.setString(8, clientId);
 
                 statement.execute();
                 connection.commit();

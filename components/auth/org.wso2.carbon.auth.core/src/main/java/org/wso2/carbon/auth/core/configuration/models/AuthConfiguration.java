@@ -37,4 +37,8 @@ public class AuthConfiguration {
         return keyManagerConfigs;
     }
 
+    public void setKeyManagerConfigs(KeyManagerConfiguration keyManagerConfigs) {
+
+        this.keyManagerConfigs = keyManagerConfigs;
+    }
 }

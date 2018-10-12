@@ -30,11 +30,60 @@ public class KeyManagerConfiguration {
     @Element(description = "Access token default validity period")
     private long defaultTokenValidityPeriod = 3600L;
 
+    @Element(description = "KeyStore Location")
+    private String keyStoreLocation = "${carbon.home}/resources/security/wso2carbon.jks";
+    @Element(description = "Keystore password")
+    private String keyStorePassword = "wso2carbon";
+    @Element(description = "Keystore Alias")
+    private String keyStoreAlias = "wso2carbon";
+    @Element(description = "KeyPassword")
+    private String keyPassword = "wso2carbon";
+
     public long getDefaultTokenValidityPeriod() {
         return defaultTokenValidityPeriod;
     }
 
     public void setDefaultTokenValidityPeriod(long defaultTokenValidityPeriod) {
         this.defaultTokenValidityPeriod = defaultTokenValidityPeriod;
+    }
+
+    public String getKeyStoreLocation() {
+
+        return keyStoreLocation;
+    }
+
+    public void setKeyStoreLocation(String keyStoreLocation) {
+
+        this.keyStoreLocation = keyStoreLocation;
+    }
+
+    public String getKeyStorePassword() {
+
+        return keyStorePassword;
+    }
+
+    public void setKeyStorePassword(String keyStorePassword) {
+
+        this.keyStorePassword = keyStorePassword;
+    }
+
+    public String getKeyStoreAlias() {
+
+        return keyStoreAlias;
+    }
+
+    public void setKeyStoreAlias(String keyStoreAlias) {
+
+        this.keyStoreAlias = keyStoreAlias;
+    }
+
+    public String getKeyPassword() {
+
+        return keyPassword;
+    }
+
+    public void setKeyPassword(String keyPassword) {
+
+        this.keyPassword = keyPassword;
     }
 }

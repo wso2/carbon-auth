@@ -139,7 +139,8 @@ public class PassWordGrantHandlerTest {
         tokens = context.getAccessTokenResponse().getTokens();
         Assert.assertNotEquals(tokens.getAccessToken().getValue(), accessTokenData.getAccessToken());
         Assert.assertNotEquals(tokens.getRefreshToken().getValue(), accessTokenData.getRefreshToken());
-
+        Mockito.when(userStoreManager.doAuthenticate(username, username)).thenReturn(false);
+        Assert.assertFalse(passwordGrantHandler.validateGrant(authorization, context, queryParameters));
         //token generate when previous token is expired
         queryParameters.put(OAuthConstants.SCOPE_QUERY_PARAM, scope);
         long currentTime = System.currentTimeMillis();

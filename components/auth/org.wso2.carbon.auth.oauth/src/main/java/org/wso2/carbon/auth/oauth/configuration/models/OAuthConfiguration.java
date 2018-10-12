@@ -20,9 +20,11 @@ package org.wso2.carbon.auth.oauth.configuration.models;
 import com.nimbusds.oauth2.sdk.GrantType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.client.registration.Constants;
 import org.wso2.carbon.auth.oauth.impl.AuthCodeGrantHandlerImpl;
 import org.wso2.carbon.auth.oauth.impl.ClientCredentialsGrantHandlerImpl;
 import org.wso2.carbon.auth.oauth.impl.DefaultTokenGenerator;
+import org.wso2.carbon.auth.oauth.impl.JWTTokenGenerator;
 import org.wso2.carbon.auth.oauth.impl.PasswordGrantHandlerImpl;
 import org.wso2.carbon.auth.oauth.impl.RefreshGrantHandler;
 import org.wso2.carbon.auth.oauth.impl.RoleBasedScopeValidator;
@@ -46,8 +48,9 @@ public class OAuthConfiguration {
     private long defaultTokenValidityPeriod = 3600L;
     @Element(description = "Access token default validity period")
     private long defaultRefreshTokenValidityPeriod = 3600L;
-    @Element(description = "Token generator class implementation")
-    private String tokenGenerator = DefaultTokenGenerator.class.getName();
+    @Element(description = "Token generator class implementations")
+    private Map<String, String> tokenGenerators = populateDefaultTokenGenerators();
+
     @Element(description = "Scope validator class implementation")
     private String scopeValidator = RoleBasedScopeValidator.class.getName();
     @Element(description = "Default grant types")
@@ -58,6 +61,12 @@ public class OAuthConfiguration {
     private List<String> oidcScopes = Arrays.asList("openid", "profile", "email", "address", "phone");
     @Element(description = "File Base Scopes")
     private Map<String, List<String>> fileBaseScopes = new HashMap<>();
+    @Element(description = "Token issuer")
+    private String tokenIssuer = "https://localhost:9443/oauth2/token";
+    @Element(description = "Signature Algorithm")
+    private String signatureAlgorithm = "SHA256withRSA";
+    @Element(description = "Persist AccessToken Alias")
+    private boolean persistAccessTokenAlias = true;
 
     public long getDefaultTokenValidityPeriod() {
 
@@ -89,14 +98,14 @@ public class OAuthConfiguration {
         this.grantTypes = grantTypes;
     }
 
-    public String getTokenGenerator() {
+    public Map<String, String> getTokenGenerators() {
 
-        return tokenGenerator;
+        return tokenGenerators;
     }
 
-    public void setTokenGenerator(String tokenGenerator) {
+    public void setTokenGenerators(Map<String, String> tokenGenerators) {
 
-        this.tokenGenerator = tokenGenerator;
+        this.tokenGenerators = tokenGenerators;
     }
 
     public String getScopeValidator() {
@@ -139,6 +148,36 @@ public class OAuthConfiguration {
         this.scopeValidator = scopeValidator;
     }
 
+    public String getTokenIssuer() {
+
+        return tokenIssuer;
+    }
+
+    public void setTokenIssuer(String tokenIssuer) {
+
+        this.tokenIssuer = tokenIssuer;
+    }
+
+    public String getSignatureAlgorithm() {
+
+        return signatureAlgorithm;
+    }
+
+    public void setSignatureAlgorithm(String signatureAlgorithm) {
+
+        this.signatureAlgorithm = signatureAlgorithm;
+    }
+
+    public boolean isPersistAccessTokenAlias() {
+
+        return persistAccessTokenAlias;
+    }
+
+    public void setPersistAccessTokenAlias(boolean persistAccessTokenAlias) {
+
+        this.persistAccessTokenAlias = persistAccessTokenAlias;
+    }
+
     private Map<String, String> populateDefaultGrantTypes() {
 
         Map<String, String> grantTypes = new HashMap();
@@ -149,5 +188,13 @@ public class OAuthConfiguration {
         grantTypes.put(GrantType.PASSWORD.getValue(), PasswordGrantHandlerImpl.class.getName());
         grantTypes.put(GrantType.CLIENT_CREDENTIALS.getValue(), ClientCredentialsGrantHandlerImpl.class.getName());
         return grantTypes;
+    }
+
+    private Map<String, String> populateDefaultTokenGenerators() {
+
+        Map<String, String> tokenGeneratorMap = new HashMap<>();
+        tokenGeneratorMap.put(Constants.DEFAULT_TOKEN_TYPE, DefaultTokenGenerator.class.getName());
+        tokenGeneratorMap.put(Constants.JWT_TOKEN_TYPE, JWTTokenGenerator.class.getName());
+        return tokenGeneratorMap;
     }
 }

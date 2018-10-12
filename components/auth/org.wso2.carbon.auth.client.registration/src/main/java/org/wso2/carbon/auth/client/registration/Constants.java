@@ -26,6 +26,8 @@ package org.wso2.carbon.auth.client.registration;
 public class Constants {
 
     public static final String CALLBACK_URL_REGEXP_PREFIX = "regexp=";
+    public static final String DEFAULT_TOKEN_TYPE = "Default";
+    public static final String JWT_TOKEN_TYPE = "JWT";
 
     /**
      * Constants related to grant type

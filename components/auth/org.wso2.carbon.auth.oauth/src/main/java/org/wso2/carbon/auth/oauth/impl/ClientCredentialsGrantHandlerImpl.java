@@ -94,26 +94,32 @@ public class ClientCredentialsGrantHandlerImpl implements GrantHandler {
     private void processClientCredentialsGrantRequest(AccessTokenContext context) throws AuthException {
 
         log.debug("Calling processClientCredentialsGrantRequest");
-
-        String clientId = (String) context.getParams().get(OAuthConstants.CLIENT_ID);
-        String appOwner = (String) context.getParams().get(OAuthConstants.APPLICATION_OWNER);
-        String grantType = (String) context.getParams().get(OAuthConstants.GRANT_TYPE);
         Scope scope = (Scope) context.getParams().get(OAuthConstants.FILTERED_SCOPES);
+        String user = (String) context.getParams().get(OAuthConstants.AUTH_USER);
+        String clientId = (String) context.getParams().get(OAuthConstants.CLIENT_ID);
+        String grantType = (String) context.getParams().get(OAuthConstants.GRANT_TYPE);
+        String pseudoName = userNameMapper.getLoggedInPseudoNameFromUserID(user);
 
-        Optional<AccessTokenResponse> tokenResponse = checkTokens(oauthDAO, appOwner, grantType, clientId,
-                scope);
-        if (tokenResponse.isPresent()) {
-            AccessTokenResponse accessTokenResponse = tokenResponse.get();
-            context.setAccessTokenResponse(accessTokenResponse);
-            context.setSuccessful(true);
+        boolean generateTokenPerRequest = TokenIssuer.renewAccessTokenPerRequest(context);
+        if (!context.isSuccessful()) {
             return;
+        }
+        if (!generateTokenPerRequest) {
+            Optional<AccessTokenResponse> tokenResponse = checkTokens(oauthDAO, pseudoName, grantType, clientId,
+                    scope);
+            if (tokenResponse.isPresent()) {
+                AccessTokenResponse accessTokenResponse = tokenResponse.get();
+                context.setAccessTokenResponse(accessTokenResponse);
+                context.setSuccessful(true);
+                return;
+            }
         }
 
         TokenIssuer.generateAccessToken(scope, context);
         AccessTokenData accessTokenData = TokenDataUtil.generateTokenData(context);
         accessTokenData.setClientId(clientId);
-        accessTokenData.setAuthUser(appOwner);
+        accessTokenData.setAuthUser(pseudoName);
         oauthDAO.addAccessTokenInfo(accessTokenData);
-        accessTokenData.setAuthUser(userNameMapper.getLoggedInUserIDFromPseudoName(accessTokenData.getAuthUser()));
+        accessTokenData.setAuthUser(user);
     }
 }

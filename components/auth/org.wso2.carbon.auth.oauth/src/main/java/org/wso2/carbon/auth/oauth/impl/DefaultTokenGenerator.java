@@ -37,10 +37,16 @@ public class DefaultTokenGenerator implements TokenGenerator {
 
     @Override
     public void generateAccessToken(AccessTokenContext context) {
+
         Scope scope = (Scope) context.getParams().get(OAuthConstants.SCOPES);
         long defaultValidityPeriod = (long) context.getParams().get(OAuthConstants.VALIDITY_PERIOD);
-
-        BearerAccessToken accessToken = new BearerAccessToken(defaultValidityPeriod, scope);
+        Object generatedAccessToken = context.getParams().get(OAuthConstants.TOKEN);
+        BearerAccessToken accessToken;
+        if (generatedAccessToken != null) {
+            accessToken = new BearerAccessToken((String) generatedAccessToken, defaultValidityPeriod, scope);
+        } else {
+            accessToken = new BearerAccessToken(defaultValidityPeriod, scope);
+        }
         String grantTypeValue = (String) context.getParams().get(OAuthConstants.GRANT_TYPE);
         RefreshToken refreshToken = null;
         if (!GrantType.CLIENT_CREDENTIALS.getValue().equals(grantTypeValue)) {
