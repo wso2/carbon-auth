@@ -18,54 +18,56 @@
 
 package org.wso2.carbon.auth.core;
 
+import com.zaxxer.hikari.HikariDataSource;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wso2.carbon.auth.core.datasource.DAOUtil;
-import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
+import org.wso2.carbon.auth.core.datasource.DataSource;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class AuthCoreDAOExceptionTest extends AuthDAOIntegrationTestBase {
+public class AuthCoreDAOExceptionTest {
 
     private static final Logger log = LoggerFactory.getLogger(AuthCoreDAOExceptionTest.class);
 
-    public AuthCoreDAOExceptionTest() {
-    }
-
-    @BeforeClass
+    @BeforeMethod
     public void init() throws Exception {
-        super.init();
-        log.info("Data sources initialized");
 
-        super.cleanup();
-        log.info("Cleaned existing databases");
+        DataSource dataSource = Mockito.mock(DataSource.class);
+        Connection connection = Mockito.mock(Connection.class);
+        Mockito.when(dataSource.getConnection()).thenReturn(connection);
+        HikariDataSource hikariDataSource = Mockito.mock(HikariDataSource.class);
+        Mockito.when(dataSource.getDatasource()).thenReturn(hikariDataSource);
+        Statement preparedStatement = Mockito.mock(Statement.class);
+        Mockito.when(connection.createStatement()).thenReturn(preparedStatement);
+        Mockito.when(preparedStatement.executeQuery(Mockito.anyString())).thenThrow(new SQLException("Table " +
+                "\"AUTH_OAUTH2_CLIENTS\" not found"));
+        Field field = DAOUtil.class.getDeclaredField("authDataSource");
+        field.setAccessible(true);
+        field.set(DAOUtil.class, dataSource);
+        log.info("Data sources initialized");
     }
 
     @Test
     public void testDAOException() throws Exception {
-        setupWithoutTables();
+
         final String sql = "SELECT * FROM AUTH_OAUTH2_CLIENTS";
         try (Connection connection = DAOUtil.getAuthConnection();
-                Statement statement = connection.createStatement();
-                ResultSet ignored = statement.executeQuery(sql)) {
+             Statement statement = connection.createStatement();
+             ResultSet ignored = statement.executeQuery(sql)) {
             //cannot reach this statement
             Assert.fail();
         } catch (SQLException e) {
             Assert.assertTrue(e.getMessage().contains("Table \"AUTH_OAUTH2_CLIENTS\" not found"));
             log.debug("Expected exception while executing query", e);
         }
-    }
-
-    @AfterClass
-    public void cleanup() throws Exception {
-        super.cleanup();
-        log.info("Cleaned databases");
     }
 }

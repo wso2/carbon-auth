@@ -26,6 +26,9 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.core.configuration.models.AuthConfiguration;
+import org.wso2.carbon.auth.core.exception.AuthException;
+import org.wso2.carbon.auth.oauth.OAuthUtils;
 import org.wso2.carbon.auth.oauth.configuration.models.OAuthConfiguration;
 import org.wso2.carbon.auth.oauth.constants.JDBCAuthConstants;
 import org.wso2.carbon.config.ConfigurationException;
@@ -115,9 +118,11 @@ public class ConfigurationActivator {
     protected void activate(BundleContext bundleContext) {
 
         OAuthConfiguration config = null;
+        AuthConfiguration authConfiguration = null;
         try {
             if (configProvider != null) {
                 config = configProvider.getConfigurationObject(OAuthConfiguration.class);
+                authConfiguration = configProvider.getConfigurationObject(AuthConfiguration.class);
             } else {
                 log.error("Configuration provider is null");
             }
@@ -134,8 +139,14 @@ public class ConfigurationActivator {
                 config.getFileBaseScopes().put(scopeEntry.getKey(), scopeEntry.getValue());
             }
         }
-        config.setFileBaseScopes(populateDefaultFileBaseScopes());
         ServiceReferenceHolder.getInstance().setConfig(config);
+        ServiceReferenceHolder.getInstance().setAuthConfiguration(authConfiguration);
+        try {
+            ServiceReferenceHolder.getInstance().setPrivateKey(OAuthUtils.extractPrivateKeyFromCertificate());
+            ServiceReferenceHolder.getInstance().setPublicKey(OAuthUtils.extractPublicKeyFromCertificate());
+        } catch (AuthException e) {
+            log.error("Error while retrieving certificates", e);
+        }
 
     }
 

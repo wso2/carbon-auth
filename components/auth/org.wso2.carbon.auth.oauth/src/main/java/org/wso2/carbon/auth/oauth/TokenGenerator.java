@@ -23,10 +23,17 @@ import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
  * Token generator interface
  */
 public interface TokenGenerator {
+
     /**
      * Generate access token
      *
      * @param context required data of token request
      */
     void generateAccessToken(AccessTokenContext context);
+
+    default boolean renewAccessTokenPerRequest() {
+
+        return false;
+    }
+
 }

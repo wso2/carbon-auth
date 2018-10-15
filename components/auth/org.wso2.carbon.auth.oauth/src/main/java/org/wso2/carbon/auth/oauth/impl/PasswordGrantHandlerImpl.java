@@ -57,7 +57,8 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
 
     @Override
     public void init(UserNameMapper userNameMapper, OAuthDAO oauthDAO, UserStoreManager userStoreManager,
-            ApplicationDAO applicationDAO) {
+                     ApplicationDAO applicationDAO) {
+
         this.userNameMapper = userNameMapper;
         this.oauthDAO = oauthDAO;
         this.userStoreManager = userStoreManager;
@@ -97,6 +98,7 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
 
     private void processPasswordGrantRequest(AccessTokenContext context)
             throws AuthException {
+
         log.debug("calling processPasswordGrantRequest");
         Scope scope = (Scope) context.getParams().get(OAuthConstants.FILTERED_SCOPES);
 
@@ -104,12 +106,18 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
         String clientId = (String) context.getParams().get(OAuthConstants.CLIENT_ID);
         String grantType = (String) context.getParams().get(OAuthConstants.GRANT_TYPE);
         String pseudoName = userNameMapper.getLoggedInPseudoNameFromUserID(user);
-        Optional<AccessTokenResponse> tokenResponse = checkTokens(oauthDAO, pseudoName, grantType, clientId, scope);
-        if (tokenResponse.isPresent()) {
-            AccessTokenResponse accessTokenResponse = tokenResponse.get();
-            context.setAccessTokenResponse(accessTokenResponse);
-            context.setSuccessful(true);
+        boolean generateTokenPerRequest = TokenIssuer.renewAccessTokenPerRequest(context);
+        if (!context.isSuccessful()) {
             return;
+        }
+        if (!generateTokenPerRequest) {
+            Optional<AccessTokenResponse> tokenResponse = checkTokens(oauthDAO, pseudoName, grantType, clientId, scope);
+            if (tokenResponse.isPresent()) {
+                AccessTokenResponse accessTokenResponse = tokenResponse.get();
+                context.setAccessTokenResponse(accessTokenResponse);
+                context.setSuccessful(true);
+                return;
+            }
         }
 
         TokenIssuer.generateAccessToken(scope, context);
@@ -124,5 +132,5 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
         String username = request.getUsername();
         Secret password = request.getPassword();
         return userStoreManager.doAuthenticate(username, password.getValue());
-}
+    }
 }

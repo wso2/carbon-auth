@@ -18,44 +18,46 @@
 
 package org.wso2.carbon.auth.client.registration.impl;
 
+import com.zaxxer.hikari.HikariDataSource;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wso2.carbon.auth.client.registration.ClientRegistrationHandler;
 import org.wso2.carbon.auth.client.registration.SampleTestObjectCreator;
 import org.wso2.carbon.auth.client.registration.dto.ClientRegistrationResponse;
 import org.wso2.carbon.auth.client.registration.model.Application;
-import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
+import org.wso2.carbon.auth.core.datasource.DAOUtil;
+import org.wso2.carbon.auth.core.datasource.DataSource;
 
-public class ClientRegistrationHandlerImplExceptionTest extends AuthDAOIntegrationTestBase {
+import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class ClientRegistrationHandlerImplExceptionTest {
 
     private static final Logger log = LoggerFactory.getLogger(ClientRegistrationHandlerImplExceptionTest.class);
     private static final String DUMMY_CLIENT_ID = "some_dummy_client_id";
-    
-    public ClientRegistrationHandlerImplExceptionTest() {
-    }
-
-    @BeforeClass
-    public void init() throws Exception {
-        super.init();
-        log.info("Data sources initialized");
-    }
 
     @BeforeMethod
-    public void setupWithoutTables() throws Exception {
-        //to make every sql execution throws exception
-        super.setupWithoutTables();
-        log.info("Created databases without any tables");
-    }
+    public void init() throws Exception {
 
-    @AfterClass
-    public void cleanup() throws Exception {
-        super.cleanup();
-        log.info("Cleaned databases");
+        DataSource dataSource = Mockito.mock(DataSource.class);
+        Connection connection = Mockito.mock(Connection.class);
+        Mockito.when(dataSource.getConnection()).thenReturn(connection);
+        HikariDataSource hikariDataSource = Mockito.mock(HikariDataSource.class);
+        Mockito.when(dataSource.getDatasource()).thenReturn(hikariDataSource);
+        PreparedStatement preparedStatement = Mockito.mock(PreparedStatement.class);
+        Mockito.when(connection.prepareStatement(Mockito.anyString())).thenReturn(preparedStatement);
+        Mockito.when(preparedStatement.execute()).thenThrow(SQLException.class);
+        Mockito.when(preparedStatement.executeQuery()).thenThrow(SQLException.class);
+        Field field = DAOUtil.class.getDeclaredField("authDataSource");
+        field.setAccessible(true);
+        field.set(DAOUtil.class, dataSource);
+        log.info("Data sources initialized");
     }
 
     @Test

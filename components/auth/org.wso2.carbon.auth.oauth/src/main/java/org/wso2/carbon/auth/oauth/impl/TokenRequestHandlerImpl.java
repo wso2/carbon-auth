@@ -126,7 +126,7 @@ public class TokenRequestHandlerImpl implements TokenRequestHandler {
                     authConfigs = ServiceReferenceHolder.getInstance().getAuthConfigurations();
                     defaultValidityPeriod = authConfigs.getDefaultTokenValidityPeriod();
                 }
-
+                context.getParams().put(OAuthConstants.TOKEN_TYPE, application.getTokenType());
                 context.getParams().put(OAuthConstants.CLIENT_ID, clientId);
                 context.getParams().put(OAuthConstants.APPLICATION_OWNER, application.getAuthUser());
                 context.getParams().put(OAuthConstants.GRANT_TYPE, grantTypeValue);

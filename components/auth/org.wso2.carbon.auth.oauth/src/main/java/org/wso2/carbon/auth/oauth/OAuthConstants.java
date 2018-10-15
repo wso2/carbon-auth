@@ -67,4 +67,7 @@ public class OAuthConstants {
     public static final String SCOPES = "scopes";
     public static final String GRANT_REQUEST = "GRANT_REQUEST";
     public static final String FILTERED_SCOPES = "FILTERED_SCOPES";
+    public static final String TOKEN_TYPE = "TOKEN_TYPE";
+    public static final String TOKEN = "TOKEN";
+    public static final String TOKEN_ALIAS = "TOKEN_ALIAS";
 }

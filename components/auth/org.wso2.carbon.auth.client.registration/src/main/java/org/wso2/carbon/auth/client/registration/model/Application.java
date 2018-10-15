@@ -35,6 +35,7 @@ public class Application {
     private String userAccessTokenExpiryTime;
     private Long applicationAccessTokenExpiryTime;
     private String refreshTokenExpiryTime;
+    private String tokenType;
 
     public String getClientName() {
         return clientName;
@@ -156,6 +157,7 @@ public class Application {
                 ", userAccessTokenExpiryTime='" + userAccessTokenExpiryTime + '\'' +
                 ", applicationAccessTokenExpiryTime='" + applicationAccessTokenExpiryTime + '\'' +
                 ", refreshTokenExpiryTime='" + refreshTokenExpiryTime + '\'' +
+                ",tokenType='" + tokenType + '\'' +
                 '}';
     }
 
@@ -165,5 +167,13 @@ public class Application {
 
     public void setAuthUser(String authUser) {
         this.authUser = authUser;
+    }
+
+    public void setTokenType(String tokenType) {
+        this.tokenType = tokenType;
+    }
+
+    public String getTokenType() {
+        return tokenType;
     }
 }

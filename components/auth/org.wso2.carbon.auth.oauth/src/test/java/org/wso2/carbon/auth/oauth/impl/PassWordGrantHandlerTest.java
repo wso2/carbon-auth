@@ -32,7 +32,7 @@ import org.wso2.carbon.auth.core.api.UserNameMapper;
 import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.oauth.ClientLookup;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
-import org.wso2.carbon.auth.oauth.Utils;
+import org.wso2.carbon.auth.oauth.OAuthUtils;
 import org.wso2.carbon.auth.oauth.configuration.models.OAuthConfiguration;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
@@ -112,7 +112,7 @@ public class PassWordGrantHandlerTest {
         accessTokenData.setTokenState(TokenState.ACTIVE.toString());
 
         //token generate when previous token is not expired
-        String hashedscopes = Utils.hashScopes(new Scope(scope));
+        String hashedscopes = OAuthUtils.hashScopes(new Scope(scope));
         String uid = UUID.randomUUID().toString();
         Mockito.when(userNameMapper.getLoggedInPseudoNameFromUserID(username)).thenReturn(uid);
         Mockito.when(oauthDAO.getTokenInfo(uid, GrantType.PASSWORD.getValue(), clientId, hashedscopes))
@@ -139,7 +139,8 @@ public class PassWordGrantHandlerTest {
         tokens = context.getAccessTokenResponse().getTokens();
         Assert.assertNotEquals(tokens.getAccessToken().getValue(), accessTokenData.getAccessToken());
         Assert.assertNotEquals(tokens.getRefreshToken().getValue(), accessTokenData.getRefreshToken());
-
+        Mockito.when(userStoreManager.doAuthenticate(username, username)).thenReturn(false);
+        Assert.assertFalse(passwordGrantHandler.validateGrant(authorization, context, queryParameters));
         //token generate when previous token is expired
         queryParameters.put(OAuthConstants.SCOPE_QUERY_PARAM, scope);
         long currentTime = System.currentTimeMillis();

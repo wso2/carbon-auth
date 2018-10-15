@@ -223,6 +223,8 @@ definitions:
       token_expire_time:
         type: integer
         format: int64
+      token_type_extension:
+        type: string
 
 #-----------------------------------------------------
 # The Application Update Request Object
@@ -243,6 +245,8 @@ definitions:
       token_expire_time:
         type: integer
         format: int64
+      token_type_extension:
+        type: string
 #-----------------------------------------------------
 # The OAuth2 Application Object
 #-----------------------------------------------------
@@ -268,6 +272,8 @@ definitions:
       token_expire_time:
         type: integer
         format: int64
+      token_type_extension:
+        type: string
 #-----------------------------------------------------
 # The Error Response object
 #-----------------------------------------------------
