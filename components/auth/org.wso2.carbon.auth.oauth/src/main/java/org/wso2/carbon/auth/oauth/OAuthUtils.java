@@ -43,9 +43,9 @@ import java.util.List;
 /**
  * utils function related to oauth component
  */
-public class Utils {
+public class OAuthUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(Utils.class);
+    private static final Logger log = LoggerFactory.getLogger(OAuthUtils.class);
 
     public static boolean isAccessTokenExpired(AccessTokenDTO accessTokenDTO) {
         // check whether the grant is expired

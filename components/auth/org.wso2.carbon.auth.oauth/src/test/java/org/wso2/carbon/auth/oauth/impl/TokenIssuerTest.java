@@ -34,7 +34,6 @@ public class TokenIssuerTest {
 
     @Test
     public void testGenerateToken() {
-
         OAuthConfiguration oAuthConfiguration = new OAuthConfiguration();
         ServiceReferenceHolder.getInstance().setConfig(oAuthConfiguration);
         AccessTokenContext context = new AccessTokenContext();
@@ -45,7 +44,6 @@ public class TokenIssuerTest {
 
     @Test
     public void testRenewAccessTokenPerRequest() {
-
         OAuthConfiguration oAuthConfiguration = new OAuthConfiguration();
         ServiceReferenceHolder.getInstance().setConfig(oAuthConfiguration);
         AccessTokenContext context = new AccessTokenContext();
@@ -56,7 +54,6 @@ public class TokenIssuerTest {
 
     @Test
     public void testRenewAccessTokenPerRequestWithDifferentTokenType() {
-
         OAuthConfiguration oAuthConfiguration = new OAuthConfiguration();
         oAuthConfiguration.getTokenGenerators().put("abc", DummyTokenGenerator.class.getName());
         ServiceReferenceHolder.getInstance().setConfig(oAuthConfiguration);
@@ -69,7 +66,6 @@ public class TokenIssuerTest {
 
     @Test
     public void testRenewAccessTokenInstantiationException() {
-
         OAuthConfiguration oAuthConfiguration = new OAuthConfiguration();
         oAuthConfiguration.getTokenGenerators().put("abc", Dummy2TokenGenerator.class.getName());
         ServiceReferenceHolder.getInstance().setConfig(oAuthConfiguration);
@@ -84,7 +80,6 @@ public class TokenIssuerTest {
 
     @Test
     public void testRenewAccessTokenPerRequestNonExistingTokenGenerationImplementation() {
-
         OAuthConfiguration oAuthConfiguration = new OAuthConfiguration();
         oAuthConfiguration.getTokenGenerators().put("abc", "aa.aa.aa");
         ServiceReferenceHolder.getInstance().setConfig(oAuthConfiguration);
@@ -98,7 +93,6 @@ public class TokenIssuerTest {
 
     @Test
     public void testRenewAccessTokenPerRequestWithNonExistingTokenType() {
-
         OAuthConfiguration oAuthConfiguration = new OAuthConfiguration();
         ServiceReferenceHolder.getInstance().setConfig(oAuthConfiguration);
         AccessTokenContext context = new AccessTokenContext();
@@ -111,7 +105,6 @@ public class TokenIssuerTest {
 
     @Test
     public void testGenerateTokenWithNonExistingTokenType() {
-
         OAuthConfiguration oAuthConfiguration = new OAuthConfiguration();
         ServiceReferenceHolder.getInstance().setConfig(oAuthConfiguration);
         AccessTokenContext context = new AccessTokenContext();
@@ -125,7 +118,6 @@ public class TokenIssuerTest {
 
     @Test
     public void testGenerateTokenWithNonExistingImplementation() {
-
         OAuthConfiguration oAuthConfiguration = new OAuthConfiguration();
         oAuthConfiguration.getTokenGenerators().replace(Constants.DEFAULT_TOKEN_TYPE, "org.wso2.carbon.auth" +
                 ".ClientImpl");
@@ -142,12 +134,10 @@ public class TokenIssuerTest {
 
         @Override
         public void generateAccessToken(AccessTokenContext context) {
-
         }
 
         @Override
         public boolean renewAccessTokenPerRequest() {
-
             return true;
         }
     }
@@ -157,18 +147,15 @@ public class TokenIssuerTest {
         private String a;
 
         public Dummy2TokenGenerator(String a) {
-
             this.a = a;
         }
 
         @Override
         public void generateAccessToken(AccessTokenContext context) {
-
         }
 
         @Override
         public boolean renewAccessTokenPerRequest() {
-
             return true;
         }
     }

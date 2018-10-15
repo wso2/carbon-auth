@@ -48,42 +48,34 @@ public class KeyManagerConfiguration {
     }
 
     public String getKeyStoreLocation() {
-
         return keyStoreLocation;
     }
 
     public void setKeyStoreLocation(String keyStoreLocation) {
-
         this.keyStoreLocation = keyStoreLocation;
     }
 
     public String getKeyStorePassword() {
-
         return keyStorePassword;
     }
 
     public void setKeyStorePassword(String keyStorePassword) {
-
         this.keyStorePassword = keyStorePassword;
     }
 
     public String getKeyStoreAlias() {
-
         return keyStoreAlias;
     }
 
     public void setKeyStoreAlias(String keyStoreAlias) {
-
         this.keyStoreAlias = keyStoreAlias;
     }
 
     public String getKeyPassword() {
-
         return keyPassword;
     }
 
     public void setKeyPassword(String keyPassword) {
-
         this.keyPassword = keyPassword;
     }
 }

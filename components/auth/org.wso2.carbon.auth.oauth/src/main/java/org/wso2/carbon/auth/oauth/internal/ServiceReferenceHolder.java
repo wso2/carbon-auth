@@ -44,7 +44,8 @@ public class ServiceReferenceHolder {
     private PrivateKey privateKey;
     private Certificate publicKey;
 
-    private ServiceReferenceHolder() {}
+    private ServiceReferenceHolder() {
+    }
 
     public static ServiceReferenceHolder getInstance() {
         return instance;
@@ -70,11 +71,11 @@ public class ServiceReferenceHolder {
     }
 
     /**
-    * This method is to get configuration map of a given namespace
-    *
-    * @param namespace namespace defined in deployment.yaml
-    * @return resource path to scope mapping
-    */
+     * This method is to get configuration map of a given namespace
+     *
+     * @param namespace namespace defined in deployment.yaml
+     * @return resource path to scope mapping
+     */
     public Map<String, String> getRestAPIConfigurationMap(String namespace) {
         try {
             if (configProvider != null) {
@@ -84,7 +85,7 @@ public class ServiceReferenceHolder {
             }
         } catch (ConfigurationException e) {
             log.error("Error while reading the configurations map of namespace : " +
-                    "org.wso2.carbon.auth.core.internal.AuthConfiguration", e);
+                              "org.wso2.carbon.auth.core.internal.AuthConfiguration", e);
         }
         return null;
     }
@@ -144,22 +145,18 @@ public class ServiceReferenceHolder {
     }
 
     public PrivateKey getPrivateKey() {
-
         return privateKey;
     }
 
     public void setPrivateKey(PrivateKey privateKey) {
-
         this.privateKey = privateKey;
     }
 
     public Certificate getPublicKey() {
-
         return publicKey;
     }
 
     public void setPublicKey(Certificate publicKey) {
-
         this.publicKey = publicKey;
     }
 }

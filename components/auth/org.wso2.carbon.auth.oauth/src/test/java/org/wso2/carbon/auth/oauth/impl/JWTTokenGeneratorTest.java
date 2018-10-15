@@ -33,8 +33,8 @@ import org.wso2.carbon.auth.core.configuration.models.AuthConfiguration;
 import org.wso2.carbon.auth.core.configuration.models.KeyManagerConfiguration;
 import org.wso2.carbon.auth.core.exception.AuthException;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
+import org.wso2.carbon.auth.oauth.OAuthUtils;
 import org.wso2.carbon.auth.oauth.TokenGenerator;
-import org.wso2.carbon.auth.oauth.Utils;
 import org.wso2.carbon.auth.oauth.configuration.models.OAuthConfiguration;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.internal.ServiceReferenceHolder;
@@ -78,12 +78,12 @@ public class JWTTokenGeneratorTest {
         ServiceReferenceHolder.getInstance().setConfig(oAuthConfiguration);
         KeyManagerConfiguration keyManagerConfiguration = new KeyManagerConfiguration();
         keyManagerConfiguration.setKeyStoreLocation("src" + File.separator + "test" + File.separator + "resources" +
-                File.separator + "wso2carbon.jks");
+                                                            File.separator + "wso2carbon.jks");
         AuthConfiguration authConfiguration = new AuthConfiguration();
         authConfiguration.setKeyManagerConfigs(keyManagerConfiguration);
         ServiceReferenceHolder.getInstance().setAuthConfiguration(authConfiguration);
-        ServiceReferenceHolder.getInstance().setPrivateKey(Utils.extractPrivateKeyFromCertificate());
-        ServiceReferenceHolder.getInstance().setPublicKey(Utils.extractPublicKeyFromCertificate());
+        ServiceReferenceHolder.getInstance().setPrivateKey(OAuthUtils.extractPrivateKeyFromCertificate());
+        ServiceReferenceHolder.getInstance().setPublicKey(OAuthUtils.extractPublicKeyFromCertificate());
         TokenGenerator tokenGenerator = new JWTTokenGenerator();
         AccessTokenContext accessTokenContext = new AccessTokenContext();
         accessTokenContext.getParams().put(OAuthConstants.VALIDITY_PERIOD, 3600L);

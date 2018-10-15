@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.configuration.models.AuthConfiguration;
 import org.wso2.carbon.auth.core.exception.AuthException;
+import org.wso2.carbon.auth.oauth.OAuthUtils;
 import org.wso2.carbon.auth.oauth.configuration.models.OAuthConfiguration;
 import org.wso2.carbon.auth.oauth.constants.JDBCAuthConstants;
 import org.wso2.carbon.config.ConfigurationException;
@@ -141,10 +142,8 @@ public class ConfigurationActivator {
         ServiceReferenceHolder.getInstance().setConfig(config);
         ServiceReferenceHolder.getInstance().setAuthConfiguration(authConfiguration);
         try {
-            ServiceReferenceHolder.getInstance().setPrivateKey(org.wso2.carbon.auth.oauth.Utils
-                    .extractPrivateKeyFromCertificate());
-            ServiceReferenceHolder.getInstance().setPublicKey(org.wso2.carbon.auth.oauth.Utils
-                    .extractPublicKeyFromCertificate());
+            ServiceReferenceHolder.getInstance().setPrivateKey(OAuthUtils.extractPrivateKeyFromCertificate());
+            ServiceReferenceHolder.getInstance().setPublicKey(OAuthUtils.extractPublicKeyFromCertificate());
         } catch (AuthException e) {
             log.error("Error while retrieving certificates", e);
         }

@@ -170,12 +170,10 @@ public class Application {
     }
 
     public void setTokenType(String tokenType) {
-
         this.tokenType = tokenType;
     }
 
     public String getTokenType() {
-
         return tokenType;
     }
 }

@@ -177,10 +177,11 @@ public class ApplicationDTO   {
     return this;
   }
 
-   /**
+  /**
    * Get tokenTypeExtension
+   *
    * @return tokenTypeExtension
-  **/
+   **/
   @ApiModelProperty(value = "")
   public String getTokenTypeExtension() {
     return tokenTypeExtension;

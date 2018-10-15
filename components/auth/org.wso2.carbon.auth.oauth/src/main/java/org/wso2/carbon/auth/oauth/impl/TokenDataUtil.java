@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.client.registration.Constants;
 import org.wso2.carbon.auth.oauth.OAuthConstants;
-import org.wso2.carbon.auth.oauth.Utils;
+import org.wso2.carbon.auth.oauth.OAuthUtils;
 import org.wso2.carbon.auth.oauth.configuration.models.OAuthConfiguration;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenContext;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
@@ -17,11 +17,9 @@ import org.wso2.carbon.auth.oauth.internal.ServiceReferenceHolder;
 import java.time.Instant;
 
 class TokenDataUtil {
-
     private static final Logger log = LoggerFactory.getLogger(TokenDataUtil.class);
 
     static AccessTokenData generateTokenData(AccessTokenContext context) {
-
         OAuthConfiguration oAuthConfiguration = ServiceReferenceHolder.getInstance().getAuthConfigurations();
         String tokenType = (String) context.getParams().getOrDefault(OAuthConstants.TOKEN_TYPE, Constants
                 .DEFAULT_TOKEN_TYPE);
@@ -42,7 +40,7 @@ class TokenDataUtil {
             accessTokenData.setRefreshToken(tokens.getRefreshToken().getValue());
         }
         accessTokenData.setScopes(tokens.getAccessToken().getScope().toStringList());
-        accessTokenData.setHashedScopes(Utils.hashScopes(tokens.getAccessToken().getScope()));
+        accessTokenData.setHashedScopes(OAuthUtils.hashScopes(tokens.getAccessToken().getScope()));
 
         Instant timestamp = Instant.now();
         long defaultRefreshTokenValidityPeriod = ServiceReferenceHolder.getInstance().getAuthConfigurations()

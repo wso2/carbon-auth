@@ -31,7 +31,7 @@ import org.wso2.carbon.auth.client.registration.dao.impl.DAOFactory;
 import org.wso2.carbon.auth.client.registration.exception.ClientRegistrationDAOException;
 import org.wso2.carbon.auth.client.registration.model.Application;
 import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
-import org.wso2.carbon.auth.oauth.Utils;
+import org.wso2.carbon.auth.oauth.OAuthUtils;
 import org.wso2.carbon.auth.oauth.dao.OAuthDAO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenDTO;
 import org.wso2.carbon.auth.oauth.dto.AccessTokenData;
@@ -109,7 +109,7 @@ public class OAuthDAOImplIntegrationTest extends AuthDAOIntegrationTestBase {
         accessTokenData.setAccessTokenCreatedTime(Instant.now());
         accessTokenData.setClientId(application.getClientId());
         accessTokenData.setGrantType("password");
-        accessTokenData.setHashedScopes(Utils.hashScopes(new Scope("read")));
+        accessTokenData.setHashedScopes(OAuthUtils.hashScopes(new Scope("read")));
         accessTokenData.setRefreshToken(UUID.randomUUID().toString());
         accessTokenData.setRefreshTokenCreatedTime(Instant.now());
         accessTokenData.setRefreshTokenValidityPeriod(15000L);
@@ -141,7 +141,7 @@ public class OAuthDAOImplIntegrationTest extends AuthDAOIntegrationTestBase {
         accessTokenData.setAccessTokenCreatedTime(Instant.now());
         accessTokenData.setClientId(application.getClientId());
         accessTokenData.setGrantType("password");
-        accessTokenData.setHashedScopes(Utils.hashScopes(new Scope("read")));
+        accessTokenData.setHashedScopes(OAuthUtils.hashScopes(new Scope("read")));
         accessTokenData.setRefreshToken(UUID.randomUUID().toString());
         accessTokenData.setRefreshTokenCreatedTime(Instant.now());
         accessTokenData.setRefreshTokenValidityPeriod(15000L);
@@ -174,7 +174,7 @@ public class OAuthDAOImplIntegrationTest extends AuthDAOIntegrationTestBase {
         accessTokenData.setAccessTokenCreatedTime(Instant.now());
         accessTokenData.setClientId(application.getClientId());
         accessTokenData.setGrantType("password");
-        accessTokenData.setHashedScopes(Utils.hashScopes(new Scope("read")));
+        accessTokenData.setHashedScopes(OAuthUtils.hashScopes(new Scope("read")));
         accessTokenData.setRefreshToken(UUID.randomUUID().toString());
         accessTokenData.setRefreshTokenCreatedTime(Instant.now());
         accessTokenData.setRefreshTokenValidityPeriod(15000L);

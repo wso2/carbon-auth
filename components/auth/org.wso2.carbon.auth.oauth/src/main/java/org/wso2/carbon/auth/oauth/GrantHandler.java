@@ -142,7 +142,7 @@ public interface GrantHandler {
                                                       String clientId, Scope scope) {
 
         AccessTokenDTO accessTokenDTO;
-        String hashedscopes = Utils.hashScopes(scope);
+        String hashedscopes = OAuthUtils.hashScopes(scope);
         try {
             accessTokenDTO = oauthDAO.getTokenInfo(authUser, grantType, clientId, hashedscopes);
         } catch (OAuthDAOException e) {
@@ -153,7 +153,7 @@ public interface GrantHandler {
         if (accessTokenDTO == null) {
             return Optional.empty();
         }
-        boolean isExpired = Utils.isAccessTokenExpired(accessTokenDTO);
+        boolean isExpired = OAuthUtils.isAccessTokenExpired(accessTokenDTO);
         if (isExpired) {
             LOG.info("Existing token is already expired");
             return Optional.empty();

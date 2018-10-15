@@ -46,7 +46,6 @@ import java.util.Optional;
  * Password grant handler
  */
 public class PasswordGrantHandlerImpl implements GrantHandler {
-
     private static final Logger log = LoggerFactory.getLogger(PasswordGrantHandlerImpl.class);
     private OAuthDAO oauthDAO;
     private ClientLookup clientLookup;
@@ -54,7 +53,6 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
     private UserStoreManager userStoreManager;
 
     PasswordGrantHandlerImpl() {
-
     }
 
     @Override
@@ -94,7 +92,6 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
     @Override
     public void process(String authorization, AccessTokenContext context, Map<String, String> queryParameters)
             throws AuthException {
-
         log.debug("Calling PasswordGrantHandlerImpl:process");
         processPasswordGrantRequest(context);
     }
@@ -132,7 +129,6 @@ public class PasswordGrantHandlerImpl implements GrantHandler {
     }
 
     private boolean validateGrant(ResourceOwnerPasswordCredentialsGrant request) throws UserStoreException {
-
         String username = request.getUsername();
         Secret password = request.getPassword();
         return userStoreManager.doAuthenticate(username, password.getValue());
