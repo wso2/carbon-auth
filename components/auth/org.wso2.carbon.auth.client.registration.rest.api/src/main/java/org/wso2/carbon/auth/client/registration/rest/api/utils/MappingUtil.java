@@ -52,6 +52,7 @@ public class MappingUtil {
         applicationDTO.setRedirectUris(extractCallBackUrlFromRegex(application.getCallBackUrl()));
         applicationDTO.setTokenExpireTime(application.getApplicationAccessTokenExpiryTime());
         applicationDTO.setTokenTypeExtension(application.getTokenType());
+        applicationDTO.setAudiences(application.getAudiences());
         return applicationDTO;
     }
 
@@ -89,7 +90,7 @@ public class MappingUtil {
         newApplication.setClientSecret(UUID.randomUUID().toString());
         newApplication.setApplicationAccessTokenExpiryTime(registrationRequestDTO.getTokenExpireTime());
         newApplication.setTokenType(registrationRequestDTO.getTokenTypeExtension());
-
+        newApplication.setAudiences(registrationRequestDTO.getAudiences());
         return newApplication;
     }
 
@@ -108,7 +109,7 @@ public class MappingUtil {
         updatedApplication.setGrantTypes(grantTypes);
         updatedApplication.setApplicationAccessTokenExpiryTime(updateRequestDTO.getTokenExpireTime());
         updatedApplication.setTokenType(updateRequestDTO.getTokenTypeExtension());
-
+        updatedApplication.setAudiences(updateRequestDTO.getAudiences());
         return updatedApplication;
     }
 

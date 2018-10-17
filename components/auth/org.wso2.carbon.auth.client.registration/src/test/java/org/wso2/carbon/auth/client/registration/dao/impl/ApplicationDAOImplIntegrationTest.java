@@ -30,6 +30,7 @@ import org.wso2.carbon.auth.client.registration.exception.ClientRegistrationDAOE
 import org.wso2.carbon.auth.client.registration.model.Application;
 import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 public class ApplicationDAOImplIntegrationTest extends AuthDAOIntegrationTestBase {
@@ -55,10 +56,13 @@ public class ApplicationDAOImplIntegrationTest extends AuthDAOIntegrationTestBas
         application.setApplicationAccessTokenExpiryTime(3600L);
         application.setAuthUser("admin");
         application.setOauthVersion("2");
+        application.setAudiences(Arrays.asList("a", "b"));
         Application retrievedApplication = applicationDAO.createApplication(application);
         Assert.assertEquals(application.getClientId(), retrievedApplication.getClientId());
         Assert.assertEquals(application.getClientSecret(), retrievedApplication.getClientSecret());
         Assert.assertEquals(Constants.DEFAULT_TOKEN_TYPE, retrievedApplication.getTokenType());
+        Assert.assertEquals(retrievedApplication.getAudiences().size(), 2);
+        Assert.assertEquals(retrievedApplication.getAudiences(), application.getAudiences());
         retrievedApplication.setClientSecret(UUID.randomUUID().toString());
         Application updatedApplication = applicationDAO.updateApplication(application.getClientId(),
                 retrievedApplication);

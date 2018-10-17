@@ -18,6 +18,8 @@
 
 package org.wso2.carbon.auth.client.registration.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -36,6 +38,7 @@ public class Application {
     private Long applicationAccessTokenExpiryTime;
     private String refreshTokenExpiryTime;
     private String tokenType;
+    private List<String> audiences = new ArrayList<>();
 
     public String getClientName() {
         return clientName;
@@ -136,6 +139,14 @@ public class Application {
                 Objects.equals(grantTypes, that.grantTypes) &&
                 Objects.equals(clientName, that.clientName);
 
+    }
+
+    public List<String> getAudiences() {
+        return audiences;
+    }
+
+    public void setAudiences(List<String> audiences) {
+        this.audiences = audiences;
     }
 
     @Override

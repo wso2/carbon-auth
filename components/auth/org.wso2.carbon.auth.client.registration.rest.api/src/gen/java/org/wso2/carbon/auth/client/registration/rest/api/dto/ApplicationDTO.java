@@ -2,8 +2,8 @@ package org.wso2.carbon.auth.client.registration.rest.api.dto;
 
 
 import com.google.gson.annotations.SerializedName;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +35,9 @@ public class ApplicationDTO   {
 
   @SerializedName("token_type_extension")
   private String tokenTypeExtension = null;
+
+  @SerializedName("audiences")
+  private List<String> audiences = new ArrayList<String>();
 
   public ApplicationDTO clientId(String clientId) {
     this.clientId = clientId;
@@ -177,11 +180,10 @@ public class ApplicationDTO   {
     return this;
   }
 
-  /**
+   /**
    * Get tokenTypeExtension
-   *
    * @return tokenTypeExtension
-   **/
+  **/
   @ApiModelProperty(value = "")
   public String getTokenTypeExtension() {
     return tokenTypeExtension;
@@ -189,6 +191,29 @@ public class ApplicationDTO   {
 
   public void setTokenTypeExtension(String tokenTypeExtension) {
     this.tokenTypeExtension = tokenTypeExtension;
+  }
+
+  public ApplicationDTO audiences(List<String> audiences) {
+    this.audiences = audiences;
+    return this;
+  }
+
+  public ApplicationDTO addAudiencesItem(String audiencesItem) {
+    this.audiences.add(audiencesItem);
+    return this;
+  }
+
+   /**
+   * Get audiences
+   * @return audiences
+  **/
+  @ApiModelProperty(value = "")
+  public List<String> getAudiences() {
+    return audiences;
+  }
+
+  public void setAudiences(List<String> audiences) {
+    this.audiences = audiences;
   }
 
 
@@ -208,12 +233,13 @@ public class ApplicationDTO   {
         Objects.equals(this.clientName, application.clientName) &&
         Objects.equals(this.grantTypes, application.grantTypes) &&
         Objects.equals(this.tokenExpireTime, application.tokenExpireTime) &&
-        Objects.equals(this.tokenTypeExtension, application.tokenTypeExtension);
+        Objects.equals(this.tokenTypeExtension, application.tokenTypeExtension) &&
+        Objects.equals(this.audiences, application.audiences);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(clientId, clientSecret, clientSecretExpiresAt, redirectUris, clientName, grantTypes, tokenExpireTime, tokenTypeExtension);
+    return Objects.hash(clientId, clientSecret, clientSecretExpiresAt, redirectUris, clientName, grantTypes, tokenExpireTime, tokenTypeExtension, audiences);
   }
 
   @Override
@@ -229,6 +255,7 @@ public class ApplicationDTO   {
     sb.append("    grantTypes: ").append(toIndentedString(grantTypes)).append("\n");
     sb.append("    tokenExpireTime: ").append(toIndentedString(tokenExpireTime)).append("\n");
     sb.append("    tokenTypeExtension: ").append(toIndentedString(tokenTypeExtension)).append("\n");
+    sb.append("    audiences: ").append(toIndentedString(audiences)).append("\n");
     sb.append("}");
     return sb.toString();
   }

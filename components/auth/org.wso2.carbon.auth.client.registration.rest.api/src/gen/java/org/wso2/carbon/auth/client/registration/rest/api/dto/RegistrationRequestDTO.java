@@ -27,6 +27,9 @@ public class RegistrationRequestDTO   {
   @SerializedName("token_type_extension")
   private String tokenTypeExtension = null;
 
+  @SerializedName("audiences")
+  private List<String> audiences = new ArrayList<String>();
+
   public RegistrationRequestDTO redirectUris(List<String> redirectUris) {
     this.redirectUris = redirectUris;
     return this;
@@ -127,6 +130,29 @@ public class RegistrationRequestDTO   {
     this.tokenTypeExtension = tokenTypeExtension;
   }
 
+  public RegistrationRequestDTO audiences(List<String> audiences) {
+    this.audiences = audiences;
+    return this;
+  }
+
+  public RegistrationRequestDTO addAudiencesItem(String audiencesItem) {
+    this.audiences.add(audiencesItem);
+    return this;
+  }
+
+   /**
+   * Get audiences
+   * @return audiences
+  **/
+  @ApiModelProperty(value = "")
+  public List<String> getAudiences() {
+    return audiences;
+  }
+
+  public void setAudiences(List<String> audiences) {
+    this.audiences = audiences;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -141,12 +167,13 @@ public class RegistrationRequestDTO   {
         Objects.equals(this.clientName, registrationRequest.clientName) &&
         Objects.equals(this.grantTypes, registrationRequest.grantTypes) &&
         Objects.equals(this.tokenExpireTime, registrationRequest.tokenExpireTime) &&
-        Objects.equals(this.tokenTypeExtension, registrationRequest.tokenTypeExtension);
+        Objects.equals(this.tokenTypeExtension, registrationRequest.tokenTypeExtension) &&
+        Objects.equals(this.audiences, registrationRequest.audiences);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(redirectUris, clientName, grantTypes, tokenExpireTime, tokenTypeExtension);
+    return Objects.hash(redirectUris, clientName, grantTypes, tokenExpireTime, tokenTypeExtension, audiences);
   }
 
   @Override
@@ -159,6 +186,7 @@ public class RegistrationRequestDTO   {
     sb.append("    grantTypes: ").append(toIndentedString(grantTypes)).append("\n");
     sb.append("    tokenExpireTime: ").append(toIndentedString(tokenExpireTime)).append("\n");
     sb.append("    tokenTypeExtension: ").append(toIndentedString(tokenTypeExtension)).append("\n");
+    sb.append("    audiences: ").append(toIndentedString(audiences)).append("\n");
     sb.append("}");
     return sb.toString();
   }

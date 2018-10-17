@@ -30,6 +30,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Default implementation of the ApplicationDAO interface. Uses SQL syntax that is common to H2 and MySQL DBs.
@@ -69,7 +71,7 @@ public class ApplicationDAOImpl implements ApplicationDAO {
                     data.setRefreshTokenExpiryTime(rs.getString("REFRESH_TOKEN_EXPIRE_TIME"));
                     data.setUserAccessTokenExpiryTime(rs.getString("USER_ACCESS_TOKEN_EXPIRE_TIME"));
                     data.setTokenType(rs.getString("TOKEN_TYPE"));
-
+                    data.setAudiences(getAudiences(connection, clientId));
                     return data;
                 }
             }
@@ -174,6 +176,9 @@ public class ApplicationDAOImpl implements ApplicationDAO {
                     statement.setString(9, Constants.DEFAULT_TOKEN_TYPE);
                 }
                 statement.execute();
+                if (!application.getAudiences().isEmpty()) {
+                    addAudiences(connection, application.getClientId(), application.getAudiences());
+                }
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
@@ -181,6 +186,39 @@ public class ApplicationDAOImpl implements ApplicationDAO {
             } finally {
                 connection.setAutoCommit(DAOUtil.isAutoCommitAuth());
             }
+        }
+    }
+
+    private void addAudiences(Connection connection, String clientId, List<String> audiences) throws SQLException {
+        final String query = "INSERT INTO AUTH_OAUTH2_APPLICATION_AUDIENCES (CLIENT_ID,AUDIENCE_VALUE) VALUES (?,?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            for (String audience : audiences) {
+                preparedStatement.setString(1, clientId);
+                preparedStatement.setString(2, audience);
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
+        }
+    }
+
+    private List<String> getAudiences(Connection connection, String clientId) throws SQLException {
+        List<String> audiencesList = new ArrayList();
+        final String query = "SELECT AUDIENCE_VALUE FROM AUTH_OAUTH2_APPLICATION_AUDIENCES WHERE CLIENT_ID = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, clientId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    audiencesList.add(resultSet.getString("AUDIENCE_VALUE"));
+                }
+            }
+            return audiencesList;
+        }
+    }
+    private void removeAudiences(Connection connection, String clientId) throws SQLException {
+        final String query = "DELETE FROM AUTH_OAUTH2_APPLICATION_AUDIENCES WHERE CLIENT_ID = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, clientId);
+            preparedStatement.executeUpdate();
         }
     }
 
@@ -209,6 +247,10 @@ public class ApplicationDAOImpl implements ApplicationDAO {
                 statement.setString(8, clientId);
 
                 statement.execute();
+                removeAudiences(connection, clientId);
+                if (!application.getAudiences().isEmpty()) {
+                    addAudiences(connection, clientId, application.getAudiences());
+                }
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();

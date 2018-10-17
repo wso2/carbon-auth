@@ -46,6 +46,7 @@ import java.security.cert.CertificateEncodingException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -136,6 +137,7 @@ public class JWTTokenGenerator extends DefaultTokenGenerator {
         long curTimeInMillis = Calendar.getInstance().getTimeInMillis();
         String sub = (String) context.getParams().get(OAuthConstants.AUTH_USER);
         String consumerKey = (String) context.getParams().get(OAuthConstants.CLIENT_ID);
+        Object audience = context.getParams().get(OAuthConstants.AUDIENCES);
         String issuer = ServiceReferenceHolder.getInstance().getAuthConfigurations().getTokenIssuer();
         JWTClaimsSet.Builder jwtClaimsSetBuilder = new JWTClaimsSet.Builder();
         jwtClaimsSetBuilder.issuer(issuer);
@@ -150,7 +152,16 @@ public class JWTTokenGenerator extends DefaultTokenGenerator {
         } else {
             jwtClaimsSetBuilder.expirationTime(new Date(curTimeInMillis + defaultValidityPeriod * 1000));
         }
-        jwtClaimsSetBuilder.audience(Collections.singletonList(consumerKey));
+        if (audience == null) {
+            jwtClaimsSetBuilder.audience(Collections.singletonList(consumerKey));
+        } else {
+            List<String> audiencesList = (List<String>) audience;
+            if (audiencesList.isEmpty()) {
+                jwtClaimsSetBuilder.audience(Collections.singletonList(consumerKey));
+            } else {
+                jwtClaimsSetBuilder.audience(audiencesList);
+            }
+        }
 
         return jwtClaimsSetBuilder.build();
     }

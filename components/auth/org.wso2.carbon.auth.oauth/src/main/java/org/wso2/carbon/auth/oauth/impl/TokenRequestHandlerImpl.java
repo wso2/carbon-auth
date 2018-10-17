@@ -131,7 +131,7 @@ public class TokenRequestHandlerImpl implements TokenRequestHandler {
                 context.getParams().put(OAuthConstants.APPLICATION_OWNER, application.getAuthUser());
                 context.getParams().put(OAuthConstants.GRANT_TYPE, grantTypeValue);
                 context.getParams().put(OAuthConstants.VALIDITY_PERIOD, defaultValidityPeriod);
-
+                context.getParams().put(OAuthConstants.AUDIENCES, application.getAudiences());
                 isAuthorized = grantHandler.get().isAuthorizedClient(application, grantTypeValue);
                 if (!isAuthorized) {
                     String error = "Grant type is not allowed for the application";
