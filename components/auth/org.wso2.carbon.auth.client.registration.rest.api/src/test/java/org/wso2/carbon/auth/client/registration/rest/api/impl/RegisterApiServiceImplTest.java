@@ -52,6 +52,7 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
     private static final String REDIRECT_URL_2 = "http://localhost/url2";
     private static final String REDIRECT_URL_UPDATED = "http://localhost/updated/url1";
     private static final String GRANT_TYPE = "password";
+    private static final String AUTHORIZATION_CODE_GRANT_TYPE = "authorization_code";
     private DataSourceService dataSourceService;
     private Request request;
 
@@ -106,7 +107,7 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
             registrationRequestDTO.setClientName(CLIENT_NAME_1);
             registrationRequestDTO.addRedirectUrisItem(REDIRECT_URL_1);
             registrationRequestDTO.addGrantTypesItem(GRANT_TYPE);
-
+            registrationRequestDTO.addGrantTypesItem(AUTHORIZATION_CODE_GRANT_TYPE);
             RegisterApi registerApi = new RegisterApi();
             Response registrationResponse = registerApi.registerApplication(registrationRequestDTO, request);
 
@@ -134,6 +135,7 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
             UpdateRequestDTO updateRequestDTO = new UpdateRequestDTO();
             updateRequestDTO.setClientName(CLIENT_NAME_1);
             updateRequestDTO.addRedirectUrisItem(REDIRECT_URL_UPDATED);
+            updateRequestDTO.addGrantTypesItem(AUTHORIZATION_CODE_GRANT_TYPE);
             Response updateResponse = registerApi.updateApplication(updateRequestDTO, clientId, null);
             Assert.assertNotNull(updateResponse);
             Assert.assertEquals(updateResponse.getStatus(), Response.Status.OK.getStatusCode());
@@ -158,6 +160,7 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
         registrationRequestDTO.addRedirectUrisItem(REDIRECT_URL_1);
         registrationRequestDTO.addRedirectUrisItem(REDIRECT_URL_2);
         registrationRequestDTO.addGrantTypesItem(GRANT_TYPE);
+        registrationRequestDTO.addGrantTypesItem(AUTHORIZATION_CODE_GRANT_TYPE);
 
         RegisterApi registerApi = new RegisterApi();
         Response registrationResponse = registerApi.registerApplication(registrationRequestDTO, request);

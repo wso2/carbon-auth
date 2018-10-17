@@ -116,23 +116,23 @@ public class MappingUtil {
 
         //TODO: After implement multi-urls to the oAuth application, we have to change this API call
         //TODO: need to validate before processing request
-        if (redirectUris.size() == 0) {
-            if ((grantTypes.contains("authorization_code") || grantTypes.
-                    contains("implicit"))) {
+        if ((grantTypes.contains("authorization_code") || grantTypes.
+                contains("implicit"))) {
+            if (redirectUris.size() == 0) {
                 throw new IllegalStateException("Valid input has not been provided");
-            } else {
-                return null;
-            }
-        } else if (redirectUris.size() == 1) {
-            String redirectUri = redirectUris.get(0);
-            if (DCRMUtils.isRedirectionUriValid(redirectUri)) {
-                return redirectUri;
-            } else {
-                throw new IllegalStateException("Valid redirectUri has not been provided");
-            }
+            } else if (redirectUris.size() == 1) {
+                String redirectUri = redirectUris.get(0);
+                if (DCRMUtils.isRedirectionUriValid(redirectUri)) {
+                    return redirectUri;
+                } else {
+                    throw new IllegalStateException("Valid redirectUri has not been provided");
+                }
 
+            } else {
+                return "regexp=" + createRegexPattern(redirectUris);
+            }
         } else {
-            return "regexp=" + createRegexPattern(redirectUris);
+            return null;
         }
     }
 
