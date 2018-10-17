@@ -225,6 +225,10 @@ definitions:
         format: int64
       token_type_extension:
         type: string
+      audiences:
+        type: array
+        items:
+          type: string
 
 #-----------------------------------------------------
 # The Application Update Request Object
@@ -247,6 +251,11 @@ definitions:
         format: int64
       token_type_extension:
         type: string
+      audiences:
+        type: array
+        items:
+          type: string
+
 #-----------------------------------------------------
 # The OAuth2 Application Object
 #-----------------------------------------------------
@@ -274,6 +283,11 @@ definitions:
         format: int64
       token_type_extension:
         type: string
+      audiences:
+        type: array
+        items:
+          type: string
+
 #-----------------------------------------------------
 # The Error Response object
 #-----------------------------------------------------

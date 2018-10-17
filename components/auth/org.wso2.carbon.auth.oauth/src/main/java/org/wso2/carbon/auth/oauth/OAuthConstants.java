@@ -70,4 +70,5 @@ public class OAuthConstants {
     public static final String TOKEN_TYPE = "TOKEN_TYPE";
     public static final String TOKEN = "TOKEN";
     public static final String TOKEN_ALIAS = "TOKEN_ALIAS";
+    public static final String AUDIENCES = "AUDIENCES";
 }

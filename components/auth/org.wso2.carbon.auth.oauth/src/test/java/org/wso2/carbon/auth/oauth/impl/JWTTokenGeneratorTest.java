@@ -42,6 +42,7 @@ import org.wso2.carbon.auth.oauth.internal.ServiceReferenceHolder;
 import java.io.File;
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
+import java.util.Arrays;
 
 public class JWTTokenGeneratorTest {
 
@@ -90,6 +91,7 @@ public class JWTTokenGeneratorTest {
         accessTokenContext.getParams().put(OAuthConstants.SCOPES, new Scope("default"));
         accessTokenContext.getParams().put(OAuthConstants.AUTH_USER, "admin");
         accessTokenContext.getParams().put(OAuthConstants.CLIENT_ID, "abcd-1234");
+        accessTokenContext.getParams().put(OAuthConstants.AUDIENCES, Arrays.asList("a", "b"));
         tokenGenerator.generateAccessToken(accessTokenContext);
         Assert.assertNotNull(accessTokenContext.getAccessTokenResponse());
         AccessTokenResponse accessTokenResponse = accessTokenContext.getAccessTokenResponse();
@@ -100,7 +102,7 @@ public class JWTTokenGeneratorTest {
         Assert.assertEquals(jwt.getHeader().getAlgorithm().getName(), "RS256");
         JWTClaimsSet jwtClaimsSet = jwt.getJWTClaimsSet();
         Assert.assertEquals(jwtClaimsSet.getIssuer(), "https://localhost:9443/oauth2/token");
-        Assert.assertEquals(jwtClaimsSet.getAudience().get(0), "abcd-1234");
+        Assert.assertEquals(jwtClaimsSet.getAudience(), Arrays.asList("a", "b"));
         Assert.assertEquals(jwtClaimsSet.getClaim("scope"), "default");
         JWSVerifier jwsVerifier = new RSASSAVerifier((RSAPublicKey) ServiceReferenceHolder.getInstance().getPublicKey
                 ().getPublicKey());
