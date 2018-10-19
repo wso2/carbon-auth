@@ -324,8 +324,9 @@ public class SCIMClaimResolver {
                 multiValuedAttribute.setAttributePrimitiveValues(Arrays.asList(values));
                 //set attribute in scim object
                 DefaultAttributeFactory.createAttribute(attributeSchema, multiValuedAttribute);
-                ((AbstractSCIMObject) scimObject).setAttribute(multiValuedAttribute);
-
+                if (scimObject instanceof AbstractSCIMObject) {
+                    ((AbstractSCIMObject) scimObject).setAttribute(multiValuedAttribute);
+                }
             } else {
                 //convert attribute to relevant type
                 Object attributeValueObject = AttributeUtil.getAttributeValueFromString(
@@ -335,7 +336,9 @@ public class SCIMClaimResolver {
                         attributeValueObject);
                 DefaultAttributeFactory.createAttribute(attributeSchema, simpleAttribute);
                 //set attribute in the SCIM object
-                ((AbstractSCIMObject) scimObject).setAttribute(simpleAttribute);
+                if (scimObject instanceof AbstractSCIMObject) {
+                    ((AbstractSCIMObject) scimObject).setAttribute(simpleAttribute);
+                }
             }
         }
     }
@@ -363,6 +366,14 @@ public class SCIMClaimResolver {
             parentAttributeURI = attributeEntry.getKey().replace(":" + attributeNames[1], "");
         }
         AttributeSchema parentAttributeSchema = getAttributeSchema(parentAttributeURI, scimObjectType);
+
+        AbstractSCIMObject abstractSCIMObject = null;
+        if (scimObject instanceof AbstractSCIMObject) {
+            abstractSCIMObject = (AbstractSCIMObject) scimObject;
+        } else {
+            log.error("Error occurred while casting scimObject to AbstractSCIMObject");
+            return;
+        }
 
                 /*differentiate between sub attribute of Complex attribute and a Multivalued attribute
                 with complex value*/
@@ -407,10 +418,10 @@ public class SCIMClaimResolver {
             DefaultAttributeFactory.createAttribute(parentAttributeSchema, complexAttribute);
 
             //check whether parent multivalued attribute already exists
-            if (((AbstractSCIMObject) scimObject).isAttributeExist(parentAttributeName)) {
+            if (abstractSCIMObject.isAttributeExist(parentAttributeName)) {
                 //create attribute value as complex value
                 MultiValuedAttribute multiValuedAttribute =
-                        (MultiValuedAttribute) scimObject.getAttribute(parentAttributeName);
+                        (MultiValuedAttribute) abstractSCIMObject.getAttribute(parentAttributeName);
                 multiValuedAttribute.setAttributeValue(complexAttribute);
             } else {
                 //create the attribute and set it in the scim object
@@ -418,7 +429,7 @@ public class SCIMClaimResolver {
                         parentAttributeName);
                 multivaluedAttribute.setAttributeValue(complexAttribute);
                 DefaultAttributeFactory.createAttribute(parentAttributeSchema, multivaluedAttribute);
-                ((AbstractSCIMObject) scimObject).setAttribute(multivaluedAttribute);
+                abstractSCIMObject.setAttribute(multivaluedAttribute);
             }
         } else {
             //sub attribute of a complex attribute
@@ -430,16 +441,16 @@ public class SCIMClaimResolver {
                                     subAttributeSchema.getType()));
             DefaultAttributeFactory.createAttribute(subAttributeSchema, simpleAttribute);
             //check whether parent attribute exists.
-            if (((AbstractSCIMObject) scimObject).isAttributeExist(parentAttributeSchema.getName())) {
+            if (abstractSCIMObject.isAttributeExist(parentAttributeSchema.getName())) {
                 ComplexAttribute complexAttribute =
-                        (ComplexAttribute) scimObject.getAttribute(parentAttributeSchema.getName());
+                        (ComplexAttribute) abstractSCIMObject.getAttribute(parentAttributeSchema.getName());
                 complexAttribute.setSubAttribute(simpleAttribute);
             } else {
                 //create parent attribute and set sub attribute
                 ComplexAttribute complexAttribute = new ComplexAttribute(parentAttributeSchema.getName());
                 complexAttribute.setSubAttribute(simpleAttribute);
                 DefaultAttributeFactory.createAttribute(parentAttributeSchema, complexAttribute);
-                ((AbstractSCIMObject) scimObject).setAttribute(complexAttribute);
+                abstractSCIMObject.setAttribute(complexAttribute);
             }
 
         }
@@ -506,13 +517,18 @@ public class SCIMClaimResolver {
 
             ComplexAttribute extensionComplexAttribute = null;
 
-            if (((AbstractSCIMObject) scimObject).isAttributeExist(parentAttribute)) {
-                Attribute extensionAttribute = ((AbstractSCIMObject) scimObject).getAttribute(parentAttribute);
-                extensionComplexAttribute = ((ComplexAttribute) extensionAttribute);
+            if (scimObject instanceof AbstractSCIMObject) {
+                if (((AbstractSCIMObject) scimObject).isAttributeExist(parentAttribute)) {
+                    Attribute extensionAttribute = ((AbstractSCIMObject) scimObject).getAttribute(parentAttribute);
+                    extensionComplexAttribute = ((ComplexAttribute) extensionAttribute);
+                } else {
+                    extensionComplexAttribute = new ComplexAttribute(parentAttribute);
+                    DefaultAttributeFactory.createAttribute(attributeSchema, extensionComplexAttribute);
+                    ((AbstractSCIMObject) scimObject).setAttribute(extensionComplexAttribute);
+                }
             } else {
-                extensionComplexAttribute = new ComplexAttribute(parentAttribute);
-                DefaultAttributeFactory.createAttribute(attributeSchema, extensionComplexAttribute);
-                ((AbstractSCIMObject) scimObject).setAttribute(extensionComplexAttribute);
+                log.error("Error occurred while casting scimObject to AbstractSCIMObject");
+                return;
             }
 
             Map<String, Attribute> extensionSubAttributes = extensionComplexAttribute.getSubAttributesList();
@@ -537,10 +553,18 @@ public class SCIMClaimResolver {
                             subSubAttributeSchema.getType()));
             DefaultAttributeFactory.createAttribute(subSubAttributeSchema, simpleAttribute);
 
+            AbstractSCIMObject abstractSCIMObject = null;
+            if (scimObject instanceof AbstractSCIMObject) {
+                abstractSCIMObject = (AbstractSCIMObject) scimObject;
+            } else {
+                log.error("Error occurred while casting scimObject to AbstractSCIMObject");
+                return;
+            }
+
             // check if the super parent exist
-            boolean superParentExist = ((AbstractSCIMObject) scimObject).isAttributeExist(attributeNames[0]);
+            boolean superParentExist = abstractSCIMObject.isAttributeExist(attributeNames[0]);
             if (superParentExist) {
-                ComplexAttribute superParentAttribute = (ComplexAttribute) ((AbstractSCIMObject) scimObject)
+                ComplexAttribute superParentAttribute = (ComplexAttribute) abstractSCIMObject
                         .getAttribute(attributeNames[0]);
                 // check if the immediate parent exist
                 boolean immediateParentExist = superParentAttribute.isSubAttributeExist(immediateParentAttributeName);
@@ -567,7 +591,7 @@ public class SCIMClaimResolver {
                 superParentAttribute.setSubAttribute(immediateParentAttribute);
                 DefaultAttributeFactory.createAttribute(superParentAttributeSchema, superParentAttribute);
                 // now add the super to the scim object
-                ((AbstractSCIMObject) scimObject).setAttribute(superParentAttribute);
+                abstractSCIMObject.setAttribute(superParentAttribute);
             }
         }
     }

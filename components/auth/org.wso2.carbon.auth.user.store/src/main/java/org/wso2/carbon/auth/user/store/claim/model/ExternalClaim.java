@@ -6,7 +6,7 @@
  * in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -15,16 +15,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.carbon.auth.user.store.constant;
-/**
- * LDAP Connector related constants.
- */
-public class LDAPConnectorConstants {
-    public static final String USER_PASSWORD_ATTRIBUTE_NAME = "userPassword";
-    public static final String USER_PASSWORD_SALT_ATTRIBUTE_NAME = "userPasswordSalt";
-    public static final String USER_UUID_ATTRIBUTE_NAME = "scimid";
-    public static final String GROUP_UUID_ATTRIBUTE_NAME = "scimid";
-    public static final String MEMBERSHIP_ATTRIBUTE_NAME = "member";
-    public static final String DISPLAY_NAME_ATTRIBUTE_NAME = "displayName";
 
+package org.wso2.carbon.auth.user.store.claim.model;
+
+/**
+ * Represents the metadata of a external claim.
+ */
+public class ExternalClaim extends Claim {
+    private String mappedLocalClaim;
+
+    public ExternalClaim(String claimDialectURI, String claimURI, String mappedLocalClaimURI) {
+        super(claimDialectURI, claimURI);
+        this.mappedLocalClaim = mappedLocalClaimURI;
+    }
+
+    public String getMappedLocalClaim() {
+        return mappedLocalClaim;
+    }
 }

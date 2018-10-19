@@ -34,12 +34,14 @@ public class UserStoreConstants {
     public static final String ITERATION_COUNT = "iteration_count";
     public static final String KEY_LENGTH = "key_length";
     public static final String CLAIM_USERNAME = "urn:ietf:params:scim:schemas:core:2.0:User:userName";
+    public static final String CLAIM_PASSWORD = "urn:ietf:params:scim:schemas:core:2.0:User:password";
+    public static final String CLAIM_DISPLAYNAME = "urn:ietf:params:scim:schemas:core:2.0:Group:displayName";
     public static final String CLAIM_ID = "urn:ietf:params:scim:schemas:core:2.0:id";
-    public static final String USER_DISPLAY_NAME = "urn:ietf:params:scim:schemas:core:2.0:User:displayName";
     public static final String GROUP_DISPLAY_NAME = "urn:ietf:params:scim:schemas:core:2.0:Group:displayName";
     public static final String NICKNAME = "nickName";
     public static final String PASSWORD_URI = "password";
     public static final String DATASOURCE_WSO2UM_DB = "WSO2_UM_DB";
+    public static final String SCIMID_ATTRIBUTE_NAME = "scimId";
 
     public static final String LDAP_MEMBER_ATTRIBUTE = "member";
     public static final String LDAP_EXTENSIBLEOBJECT_ATTRIBUTE = "extensibleObject";
@@ -50,7 +52,8 @@ public class UserStoreConstants {
     
     public static final int RESOURCE_USER = 0;
     public static final int RESOURCE_GROUP = 1;
-
+    public static final int MAX_USER_ROLE_LIST = 100;
+    public static final int MAX_SEARCH_TIME = 10000;
     /**
      * ADD or UPDATE operation
      */

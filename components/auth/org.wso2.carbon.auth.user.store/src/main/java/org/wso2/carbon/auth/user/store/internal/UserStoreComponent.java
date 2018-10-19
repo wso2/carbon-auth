@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.user.store.configuration.UserStoreConfigurationService;
 import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
-import org.wso2.carbon.auth.user.store.util.UserStoreUtil;
 import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
@@ -108,14 +107,6 @@ public class UserStoreComponent {
                 UserStoreConfigurationService.class.getName(),
                 userStoreConfigurationService, null);
 
-        //add default attributes
-        UserStoreUtil.addDefaultAttributes(config);
-
-        //adding admin user
-        UserStoreUtil.addAdminUser(config);
-
-        //adding admin group
-        UserStoreUtil.addAdminGroup(config);
     }
 
     @Deactivate

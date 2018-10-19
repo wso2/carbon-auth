@@ -29,12 +29,15 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
+import org.wso2.carbon.auth.user.store.claim.ClaimConstants;
 import org.wso2.carbon.auth.user.store.configuration.UserStoreConfigurationService;
 import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 import org.wso2.carbon.auth.user.store.internal.ServiceReferenceHolder;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
+
+import java.io.File;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ ServiceReferenceHolder.class })
@@ -56,6 +59,9 @@ public class UserStoreConnectorFactoryTest extends AuthDAOIntegrationTestBase {
 
     @Test
     public void testGetUserStoreConnector() throws Exception {
+        System.setProperty(ClaimConstants.CARBON_RUNTIME_DIR_PROP_NAME,
+                System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator
+                        + "resources" + File.separator + "runtime.home" + File.separator);
         PowerMockito.mockStatic(ServiceReferenceHolder.class);
         PowerMockito.when(ServiceReferenceHolder.getInstance()).thenReturn(serviceReferenceHolder);
 

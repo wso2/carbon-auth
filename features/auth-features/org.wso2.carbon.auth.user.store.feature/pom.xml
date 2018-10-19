@@ -79,6 +79,7 @@
                                     <directory>resources</directory>
                                     <includes>
                                         <include>ldif/**</include>
+                                        <include>conf/**</include>
                                         <include>p2.inf</include>
                                     </includes>
                                 </resource>

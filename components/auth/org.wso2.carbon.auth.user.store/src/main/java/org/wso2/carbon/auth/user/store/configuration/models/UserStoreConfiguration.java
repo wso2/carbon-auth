@@ -117,17 +117,17 @@ public class UserStoreConfiguration {
     private void populateLDAPDefaultProperties() {
         ldapProperties.put(Constants.LDAP_CONNECTOR_CLASS,
                 "org.wso2.carbon.auth.user.store.connector.ldap.LDAPUserStoreConnector");
-        ldapProperties.put(Constants.LDAP_CONNECTION_URL, "ldap://localhost:10389");
-        ldapProperties.put(Constants.LDAP_CONNECTION_NAME, "uid=admin,ou=system");
+        ldapProperties.put(Constants.LDAP_CONNECTION_URL, "ldap://172.17.0.2:389");
+        ldapProperties.put(Constants.LDAP_CONNECTION_NAME, "cn=admin,dc=example,dc=org");
         ldapProperties.put(Constants.LDAP_CONNECTION_PASSWORD, "admin");
         ldapProperties.put(Constants.LDAP_INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         ldapProperties.put(Constants.LDAP_SECURITY_AUTHENTICATION, "simple");
-        ldapProperties.put(Constants.LDAP_USER_SEARCH_BASE, "ou=Users,dc=wso2,dc=org");
+        ldapProperties.put(Constants.LDAP_USER_SEARCH_BASE, "ou=users,dc=example,dc=org");
         ldapProperties.put(Constants.LDAP_USER_ENTRY_OBJECT_CLASS, "identityPerson");
         ldapProperties.put(Constants.LDAP_USERNAME_ATTRIBUTE, "uid");
         ldapProperties.put(Constants.LDAP_USERNAME_SEARCH_FILTER, "(&amp;(objectClass=person)(uid=?))");
         ldapProperties.put(Constants.LDAP_USERNAME_LIST_FILTER, "(objectClass=person)");
-        ldapProperties.put(Constants.LDAP_GROUP_SEARCH_BASE, "ou=Groups,dc=wso2,dc=org");
+        ldapProperties.put(Constants.LDAP_GROUP_SEARCH_BASE, "ou=Groups,dc=example,dc=org");
         ldapProperties.put(Constants.LDAP_GROUP_ENTRY_OBJECT_CLASS, "groupOfNames");
         ldapProperties.put(Constants.LDAP_GROUP_ATTRIBUTE, "cn");
         ldapProperties.put(Constants.LDAP_GROUP_SEARCH_FILTER, "(&amp;(objectClass=groupOfNames)(cn=?))");
