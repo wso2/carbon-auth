@@ -21,6 +21,12 @@ package org.wso2.carbon.auth.user.store.connector.jdbc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.exception.TemplateExceptionCodes;
+import org.wso2.carbon.auth.user.store.claim.ClaimConstants;
+import org.wso2.carbon.auth.user.store.claim.DefaultClaimManager;
+//import org.wso2.carbon.auth.user.store.claim.DefaultClaimMetadataStore;
+//import org.wso2.carbon.auth.user.store.claim.api.ClaimMapping;
+//import org.wso2.carbon.auth.user.store.claim.model.ExternalClaim;
+import org.wso2.carbon.auth.user.store.claim.model.LocalClaim;
 import org.wso2.carbon.auth.user.store.configuration.models.AttributeConfiguration;
 import org.wso2.carbon.auth.user.store.configuration.models.Uniqueness;
 import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
@@ -48,10 +54,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.security.auth.callback.PasswordCallback;
 import javax.sql.DataSource;
@@ -119,6 +128,7 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
         }
 
         loadQueries(strProperties);
+        addDefaultAttributes(userStoreConfig);
 
         if (log.isDebugEnabled()) {
             log.debug("JDBC identity store with id: {} initialized successfully.", userStoreId);
@@ -264,6 +274,11 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
         }
     }
 
+    @Override public List<Attribute> getUserAttributeValues(String userID, List<String> requiredAttribute)
+            throws UserStoreConnectorException {
+        return getUserAttributeValues(userID);
+    }
+
     @Override
     public String getConnectorGroupId(String attributeUri, String attributeValue)
             throws GroupNotFoundException, UserStoreConnectorException {
@@ -403,6 +418,11 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
         }
     }
 
+    @Override public List<Attribute> getGroupAttributeValues(String groupId, List<String> requiredAttribute)
+            throws UserStoreConnectorException {
+        return getGroupAttributeValues(groupId);
+    }
+
     @Override
     public boolean isUserInGroup(String userId, String groupId) throws UserStoreConnectorException {
 
@@ -474,7 +494,8 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
         String connectorUniqueId = Optional.ofNullable(getIdFromAttributes(attributes))
                 .orElse(UserStoreUtil.generateUUID());
         //validate if all attributes are valid (exists in DB)
-        validateAttributes(attributes, UserStoreConstants.RESOURCE_USER, Operation.ADD);
+        //todo: validate attributes against claims mapping
+//        validateAttributes(attributes, UserStoreConstants.RESOURCE_USER, Operation.ADD);
 
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection(), false)) {
 
@@ -1027,7 +1048,6 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
         }
     }
 
-    @Override
     public AttributeConfiguration getAttributeConfigByURI(String uri) throws UserStoreConnectorException {
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection())) {
             NamedPreparedStatement namedPreparedStatement = new NamedPreparedStatement(unitOfWork.getConnection(),
@@ -1053,7 +1073,6 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
         }
     }
 
-    @Override
     public void addAttribute(AttributeConfiguration config) throws UserStoreConnectorException {
         try (UnitOfWork unitOfWork = UnitOfWork.beginTransaction(dataSource.getConnection())) {
             NamedPreparedStatement namedPrepStmt = new NamedPreparedStatement(unitOfWork.getConnection(),
@@ -1155,12 +1174,48 @@ public class JDBCUserStoreConnector implements UserStoreConnector {
      * @throws UserStoreConnectorException if error occurred while getting id attribute
      */
     private String getIdFromAttributes(List<Attribute> attributes) throws UserStoreConnectorException {
-        for (Attribute attribute: attributes) {
-            if (UserStoreConstants.CLAIM_ID.equals(attribute.getAttributeUri())) {
+        for (Attribute attribute : attributes) {
+            if (UserStoreConstants.SCIMID_ATTRIBUTE_NAME.equalsIgnoreCase(attribute.getAttributeUri())) {
                 return attribute.getAttributeValue();
             }
         }
         return null;
     }
 
+    /**
+     * Add default user attributes
+     *
+     * @param config UserStoreConfiguration
+     * @throws UserStoreConnectorException when error occurs while adding default attributes
+     */
+    public void addDefaultAttributes(UserStoreConfiguration config) throws UserStoreConnectorException {
+//        List<AttributeConfiguration> attributeConfigurations = config.getAttributes();
+        //Iterate the list of attribute in the config from last index to 0. If any config found to be exist in the DB,
+        // then stop the process and return. This is done to reduce the effect to the startup time.
+        // Any new attribute needs to be added to the last in the configuration.
+        DefaultClaimManager defaultClaimManager = DefaultClaimManager.getInstance();
+        //        DefaultClaimMetadataStore claimMetadataStore = new DefaultClaimMetadataStore(defaultClaimManager);
+        //        AttributeConfiguration attributeConfiguration;
+        Set<String> att = new HashSet<>();
+        for (LocalClaim localClaim : defaultClaimManager.getLocalClaims()) {
+            att.add(localClaim.getMappedAttribute(ClaimConstants.PRIMARY_DEFAULT_DOMAIN_NAME));
+        }
+        Iterator<String> iterator = att.iterator();
+        AttributeConfiguration attributeConfiguration;
+        while (iterator.hasNext()) {
+            String value = iterator.next();
+            attributeConfiguration = new AttributeConfiguration();
+            attributeConfiguration.setAttributeName(value);
+            attributeConfiguration.setAttributeUri(value);
+            attributeConfiguration.setDisplayName(value);
+            attributeConfiguration.setRegex("*");
+            attributeConfiguration.setRequired(false);
+            attributeConfiguration.setUniqueness(Uniqueness.NONE);
+            if (getAttributeConfigByURI(attributeConfiguration.getAttributeUri()) == null) {
+                addAttribute(attributeConfiguration);
+            } else {
+                return;
+            }
+        }
+    }
 }

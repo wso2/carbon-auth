@@ -15,36 +15,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.wso2.carbon.auth.user.store.claim.model;
 
-package org.wso2.carbon.auth.user.store.util;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.UUID;
+import java.util.Locale;
 
 /**
- * Identity Management Util.
+ * Represents the metadata of a attribute mapping.
  */
-public class UserStoreUtil {
+public class AttributeMapping {
+    private String userStoreDomain;
+    private String attributeName;
 
-    private static Logger log = LoggerFactory.getLogger(UserStoreUtil.class);
-
-    private UserStoreUtil() {
-
+    public AttributeMapping(String userStoreDomain, String attributeName) {
+        this.userStoreDomain = userStoreDomain.toUpperCase(Locale.getDefault());
+        this.attributeName = attributeName;
     }
 
-    /**
-     * Generate UUID.
-     *
-     * @return UUID as a string.
-     */
-    public static String generateUUID() {
+    public String getUserStoreDomain() {
+        return userStoreDomain;
+    }
 
-        String random = UUID.randomUUID().toString();
-        random = random.replace("/", "_");
-        random = random.replace("=", "a");
-        random = random.replace("+", "f");
-        return random;
+    public String getAttributeName() {
+        return attributeName;
     }
 }

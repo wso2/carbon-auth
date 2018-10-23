@@ -18,13 +18,17 @@
 
 package org.wso2.carbon.auth.scim.internal;
 
+import org.osgi.service.component.ComponentContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.auth.scim.utils.Util;
 import org.wso2.carbon.auth.user.store.configuration.UserStoreConfigurationService;
+import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 
 /**
  * OSGi component for carbon security connectors.
@@ -60,5 +64,12 @@ public class SCIMComponent {
         if (log.isDebugEnabled()) {
             log.debug("User store configuration service unregistered.");
         }
+    }
+
+    @Activate
+    protected void activate(ComponentContext componentContext) {
+        UserStoreConfiguration userStoreConfiguration =
+                ServiceReferenceHolder.getInstance().getUserStoreConfigurationService().getUserStoreConfiguration();
+        Util.addDefaultAdminUserAndRole(userStoreConfiguration);
     }
 }
