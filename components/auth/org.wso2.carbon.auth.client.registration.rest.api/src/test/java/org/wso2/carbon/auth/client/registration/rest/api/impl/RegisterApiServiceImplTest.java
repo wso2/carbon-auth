@@ -36,6 +36,7 @@ import org.wso2.carbon.auth.core.configuration.models.AuthConfiguration;
 import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
 import org.wso2.carbon.auth.user.store.configuration.UserStoreConfigurationService;
 import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
+import org.wso2.carbon.auth.user.store.util.UserStoreUtil;
 import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.msf4j.Request;
@@ -89,6 +90,8 @@ public class RegisterApiServiceImplTest extends AuthDAOIntegrationTestBase {
         org.wso2.carbon.auth.user.store.internal.ServiceReferenceHolder.getInstance()
                 .setDataSourceService(dataSourceService);
 
+        UserStoreUtil.addDefaultAttributes(userStoreConfiguration);
+        UserStoreUtil.addAdminUser(userStoreConfiguration);
     }
 
     @AfterClass

@@ -29,8 +29,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.core.test.common.AuthDAOIntegrationTestBase;
-import org.wso2.carbon.auth.user.store.claim.ClaimConstants;
 import org.wso2.carbon.auth.user.store.configuration.UserStoreConfigurationService;
+import org.wso2.carbon.auth.user.store.configuration.models.AttributeConfiguration;
+import org.wso2.carbon.auth.user.store.configuration.models.Uniqueness;
 import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.connector.Attribute;
 import org.wso2.carbon.auth.user.store.connector.Constants;
@@ -42,9 +43,10 @@ import org.wso2.carbon.auth.user.store.exception.GroupNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 import org.wso2.carbon.auth.user.store.internal.ServiceReferenceHolder;
+import org.wso2.carbon.auth.user.store.util.UserStoreUtil;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
+import org.wso2.charon3.core.schema.SCIMConstants;
 
-import java.io.File;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -81,9 +83,6 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         super.init();
         super.setup();
 
-        System.setProperty(ClaimConstants.CARBON_RUNTIME_DIR_PROP_NAME,
-                System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator
-                        + "resources" + File.separator + "runtime.home" + File.separator);
 
         userStoreConfiguration = new UserStoreConfiguration();
         userStoreConfiguration.setConnectorType(UserStoreConstants.JDBC_CONNECTOR_TYPE);
@@ -101,9 +100,10 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         PowerMockito.when(dataSourceService.getDataSource(Constants.DATASOURCE_WSO2UM_DB))
                 .thenReturn(this.umDataSource.getDatasource());
 
+        //add default user attributes to the database
+        UserStoreUtil.addDefaultAttributes(new UserStoreConfiguration());
+
         connector = UserStoreConnectorFactory.getUserStoreConnector();
-        JDBCUserStoreConnector con = (JDBCUserStoreConnector) connector;
-        con.addDefaultAttributes(userStoreConfiguration);
         Assert.assertNotNull(connector);
 
         List<Attribute> attributeList = new ArrayList<>();
@@ -149,14 +149,14 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
     public void testGetConnectorUserId() throws Exception {
         String userId;
         try {
-            userId = connector.getConnectorUserId(Constants.USERNAME_URI, "admin");
+            userId = connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "admin");
             Assert.assertNotNull(userId);
         } catch (UserNotFoundException e) {
             Assert.fail("Exception not expected");
         }
 
         try {
-            connector.getConnectorUserId(Constants.USERNAME_URI, "nouser");
+            connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "nouser");
             Assert.fail("Exception expected");
         } catch (UserNotFoundException e) {
             Assert.assertEquals("User not found with the given attribute", e.getMessage());
@@ -165,7 +165,7 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         //checking SQL exception path
         super.cleanup();
         try {
-            connector.getConnectorUserId(Constants.USERNAME_URI, "admin");
+            connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "admin");
             Assert.fail("Exception expected");
         } catch (UserStoreConnectorException e) {
             Assert.assertTrue(e.getCause() instanceof SQLException);
@@ -173,40 +173,13 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
     }
 
     @Test
-    public void testListConnectorUserIdsWithoutFilter() throws Exception {
-        String givenName = "givenName";
-        List<Attribute> attributeList = new ArrayList<>();
-        attributeList.add(new Attribute(Constants.USERNAME_URI, "testListConnectorUserIdsWithoutFilter_user"));
-        attributeList.add(new Attribute(givenName, givenName));
-        String userId = connector.addUser(attributeList);
-        Assert.assertNotNull(userId);
-        List<String> userIds = null;
-
-        try {
-            userIds = connector.listConnectorUserIds(0, 0);
-            Assert.assertNotNull(userIds);
-        } catch (UserStoreConnectorException e) {
-            Assert.fail("Exception not expected");
-        }
-        Assert.assertEquals(0, userIds.size());
-
-        try {
-            userIds = connector.listConnectorUserIds(1, 5);
-            Assert.assertNotNull(userIds);
-        } catch (UserStoreConnectorException e) {
-            Assert.fail("Exception not expected");
-        }
-        Assert.assertTrue(userIds.size() > 0);
-    }
-
-    @Test
     public void testListConnectorUserIds() throws Exception {
-        String givenName = "givenName";
+        final String familyName = "watson";
         for (int i = 0; i < 5; i++) {
             List<Attribute> attributeList = new ArrayList<>();
             attributeList.add(new Attribute(Constants.PASSWORD_URI, "admin" + i));
             attributeList.add(new Attribute(Constants.USERNAME_URI, "user" + i));
-            attributeList.add(new Attribute(givenName, givenName));
+            attributeList.add(new Attribute(SCIMConstants.UserSchemaConstants.FAMILY_NAME_URI, familyName));
             String userId = connector.addUser(attributeList);
             Assert.assertNotNull(userId);
         }
@@ -214,7 +187,8 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         List<String> userIds = null;
 
         try {
-            userIds = connector.listConnectorUserIds(givenName, givenName, 0, 3);
+            userIds = connector
+                    .listConnectorUserIds(SCIMConstants.UserSchemaConstants.FAMILY_NAME_URI, familyName, 0, 3);
             Assert.assertNotNull(userIds);
         } catch (UserStoreConnectorException e) {
             Assert.fail("Exception not expected");
@@ -225,7 +199,8 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         });
 
         try {
-            userIds = connector.listConnectorUserIds(givenName, givenName, 1, -1);
+            userIds = connector
+                    .listConnectorUserIds(SCIMConstants.UserSchemaConstants.FAMILY_NAME_URI, familyName, 1, -1);
             Assert.assertNotNull(userIds);
         } catch (UserStoreConnectorException e) {
             Assert.fail("Exception not expected");
@@ -238,7 +213,7 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         //checking SQL exception path
         super.cleanup();
         try {
-            connector.listConnectorUserIds(givenName, "unknown", 0, 3);
+            connector.listConnectorUserIds(SCIMConstants.UserSchemaConstants.FAMILY_NAME_URI, "unknown", 0, 3);
             Assert.fail("Exception expected");
         } catch (UserStoreConnectorException e) {
             Assert.assertTrue(e.getCause() instanceof SQLException);
@@ -258,7 +233,7 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
 
         String userId = null;
         try {
-            userId = connector.getConnectorUserId(Constants.USERNAME_URI, adminUser);
+            userId = connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, adminUser);
             Assert.assertNotNull(userId);
             Assert.assertEquals(adminUserId, userId);
         } catch (UserNotFoundException e) {
@@ -367,41 +342,6 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
     }
 
     @Test
-    public void testListConnectorGroupIdsWithoutFilter() throws Exception {
-
-        //adding group(s)
-        List<Attribute> attributeListGroup1 = new ArrayList<>();
-        attributeListGroup1
-                .add(new Attribute(Constants.GROUP_DISPLAY_NAME_URI, "testListConnectorGroupIdsWithoutFilter_GROUP"));
-
-        String connectorUniqueId = null;
-        try {
-            connectorUniqueId = connector.addGroup(attributeListGroup1);
-            Assert.assertNotNull(connectorUniqueId);
-        } catch (UserStoreConnectorException e) {
-            Assert.fail("Exception not expected");
-        }
-
-        //assertions
-        List<String> groupIds = null;
-        try {
-            groupIds = connector.listConnectorGroupIds(0, 0);
-            Assert.assertNotNull(groupIds);
-        } catch (UserStoreConnectorException e) {
-            Assert.fail("Exception not expected");
-        }
-        Assert.assertEquals(0, groupIds.size());
-
-        try {
-            groupIds = connector.listConnectorGroupIds(0, 5);
-            Assert.assertNotNull(groupIds);
-        } catch (UserStoreConnectorException e) {
-            Assert.fail("Exception not expected");
-        }
-        Assert.assertTrue(groupIds.size() > 0);
-    }
-
-    @Test
     public void testGetGroupAttributeValues() throws Exception {
         List<Attribute> attributes;
 
@@ -492,14 +432,20 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
 
     @Test
     public void testGetUsers() throws Exception {
-        final String middleName = "middleName";
+        final String middleName = "middlename";
 
         final String user = "jdbcUser";
+        final String pass = "pass";
+
+        AttributeConfiguration configuration = new AttributeConfiguration(middleName, middleName, middleName, false,
+                ".*", Uniqueness.NONE);
+        connector.addAttribute(configuration);
 
         try {
             for (int i = 0; i < 5; i++) {
                 List<Attribute> attributeList = new ArrayList<>();
                 attributeList.add(new Attribute(Constants.USERNAME_URI, user + i));
+                attributeList.add(new Attribute(Constants.PASSWORD_URI, pass + i));
                 attributeList.add(new Attribute(middleName, middleName));
                 connector.addUser(attributeList);
             }
@@ -566,12 +512,12 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         List<Attribute> attributeList = new ArrayList<>();
         attributeList.add(new Attribute(Constants.USERNAME_URI, user));
         attributeList.add(new Attribute(Constants.PASSWORD_URI, pass));
-        attributeList.add(new Attribute(Constants.GIVEN_NAME_ATTR_NAME, familyName));
+        attributeList.add(new Attribute(Constants.FAMILY_NAME_URI, familyName));
         String userId = Utils.addUser(connector, attributeList);
         Assert.assertNotNull(userId);
 
         List<Attribute> attributeUpdate = new ArrayList<>();
-        attributeUpdate.add(new Attribute(Constants.GIVEN_NAME_ATTR_NAME, newFamilyName));
+        attributeUpdate.add(new Attribute(Constants.FAMILY_NAME_URI, newFamilyName));
 
         try {
             connector.updateUserAttributes(userId, attributeUpdate);
@@ -581,7 +527,7 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
 
         List<Attribute> attributes = connector.getUserAttributeValues(userId);
         attributes.forEach((Attribute attribute) -> {
-            if (Constants.GIVEN_NAME_ATTR_NAME.equalsIgnoreCase(attribute.getAttributeUri())) {
+            if (Constants.FAMILY_NAME_URI.equalsIgnoreCase(attribute.getAttributeUri())) {
                 Assert.assertEquals(newFamilyName, attribute.getAttributeValue());
             }
         });
@@ -725,12 +671,12 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
 
         List<Attribute> attributeList = new ArrayList<>();
         attributeList.add(new Attribute(Constants.GROUP_DISPLAY_NAME_URI, displayName));
-        attributeList.add(new Attribute(Constants.GIVEN_NAME_ATTR_NAME, familyName));
+        attributeList.add(new Attribute(Constants.FAMILY_NAME_URI, familyName));
         String groupId = Utils.addGroup(connector, attributeList);
         Assert.assertNotNull(groupId);
 
         List<Attribute> updateAttributeList = new ArrayList<>();
-        updateAttributeList.add(new Attribute(Constants.GIVEN_NAME_ATTR_NAME, newFamilyName));
+        updateAttributeList.add(new Attribute(Constants.FAMILY_NAME_URI, newFamilyName));
 
         try {
             connector.updateGroupAttributes(groupId, updateAttributeList);
@@ -740,7 +686,7 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
 
         List<Attribute> attributes = connector.getGroupAttributeValues(groupId);
         attributes.forEach((Attribute attribute) -> {
-            if (Constants.GIVEN_NAME_ATTR_NAME.equalsIgnoreCase(attribute.getAttributeUri())) {
+            if (Constants.FAMILY_NAME_URI.equalsIgnoreCase(attribute.getAttributeUri())) {
                 Assert.assertEquals(newFamilyName, attribute.getAttributeValue());
             }
         });
@@ -973,31 +919,4 @@ public class JDBCUserStoreConnectorTest extends AuthDAOIntegrationTestBase {
         }
     }
 
-    @Test
-    public void testGetUserIdsOfGroup() throws Exception {
-        String displayName = "testGetUserIdsOfGroup_group";
-        String userName = "testGetUserIdsOfGroup_user";
-        String groupId = Utils.addGroup(connector, displayName);
-        Assert.assertNotNull(groupId);
-        String userId = Utils.addUser(connector, userName, "pass");
-        Assert.assertNotNull(userId);
-
-        Utils.updateGroupsOfUser(connector, userId, Arrays.asList(groupId));
-        List<String> userIds = connector.getUserIdsOfGroup(groupId);
-        Assert.assertEquals(1, userIds.size());
-    }
-
-    @Test
-    public void testGetGroupIdsOfUser() throws Exception {
-        String displayName = "testGetGroupIdsOfUser_group";
-        String userName = "testGetGroupIdsOfUser_user";
-        String groupId = Utils.addGroup(connector, displayName);
-        Assert.assertNotNull(groupId);
-        String userId = Utils.addUser(connector, userName, "pass");
-        Assert.assertNotNull(userId);
-        Utils.updateGroupsOfUser(connector, userId, Arrays.asList(groupId));
-
-        List<String> groupIds = connector.getGroupIdsOfUser(userId);
-        Assert.assertEquals(1, groupIds.size());
-    }
 }

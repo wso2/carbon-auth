@@ -22,9 +22,5 @@ package org.wso2.carbon.auth.user.store.constant;
 public class LDAPConnectorConstants {
     public static final String USER_PASSWORD_ATTRIBUTE_NAME = "userPassword";
     public static final String USER_PASSWORD_SALT_ATTRIBUTE_NAME = "userPasswordSalt";
-    public static final String USER_UUID_ATTRIBUTE_NAME = "scimid";
-    public static final String GROUP_UUID_ATTRIBUTE_NAME = "scimid";
-    public static final String MEMBERSHIP_ATTRIBUTE_NAME = "member";
-    public static final String DISPLAY_NAME_ATTRIBUTE_NAME = "displayName";
 
 }

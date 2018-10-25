@@ -22,7 +22,6 @@ import org.mockito.Mockito;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.wso2.carbon.auth.user.store.claim.ClaimConstants;
 import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.connector.Attribute;
 import org.wso2.carbon.auth.user.store.connector.Constants;
@@ -31,18 +30,17 @@ import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
 import org.wso2.carbon.auth.user.store.connector.jdbc.DefaultPasswordHandler;
 import org.wso2.carbon.auth.user.store.connector.testutil.Utils;
 import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
+import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 import org.wso2.carbon.auth.user.store.internal.ServiceReferenceHolder;
 import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 
-import java.io.File;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import javax.security.auth.callback.PasswordCallback;
 
 public class LDAPUserStoreConnectorIT {
@@ -50,18 +48,12 @@ public class LDAPUserStoreConnectorIT {
     private String group = "ldapGroup";
     private String user = "ldapUser";
     private String pass = "ldapPass";
-    private String displayNameAttrName = "displayName";
-    private String scimid = "scimid";
-
     private UserStoreConnector connector;
     private String userID;
     private String groupId;
 
     @BeforeMethod
     public void init() throws Exception {
-        System.setProperty(ClaimConstants.CARBON_RUNTIME_DIR_PROP_NAME,
-                System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator
-                        + "resources" + File.separator + "runtime.home" + File.separator);
         DataSourceService dataSourceService = Mockito.mock(DataSourceService.class);
         storeConfiguration = new UserStoreConfiguration();
         storeConfiguration.setConnectorType(UserStoreConstants.LDAP_CONNECTOR_TYPE);
@@ -96,23 +88,21 @@ public class LDAPUserStoreConnectorIT {
 
         connector = new LDAPUserStoreConnector();
         connector.init(storeConfiguration);
-        userID = null;
-        groupId = null;
     }
 
     @Test
     public void testGetConnectorUserId() throws Exception {
         List<Attribute> attributes = new ArrayList<>();
         attributes.add(new Attribute(Constants.USERNAME_URI, user));
-        userID = Utils.addUser(connector, attributes);
-        Assert.assertNotNull(userID);
+        userID = connector.addUser(attributes);
+        Assert.assertEquals(user, userID);
 
         PasswordCallback passwordCallback = new PasswordCallback(pass, false);
         userID = connector.addCredential(userID, passwordCallback);
-        Assert.assertNotNull(userID);
+        Assert.assertEquals(user, userID);
 
         String uid = connector.getConnectorUserId(Constants.USERNAME_URI, user);
-        Assert.assertEquals(userID, uid);
+        Assert.assertEquals(user, uid);
     }
 
     @Test
@@ -123,26 +113,29 @@ public class LDAPUserStoreConnectorIT {
 
         List<Attribute> attributes = new ArrayList<>();
         attributes.add(new Attribute(Constants.USERNAME_URI, user1));
-        attributes.add(new Attribute(displayNameAttrName, nickNameValue));
+        attributes.add(new Attribute(Constants.USER_DISPLAY_NAME_URI, nickNameValue));
         String userID1 = Utils.addUser(connector, attributes);
-        Assert.assertNotNull(userID1);
+        Assert.assertEquals(user1, userID1);
 
         attributes = new ArrayList<>();
         attributes.add(new Attribute(Constants.USERNAME_URI, user2));
-        attributes.add(new Attribute(displayNameAttrName, nickNameValue));
+        attributes.add(new Attribute(Constants.USER_DISPLAY_NAME_URI, nickNameValue));
         String userID2 = Utils.addUser(connector, attributes);
-        Assert.assertNotNull(userID2);
+        Assert.assertEquals(user2, userID2);
 
-        List<String> uids = connector.listConnectorUserIds(displayNameAttrName, nickNameValue, 0, -1);
+        List<String> uids = connector.listConnectorUserIds(Constants.USER_DISPLAY_NAME_URI, nickNameValue, 0, -1);
         Assert.assertEquals(uids.size(), 2);
+
+        connector.deleteUser(userID1);
+        connector.deleteUser(userID2);
     }
 
     @Test
     public void testGetUserAttributeValues() throws Exception {
         List<Attribute> attributes = new ArrayList<>();
         attributes.add(new Attribute(Constants.USERNAME_URI, user));
-        userID = Utils.addUser(connector, attributes);
-        Assert.assertNotNull(userID);
+        userID = connector.addUser(attributes);
+        Assert.assertEquals(user, userID);
 
         try {
             attributes = connector.getUserAttributeValues(userID);
@@ -157,34 +150,39 @@ public class LDAPUserStoreConnectorIT {
     @Test
     public void testGetConnectorGroupId() throws Exception {
         List<Attribute> attributes = new ArrayList<>();
-        attributes.add(new Attribute(displayNameAttrName, group));
-        groupId = Utils.addGroup(connector, attributes);
-        Assert.assertNotNull(groupId);
+        attributes.add(new Attribute(UserStoreConstants.GROUP_DISPLAY_NAME, group));
+        groupId = connector.addGroup(attributes);
+        Assert.assertEquals(group, groupId);
 
-        String gid = connector.getConnectorGroupId(displayNameAttrName, group);
-        Assert.assertEquals(groupId, gid);
+        String uid = connector.getConnectorGroupId(UserStoreConstants.GROUP_DISPLAY_NAME, group);
+        Assert.assertEquals(group, uid);
+
+        connector.deleteGroup(groupId);
     }
 
     @Test
-    public  void testListConnectorGroupIds() throws Exception {
+    public void testListConnectorGroupIds() throws Exception {
         String group1 = "group1";
         String group2 = "group2";
         String nickNameValue = "commonName";
 
         List<Attribute> attributes = new ArrayList<>();
-        attributes.add(new Attribute(displayNameAttrName, group1));
+        attributes.add(new Attribute(UserStoreConstants.GROUP_DISPLAY_NAME, group1));
         attributes.add(new Attribute(UserStoreConstants.NICKNAME, nickNameValue));
         String groupId1 = Utils.addGroup(connector, attributes);
-        Assert.assertNotNull(groupId1);
+        Assert.assertEquals(group1, groupId1);
 
         attributes = new ArrayList<>();
-        attributes.add(new Attribute(displayNameAttrName, group2));
+        attributes.add(new Attribute(UserStoreConstants.GROUP_DISPLAY_NAME, group2));
         attributes.add(new Attribute(UserStoreConstants.NICKNAME, nickNameValue));
         String groupId2 = Utils.addGroup(connector, attributes);
-        Assert.assertNotNull(groupId2);
+        Assert.assertEquals(group2, groupId2);
 
         List<String> uids = connector.listConnectorGroupIds(UserStoreConstants.NICKNAME, nickNameValue, 0, -1);
         Assert.assertEquals(2, uids.size());
+
+        connector.deleteGroup(groupId1);
+        connector.deleteGroup(groupId2);
     }
 
     @Test
@@ -192,19 +190,20 @@ public class LDAPUserStoreConnectorIT {
         String group1 = "group1";
         String nickNameValue = "commonName";
         List<Attribute> attributes = new ArrayList<>();
-        attributes.add(new Attribute(displayNameAttrName, group1));
+        attributes.add(new Attribute(UserStoreConstants.GROUP_DISPLAY_NAME, group1));
         attributes.add(new Attribute(UserStoreConstants.NICKNAME, nickNameValue));
-        groupId = Utils.addGroup(connector, attributes);
-        Assert.assertNotNull(groupId);
+        String groupId1 = Utils.addGroup(connector, attributes);
+        Assert.assertEquals(group1, groupId1);
 
         try {
-            attributes = connector.getGroupAttributeValues(groupId);
+            attributes = connector.getGroupAttributeValues(groupId1);
             Assert.assertNotNull(attributes);
         } catch (UserStoreConnectorException e) {
             Assert.fail("Exception not expected");
         }
 
-        Assert.assertEquals(7, attributes.size());
+        Assert.assertEquals(6, attributes.size());
+        connector.deleteGroup(groupId1);
     }
 
     @Test
@@ -226,14 +225,16 @@ public class LDAPUserStoreConnectorIT {
 
         isIn = connector.isUserInGroup(userId, groupId);
         Assert.assertTrue(isIn);
+        connector.deleteUser(userId);
+        connector.deleteGroup(groupId);
     }
 
     @Test
     public void testAddUser() throws Exception {
         List<Attribute> attributes = new ArrayList<>();
         attributes.add(new Attribute(Constants.USERNAME_URI, user));
-        userID = Utils.addUser(connector, attributes);
-        Assert.assertNotNull(userID);
+        userID = connector.addUser(attributes);
+        Assert.assertEquals(user, userID);
     }
 
     @Test
@@ -242,33 +243,32 @@ public class LDAPUserStoreConnectorIT {
         String attCommonValue = "commonName";
         List<Attribute> attributes = new ArrayList<>();
         attributes.add(new Attribute(Constants.USERNAME_URI, user1));
-        attributes.add(new Attribute(displayNameAttrName, attCommonValue));
+        attributes.add(new Attribute(Constants.USER_DISPLAY_NAME_URI, attCommonValue));
         String userID1 = Utils.addUser(connector, attributes);
-        Assert.assertNotNull(userID1);
+        Assert.assertEquals(user1, userID1);
 
         attributes = new ArrayList<>();
-        attributes.add(new Attribute(displayNameAttrName, attCommonValue));
+        attributes.add(new Attribute(Constants.USER_DISPLAY_NAME_URI, attCommonValue));
         connector.updateUserAttributes(userID1, attributes);
 
         attributes = connector.getUserAttributeValues(userID1);
         for (Attribute attribute : attributes) {
-            if (displayNameAttrName.equals(attribute.getAttributeUri())) {
+            if (Constants.USER_DISPLAY_NAME_URI.equals(attribute.getAttributeUri())) {
                 Assert.assertEquals(attCommonValue, attribute.getAttributeValue());
                 return;
             }
         }
+        connector.deleteUser(userID1);
     }
 
     @Test
     public void testAddDeleteGroup() throws Exception {
         List<Attribute> attributes = new ArrayList<>();
-        attributes.add(new Attribute(displayNameAttrName, group));
-        groupId = Utils.addGroup(connector, attributes);
-        Assert.assertNotNull(groupId);
+        attributes.add(new Attribute(UserStoreConstants.GROUP_DISPLAY_NAME, group));
+        groupId = connector.addGroup(attributes);
+        Assert.assertEquals(group, groupId);
 
         connector.deleteGroup(groupId);
-        List<String> groupIdList = connector.listConnectorGroupIds(0, 100);
-        Assert.assertFalse(groupIdList.contains(groupId));
     }
 
     @Test
@@ -278,8 +278,7 @@ public class LDAPUserStoreConnectorIT {
         for (int i = 0; i < 5; i++) {
             groupAttr = new ArrayList<>();
             String groupName = "group_" + i;
-            groupAttr.add(new Attribute(displayNameAttrName, groupName));
-            groupAttr.add(new Attribute(scimid, UUID.randomUUID().toString()));
+            groupAttr.add(new Attribute(UserStoreConstants.GROUP_DISPLAY_NAME, groupName));
             attributes.put(groupName, groupAttr);
         }
 
@@ -301,6 +300,11 @@ public class LDAPUserStoreConnectorIT {
                 Assert.fail("Exception not expected");
             }
         });
+
+        for (int i = 0; i < 5; i++) {
+            String groupName = "group_" + i;
+            connector.deleteGroup(groupName);
+        }
     }
 
     @Test
@@ -309,10 +313,10 @@ public class LDAPUserStoreConnectorIT {
         String nickNameValue = "commonName";
         String newNickNameValue = "commonName";
         List<Attribute> attributes = new ArrayList<>();
-        attributes.add(new Attribute(displayNameAttrName, group1));
+        attributes.add(new Attribute(UserStoreConstants.GROUP_DISPLAY_NAME, group1));
         attributes.add(new Attribute(UserStoreConstants.NICKNAME, nickNameValue));
         String groupId1 = Utils.addGroup(connector, attributes);
-        Assert.assertNotNull(groupId1);
+        Assert.assertEquals(group1, groupId1);
 
         attributes = new ArrayList<>();
         attributes.add(new Attribute(UserStoreConstants.NICKNAME, newNickNameValue));
@@ -325,35 +329,36 @@ public class LDAPUserStoreConnectorIT {
                 return;
             }
         }
+        connector.deleteGroup(groupId1);
     }
 
     @Test
     public void testAddCredential() throws Exception {
         List<Attribute> attributes = new ArrayList<>();
         attributes.add(new Attribute(Constants.USERNAME_URI, user));
-        userID = Utils.addUser(connector, attributes);
-        Assert.assertNotNull(userID);
+        userID = connector.addUser(attributes);
+        Assert.assertEquals(user, userID);
 
         PasswordCallback passwordCallback = new PasswordCallback(pass, false);
         userID = connector.addCredential(userID, passwordCallback);
-        Assert.assertNotNull(userID);
+        Assert.assertEquals(user, userID);
     }
 
     @Test
     public void testUpdateCredentials() throws Exception {
         List<Attribute> attributes = new ArrayList<>();
         attributes.add(new Attribute(Constants.USERNAME_URI, user));
-        userID = Utils.addUser(connector, attributes);
-        Assert.assertNotNull(userID);
+        userID = connector.addUser(attributes);
+        Assert.assertEquals(user, userID);
 
         PasswordCallback passwordCallback = new PasswordCallback(pass, false);
         userID = connector.addCredential(userID, passwordCallback);
-        Assert.assertNotNull(userID);
+        Assert.assertEquals(user, userID);
 
         passwordCallback.setPassword("newAdminPass".toCharArray());
         connector.updateCredentials(userID, passwordCallback);
 
-        Map passInfo = connector.getUserPasswordInfo(userID);
+        Map passInfo = connector.getUserPasswordInfo(user);
         Assert.assertNotNull(passInfo);
 
         String hashAlgo = "SHA256";
@@ -381,16 +386,16 @@ public class LDAPUserStoreConnectorIT {
     public void testDeleteCredential() throws Exception {
         List<Attribute> attributes = new ArrayList<>();
         attributes.add(new Attribute(Constants.USERNAME_URI, user));
-        userID = Utils.addUser(connector, attributes);
-        Assert.assertNotNull(userID);
+        userID = connector.addUser(attributes);
+        Assert.assertEquals(user, userID);
 
         PasswordCallback passwordCallback = new PasswordCallback(pass, false);
         userID = connector.addCredential(userID, passwordCallback);
-        Assert.assertNotNull(userID);
+        Assert.assertEquals(user, userID);
 
         connector.deleteCredential(userID);
 
-        Map passInfo = connector.getUserPasswordInfo(userID);
+        Map passInfo = connector.getUserPasswordInfo(user);
         Assert.assertNull(passInfo);
     }
 
@@ -398,28 +403,26 @@ public class LDAPUserStoreConnectorIT {
     public void testGetUserPasswordInfo() throws Exception {
         List<Attribute> attributes = new ArrayList<>();
         attributes.add(new Attribute(Constants.USERNAME_URI, user));
-        userID = Utils.addUser(connector, attributes);
-        Assert.assertNotNull(userID);
+        userID = connector.addUser(attributes);
+        Assert.assertEquals(user, userID);
 
         PasswordCallback passwordCallback = new PasswordCallback(pass, false);
         userID = connector.addCredential(userID, passwordCallback);
-        Assert.assertNotNull(userID);
+        Assert.assertEquals(user, userID);
 
-        Map passInfo = connector.getUserPasswordInfo(userID);
+        Map passInfo = connector.getUserPasswordInfo(user);
         Assert.assertNotNull(passInfo.get(UserStoreConstants.PASSWORD));
         Assert.assertNotNull(passInfo.get(UserStoreConstants.PASSWORD_SALT));
     }
 
     @AfterMethod
     public void clean() throws Exception {
-        List<String> userIdsList = connector.listConnectorUserIds(0, 100);
-        for (String uid : userIdsList) {
-            connector.deleteUser(uid);
-        }
-
-        List<String> groupIdList = connector.listConnectorGroupIds(0, 100);
-        for (String gid : groupIdList) {
-            connector.deleteGroup(gid);
+        connector.deleteUser(userID);
+        try {
+            String uid = connector.getConnectorUserId(Constants.USERNAME_URI, user);
+            Assert.fail("Exception expected");
+        } catch (UserNotFoundException e) {
+            Assert.assertEquals("User not found with the given attribute", e.getMessage());
         }
     }
 

@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.auth.user.store.connector;
 
+import org.wso2.carbon.auth.user.store.configuration.models.AttributeConfiguration;
 import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.exception.GroupNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
@@ -83,16 +84,6 @@ public interface UserStoreConnector {
      */
     List<Attribute> getUserAttributeValues(String userID) throws UserStoreConnectorException;
 
-    /**
-     * Retrieve attributes of the user with the given ID.
-     *
-     * @param userID ID of the user whose claims are requested
-     * @return Attribute map of the user with given ID
-     * @throws UserStoreConnectorException User Store Connector Exception.
-     */
-    List<Attribute> getUserAttributeValues(String userID, List<String> requiredAttribute)
-            throws UserStoreConnectorException;
-
 
     /**
      * Get connector group id from unique attribute..
@@ -137,16 +128,6 @@ public interface UserStoreConnector {
      * @throws UserStoreConnectorException User Store Connector Exception.
      */
     List<Attribute> getGroupAttributeValues(String groupId) throws UserStoreConnectorException;
-
-    /**
-     * Get all of the attributes that belongs to this group.
-     *
-     * @param groupId Id of the group.
-     * @return Map of attributes.
-     * @throws UserStoreConnectorException User Store Connector Exception.
-     */
-    List<Attribute> getGroupAttributeValues(String groupId, List<String> requiredAttribute)
-            throws UserStoreConnectorException;
 
 
     /**
@@ -345,4 +326,20 @@ public interface UserStoreConnector {
      */
     Map getUserPasswordInfo(String userId) throws UserStoreConnectorException;
 
+    /**
+     * Get attribute config information from the attribute uri
+     * 
+     * @param uri attribute uri
+     * @return attribute config information
+     * @throws UserStoreConnectorException when issue occurred while retrieving attribute info
+     */
+    AttributeConfiguration getAttributeConfigByURI(String uri) throws UserStoreConnectorException;
+
+    /**
+     * Add an attribute (user/group) to the store (DB)
+     * 
+     * @param attributeConfiguration attribute configuration object
+     * @throws UserStoreConnectorException when issue occurred while adding attribute configuration object to store (DB)
+     */
+    void addAttribute(AttributeConfiguration attributeConfiguration) throws UserStoreConnectorException;
 }

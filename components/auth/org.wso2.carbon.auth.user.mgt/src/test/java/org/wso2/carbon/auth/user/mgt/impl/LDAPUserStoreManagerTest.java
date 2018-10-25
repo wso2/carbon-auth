@@ -22,7 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.wso2.carbon.auth.user.store.claim.ClaimConstants;
 import org.wso2.carbon.auth.user.store.connector.PasswordHandler;
 import org.wso2.carbon.auth.user.store.connector.jdbc.DefaultPasswordHandler;
 import org.wso2.carbon.auth.user.store.connector.ldap.LDAPUserStoreConnector;
@@ -30,7 +29,6 @@ import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 import org.wso2.carbon.auth.user.store.util.UserStoreUtil;
 
-import java.io.File;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,16 +38,11 @@ public class LDAPUserStoreManagerTest {
     LDAPUserStoreConnector connector;
     String userName = "admin";
     String password = "admin";
-    String userId = "asdadasdsa12131";
-    String usernameAttrName = "uid";
 
     @Before
     public void init() throws Exception {
-        System.setProperty(ClaimConstants.CARBON_RUNTIME_DIR_PROP_NAME,
-                System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator
-                        + "resources" + File.separator + "runtime.home" + File.separator);
         connector = Mockito.mock(LDAPUserStoreConnector.class);
-        Mockito.when(connector.getConnectorUserId(usernameAttrName, userName)).thenReturn(userId);
+        Mockito.when(connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, userName)).thenReturn(userName);
 
         Map info = new HashMap();
 
@@ -74,13 +67,13 @@ public class LDAPUserStoreManagerTest {
         info.put(UserStoreConstants.ITERATION_COUNT, iterationCount);
         info.put(UserStoreConstants.KEY_LENGTH, keyLength);
 
-        Mockito.when(connector.getUserPasswordInfo(userId)).thenReturn(info);
+        Mockito.when(connector.getUserPasswordInfo(userName)).thenReturn(info);
     }
 
     @Test
     public void testDoAuthenticate() throws Exception {
         LDAPUserStoreManager manager = new LDAPUserStoreManager(connector);
-        boolean isAutheticated = manager.doAuthenticate(userName, password);
+        boolean isAutheticated = manager.doAuthenticate("admin", "admin");
         Assert.assertTrue(isAutheticated);
     }
 }

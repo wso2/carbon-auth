@@ -25,7 +25,6 @@ public class Constants {
     public static final String OBJECT_CLASS_NAME = "objectClass";
     public static final String ATTR_NAME_CN = "cn";
     public static final String ATTR_NAME_SN = "sn";
-    public static final String ATTR_NAME_SCIMID = "scimid";
 
     public static final String LDAP_CONNECTOR_CLASS = "ldap.connectorClass";
     public static final String LDAP_CONNECTION_URL = "ldap.ConnectionURL";

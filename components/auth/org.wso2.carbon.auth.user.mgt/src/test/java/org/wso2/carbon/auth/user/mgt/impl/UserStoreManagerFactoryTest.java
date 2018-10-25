@@ -32,15 +32,12 @@ import org.testng.Assert;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
 import org.wso2.carbon.auth.user.mgt.UserStoreManagerFactory;
 import org.wso2.carbon.auth.user.mgt.internal.ServiceReferenceHolder;
-import org.wso2.carbon.auth.user.store.claim.ClaimConstants;
 import org.wso2.carbon.auth.user.store.configuration.UserStoreConfigurationService;
 import org.wso2.carbon.auth.user.store.configuration.models.UserStoreConfiguration;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnectorFactory;
 import org.wso2.carbon.auth.user.store.connector.jdbc.JDBCUserStoreConnector;
 import org.wso2.carbon.auth.user.store.connector.ldap.LDAPUserStoreConnector;
 import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
-
-import java.io.File;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ ServiceReferenceHolder.class, UserStoreConnectorFactory.class })
@@ -58,9 +55,6 @@ public class UserStoreManagerFactoryTest {
     
     @Before
     public void init() {
-        System.setProperty(ClaimConstants.CARBON_RUNTIME_DIR_PROP_NAME,
-                System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator
-                        + "resources" + File.separator + "runtime.home" + File.separator);
         PowerMockito.mockStatic(ServiceReferenceHolder.class);
         PowerMockito.mockStatic(UserStoreConnectorFactory.class);
 

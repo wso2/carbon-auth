@@ -21,9 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
-import org.wso2.carbon.auth.user.store.claim.ClaimMetadataStore;
-import org.wso2.carbon.auth.user.store.claim.DefaultClaimManager;
-import org.wso2.carbon.auth.user.store.claim.DefaultClaimMetadataStore;
 import org.wso2.carbon.auth.user.store.connector.PasswordHandler;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnectorFactory;
@@ -43,13 +40,10 @@ public class JDBCUserStoreManager implements UserStoreManager {
     private static final Logger log = LoggerFactory.getLogger(JDBCUserStoreManager.class);
     private UserStoreConnector userStoreConnector;
     private PasswordHandler passwordHandler;
-    private ClaimMetadataStore claimMetadataStore;
 
     public JDBCUserStoreManager() throws UserStoreException {
         try {
             this.userStoreConnector = UserStoreConnectorFactory.getUserStoreConnector();
-            DefaultClaimManager defaultClaimManager = DefaultClaimManager.getInstance();
-            this.claimMetadataStore = new DefaultClaimMetadataStore(defaultClaimManager);
         } catch (UserStoreConnectorException e) {
             throw new UserStoreException("Error while initializing JDBC user store connector", e);
         }
@@ -57,10 +51,9 @@ public class JDBCUserStoreManager implements UserStoreManager {
     }
 
     protected JDBCUserStoreManager(UserStoreConnector userStoreConnector, PasswordHandler passwordHandler) {
+
         this.userStoreConnector = userStoreConnector;
         this.passwordHandler = passwordHandler;
-        DefaultClaimManager defaultClaimManager = DefaultClaimManager.getInstance();
-        this.claimMetadataStore = new DefaultClaimMetadataStore(defaultClaimManager);
     }
 
     @Override
@@ -68,8 +61,7 @@ public class JDBCUserStoreManager implements UserStoreManager {
 
         try {
             String password = (String) credential;
-            String uid = claimMetadataStore.getAttributeName(UserStoreConstants.CLAIM_USERNAME);
-            String userId = userStoreConnector.getConnectorUserId(uid, userName);
+            String userId = userStoreConnector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, userName);
             Map info = userStoreConnector.getUserPasswordInfo(userId);
 
 
@@ -97,8 +89,7 @@ public class JDBCUserStoreManager implements UserStoreManager {
     public List<String> getRoleListOfUser(String userName) throws UserStoreException {
 
         try {
-            String uid = claimMetadataStore.getAttributeName(UserStoreConstants.CLAIM_USERNAME);
-            String userId = userStoreConnector.getConnectorUserId(uid, userName);
+            String userId = userStoreConnector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, userName);
             return userStoreConnector.getGroupsOfUser(userId);
         } catch (UserNotFoundException e) {
             throw new UserStoreException("User not found exception occurred", e);

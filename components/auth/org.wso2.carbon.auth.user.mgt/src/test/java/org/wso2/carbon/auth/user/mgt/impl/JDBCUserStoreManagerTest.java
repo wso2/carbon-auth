@@ -23,14 +23,12 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
-import org.wso2.carbon.auth.user.store.claim.ClaimConstants;
 import org.wso2.carbon.auth.user.store.connector.PasswordHandler;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
 import org.wso2.carbon.auth.user.store.constant.UserStoreConstants;
 import org.wso2.carbon.auth.user.store.exception.UserNotFoundException;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 
-import java.io.File;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,16 +36,13 @@ import java.util.Map;
 
 public class JDBCUserStoreManagerTest {
 
-    String userNameAttrName = "uid";
     UserStoreManager userStoreManager;
     UserStoreConnector connector;
     PasswordHandler defaultPasswordHandler;
 
     @BeforeMethod
     public void init() {
-        System.setProperty(ClaimConstants.CARBON_RUNTIME_DIR_PROP_NAME,
-                System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator
-                        + "resources" + File.separator + "runtime.home" + File.separator);
+
         connector = Mockito.mock(UserStoreConnector.class);
         defaultPasswordHandler = Mockito.mock(PasswordHandler.class);
         userStoreManager = new JDBCUserStoreManager(connector, defaultPasswordHandler);
@@ -70,7 +65,7 @@ public class JDBCUserStoreManagerTest {
         info.put(UserStoreConstants.HASH_ALGO, "HASH_ALGO");
         Mockito.when(defaultPasswordHandler.hashPassword(password.toCharArray(), (String) info.get(UserStoreConstants
                 .PASSWORD_SALT), (String) info.get(UserStoreConstants.HASH_ALGO))).thenReturn(hashedPass);
-        Mockito.when(connector.getConnectorUserId(userNameAttrName, username)).thenReturn(userId);
+        Mockito.when(connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, username)).thenReturn(userId);
         Mockito.when(connector.getUserPasswordInfo(userId)).thenReturn(info);
 
         //correct pass
@@ -102,7 +97,7 @@ public class JDBCUserStoreManagerTest {
         }
 
         //when UserNotFoundException occurred
-        Mockito.when(connector.getConnectorUserId(userNameAttrName, username))
+        Mockito.when(connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, username))
                 .thenThrow(UserNotFoundException.class);
         try {
             authenticated = userStoreManager.doAuthenticate(username, password);
@@ -115,10 +110,10 @@ public class JDBCUserStoreManagerTest {
     @Test
     public void testGetRoleListOfUser() throws UserStoreConnectorException, UserNotFoundException, UserStoreException {
 
-        Mockito.when(connector.getConnectorUserId(userNameAttrName, "admin")).thenReturn("1234");
+        Mockito.when(connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "admin")).thenReturn("1234");
         Mockito.when(connector.getGroupsOfUser("1234")).thenReturn(Arrays.asList("1"));
         userStoreManager.getRoleListOfUser("admin");
-        Mockito.verify(connector, Mockito.times(1)).getConnectorUserId(userNameAttrName, "admin");
+        Mockito.verify(connector, Mockito.times(1)).getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "admin");
         Mockito.verify(connector, Mockito.times(1)).getGroupsOfUser("1234");
     }
 
@@ -126,7 +121,7 @@ public class JDBCUserStoreManagerTest {
     public void testGetRoleListOfUserUserNotfoundException() throws UserStoreConnectorException,
             UserNotFoundException {
 
-        Mockito.when(connector.getConnectorUserId(userNameAttrName, "admin1")).thenThrow(new
+        Mockito.when(connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "admin1")).thenThrow(new
                 UserNotFoundException(""));
         try {
             userStoreManager.getRoleListOfUser("admin1");
@@ -134,7 +129,7 @@ public class JDBCUserStoreManagerTest {
         } catch (UserStoreException e) {
             Assert.assertTrue(e.getMessage().contains("User not found exception occurred"));
         }
-        Mockito.verify(connector, Mockito.times(1)).getConnectorUserId(userNameAttrName, "admin1");
+        Mockito.verify(connector, Mockito.times(1)).getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "admin1");
         Mockito.verify(connector, Mockito.times(0)).getGroupsOfUser(Mockito.anyString());
     }
 
@@ -142,7 +137,7 @@ public class JDBCUserStoreManagerTest {
     public void testGetRoleListOfUserStoreException() throws UserStoreConnectorException,
             UserNotFoundException {
 
-        Mockito.when(connector.getConnectorUserId(userNameAttrName, "admin1")).thenThrow(new
+        Mockito.when(connector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "admin1")).thenThrow(new
                 UserStoreConnectorException(""));
         try {
             userStoreManager.getRoleListOfUser("admin1");
@@ -150,7 +145,7 @@ public class JDBCUserStoreManagerTest {
         } catch (UserStoreException e) {
             Assert.assertTrue(e.getMessage().contains("User Connector exception occurred"));
         }
-        Mockito.verify(connector, Mockito.times(1)).getConnectorUserId(userNameAttrName, "admin1");
+        Mockito.verify(connector, Mockito.times(1)).getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, "admin1");
         Mockito.verify(connector, Mockito.times(0)).getGroupsOfUser(Mockito.anyString());
     }
 

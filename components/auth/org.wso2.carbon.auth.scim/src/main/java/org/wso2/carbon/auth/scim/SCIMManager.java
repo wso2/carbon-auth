@@ -23,8 +23,6 @@ import org.slf4j.LoggerFactory;
 
 import org.wso2.carbon.auth.scim.exception.AuthUserManagementException;
 import org.wso2.carbon.auth.scim.impl.CarbonAuthSCIMUserManager;
-import org.wso2.carbon.auth.user.store.claim.DefaultClaimManager;
-import org.wso2.carbon.auth.user.store.claim.DefaultClaimMetadataStore;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnectorFactory;
 import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
@@ -64,9 +62,7 @@ public class SCIMManager {
         UserStoreConnector userStoreConnector;
         try {
             userStoreConnector = UserStoreConnectorFactory.getUserStoreConnector();
-            DefaultClaimManager defaultClaimManager = DefaultClaimManager.getInstance();
-            DefaultClaimMetadataStore defaultClaimMetadataStore = new DefaultClaimMetadataStore(defaultClaimManager);
-            return new CarbonAuthSCIMUserManager(userStoreConnector, defaultClaimMetadataStore);
+            return new CarbonAuthSCIMUserManager(userStoreConnector);
         } catch (UserStoreConnectorException e) {
             throw new AuthUserManagementException("User manager initialization failed", e);
         }

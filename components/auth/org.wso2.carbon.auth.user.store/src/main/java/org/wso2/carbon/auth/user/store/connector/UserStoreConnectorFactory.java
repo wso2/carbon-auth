@@ -35,17 +35,14 @@ public class UserStoreConnectorFactory {
     public static UserStoreConnector getUserStoreConnector() throws UserStoreConnectorException {
         UserStoreConfiguration userStoreConfiguration = ServiceReferenceHolder.getInstance()
                 .getUserStoreConfigurationService().getUserStoreConfiguration();
-        UserStoreConnector connector;
         if (UserStoreConstants.JDBC_CONNECTOR_TYPE.equals(userStoreConfiguration.getConnectorType())) {
-            connector = new JDBCUserStoreConnector();
+            JDBCUserStoreConnector connector = new JDBCUserStoreConnector();
+            connector.init(userStoreConfiguration);
+            return connector;
         } else if (UserStoreConstants.LDAP_CONNECTOR_TYPE.equals(userStoreConfiguration.getConnectorType())) {
-            connector = new LDAPUserStoreConnector();
-        } else {
-            throw new UserStoreConnectorException("User store connector type is not defined in configuration");
+            return new LDAPUserStoreConnector();
         }
-        connector.init(userStoreConfiguration);
-        return connector;
-
+        throw new UserStoreConnectorException("User store connector type is not defined in configuration");
     }
 
 }

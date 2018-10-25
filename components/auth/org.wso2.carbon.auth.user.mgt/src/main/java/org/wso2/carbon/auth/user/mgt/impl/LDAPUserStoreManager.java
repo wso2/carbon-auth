@@ -21,9 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.auth.user.mgt.UserStoreException;
 import org.wso2.carbon.auth.user.mgt.UserStoreManager;
-import org.wso2.carbon.auth.user.store.claim.ClaimMetadataStore;
-import org.wso2.carbon.auth.user.store.claim.DefaultClaimManager;
-import org.wso2.carbon.auth.user.store.claim.DefaultClaimMetadataStore;
 import org.wso2.carbon.auth.user.store.connector.PasswordHandler;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnector;
 import org.wso2.carbon.auth.user.store.connector.UserStoreConnectorFactory;
@@ -42,13 +39,10 @@ import java.util.Map;
 public class LDAPUserStoreManager implements UserStoreManager {
     private static Logger log = LoggerFactory.getLogger(LDAPUserStoreManager.class);
     private UserStoreConnector userStoreConnector;
-    private ClaimMetadataStore claimMetadataStore;
 
     public LDAPUserStoreManager() throws UserStoreException {
         try {
             this.userStoreConnector = UserStoreConnectorFactory.getUserStoreConnector();
-            DefaultClaimManager defaultClaimManager = DefaultClaimManager.getInstance();
-            this.claimMetadataStore = new DefaultClaimMetadataStore(defaultClaimManager);
         } catch (UserStoreConnectorException e) {
             throw new UserStoreException("Error while initializing LDAP user store connector", e);
         }
@@ -56,16 +50,13 @@ public class LDAPUserStoreManager implements UserStoreManager {
 
     public LDAPUserStoreManager(UserStoreConnector userStoreConnector) {
         this.userStoreConnector = userStoreConnector;
-        DefaultClaimManager defaultClaimManager = DefaultClaimManager.getInstance();
-        this.claimMetadataStore = new DefaultClaimMetadataStore(defaultClaimManager);
     }
 
     @Override
     public boolean doAuthenticate(String userName, Object credential) throws UserStoreException {
         try {
             String password = (String) credential;
-            String uid = claimMetadataStore.getAttributeName(UserStoreConstants.CLAIM_USERNAME);
-            String userId = userStoreConnector.getConnectorUserId(uid, userName);
+            String userId = userStoreConnector.getConnectorUserId(UserStoreConstants.CLAIM_USERNAME, userName);
             Map info = userStoreConnector.getUserPasswordInfo(userId);
             PasswordHandler passwordHandler = new DefaultPasswordHandler();
             passwordHandler.setIterationCount((int) info.get(UserStoreConstants.ITERATION_COUNT));

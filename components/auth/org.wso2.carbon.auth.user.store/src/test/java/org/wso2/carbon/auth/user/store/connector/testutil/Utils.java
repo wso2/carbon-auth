@@ -25,15 +25,13 @@ import org.wso2.carbon.auth.user.store.exception.UserStoreConnectorException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class Utils {
-    private static final String scimid = "scimId";
     public static String addUser(UserStoreConnector connector, String username, String password) {
         List<Attribute> attributeList = new ArrayList<>();
         attributeList.add(new Attribute(Constants.USERNAME_URI, username));
         if (password != null) {
-//            attributeList.add(new Attribute(Constants.PASSWORD_URI, password));
+            attributeList.add(new Attribute(Constants.PASSWORD_URI, password));
         }
         return addUser(connector, attributeList);
     }
@@ -41,12 +39,11 @@ public class Utils {
     public static String addUser(UserStoreConnector connector, List<Attribute> attributeList) {
         String userId;
         try {
-            attributeList = populateScimId(attributeList);
             userId = connector.addUser(attributeList);
             Assert.assertNotNull(userId);
             return userId;
         } catch (UserStoreConnectorException e) {
-            Assert.fail("Exception not expected. " + e.getCause());
+            Assert.fail("Exception not expected");
         }
         return null;
     }
@@ -60,27 +57,13 @@ public class Utils {
     public static String addGroup(UserStoreConnector connector, List<Attribute> attributeList) {
         String connectorUniqueId;
         try {
-            attributeList = populateScimId(attributeList);
             connectorUniqueId = connector.addGroup(attributeList);
             Assert.assertNotNull(connectorUniqueId);
             return connectorUniqueId;
         } catch (UserStoreConnectorException e) {
-            Assert.fail("Exception not expected." + e.getCause());
+            Assert.fail("Exception not expected");
         }
         return null;
-    }
-
-    private static List<Attribute> populateScimId(List<Attribute> attributeList) {
-        if (attributeList != null) {
-            for (Attribute attribute : attributeList) {
-                if (scimid.equalsIgnoreCase(attribute.getAttributeUri())) {
-                    return attributeList;
-                }
-            }
-            attributeList.add(new Attribute(scimid, UUID.randomUUID().toString()));
-            return attributeList;
-        }
-        return attributeList;
     }
 
     public static void updateGroupsOfUser(UserStoreConnector connector, String userId, List<String> groupIds) {
